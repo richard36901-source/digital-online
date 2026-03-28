@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title id="pageTitle">דיגיטל אונליין</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;800;900&family=Assistant:wght@400;500;600&display=swap" rel="stylesheet"/>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-WNJN9XQT');</script>
+<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','10211443525862398');fbq('track','PageView');</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Assistant',sans-serif;background:#0D0D0D;color:#fff;direction:rtl;min-height:100svh;display:flex;flex-direction:column}
+a{-webkit-tap-highlight-color:transparent}
+header{background:#111;border-bottom:1px solid #222;padding:14px 20px;display:flex;align-items:center;justify-content:center}
+header img{height:36px;opacity:.9}
+.main{flex:1;max-width:640px;margin:0 auto;width:100%;padding:28px 18px 48px}
+h1{font-family:'Heebo',sans-serif;font-size:clamp(22px,6vw,32px);font-weight:900;color:#fff;line-height:1.25;margin-bottom:12px}
+.desc{font-family:'Assistant',sans-serif;font-size:clamp(15px,3.8vw,18px);color:#aaa;line-height:1.7;margin-bottom:28px}
+.vid-wrap{position:relative;width:100%;border-radius:16px;overflow:hidden;background:#000;border:1px solid #222;cursor:pointer;box-shadow:0 8px 32px rgba(0,0,0,.4);margin-bottom:10px}
+.vid-wrap video{width:100%;display:block}
+.vid-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.3);border:none;width:100%;cursor:pointer;transition:background .2s}
+.vid-overlay:hover{background:rgba(0,0,0,.4)}
+.play-btn{width:70px;height:70px;border-radius:50%;background:#00C853;display:flex;align-items:center;justify-content:center;box-shadow:0 0 28px rgba(0,200,83,.5)}
+.vid-below{text-align:center;font-family:'Assistant',sans-serif;font-size:13px;color:#555;margin-bottom:24px;line-height:1.5}
+.prog-wrap{width:100%;height:4px;background:#222;border-radius:99px;overflow:hidden;margin-bottom:16px;cursor:pointer}
+.prog-fill{height:100%;width:0%;background:#00C853;border-radius:99px;transition:width .5s linear;pointer-events:none}
+.controls{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.ctrl{background:rgba(255,255,255,.07);border:none;color:#aaa;border-radius:8px;padding:8px 14px;font-family:'Heebo',sans-serif;font-size:13px;cursor:pointer;transition:background .2s}
+.ctrl:hover{background:rgba(255,255,255,.13);color:#fff}
+.time-disp{font-family:'Assistant',sans-serif;font-size:12px;color:#444;margin-right:auto}
+.cta-section{background:#111;border:1px solid #222;border-radius:14px;padding:20px;text-align:center}
+.cta-section p{font-family:'Assistant',sans-serif;font-size:14px;color:#888;margin-bottom:14px}
+.cta-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#00C853;color:#fff;font-family:'Heebo',sans-serif;font-size:17px;font-weight:800;border:none;border-radius:12px;padding:14px 32px;cursor:pointer;text-decoration:none;transition:background .2s,transform .15s}
+.cta-btn:hover{background:#00A843;transform:translateY(-1px)}
+</style>
+</head>
+<body>
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WNJN9XQT" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+<header>
+  <img src="assets/logo.png" alt="דיגיטל אונליין"/>
+</header>
+
+<div class="main">
+  <h1 id="mainTitle">טוען...</h1>
+  <p class="desc" id="mainDesc">טוען...</p>
+
+  <div class="vid-wrap" onclick="togglePlay()">
+    <video id="mainVid" preload="metadata" playsinline poster="assets/video-preview-bg.jpg">
+      <source id="vidSrc" src="" type="video/mp4"/>
+    </video>
+    <button class="vid-overlay" id="vidOverlay">
+      <div class="play-btn"><svg width="26" height="26" viewBox="0 0 24 24" fill="white"><polygon points="5,3 19,12 5,21"/></svg></div>
+    </button>
+  </div>
+
+  <div class="prog-wrap" id="progWrap" onclick="seekVid(event)">
+    <div class="prog-fill" id="progFill"></div>
+  </div>
+
+  <div class="controls">
+    <button class="ctrl" onclick="togglePlay()">⏯</button>
+    <button class="ctrl" onclick="rewind()">↺ 10s</button>
+    <span class="time-disp" id="timeDisp">00:00 / 00:00</span>
+  </div>
+
+  <p class="vid-below" id="vidBelow"></p>
+
+  <div class="cta-section" id="ctaSection" style="display:none">
+    <p id="ctaText"></p>
+    <a class="cta-btn" id="ctaBtn" href="#">המשך →</a>
+  </div>
+</div>
+
+<script>
+const PAGE='content_page_1';
+const SHEET_URL='https://script.google.com/macros/s/AKfycbxSkQGsN-Lpmih9UVXKP0Uz3nCr8bvvVwtiGmp3fQAgxmQXnaZOjBHZ1mlDKu0EX6AyeQ/exec';
+const ADMIN_KEY='do_admin_content';
+
+window.dataLayer=window.dataLayer||[];
+const P=new URLSearchParams(location.search);
+const sup=P.get('supplier')||'',src=P.get('utm_source')||'',t_param=parseInt(P.get('t')||0);
+
+/* load content from admin settings */
+function loadContent(){
+  try{
+    const all=JSON.parse(localStorage.getItem(ADMIN_KEY)||'{}');
+    const c=all.page1||{};
+    document.getElementById('mainTitle').textContent = c.title||'הדרכה מיוחדת';
+    document.getElementById('mainDesc').textContent  = c.desc||'צפה בסרטון למטה';
+    document.getElementById('pageTitle').textContent = (c.title||'דיגיטל אונליין')+' | דיגיטל אונליין';
+    if(c.vidBelow) document.getElementById('vidBelow').textContent=c.vidBelow;
+    if(c.ctaText&&c.ctaLink){
+      document.getElementById('ctaText').textContent=c.ctaText;
+      document.getElementById('ctaBtn').href=c.ctaLink;
+      document.getElementById('ctaBtn').textContent=c.ctaBtnText||'המשך →';
+      document.getElementById('ctaSection').style.display='block';
+    }
+    const vidSrc=c.videoUrl||'assets/video-1.mp4';
+    document.getElementById('vidSrc').src=vidSrc;
+    document.getElementById('mainVid').load();
+    if(t_param>3){
+      document.getElementById('mainVid').addEventListener('loadedmetadata',()=>{
+        document.getElementById('mainVid').currentTime=t_param;
+      },{once:true});
+    }
+  }catch(e){
+    document.getElementById('mainTitle').textContent='הדרכה מיוחדת';
+    document.getElementById('mainDesc').textContent='צפה בסרטון למטה';
+  }
+}
+loadContent();
+
+dataLayer.push({event:'page_view',page:PAGE,utm_source:src,supplier:sup});
+
+/* video */
+let vp=0;
+const vid=document.getElementById('mainVid');
+const vm={};[25,50,75,100].forEach(m=>vm[m]=0);
+
+function togglePlay(){
+  if(vp){vid.pause();}else{vid.play();}
+}
+function rewind(){vid.currentTime=Math.max(0,vid.currentTime-10);}
+function seekVid(e){
+  if(!vid.duration)return;
+  const r=document.getElementById('progWrap').getBoundingClientRect();
+  vid.currentTime=((e.clientX-r.left)/r.width)*vid.duration;
+}
+
+vid.addEventListener('play',()=>{
+  vp=1;document.getElementById('vidOverlay').style.display='none';
+  dataLayer.push({event:'video_play',page:PAGE,time:Math.round(vid.currentTime)});
+  sendSheet('video_play',Math.round(vid.currentTime),0);
+});
+vid.addEventListener('pause',()=>{
+  vp=0;
+  if(!vid.ended) document.getElementById('vidOverlay').style.display='flex';
+  const pos=Math.round(vid.currentTime);
+  const pct=vid.duration?Math.round((pos/vid.duration)*100):0;
+  dataLayer.push({event:'video_pause',page:PAGE,time:pos});
+  sendSheet('video_pause',pos,pct);
+  savePos(pos);
+});
+vid.addEventListener('timeupdate',()=>{
+  if(!vid.duration)return;
+  const pct=(vid.currentTime/vid.duration)*100;
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('timeDisp').textContent=fmt(vid.currentTime)+' / '+fmt(vid.duration);
+  [25,50,75,100].forEach(m=>{
+    if(!vm[m]&&pct>=m){vm[m]=1;
+      dataLayer.push({event:'video_progress',milestone:m+'%',page:PAGE});
+      sendSheet('video_'+m+'pct',Math.round(vid.currentTime),m);
+    }
+  });
+  if(Math.round(vid.currentTime)%5===0) savePos(Math.round(vid.currentTime));
+});
+vid.addEventListener('ended',()=>{
+  vp=0;document.getElementById('vidOverlay').style.display='flex';
+  dataLayer.push({event:'video_ended',page:PAGE});
+  sendSheet('video_completed',Math.round(vid.duration||0),100);
+});
+
+function savePos(pos){
+  try{localStorage.setItem('cp1_pos',pos);}catch(e){}
+  const u=new URL(location.href);u.searchParams.set('t',pos);
+  history.replaceState(null,'',u.toString());
+}
+
+function sendSheet(eventName,posSec,pct){
+  const payload={
+    event:eventName,page:PAGE,
+    position_sec:posSec,pct_watched:pct,
+    resume_link:location.origin+location.pathname+'?t='+posSec,
+    supplier:sup,utm_source:src,
+    timestamp:new Date().toLocaleString('he-IL')
+  };
+  try{fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});}catch(e){}
+}
+
+function fmt(s){const m=Math.floor(s/60),sc=Math.floor(s%60);return String(m).padStart(2,'0')+':'+String(sc).padStart(2,'0');}
+
+const sd={};[25,50,75,100].forEach(d=>sd[d]=0);
+window.addEventListener('scroll',()=>{const s=document.body.scrollHeight-window.innerHeight;if(!s)return;const p=Math.round(window.scrollY/s*100);[25,50,75,100].forEach(d=>{if(!sd[d]&&p>=d){sd[d]=1;dataLayer.push({event:'scroll_depth',depth:d+'%',page:PAGE});}});},{passive:true});
+const t0=Date.now();
+window.addEventListener('beforeunload',()=>{
+  const pos=Math.round(vid.currentTime);
+  const pct=vid.duration?Math.round((pos/vid.duration)*100):0;
+  if(navigator.sendBeacon){
+    navigator.sendBeacon(SHEET_URL,JSON.stringify({event:'page_exit',page:PAGE,position_sec:pos,pct_watched:pct,resume_link:location.origin+location.pathname+'?t='+pos,seconds_on_page:Math.round((Date.now()-t0)/1000),supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')}));
+  }
+  dataLayer.push({event:'page_time',seconds:Math.round((Date.now()-t0)/1000),page:PAGE,video_pos:pos});
+});
+</script>
+</body>
+</html>
