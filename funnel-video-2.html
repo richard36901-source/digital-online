@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>דיגיטל אונליין | הדרכה 2 מתוך 4</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;800;900&family=Assistant:wght@400;500;600&display=swap" rel="stylesheet"/>
+<script>(function(w,d,s,l,i2){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i2+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-WNJN9XQT');</script>
+<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','10211443525862398');fbq('track','PageView');</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Assistant',sans-serif;background:#0D0D0D;color:#fff;direction:rtl;min-height:100svh;display:flex;flex-direction:column}
+a{-webkit-tap-highlight-color:transparent;text-decoration:none}
+/* PROG */
+.prog{background:#111;border-bottom:1px solid #222;padding:10px 18px 11px;position:sticky;top:0;z-index:50}
+.prog-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.prog-row span{font-family:'Heebo',sans-serif;font-size:12px;font-weight:700;color:#00C853}
+.prog-track{width:100%;height:7px;background:#222;border-radius:99px;overflow:hidden}
+.prog-fill{height:100%;width:200%;background:linear-gradient(90deg,#00C853,#69f0ae);border-radius:99px;max-width:100%}
+.steps-row{display:flex;gap:5px;margin-top:7px}
+.step-dot{flex:1;height:4px;border-radius:99px;background:#333;transition:background .4s}
+.step-dot.done{background:#00C853}
+.step-dot.cur{background:#69f0ae}
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;max-width:600px;margin:0 auto;width:100%;padding:20px 18px 40px}
+.ep-label{font-family:'Assistant',sans-serif;font-size:12px;color:#555;margin-bottom:8px}
+.ep-title{font-family:'Heebo',sans-serif;font-size:clamp(18px,5vw,24px);font-weight:900;color:#fff;margin-bottom:16px;line-height:1.25}
+/* VIDEO */
+.vid-wrap{position:relative;width:100%;border-radius:14px;overflow:hidden;background:#000;border:1px solid #222;margin-bottom:12px;cursor:pointer}
+.vid-wrap video{width:100%;display:block;max-height:360px;object-fit:contain;background:#000}
+.vid-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.45);border:none;width:100%;cursor:pointer;gap:10px;transition:background .2s}
+.vid-overlay:hover{background:rgba(0,0,0,.55)}
+.play-btn{width:68px;height:68px;border-radius:50%;background:#00C853;display:flex;align-items:center;justify-content:center;box-shadow:0 0 28px rgba(0,200,83,.5)}
+.vid-overlay .lock-msg{display:none;font-family:'Heebo',sans-serif;font-size:14px;font-weight:700;color:#fff;background:rgba(0,0,0,.6);padding:8px 16px;border-radius:8px;text-align:center}
+/* CONTROLS */
+.vid-controls{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.ctrl-btn{background:rgba(255,255,255,.08);border:none;color:#fff;border-radius:8px;padding:8px 14px;font-family:'Heebo',sans-serif;font-size:13px;cursor:pointer;transition:background .2s}
+.ctrl-btn:hover{background:rgba(255,255,255,.15)}
+.time-display{font-family:'Assistant',sans-serif;font-size:13px;color:#666;margin-right:auto}
+/* PROGRESS BAR */
+.vid-prog-wrap{width:100%;height:5px;background:#222;border-radius:99px;overflow:hidden;margin-bottom:14px;cursor:pointer}
+.vid-prog-fill{height:100%;width:0%;background:#00C853;border-radius:99px;transition:width .5s linear;pointer-events:none}
+/* INFO */
+.info-box{background:#1a1a1a;border:1px solid #222;border-radius:12px;padding:14px 16px;margin-bottom:16px}
+.info-box p{font-family:'Assistant',sans-serif;font-size:13px;color:#888;line-height:1.65}
+/* NEXT BTN */
+.next-section{display:none;margin-top:8px}
+.next-section.show{display:block}
+.next-btn{display:flex;width:100%;height:54px;background:#00C853;color:#fff;font-family:'Heebo',sans-serif;font-size:18px;font-weight:800;border:none;border-radius:12px;cursor:pointer;align-items:center;justify-content:center;gap:8px;text-decoration:none;transition:background .2s,transform .15s;animation:pG 2.5s ease-in-out infinite}
+.next-btn:hover{background:#00A843;animation:none;transform:translateY(-1px)}
+@keyframes pG{0%,100%{box-shadow:0 0 0 0 rgba(0,200,83,.4)}50%{box-shadow:0 0 0 10px rgba(0,200,83,0)}}
+.next-note{text-align:center;font-family:'Assistant',sans-serif;font-size:12px;color:#555;margin-top:8px}
+.locked-note{display:none;text-align:center;font-family:'Heebo',sans-serif;font-size:13px;color:#555;margin-top:8px;line-height:1.5}
+.locked-note.show{display:block}
+</style>
+</head>
+<body>
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WNJN9XQT" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+<div class="prog">
+  <div class="prog-row">
+    <span>הדרכה 2 מתוך 4</span>
+    <span id="progPct">20%</span>
+  </div>
+  <div class="prog-track"><div class="prog-fill" style="width:50%"></div></div>
+  <div class="steps-row" id="stepsRow"></div>
+</div>
+
+<div class="main">
+  <p class="ep-label">📚 הדרכה 2 מתוך 4</p>
+  <h1 class="ep-title" id="epTitle">טוען...</h1>
+
+  <div class="vid-wrap" id="vidWrap" onclick="handleVidClick()">
+    <video id="mainVid" preload="metadata" playsinline poster="assets/video-preview-bg.jpg">
+      <source src="assets/funnel-video-2.mp4" type="video/mp4"/>
+    </video>
+    <button class="vid-overlay" id="vidOverlay">
+      <div class="play-btn"><svg width="26" height="26" viewBox="0 0 24 24" fill="white"><polygon points="5,3 19,12 5,21"/></svg></div>
+      <span class="lock-msg" id="lockMsg">🔒 סיים את הסרטון הקודם כדי לפתוח</span>
+    </button>
+  </div>
+
+  <div class="vid-prog-wrap" id="vidProgWrap" onclick="seekVid(event)">
+    <div class="vid-prog-fill" id="vidProgFill"></div>
+  </div>
+
+  <div class="vid-controls">
+    <button class="ctrl-btn" onclick="togglePlay()">⏯ השהה/הפעל</button>
+    <button class="ctrl-btn" onclick="rewind10()">↺ 10 שניות</button>
+    <span class="time-display" id="timeDisplay">00:00 / 00:00</span>
+  </div>
+
+  <div class="info-box" id="infoBox">
+    <p id="infoText">טוען...</p>
+  </div>
+
+  <div class="next-section" id="nextSection">
+    <a class="next-btn" href="funnel-video-3.html" id="nextBtn" onclick="trackNext()">
+      ✅ עברו להדרכה הבאה →
+    </a>
+    <p class="next-note">הדרכה 3 מתוך 4 — ממשיך להיפתח</p>
+  </div>
+  <p class="locked-note" id="lockedNote">👆 ראה את הסרטון עד הסוף כדי לפתוח את ההדרכה הבאה</p>
+</div>
+
+<script>
+const VID_NUM=2;
+const TOTAL=4;
+const NEXT_PAGE='funnel-video-3.html';
+const PAGE='funnel_video_2';
+const TITLES=['','מבוא — איך זה עובד','הגדרת המנגנון שלך','הפעלת ראשונה — צעד אחר צעד','תוצאות וצעדים הבאים'];
+const INFOS=['',
+  'בהדרכה זו תקבל הבנה מלאה של המודל ותדע בדיוק מה מחכה לך.',
+  'בהדרכה זו נבנה יחד את הבסיס שממנו הכל ממריא.',
+  'כאן אנחנו מתחילים בפועל — שלב אחר שלב, ברור ופשוט.',
+  'הדרכה אחרונה — כאן תדע בדיוק מה לעשות מהרגע הזה.'
+];
+
+window.dataLayer=window.dataLayer||[];
+document.getElementById('epTitle').textContent=TITLES[VID_NUM];
+document.getElementById('infoText').textContent=INFOS[VID_NUM];
+
+const P=new URLSearchParams(location.search);
+const sup=P.get('supplier')||'',src=P.get('utm_source')||'',t_param=P.get('t')||0;
+
+dataLayer.push({event:'page_view',page:PAGE,video_num:VID_NUM,supplier:sup,utm_source:src});
+if(typeof fbq!=='undefined')fbq('track','PageView');
+
+/* build step dots */
+const sr=document.getElementById('stepsRow');
+for(let i=1;i<=TOTAL;i++){
+  const d=document.createElement('div');
+  d.className='step-dot'+(i<VID_NUM?' done':i===VID_NUM?' cur':'');
+  sr.appendChild(d);
+}
+
+/* check if this video is unlocked */
+const UNLOCK_KEY='funnel_unlocked';
+function getUnlocked(){try{return parseInt(localStorage.getItem(UNLOCK_KEY)||'1');}catch(e){return 1;}}
+function setUnlocked(n){try{localStorage.setItem(UNLOCK_KEY,Math.max(getUnlocked(),n));}catch(e){}}
+
+const unlocked=getUnlocked();
+const isLocked=VID_NUM>unlocked;
+
+const vid=document.getElementById('mainVid');
+const overlay=document.getElementById('vidOverlay');
+const lockMsg=document.getElementById('lockMsg');
+
+if(isLocked){
+  lockMsg.style.display='block';
+  overlay.querySelector('.play-btn').style.display='none';
+  dataLayer.push({event:'video_locked',page:PAGE,video_num:VID_NUM});
+} else {
+  /* resume from saved position or URL param */
+  const savedKey='funnel_pos_2';
+  const savedPos=t_param?parseInt(t_param):parseInt(localStorage.getItem(savedKey)||'0');
+  if(savedPos>3){
+    vid.addEventListener('loadedmetadata',()=>{vid.currentTime=savedPos;},{ once:true });
+  }
+}
+
+let vp=0,ended=false;
+const vm={};[25,50,75,100].forEach(m=>vm[m]=0);
+
+function handleVidClick(){
+  if(isLocked){
+    dataLayer.push({event:'video_locked_click',page:PAGE,video_num:VID_NUM});
+    return;
+  }
+  togglePlay();
+}
+
+function togglePlay(){
+  if(isLocked)return;
+  if(vp){vid.pause();}else{vid.play();}
+}
+
+vid.addEventListener('play',()=>{vp=1;overlay.style.display='none';dataLayer.push({event:'video_play',page:PAGE,video_num:VID_NUM,time:Math.round(vid.currentTime)});});
+vid.addEventListener('pause',()=>{vp=0;if(!ended)overlay.style.display='flex';const pausePos=Math.round(vid.currentTime);
+  const pausePct=vid.duration?Math.round((pausePos/vid.duration)*100):0;
+  dataLayer.push({event:'video_pause',page:PAGE,video_num:VID_NUM,time:pausePos});
+  sendVideoEvent('video_pause',pausePos,pausePct);
+  savePos();});
+
+function savePos(){
+  const pos=Math.round(vid.currentTime);
+  const pct=vid.duration?Math.round((pos/vid.duration)*100):0;
+  try{localStorage.setItem('funnel_pos_'+VID_NUM,pos);}catch(e){}
+  /* update URL for deep link */
+  const url=new URL(location.href);
+  url.searchParams.set('t',pos);
+  history.replaceState(null,'',url.toString());
+  /* send to Sheets */
+  sendVideoEvent('video_position',pos,pct);
+}
+
+function sendVideoEvent(eventName, posSeconds, pctWatched){
+  const P2=new URLSearchParams(location.search);
+  const payload={
+    event       : eventName,
+    video_num   : VID_NUM,
+    video_title : TITLES[VID_NUM],
+    position_sec: posSeconds,
+    pct_watched : pctWatched,
+    resume_link : location.origin+location.pathname+'?t='+posSeconds,
+    supplier    : sup,
+    utm_source  : src,
+    page        : PAGE,
+    timestamp   : new Date().toLocaleString('he-IL')
+  };
+  try{
+    fetch('https://script.google.com/macros/s/AKfycbxSkQGsN-Lpmih9UVXKP0Uz3nCr8bvvVwtiGmp3fQAgxmQXnaZOjBHZ1mlDKu0EX6AyeQ/exec',{
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(payload)
+    });
+  }catch(e){}
+}catch(e){}
+  /* also expose via URL so you can send deep link */
+  const url=new URL(location.href);
+  url.searchParams.set('t',Math.round(vid.currentTime));
+  history.replaceState(null,'',url.toString());
+}
+
+vid.addEventListener('timeupdate',()=>{
+  if(!vid.duration)return;
+  const p=(vid.currentTime/vid.duration)*100;
+  document.getElementById('vidProgFill').style.width=p+'%';
+  /* time display */
+  const cur=fmtTime(vid.currentTime),dur=fmtTime(vid.duration);
+  document.getElementById('timeDisplay').textContent=cur+' / '+dur;
+  /* milestone tracking */
+  [25,50,75,100].forEach(m=>{if(!vm[m]&&p>=m){vm[m]=1;dataLayer.push({event:'video_progress',milestone:m+'%',time:Math.round(vid.currentTime),page:PAGE,video_num:VID_NUM});}});
+  /* save position every 5s */
+  if(Math.round(vid.currentTime)%5===0)savePos();
+});
+
+vid.addEventListener('ended',()=>{
+  ended=true;vp=0;
+  dataLayer.push({event:'video_ended',page:PAGE,video_num:VID_NUM});
+  sendVideoEvent('video_completed',Math.round(vid.duration||0),100);
+  if(typeof fbq!=='undefined')fbq('track','ViewContent',{content_name:'funnel_video_'+VID_NUM});
+  /* unlock next */
+  setUnlocked(VID_NUM+1);
+  /* show next button */
+  document.getElementById('nextSection').classList.add('show');
+  document.getElementById('lockedNote').classList.remove('show');
+  overlay.style.display='none';
+});
+
+/* seek on progress bar click */
+function seekVid(e){
+  if(isLocked||!vid.duration)return;
+  const rect=document.getElementById('vidProgWrap').getBoundingClientRect();
+  const ratio=(e.clientX-rect.left)/rect.width;
+  vid.currentTime=ratio*vid.duration;
+  dataLayer.push({event:'video_seek',page:PAGE,video_num:VID_NUM,to:Math.round(vid.currentTime)});
+}
+
+function rewind10(){
+  if(isLocked)return;
+  vid.currentTime=Math.max(0,vid.currentTime-10);
+  dataLayer.push({event:'video_rewind',page:PAGE,video_num:VID_NUM});
+}
+
+function fmtTime(s){const m=Math.floor(s/60),sec=Math.floor(s%60);return String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0');}
+
+/* show locked note if not yet ended and next page exists */
+if(!isLocked && NEXT_PAGE){
+  document.getElementById('lockedNote').classList.add('show');
+}
+
+/* scroll depth */
+const sd={};[25,50,75,100].forEach(d=>sd[d]=0);
+window.addEventListener('scroll',()=>{const s=document.body.scrollHeight-window.innerHeight;if(!s)return;const p2=Math.round(window.scrollY/s*100);[25,50,75,100].forEach(d=>{if(!sd[d]&&p2>=d){sd[d]=1;dataLayer.push({event:'scroll_depth',depth:d+'%',page:PAGE});}});},{passive:true});
+
+const t0=Date.now();
+window.addEventListener('beforeunload',()=>{
+  const pos=Math.round(vid.currentTime);
+  const pct=vid.duration?Math.round((pos/vid.duration)*100):0;
+  const resumeLink=location.origin+location.pathname+'?t='+pos;
+  /* send exit event to Sheets */
+  const payload={
+    event       : 'video_exit',
+    video_num   : VID_NUM,
+    video_title : TITLES[VID_NUM],
+    position_sec: pos,
+    pct_watched : pct,
+    resume_link : resumeLink,
+    supplier    : sup,
+    utm_source  : src,
+    page        : PAGE,
+    timestamp   : new Date().toLocaleString('he-IL')
+  };
+  /* use sendBeacon for reliable exit tracking */
+  if(navigator.sendBeacon){
+    navigator.sendBeacon('https://script.google.com/macros/s/AKfycbxSkQGsN-Lpmih9UVXKP0Uz3nCr8bvvVwtiGmp3fQAgxmQXnaZOjBHZ1mlDKu0EX6AyeQ/exec', JSON.stringify(payload));
+  }
+  dataLayer.push({event:'page_time',seconds:Math.round((Date.now()-t0)/1000),page:PAGE,video_pos:pos,pct_watched:pct,resume_link:resumeLink});
+});});
+
+function trackNext(){dataLayer.push({event:'funnel_next_click',page:PAGE,video_num:VID_NUM,from:VID_NUM,to:VID_NUM+1});}
+</script>
+</body>
+</html>
