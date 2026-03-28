@@ -169,34 +169,40 @@ async function handleSubmit(){
   const btn=document.getElementById('submitBtn'),bc=document.getElementById('bc');
   btn.disabled=1;bc.innerHTML='<div class="spinner"></div><span>שולח...</span>';
 
-  const params=new URLSearchParams({
-    fullName:data.name,
-    email:data.email,
-    phone:data.phone,
-    variant:VARIANT,
-    page:PAGE,
-    supplier:sup,
-    utm_source:src,
-    utm_medium:med,
-    utm_campaign:camp
-  });
+  const payload={
+    fullName:data.name, email:data.email, phone:data.phone,
+    variant:VARIANT, page:PAGE, supplier:sup,
+    utm_source:src, utm_medium:med, utm_campaign:camp,
+    timestamp:new Date().toLocaleString('he-IL'),
+    landing_url:location.href
+  };
 
-  /* send via image pixel — works from any domain, no CORS */
-  const img = new Image();
-  img.src = 'https://script.google.com/macros/s/AKfycby64AwjEtix8-NVPyP32nwbc0qSBWDccbC7VyC3RyKCWAMC3lBRBAK0KkumGVBdwMPo/exec?' + params.toString();
-
-  /* wait 1.5s then redirect regardless */
-  await new Promise(r => setTimeout(r, 1500));
-
-  dn=1;
-  dataLayer.push({event:'form_submitted',variant:VARIANT,page:PAGE,
-    name:data.name,email:data.email,phone:data.phone,supplier:sup});
-  if(typeof fbq!=='undefined') fbq('track','Lead');
-  document.getElementById('formWrap').style.display='none';
-  document.getElementById('successBox').classList.add('show');
-  const q=new URLSearchParams({name:data.name,variant:VARIANT,
-    supplier:sup,utm_source:src,utm_medium:med,utm_campaign:camp});
-  setTimeout(()=>{window.location.href=THANKYOU_URL+'?'+q.toString();},1500);
+  try{
+    await fetch('https://hook.eu1.make.com/jp6ukjt7tpk3y4yly9c691g01f47cq8q',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(payload)
+    });
+    dn=1;
+    dataLayer.push({event:'form_submitted',variant:VARIANT,page:PAGE,
+      name:data.name,email:data.email,phone:data.phone,supplier:sup});
+    if(typeof fbq!=='undefined') fbq('track','Lead');
+    document.getElementById('formWrap').style.display='none';
+    document.getElementById('successBox').classList.add('show');
+    const q=new URLSearchParams({name:data.name,variant:VARIANT,
+      supplier:sup,utm_source:src,utm_medium:med,utm_campaign:camp});
+    setTimeout(()=>{window.location.href=THANKYOU_URL+'?'+q.toString();},2200);
+  }catch(e){
+    btn.disabled=0;
+    bc.textContent=VARIANT==='v1_green'?'📩 שלח לי עכשיו':VARIANT==='v2_orange'?'פתח לי את זה עכשיו 🔥':'🎬 אני רוצה לראות';
+    dataLayer.push({event:'form_error',variant:VARIANT,page:PAGE});
+    /* redirect anyway — don't block user */
+    dn=1;
+    document.getElementById('formWrap').style.display='none';
+    document.getElementById('successBox').classList.add('show');
+    const q=new URLSearchParams({name:data.name,variant:VARIANT,supplier:sup});
+    setTimeout(()=>{window.location.href=THANKYOU_URL+'?'+q.toString();},2200);
+  }
 }
 </script>
 </body>
