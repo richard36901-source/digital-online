@@ -164,9 +164,11 @@ function validate(){
 }
 async function handleSubmit(){
   dataLayer.push({event:'cta_clicked',variant:VARIANT,page:PAGE});
-  const data=validate();if(!data){dataLayer.push({event:'form_validation_failed',variant:VARIANT});return;}
+  const data=validate();
+  if(!data){dataLayer.push({event:'form_validation_failed',variant:VARIANT});return;}
   const btn=document.getElementById('submitBtn'),bc=document.getElementById('bc');
   btn.disabled=1;bc.innerHTML='<div class="spinner"></div><span>שולח...</span>';
+
   const params=new URLSearchParams({
     fullName:data.name,
     email:data.email,
@@ -178,21 +180,23 @@ async function handleSubmit(){
     utm_medium:med,
     utm_campaign:camp
   });
-  try{
-    await fetch('https://script.google.com/macros/s/AKfycbxyq4eOHYKzpnWzGL6boLFcjPMf0agC5QoJgs7fZsmmSimyGWZF3Hrmczy7PcXDT-VUlw/exec?'+params.toString(),{method:'GET',mode:'no-cors'});
-    dn=1;
-    dataLayer.push({event:'form_submitted',variant:VARIANT,page:PAGE,name:data.name,email:data.email,phone:data.phone,supplier:sup});
-    if(typeof fbq!=='undefined')fbq('track','Lead');
-    document.getElementById('formWrap').style.display='none';
-    document.getElementById('successBox').classList.add('show');
-    const q=new URLSearchParams({name:data.name,variant:VARIANT,supplier:sup,utm_source:src,utm_medium:med,utm_campaign:camp});
-    setTimeout(()=>{window.location.href=THANKYOU_URL+'?'+q.toString();},2200);
-  }catch(e){
-    btn.disabled=0;
-    bc.textContent=VARIANT==='v1_green'?'📩 שלח לי עכשיו':VARIANT==='v2_orange'?'פתח לי את זה עכשיו 🔥':'🎬 אני רוצה לראות';
-    dataLayer.push({event:'form_error',variant:VARIANT,page:PAGE});
-    alert('אירעה שגיאה, נסה שנית');
-  }
+
+  /* send via image pixel — works from any domain, no CORS */
+  const img = new Image();
+  img.src = 'https://script.google.com/macros/s/AKfycbxyq4eOHYKzpnWzGL6boLFcjPMf0agC5QoJgs7fZsmmSimyGWZF3Hrmczy7PcXDT-VUlw/exec?' + params.toString();
+
+  /* wait 1.5s then redirect regardless */
+  await new Promise(r => setTimeout(r, 1500));
+
+  dn=1;
+  dataLayer.push({event:'form_submitted',variant:VARIANT,page:PAGE,
+    name:data.name,email:data.email,phone:data.phone,supplier:sup});
+  if(typeof fbq!=='undefined') fbq('track','Lead');
+  document.getElementById('formWrap').style.display='none';
+  document.getElementById('successBox').classList.add('show');
+  const q=new URLSearchParams({name:data.name,variant:VARIANT,
+    supplier:sup,utm_source:src,utm_medium:med,utm_campaign:camp});
+  setTimeout(()=>{window.location.href=THANKYOU_URL+'?'+q.toString();},1500);
 }
 </script>
 </body>
