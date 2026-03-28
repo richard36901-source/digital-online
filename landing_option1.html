@@ -183,7 +183,7 @@ async function handleSubmit(){
 
   /* send via image pixel — works from any domain, no CORS */
   const img = new Image();
-  img.src = 'https://script.google.com/macros/s/AKfycbxSkQGsN-Lpmih9UVXKP0Uz3nCr8bvvVwtiGmp3fQAgxmQXnaZOjBHZ1mlDKu0EX6AyeQ/exec?' + params.toString();
+  img.src = 'https://script.google.com/macros/s/AKfycbxSp4P5CxdHOFkURVrLtJAhVqiesJz0QPWJe7JUsskr/exec?' + params.toString();
 
   /* wait 1.5s then redirect regardless */
   await new Promise(r => setTimeout(r, 1500));
