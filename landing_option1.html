@@ -169,7 +169,7 @@ async function handleSubmit(){
   btn.disabled=1;bc.innerHTML='<div class="spinner"></div><span>שולח...</span>';
   const payload={fullName:data.name,email:data.email,phone:data.phone,variant:VARIANT,page:PAGE,supplier:sup,utm_source:src,utm_medium:med,utm_campaign:camp,landing_url:location.href};
   try{
-    await fetch('https://script.google.com/macros/s/AKfycbxyq4eOHYKzpnWzGL6boLFcjPMf0agC5QoJgs7fZsmmSimyGWZF3Hrmczy7PcXDT-VUlw/exec',{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    await fetch('https://script.google.com/macros/s/AKfycbxyq4eOHYKzpnWzGL6boLFcjPMf0agC5QoJgs7fZsmmSimyGWZF3Hrmczy7PcXDT-VUlw/exec',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});
     dn=1;dataLayer.push({event:'form_submitted',variant:VARIANT,page:PAGE,name:data.name,email:data.email,phone:data.phone,supplier:sup});
     if(typeof fbq!=='undefined')fbq('track','Lead');
     document.getElementById('formWrap').style.display='none';
