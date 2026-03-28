@@ -148,7 +148,7 @@ body{font-family:'Assistant',sans-serif;background:#f0f2f5;color:#1a1a1a;directi
         <div class="sec-body">
           <div class="field">
             <div class="fl">🎬 כתובת הסרטון</div>
-            <div class="fh">שם קובץ בתיקיית assets — לדוגמה: assets/video-1.mp4</div>
+            <div class="fh">שם קובץ בתיקיית assets — או לינק מ-Google Drive / YouTube</div>
             <input type="text" class="url-input" id="f_vidTY" placeholder="assets/video-1.mp4" oninput="onVid(this,'pTY','sTY')"/>
             <div class="spill mt" id="sTY">ריק</div>
             <div class="vprev" id="pTY"><video controls><source id="vsTY" src=""/></video></div>
@@ -217,10 +217,14 @@ body{font-family:'Assistant',sans-serif;background:#f0f2f5;color:#1a1a1a;directi
       </div>
 
       <div class="info-box">
-        <strong>💡 איך מחליפים סרטון:</strong><br>
-        1. העלה את הקובץ לתיקיית <strong>assets</strong> בגיטהאב<br>
-        2. כתוב כאן: <strong>assets/שם-הקובץ.mp4</strong><br>
-        3. לחץ <strong>שמור הכל</strong> — הסרטון יתחלף מיד
+        <strong>💡 3 דרכים להחליף סרטון:</strong><br><br>
+        <strong>🔵 Google Drive (מומלץ):</strong><br>
+        1. העלה ל-Drive → לחץ ימני → "שתף" → "כל מי שיש לו לינק"<br>
+        2. העתק לינק → הדבק כאן → הלינק מתמיר אוטומטית ✅<br><br>
+        <strong>🔴 YouTube:</strong><br>
+        1. העלה ב-YouTube כ-Unlisted → העתק לינק → הדבק כאן ✅<br><br>
+        <strong>⚫ GitHub assets:</strong><br>
+        העלה קובץ לתיקיית assets ← כתוב: <strong>assets/שם.mp4</strong>
       </div>
     </div>
 
@@ -447,6 +451,35 @@ function toast(msg){
 
 /* COPY */
 function cp(url){navigator.clipboard.writeText(url).then(()=>toast('✅ הלינק הועתק!'));}
+
+
+/* GOOGLE DRIVE URL CONVERTER */
+function convertDriveUrl(url) {
+  if (!url) return url;
+  // Handle drive.google.com/file/d/FILE_ID/view
+  const match = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if (match) {
+    return 'https://drive.google.com/uc?export=download&id=' + match[1];
+  }
+  // Handle drive.google.com/open?id=FILE_ID
+  const match2 = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if (match2) {
+    return 'https://drive.google.com/uc?export=download&id=' + match2[1];
+  }
+  return url;
+}
+
+/* Override onVid to auto-convert Drive links */
+const _origOnVid = onVid;
+function onVid(input, prevId, statId) {
+  const converted = convertDriveUrl(input.value.trim());
+  if (converted !== input.value.trim()) {
+    input.value = converted;
+    input.style.borderColor = '#2962FF';
+    setTimeout(() => input.style.borderColor = '', 1500);
+  }
+  _origOnVid(input, prevId, statId);
+}
 
 /* WARN UNSAVED */
 window.addEventListener('beforeunload',e=>{if(isDirty){e.preventDefault();e.returnValue='';}});
