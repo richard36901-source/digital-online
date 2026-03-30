@@ -153,12 +153,12 @@ h1 .gold{
 
 /* ── MODAL OVERLAY ── */
 .modal-overlay{
-  position:fixed;inset:0;z-index:200;
-  background:rgba(0,0,0,.75);
-  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;
+  background:rgba(0,0,0,.8);
   display:flex;align-items:flex-end;justify-content:center;
   opacity:0;pointer-events:none;
-  transition:opacity .3s;
+  transition:opacity .3s ease;
+  -webkit-overflow-scrolling:touch;
 }
 .modal-overlay.open{opacity:1;pointer-events:all}
 .modal-overlay.open .modal{transform:translateY(0)}
@@ -168,10 +168,13 @@ h1 .gold{
   background:#141414;
   border:1px solid rgba(255,255,255,.08);
   border-radius:20px 20px 0 0;
-  padding:28px 22px 40px;
+  padding:28px 22px 48px;
   width:100%;max-width:500px;
+  max-height:90vh;
+  overflow-y:auto;
   transform:translateY(100%);
   transition:transform .4s cubic-bezier(.32,.72,0,1);
+  position:relative;
 }
 .modal-handle{width:36px;height:4px;background:rgba(255,255,255,.15);border-radius:2px;margin:0 auto 20px}
 .modal-title{font-family:'Heebo',sans-serif;font-size:18px;font-weight:900;color:#fff;text-align:center;margin-bottom:4px}
@@ -262,6 +265,22 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.15)}
 .spinner{width:20px;height:20px;border-radius:50%;border:2.5px solid rgba(0,0,0,.2);border-top-color:#000;animation:sp .6s linear infinite;flex-shrink:0}
 @keyframes sp{to{transform:rotate(360deg)}}
 </style>
+<!-- Early modal function - must be before body content -->
+<script>
+function openModal(){
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+  if(window.dataLayer) dataLayer.push({event:'form_opened',page:'landing_option1'});
+  setTimeout(function(){var el=document.getElementById('iName');if(el)el.focus();},400);
+}
+function closeModal(){
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+function handleOverlayClick(e){
+  if(e.target===document.getElementById('modalOverlay'))closeModal();
+}
+</script>
 </head>
 <body>
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WNJN9XQT" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -365,18 +384,7 @@ if(typeof fbq!=='undefined')fbq('track','PageView');
 function acceptCookie(){localStorage.setItem('ck','1');document.getElementById('cookieBanner').style.display='none';}
 if(localStorage.getItem('ck'))document.getElementById('cookieBanner').style.display='none';
 
-/* modal */
-function openModal(){
-  document.getElementById('modalOverlay').classList.add('open');
-  document.body.style.overflow='hidden';
-  dataLayer.push({event:'form_opened',variant:VARIANT,page:PAGE});
-  setTimeout(()=>document.getElementById('iName').focus(),400);
-}
-function closeModal(){
-  document.getElementById('modalOverlay').classList.remove('open');
-  document.body.style.overflow='';
-}
-function handleOverlayClick(e){if(e.target===document.getElementById('modalOverlay'))closeModal();}
+/* modal functions defined in head */
 
 /* scroll */
 const sd={};[25,50,75,100].forEach(d=>sd[d]=0);
