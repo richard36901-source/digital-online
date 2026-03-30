@@ -62,64 +62,22 @@ button{font-family:inherit;outline:none;-webkit-tap-highlight-color:transparent}
 /* VID LABEL */
 .vid-label{text-align:center;font-family:'Heebo',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,.7);margin-bottom:8px;line-height:1.55}
 
-/* VIDEO — 3:4 portrait */
+/* VIDEO WRAP — uses Vimeo's native 176.67% padding = 9:16 portrait */
 .vid-wrap{
-  position:relative;
-  width:100%;
-  aspect-ratio:3/4;
-  border-radius:10px;overflow:hidden;
-  background:#111;cursor:pointer;
+  border-radius:10px;
+  overflow:hidden;
   border:1px solid rgba(255,255,255,.08);
   box-shadow:0 8px 32px rgba(0,0,0,.5);
   margin-bottom:6px;
+  /* Vimeo's exact ratio */
+  padding:176.67% 0 0 0;
+  position:relative;
 }
-.vid-wrap video{
-  position:absolute;inset:0;
+.vid-wrap iframe{
+  position:absolute;
+  top:0;left:0;
   width:100%;height:100%;
-  object-fit:cover;display:block;
-}
-.vid-overlay{
-  position:absolute;inset:0;
-  display:none;
-  align-items:center;justify-content:center;
-  background:rgba(0,0,0,.3);border:none;
-  width:100%;cursor:pointer;transition:background .2s;
-}
-.vid-overlay.visible{display:flex}
-.vid-overlay:hover{background:rgba(0,0,0,.4)}
-.play-circle{
-  width:68px;height:68px;border-radius:50%;
-  background:linear-gradient(135deg,#d4a843,#f0c060);
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 0 30px rgba(212,168,67,.5);
-}
-.time-badge{
-  position:absolute;top:10px;left:10px;
-  background:rgba(0,0,0,.65);color:#d4a843;
-  font-family:'Heebo',sans-serif;font-size:13px;font-weight:700;
-  padding:3px 9px;border-radius:4px;
-  border:1px solid rgba(212,168,67,.2);
-  z-index:5;
-}
-
-/* UNMUTE BUTTON */
-.unmute-btn{
-  position:absolute;bottom:14px;left:50%;transform:translateX(-50%);
-  background:rgba(0,0,0,.78);
-  color:#fff;
-  border:1px solid rgba(255,255,255,.25);
-  font-family:'Heebo',sans-serif;font-weight:800;font-size:14px;
-  padding:9px 22px;border-radius:24px;
-  cursor:pointer;z-index:10;
-  display:flex;align-items:center;gap:6px;
-  white-space:nowrap;
-  animation:pulseMute 2s ease-in-out infinite;
-  transition:background .2s,color .2s;
-}
-.unmute-btn:hover{background:rgba(212,168,67,.9);color:#000}
-@keyframes pulseMute{
-  0%,100%{box-shadow:0 0 0 0 rgba(212,168,67,.0)}
-  50%{box-shadow:0 0 0 6px rgba(212,168,67,.25)}
+  border:none;display:block;
 }
 
 .vid-below{font-family:'Assistant',sans-serif;font-size:13px;color:rgba(255,255,255,.4);text-align:center;margin:8px 0 0;line-height:1.5}
@@ -224,34 +182,18 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.1)}
       <span>בדקות הקרובות תקבל את זה גם למייל וגם ל-SMS. כדי שלא תפספס — שים לב שזה נכנס.</span>
     </div>
 
-    <!-- VIDEO -->
+    <!-- VIDEO — Vimeo exact embed -->
     <div class="vid-label">▶️ חשוב: תראה את הסרטון עד הסוף<br>בסוף הכל מתחבר לך בצורה ברורה.</div>
 
-    <div class="vid-wrap" id="vidWrap" onclick="handleWrapClick()">
-      <video
-        id="mainVid"
-        preload="auto"
-        playsinline
-        autoplay
-        muted
-      >
-        <source src="https://drive.google.com/uc?export=download&id=1h-SvKCjvvoJONqTi6fxDEYbh5DvezS7P" type="video/mp4"/>
-      </video>
-
-      <!-- Time badge -->
-      <div class="time-badge">⏱ <span id="timeBadge">--:--</span></div>
-
-      <!-- Play overlay — hidden while autoplaying, shown when paused -->
-      <button class="vid-overlay" id="vidOverlay" onclick="handleOverlayClick(event)">
-        <div class="play-circle">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="#000"><polygon points="6,3 20,12 6,21"/></svg>
-        </div>
-      </button>
-
-      <!-- Unmute button — shown while muted -->
-      <button class="unmute-btn" id="unmuteBtn" onclick="unmute(event)">
-        🔇 לחץ להפעלת הסאונד
-      </button>
+    <div class="vid-wrap">
+      <iframe
+        id="vimeoPlayer"
+        src="https://player.vimeo.com/video/1178609782?badge=0&autopause=0&player_id=0&app_id=58479&autoplay=1&muted=1"
+        frameborder="0"
+        allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
+        referrerpolicy="strict-origin-when-cross-origin"
+        title="video-1.mp4"
+      ></iframe>
     </div>
 
     <p class="vid-below">זה רק 5 דקות… אבל זה יכול לשנות לך את הזווית לגמרי.</p>
@@ -302,6 +244,8 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.1)}
   <a href="privacy.html">מדיניות פרטיות</a><span class="sep">|</span><a href="terms.html">תנאי שימוש</a>
 </footer>
 
+<!-- Vimeo SDK — loaded at bottom so iframe is ready -->
+<script src="https://player.vimeo.com/api/player.js"></script>
 <script>
 /* ─── CONSTANTS ─── */
 const PAGE    = 'thank_you';
@@ -312,7 +256,6 @@ const P       = new URLSearchParams(location.search);
 const variant = P.get('variant')    || '';
 const sup     = P.get('supplier')   || '';
 const src     = P.get('utm_source') || '';
-const med     = P.get('utm_medium') || '';
 
 /* ─── PAGE VIEW ─── */
 dataLayer.push({event:'page_view', page:PAGE, source_variant:variant, supplier:sup, utm_source:src});
@@ -333,142 +276,84 @@ window.addEventListener('scroll', () => {
   });
 }, {passive:true});
 
-/* ─── VIDEO ─── */
-const vid       = document.getElementById('mainVid');
-const overlay   = document.getElementById('vidOverlay');
-const unmuteBtn = document.getElementById('unmuteBtn');
-const timeBadge = document.getElementById('timeBadge');
-let   vp        = 0;
-const vm        = {};
+/* ─── VIMEO TRACKING — wait for SDK to be ready ─── */
+const t0 = Date.now();
+const vm = {};
 [25,50,75,100].forEach(m => vm[m] = 0);
 
-/* Unmute */
-function unmute(e){
-  if(e) e.stopPropagation();
-  vid.muted = false;
-  unmuteBtn.style.display = 'none';
-  dataLayer.push({event:'video_unmute', page:PAGE, time:Math.round(vid.currentTime)});
-}
+window.addEventListener('load', () => {
+  const iframe = document.getElementById('vimeoPlayer');
+  const player = new Vimeo.Player(iframe);
 
-/* Tap on video wrap = toggle play/pause */
-function handleWrapClick(){
-  if(vp){ vid.pause(); } else { vid.play(); }
-}
-
-/* Tap on overlay = play */
-function handleOverlayClick(e){
-  e.stopPropagation();
-  vid.play();
-}
-
-/* PLAY */
-vid.addEventListener('play', () => {
-  vp = 1;
-  overlay.classList.remove('visible');
-  dataLayer.push({event:'video_play', page:PAGE, time:Math.round(vid.currentTime)});
-});
-
-/* PAUSE */
-vid.addEventListener('pause', () => {
-  vp = 0;
-  if(!vid.ended) overlay.classList.add('visible');
-  const pos = Math.round(vid.currentTime);
-  const pct = vid.duration ? Math.round((pos / vid.duration) * 100) : 0;
-  dataLayer.push({event:'video_pause', page:PAGE, time:pos, pct_watched:pct});
-  try{ localStorage.setItem('ty_pos', pos); } catch(e){}
-  const u = new URL(location.href);
-  u.searchParams.set('t', pos);
-  history.replaceState(null, '', u.toString());
-  fetch(WEBHOOK, {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({
-      event:'video_pause', page:PAGE,
-      position_sec:pos, pct_watched:pct,
-      resume_link: location.origin + location.pathname + '?t=' + pos,
-      supplier:sup, utm_source:src,
-      timestamp: new Date().toLocaleString('he-IL')
-    })
-  }).catch(()=>{});
-});
-
-/* TIMEUPDATE — countdown badge + milestones + autosave */
-vid.addEventListener('timeupdate', () => {
-  if(!vid.duration) return;
-  const pct = (vid.currentTime / vid.duration) * 100;
-  const rem = Math.max(0, vid.duration - vid.currentTime);
-  timeBadge.textContent = fmt(rem);
-  [25,50,75,100].forEach(m => {
-    if(!vm[m] && pct >= m){
-      vm[m] = 1;
-      dataLayer.push({event:'video_progress', milestone:m+'%', time:Math.round(vid.currentTime), page:PAGE});
-    }
+  player.on('play', (data) => {
+    dataLayer.push({event:'video_play', page:PAGE, time:Math.round(data.seconds)});
   });
-  if(Math.round(vid.currentTime) % 5 === 0){
-    try{ localStorage.setItem('ty_pos', Math.round(vid.currentTime)); } catch(e){}
-  }
-});
 
-/* ENDED */
-vid.addEventListener('ended', () => {
-  vp = 0;
-  overlay.classList.add('visible');
-  dataLayer.push({event:'video_ended', page:PAGE});
-  if(typeof fbq !== 'undefined') fbq('track','ViewContent',{content_name:'thankyou_video'});
-  fetch(WEBHOOK, {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({
-      event:'video_completed', page:PAGE, pct_watched:100,
-      supplier:sup, utm_source:src,
-      timestamp: new Date().toLocaleString('he-IL')
-    })
-  }).catch(()=>{});
-});
-
-/* RESUME from ?t= param */
-const tParam = parseInt(P.get('t') || 0);
-if(tParam > 3){
-  vid.addEventListener('loadedmetadata', () => { vid.currentTime = tParam; }, {once:true});
-}
-
-/* AUTOPLAY — if browser blocks it, show overlay instead */
-const autoplayPromise = vid.play();
-if(autoplayPromise !== undefined){
-  autoplayPromise.catch(() => {
-    overlay.classList.add('visible');
-    unmuteBtn.style.display = 'none';
+  player.on('pause', (data) => {
+    const pos = Math.round(data.seconds);
+    const pct = Math.round(data.percent * 100);
+    dataLayer.push({event:'video_pause', page:PAGE, time:pos, pct_watched:pct});
+    fetch(WEBHOOK, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        event:'video_pause', page:PAGE,
+        position_sec:pos, pct_watched:pct,
+        supplier:sup, utm_source:src,
+        timestamp: new Date().toLocaleString('he-IL')
+      })
+    }).catch(()=>{});
   });
-}
 
-/* PAGE EXIT */
-const t0 = Date.now();
-window.addEventListener('beforeunload', () => {
-  const pos = Math.round(vid.currentTime);
-  const pct = vid.duration ? Math.round((pos / vid.duration) * 100) : 0;
-  if(navigator.sendBeacon){
-    navigator.sendBeacon(WEBHOOK, JSON.stringify({
-      event:'page_exit', page:PAGE,
-      position_sec:pos, pct_watched:pct,
-      resume_link: location.origin + location.pathname + '?t=' + pos,
-      seconds_on_page: Math.round((Date.now() - t0) / 1000),
-      supplier:sup, utm_source:src,
-      timestamp: new Date().toLocaleString('he-IL')
-    }));
-  }
-  dataLayer.push({
-    event:'page_time',
-    seconds: Math.round((Date.now() - t0) / 1000),
-    page:PAGE, video_pos:pos, pct_watched:pct
+  player.on('timeupdate', (data) => {
+    const pct = data.percent * 100;
+    [25,50,75,100].forEach(m => {
+      if(!vm[m] && pct >= m){
+        vm[m] = 1;
+        dataLayer.push({event:'video_progress', milestone:m+'%', time:Math.round(data.seconds), page:PAGE});
+      }
+    });
+  });
+
+  player.on('ended', () => {
+    dataLayer.push({event:'video_ended', page:PAGE});
+    if(typeof fbq !== 'undefined') fbq('track','ViewContent',{content_name:'thankyou_video'});
+    fetch(WEBHOOK, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        event:'video_completed', page:PAGE, pct_watched:100,
+        supplier:sup, utm_source:src,
+        timestamp: new Date().toLocaleString('he-IL')
+      })
+    }).catch(()=>{});
+  });
+
+  /* Page exit */
+  window.addEventListener('beforeunload', () => {
+    player.getCurrentTime().then((pos) => {
+      player.getDuration().then((dur) => {
+        const pct = dur ? Math.round((pos / dur) * 100) : 0;
+        if(navigator.sendBeacon){
+          navigator.sendBeacon(WEBHOOK, JSON.stringify({
+            event:'page_exit', page:PAGE,
+            position_sec:Math.round(pos), pct_watched:pct,
+            seconds_on_page: Math.round((Date.now() - t0) / 1000),
+            supplier:sup, utm_source:src,
+            timestamp: new Date().toLocaleString('he-IL')
+          }));
+        }
+        dataLayer.push({
+          event:'page_time',
+          seconds: Math.round((Date.now() - t0) / 1000),
+          page:PAGE, video_pos:Math.round(pos), pct_watched:pct
+        });
+      });
+    });
   });
 });
 
-/* HELPERS */
-function fmt(s){
-  const m  = Math.floor(s / 60);
-  const sc = Math.floor(s % 60);
-  return String(m).padStart(2,'0') + ':' + String(sc).padStart(2,'0');
-}
+/* ─── BUTTON TRACKING ─── */
 function trackWA(){
   dataLayer.push({event:'wa_click', page:PAGE, source_variant:variant, supplier:sup});
   if(typeof fbq !== 'undefined') fbq('track','Contact');
