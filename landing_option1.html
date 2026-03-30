@@ -57,7 +57,6 @@ input,button{font-family:inherit;outline:none;-webkit-tap-highlight-color:transp
   overflow:hidden;
   min-height:calc(100svh - 44px);
 }
-/* subtle radial glow bg */
 .hero::before{
   content:'';position:absolute;inset:0;
   background:
@@ -65,7 +64,6 @@ input,button{font-family:inherit;outline:none;-webkit-tap-highlight-color:transp
     radial-gradient(ellipse 40% 40% at 80% 80%, rgba(212,168,67,.04) 0%, transparent 60%);
   pointer-events:none;
 }
-/* grid lines */
 .hero::after{
   content:'';position:absolute;inset:0;
   background-image:
@@ -77,7 +75,6 @@ input,button{font-family:inherit;outline:none;-webkit-tap-highlight-color:transp
 
 .hero-inner{position:relative;z-index:1;max-width:520px;width:100%;text-align:center}
 
-/* TAG */
 .tag{
   display:inline-flex;align-items:center;gap:6px;
   background:rgba(212,168,67,.1);
@@ -91,7 +88,6 @@ input,button{font-family:inherit;outline:none;-webkit-tap-highlight-color:transp
 .tag-dot{width:6px;height:6px;border-radius:50%;background:#d4a843;animation:blink 2s ease-in-out infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 
-/* HEADLINE */
 h1{
   font-family:'Heebo',sans-serif;
   font-size:clamp(24px,6.5vw,40px);
@@ -117,7 +113,6 @@ h1 .gold{
   margin-left:auto;margin-right:auto;
 }
 
-/* ── MAIN CTA BUTTON ── */
 .main-cta{
   display:inline-flex;align-items:center;justify-content:center;gap:10px;
   background:linear-gradient(135deg,#d4a843,#f0c060);
@@ -126,24 +121,58 @@ h1 .gold{
   border:none;border-radius:8px;cursor:pointer;
   padding:18px 40px;
   width:100%;max-width:360px;
-  box-shadow:0 0 0 0 rgba(212,168,67,.4);
-  animation:ctaGlow 2s ease-in-out infinite;
   position:relative;overflow:hidden;
-  transition:transform .15s;
   letter-spacing:.3px;
+  animation:ctaJump 2.8s cubic-bezier(.36,.07,.19,.97) infinite;
+  transform-origin:center bottom;
+}
+.main-cta::before{
+  content:'';position:absolute;inset:0;border-radius:8px;
+  box-shadow:0 0 0 0 rgba(212,168,67,.6);
+  animation:ctaPulse 2.8s ease-out infinite;
 }
 .main-cta::after{
   content:'';position:absolute;top:0;left:-120%;width:50%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);
-  animation:shine 2.5s ease-in-out infinite;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);
+  animation:shine 2.8s ease-in-out infinite;
 }
-@keyframes shine{0%{left:-120%}100%{left:160%}}
-@keyframes ctaGlow{
-  0%,100%{box-shadow:0 4px 24px rgba(212,168,67,.3),0 0 0 0 rgba(212,168,67,.2)}
-  50%{box-shadow:0 4px 32px rgba(212,168,67,.5),0 0 0 8px rgba(212,168,67,0)}
+/* shadow that squishes when button is in air */
+.cta-shadow{
+  width:260px;max-width:70%;height:10px;
+  background:radial-gradient(ellipse,rgba(212,168,67,.35) 0%,transparent 70%);
+  margin:0 auto;
+  animation:shadowPulse 2.8s cubic-bezier(.36,.07,.19,.97) infinite;
+  border-radius:50%;
 }
-.main-cta:hover{transform:translateY(-2px)}
-.main-cta:active{transform:translateY(0)}
+@keyframes ctaJump{
+  0%   {transform:translateY(0)    scaleX(1)   scaleY(1)}
+  8%   {transform:translateY(0)    scaleX(1.08) scaleY(.92)}   /* squish before jump */
+  20%  {transform:translateY(-22px) scaleX(.95) scaleY(1.05)}  /* peak */
+  35%  {transform:translateY(-6px)  scaleX(.97) scaleY(1.02)}  /* float */
+  48%  {transform:translateY(0)    scaleX(1.06) scaleY(.94)}   /* land squish */
+  58%  {transform:translateY(-8px)  scaleX(.98) scaleY(1.02)}  /* small bounce */
+  68%  {transform:translateY(0)    scaleX(1.02) scaleY(.99)}   /* settle */
+  100% {transform:translateY(0)    scaleX(1)   scaleY(1)}
+}
+@keyframes shadowPulse{
+  0%   {transform:scaleX(1);   opacity:.35}
+  8%   {transform:scaleX(1.1); opacity:.5}
+  20%  {transform:scaleX(.65); opacity:.15}
+  35%  {transform:scaleX(.75); opacity:.2}
+  48%  {transform:scaleX(1.12);opacity:.55}
+  58%  {transform:scaleX(.85); opacity:.28}
+  68%  {transform:scaleX(1.02);opacity:.38}
+  100% {transform:scaleX(1);   opacity:.35}
+}
+@keyframes ctaPulse{
+  0%  {box-shadow:0 0 0 0 rgba(212,168,67,.5)}
+  48% {box-shadow:0 0 0 0 rgba(212,168,67,.5)}
+  65% {box-shadow:0 0 0 14px rgba(212,168,67,0)}
+  100%{box-shadow:0 0 0 0 rgba(212,168,67,0)}
+}
+@keyframes shine{0%{left:-120%}60%{left:160%}100%{left:160%}}
+.main-cta:hover{animation-play-state:paused;transform:translateY(-4px) scale(1.02);box-shadow:0 8px 32px rgba(212,168,67,.5);transition:transform .2s,box-shadow .2s}
+.main-cta:active{transform:scale(.97);transition:transform .1s}
 
 .cta-sub{
   margin-top:12px;
@@ -163,7 +192,6 @@ h1 .gold{
 .modal-overlay.open{opacity:1;pointer-events:all}
 .modal-overlay.open .modal{transform:translateY(0)}
 
-/* ── MODAL ── */
 .modal{
   background:#141414;
   border:1px solid rgba(255,255,255,.08);
@@ -180,7 +208,6 @@ h1 .gold{
 .modal-title{font-family:'Heebo',sans-serif;font-size:18px;font-weight:900;color:#fff;text-align:center;margin-bottom:4px}
 .modal-sub{font-family:'Assistant',sans-serif;font-size:13px;color:rgba(255,255,255,.45);text-align:center;margin-bottom:20px}
 
-/* FORM */
 .form-wrap{display:flex;flex-direction:column;gap:10px}
 input[type=text],input[type=email],input[type=tel]{
   width:100%;height:52px;
@@ -197,7 +224,6 @@ input.err{border-color:#e53935!important}
 input::placeholder{color:rgba(255,255,255,.25)}
 .ferr{font-size:11px;color:#e53935;min-height:11px;margin-top:-6px}
 
-/* CONSENT */
 .consent-wrap{display:flex;align-items:flex-start;gap:10px;margin-top:4px}
 .consent-wrap input[type=checkbox]{
   width:18px;height:18px;margin-top:2px;flex-shrink:0;
@@ -205,7 +231,6 @@ input::placeholder{color:rgba(255,255,255,.25)}
 }
 .consent-wrap label{font-family:'Assistant',sans-serif;font-size:12px;color:rgba(255,255,255,.5);line-height:1.6;cursor:pointer}
 
-/* SUBMIT BTN */
 .submit-btn{
   width:100%;height:54px;
   background:linear-gradient(135deg,#d4a843,#f0c060);
@@ -228,14 +253,12 @@ input::placeholder{color:rgba(255,255,255,.25)}
 
 .form-notes{text-align:center;font-family:'Assistant',sans-serif;font-size:11px;color:rgba(255,255,255,.3);margin-top:8px;line-height:1.7}
 
-/* SUCCESS */
 .success{display:none;text-align:center;padding:32px 10px;flex-direction:column;align-items:center}
 .success.show{display:flex}
 .success .si{font-size:48px;margin-bottom:12px}
 .success h2{font-family:'Heebo',sans-serif;font-size:20px;font-weight:900;color:#d4a843;margin-bottom:6px}
 .success p{font-family:'Assistant',sans-serif;font-size:13px;color:rgba(255,255,255,.45)}
 
-/* ── FOOTER ── */
 footer{
   background:rgba(255,255,255,.03);
   border-top:1px solid rgba(255,255,255,.06);
@@ -250,7 +273,6 @@ footer a{color:rgba(255,255,255,.5);text-decoration:none}
 footer a:hover{color:#d4a843}
 footer .sep{margin:0 6px;color:rgba(255,255,255,.15)}
 
-/* ── COOKIE BANNER ── */
 .cookie{
   position:fixed;bottom:0;left:0;right:0;z-index:999;
   background:rgba(10,10,10,.97);
@@ -265,12 +287,26 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.15)}
 .spinner{width:20px;height:20px;border-radius:50%;border:2.5px solid rgba(0,0,0,.2);border-top-color:#000;animation:sp .6s linear infinite;flex-shrink:0}
 @keyframes sp{to{transform:rotate(360deg)}}
 </style>
-<!-- Early modal function - must be before body content -->
+
+<!-- ALL JS in head so functions are available before DOM renders -->
 <script>
+const WEBHOOK='https://hook.eu1.make.com/jp6ukjt7tpk3y4yly9c691g01f47cq8q';
+const THANKYOU_URL='thankyou.html';
+const VARIANT='v1_luxury';
+const PAGE='landing_option1';
+
+window.dataLayer=window.dataLayer||[];
+const P=new URLSearchParams(location.search);
+const sup=P.get('supplier')||'',src=P.get('utm_source')||'',med=P.get('utm_medium')||'',camp=P.get('utm_campaign')||'';
+
+/* cookie */
+function acceptCookie(){localStorage.setItem('ck','1');document.getElementById('cookieBanner').style.display='none';}
+
+/* modal */
 function openModal(){
   document.getElementById('modalOverlay').classList.add('open');
   document.body.style.overflow='hidden';
-  if(window.dataLayer) dataLayer.push({event:'form_opened',page:'landing_option1'});
+  if(window.dataLayer) dataLayer.push({event:'form_opened',page:PAGE});
   setTimeout(function(){var el=document.getElementById('iName');if(el)el.focus();},400);
 }
 function closeModal(){
@@ -280,6 +316,82 @@ function closeModal(){
 function handleOverlayClick(e){
   if(e.target===document.getElementById('modalOverlay'))closeModal();
 }
+
+/* validation */
+function se(id,m){document.getElementById(id).textContent=m;}
+function clr(){['errName','errEmail','errPhone'].forEach(id=>se(id,''));}
+
+function validate(){
+  clr();
+  const n=document.getElementById('iName').value.trim();
+  const e=document.getElementById('iEmail').value.trim();
+  const ph=document.getElementById('iPhone').value.replace(/[\s\-]/g,'');
+  const c=document.getElementById('consent').checked;
+  let ok=1;
+  if(!n){se('errName','נא להזין שם');document.getElementById('iName').classList.add('err');ok=0;}
+  else document.getElementById('iName').classList.remove('err');
+  if(!e||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)){se('errEmail','אימייל לא תקין');document.getElementById('iEmail').classList.add('err');ok=0;}
+  else document.getElementById('iEmail').classList.remove('err');
+  if(!ph||!/^0[0-9]{8,9}$/.test(ph)){se('errPhone','טלפון לא תקין');document.getElementById('iPhone').classList.add('err');ok=0;}
+  else document.getElementById('iPhone').classList.remove('err');
+  if(!c){alert('יש לאשר קבלת הודעות');ok=0;}
+  return ok?{name:n,email:e,phone:ph}:null;
+}
+
+/* submit */
+async function handleSubmit(){
+  dataLayer.push({event:'cta_clicked',variant:VARIANT,page:PAGE});
+  const data=validate();
+  if(!data){dataLayer.push({event:'form_validation_failed',variant:VARIANT});return;}
+  const btn=document.getElementById('submitBtn'),bc=document.getElementById('bc');
+  btn.disabled=true;
+  bc.innerHTML='<div class="spinner"></div><span>שולח...</span>';
+  const payload={
+    fullName:data.name,email:data.email,phone:data.phone,
+    variant:VARIANT,page:PAGE,supplier:sup,
+    utm_source:src,utm_medium:med,utm_campaign:camp,
+    timestamp:new Date().toLocaleString('he-IL'),
+    landing_url:location.href
+  };
+  try{
+    await fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+  }catch(e){}
+  dataLayer.push({event:'form_submitted',variant:VARIANT,page:PAGE,name:data.name,email:data.email,phone:data.phone,supplier:sup});
+  if(typeof fbq!=='undefined')fbq('track','Lead');
+  document.getElementById('formWrap').style.display='none';
+  document.getElementById('successBox').classList.add('show');
+  setTimeout(function(){window.location.href=THANKYOU_URL;},1800);
+}
+
+/* run after DOM ready */
+document.addEventListener('DOMContentLoaded',function(){
+  if(localStorage.getItem('ck'))document.getElementById('cookieBanner').style.display='none';
+
+  dataLayer.push({event:'page_view',variant:VARIANT,page:PAGE,utm_source:src,supplier:sup});
+
+  /* scroll depth */
+  const sd={};[25,50,75,100].forEach(d=>sd[d]=0);
+  window.addEventListener('scroll',function(){
+    const s=document.body.scrollHeight-window.innerHeight;
+    if(!s)return;
+    const p=Math.round(window.scrollY/s*100);
+    [25,50,75,100].forEach(d=>{if(!sd[d]&&p>=d){sd[d]=1;dataLayer.push({event:'scroll_depth',depth:d+'%',variant:VARIANT});}});
+  },{passive:true});
+
+  /* time on page + form abandon */
+  const t0=Date.now();let formSt=0,dn=0;
+  window.addEventListener('beforeunload',function(){
+    dataLayer.push({event:'page_time',seconds:Math.round((Date.now()-t0)/1000),variant:VARIANT});
+    if(formSt&&!dn) dataLayer.push({event:'form_abandoned',variant:VARIANT,page:PAGE});
+  });
+
+  ['iName','iEmail','iPhone'].forEach(function(id){
+    const el=document.getElementById(id);
+    if(!el)return;
+    el.addEventListener('focus',function(){if(!formSt){formSt=1;dataLayer.push({event:'form_started',variant:VARIANT,page:PAGE});}});
+    el.addEventListener('blur',function(){if(el.value.trim())dataLayer.push({event:'form_field_filled',field:id,variant:VARIANT});});
+  });
+});
 </script>
 </head>
 <body>
@@ -317,6 +429,7 @@ function handleOverlayClick(e){
     <button class="main-cta" onclick="openModal()">
       📩 שלח לי את ההסבר עכשיו
     </button>
+    <div class="cta-shadow"></div>
     <p class="cta-sub">הגישה נשלחת מיד · ללא עלות</p>
 
   </div>
@@ -325,7 +438,7 @@ function handleOverlayClick(e){
 <!-- FOOTER -->
 <footer>
   דיגיטל אונליין מבית או די מסחר אונליין בע"מ<br>
-  <a href="/cdn-cgi/l/email-protection#d8abada8a8b7aaac98bcb1bfb1acb9b4b7b6b4b1b6bdf6bbb7f6b1b4"><span class="__cf_email__" data-cfemail="8efdfbfefee1fcfaceeae7e9e7faefe2e1e0e2e7e0eba0ede1a0e7e2">[email&#160;protected]</span></a><br>
+  <a href="mailto:support@digitalonline.co.il">support@digitalonline.co.il</a><br>
   <a href="privacy.html">מדיניות פרטיות</a><span class="sep">|</span><a href="terms.html">תנאי שימוש</a>
 </footer>
 
@@ -367,67 +480,5 @@ function handleOverlayClick(e){
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-const WEBHOOK='https://hook.eu1.make.com/jp6ukjt7tpk3y4yly9c691g01f47cq8q';
-const THANKYOU_URL='thankyou.html';
-const VARIANT='v1_luxury';
-const PAGE='landing_option1';
-
-window.dataLayer=window.dataLayer||[];
-const P=new URLSearchParams(location.search);
-const sup=P.get('supplier')||'',src=P.get('utm_source')||'',med=P.get('utm_medium')||'',camp=P.get('utm_campaign')||'';
-
-dataLayer.push({event:'page_view',variant:VARIANT,page:PAGE,utm_source:src,supplier:sup});
-if(typeof fbq!=='undefined')fbq('track','PageView');
-
-/* cookie */
-function acceptCookie(){localStorage.setItem('ck','1');document.getElementById('cookieBanner').style.display='none';}
-if(localStorage.getItem('ck'))document.getElementById('cookieBanner').style.display='none';
-
-/* modal functions defined in head */
-
-/* scroll */
-const sd={};[25,50,75,100].forEach(d=>sd[d]=0);
-window.addEventListener('scroll',()=>{const s=document.body.scrollHeight-window.innerHeight;if(!s)return;const p=Math.round(window.scrollY/s*100);[25,50,75,100].forEach(d=>{if(!sd[d]&&p>=d){sd[d]=1;dataLayer.push({event:'scroll_depth',depth:d+'%',variant:VARIANT});}});},{passive:true});
-
-const t0=Date.now();let dn=0,formSt=0;
-window.addEventListener('beforeunload',()=>{
-  dataLayer.push({event:'page_time',seconds:Math.round((Date.now()-t0)/1000),variant:VARIANT});
-  if(formSt&&!dn) dataLayer.push({event:'form_abandoned',variant:VARIANT,page:PAGE});
-});
-['iName','iEmail','iPhone'].forEach(id=>{
-  const el=document.getElementById(id);
-  el.addEventListener('focus',()=>{if(!formSt){formSt=1;dataLayer.push({event:'form_started',variant:VARIANT,page:PAGE});}});
-  el.addEventListener('blur',()=>{if(el.value.trim())dataLayer.push({event:'form_field_filled',field:id,variant:VARIANT});});
-});
-
-function se(id,m){document.getElementById(id).textContent=m}
-function clr(){['errName','errEmail','errPhone'].forEach(id=>se(id,''))}
-
-function validate(){
-  clr();
-  const n=document.getElementById('iName').value.trim();
-  const e=document.getElementById('iEmail').value.trim();
-  const ph=document.getElementById('iPhone').value.replace(/[\s\-]/g,'');
-  const c=document.getElementById('consent').checked;
-  let ok=1;
-  if(!n){se('errName','נא להזין שם');document.getElementById('iName').classList.add('err');ok=0;}else document.getElementById('iName').classList.remove('err');
-  if(!e||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)){se('errEmail','אימייל לא תקין');document.getElementById('iEmail').classList.add('err');ok=0;}else document.getElementById('iEmail').classList.remove('err');
-  if(!ph||!/^0[0-9]{8,9}$/.test(ph)){se('errPhone','טלפון לא תקין');document.getElementById('iPhone').classList.add('err');ok=0;}else document.getElementById('iPhone').classList.remove('err');
-  if(!c){alert('יש לאשר קבלת הודעות');ok=0;}
-  return ok?{name:n,email:e,phone:ph}:null;
-}
-
-async function handleSubmit(){
-  dataLayer.push({event:'cta_clicked',variant:VARIANT,page:PAGE});
-  const data=validate();
-  if(!data){dataLayer.push({event:'form_validation_failed',variant:VARIANT});return;}
-  const btn=document.getElementById('submitBtn'),bc=document.getElementById('bc');
-  btn.disabled=1;bc.innerHTML='<div class="spinner"></div><span>שולח...</span>';
-  const payload={fullName:data.name,email:data.email,phone:data.phone,variant:VARIANT,page:PAGE,supplier:sup,utm_source:src,utm_medium:med,utm_campaign:camp,timestamp:new Date().toLocaleString('he-IL'),landing_url:location.href};
-  try{await fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});}catch(e){}
-  dn=1;
-  dataLayer.push({event:'form_submitted',variant:VARIANT,page:PAGE,name:data.name,email:data.email,phone:data.phone,supplier:sup});
-  if(typeof fbq!=='undefined')fbq('track','Lead');
-  document.getElementById('formWrap').style.display='none';
-  document.getElementById('successBo
+</body>
+</html>
