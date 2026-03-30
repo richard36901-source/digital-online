@@ -80,7 +80,7 @@ button{font-family:inherit;outline:none;-webkit-tap-highlight-color:transparent}
 }
 .vid-overlay{
   position:absolute;inset:0;
-  display:none; /* hidden — video autoplays */
+  display:none;
   align-items:center;justify-content:center;
   background:rgba(0,0,0,.3);border:none;
   width:100%;cursor:pointer;transition:background .2s;
@@ -114,9 +114,9 @@ button{font-family:inherit;outline:none;-webkit-tap-highlight-color:transparent}
   display:flex;align-items:center;gap:6px;
   white-space:nowrap;
   animation:pulseMute 2s ease-in-out infinite;
-  transition:background .2s;
+  transition:background .2s,color .2s;
 }
-.unmute-btn:hover{background:rgba(212,168,67,.85);color:#000}
+.unmute-btn:hover{background:rgba(212,168,67,.9);color:#000}
 @keyframes pulseMute{
   0%,100%{box-shadow:0 0 0 0 rgba(212,168,67,.0)}
   50%{box-shadow:0 0 0 6px rgba(212,168,67,.25)}
@@ -224,7 +224,7 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.1)}
       <span>בדקות הקרובות תקבל את זה גם למייל וגם ל-SMS. כדי שלא תפספס — שים לב שזה נכנס.</span>
     </div>
 
-    <!-- VIDEO (3:4 portrait, autoplay muted) -->
+    <!-- VIDEO -->
     <div class="vid-label">▶️ חשוב: תראה את הסרטון עד הסוף<br>בסוף הכל מתחבר לך בצורה ברורה.</div>
 
     <div class="vid-wrap" id="vidWrap" onclick="handleWrapClick()">
@@ -234,22 +234,21 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.1)}
         playsinline
         autoplay
         muted
-        poster="assets/video-preview-bg.jpg"
       >
-        <source src="assets/video-1.mp4" type="video/mp4"/>
+        <source src="https://drive.google.com/uc?export=download&id=1h-SvKCjvvoJONqTi6fxDEYbh5DvezS7P" type="video/mp4"/>
       </video>
 
       <!-- Time badge -->
-      <div class="time-badge">⏱ <span id="timeBadge">04:57</span></div>
+      <div class="time-badge">⏱ <span id="timeBadge">--:--</span></div>
 
-      <!-- Play overlay (shown only when paused after user interaction) -->
+      <!-- Play overlay — hidden while autoplaying, shown when paused -->
       <button class="vid-overlay" id="vidOverlay" onclick="handleOverlayClick(event)">
         <div class="play-circle">
           <svg width="26" height="26" viewBox="0 0 24 24" fill="#000"><polygon points="6,3 20,12 6,21"/></svg>
         </div>
       </button>
 
-      <!-- Unmute button (shown while muted) -->
+      <!-- Unmute button — shown while muted -->
       <button class="unmute-btn" id="unmuteBtn" onclick="unmute(event)">
         🔇 לחץ להפעלת הסאונד
       </button>
@@ -309,11 +308,11 @@ const PAGE    = 'thank_you';
 const WEBHOOK = 'https://hook.eu1.make.com/jp6ukjt7tpk3y4yly9c691g01f47cq8q';
 
 window.dataLayer = window.dataLayer || [];
-const P        = new URLSearchParams(location.search);
-const variant  = P.get('variant')    || '';
-const sup      = P.get('supplier')   || '';
-const src      = P.get('utm_source') || '';
-const med      = P.get('utm_medium') || '';
+const P       = new URLSearchParams(location.search);
+const variant = P.get('variant')    || '';
+const sup     = P.get('supplier')   || '';
+const src     = P.get('utm_source') || '';
+const med     = P.get('utm_medium') || '';
 
 /* ─── PAGE VIEW ─── */
 dataLayer.push({event:'page_view', page:PAGE, source_variant:variant, supplier:sup, utm_source:src});
@@ -335,12 +334,12 @@ window.addEventListener('scroll', () => {
 }, {passive:true});
 
 /* ─── VIDEO ─── */
-const vid        = document.getElementById('mainVid');
-const overlay    = document.getElementById('vidOverlay');
-const unmuteBtn  = document.getElementById('unmuteBtn');
-const timeBadge  = document.getElementById('timeBadge');
-let   vp         = 0;   // is playing
-const vm         = {};
+const vid       = document.getElementById('mainVid');
+const overlay   = document.getElementById('vidOverlay');
+const unmuteBtn = document.getElementById('unmuteBtn');
+const timeBadge = document.getElementById('timeBadge');
+let   vp        = 0;
+const vm        = {};
 [25,50,75,100].forEach(m => vm[m] = 0);
 
 /* Unmute */
@@ -351,25 +350,25 @@ function unmute(e){
   dataLayer.push({event:'video_unmute', page:PAGE, time:Math.round(vid.currentTime)});
 }
 
-/* Clicking the wrap toggles play/pause */
+/* Tap on video wrap = toggle play/pause */
 function handleWrapClick(){
   if(vp){ vid.pause(); } else { vid.play(); }
 }
 
-/* Clicking the overlay plays */
+/* Tap on overlay = play */
 function handleOverlayClick(e){
   e.stopPropagation();
   vid.play();
 }
 
-/* PLAY event */
+/* PLAY */
 vid.addEventListener('play', () => {
   vp = 1;
   overlay.classList.remove('visible');
   dataLayer.push({event:'video_play', page:PAGE, time:Math.round(vid.currentTime)});
 });
 
-/* PAUSE event */
+/* PAUSE */
 vid.addEventListener('pause', () => {
   vp = 0;
   if(!vid.ended) overlay.classList.add('visible');
@@ -393,7 +392,7 @@ vid.addEventListener('pause', () => {
   }).catch(()=>{});
 });
 
-/* TIMEUPDATE — badge + milestones + autosave */
+/* TIMEUPDATE — countdown badge + milestones + autosave */
 vid.addEventListener('timeupdate', () => {
   if(!vid.duration) return;
   const pct = (vid.currentTime / vid.duration) * 100;
@@ -427,19 +426,18 @@ vid.addEventListener('ended', () => {
   }).catch(()=>{});
 });
 
-/* RESUME from URL ?t= param */
+/* RESUME from ?t= param */
 const tParam = parseInt(P.get('t') || 0);
 if(tParam > 3){
   vid.addEventListener('loadedmetadata', () => { vid.currentTime = tParam; }, {once:true});
 }
 
-/* Autoplay — if browser blocks it, show overlay */
+/* AUTOPLAY — if browser blocks it, show overlay instead */
 const autoplayPromise = vid.play();
 if(autoplayPromise !== undefined){
   autoplayPromise.catch(() => {
-    /* Autoplay blocked — show overlay so user can tap to play */
     overlay.classList.add('visible');
-    unmuteBtn.style.display = 'none'; /* hide unmute until they play */
+    unmuteBtn.style.display = 'none';
   });
 }
 
