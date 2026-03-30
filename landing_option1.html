@@ -108,9 +108,19 @@ h1 .gold{
   font-size:clamp(15px,3.8vw,18px);
   color:rgba(255,255,255,.6);
   line-height:1.7;
-  margin-bottom:40px;
+  margin-bottom:10px;
   max-width:420px;
   margin-left:auto;margin-right:auto;
+}
+.sub-small{
+  font-family:'Assistant',sans-serif;
+  font-size:clamp(13px,3.2vw,15px);
+  color:rgba(255,255,255,.38);
+  line-height:1.6;
+  margin-bottom:36px;
+  max-width:380px;
+  margin-left:auto;margin-right:auto;
+  font-style:italic;
 }
 
 .main-cta{
@@ -299,6 +309,9 @@ window.dataLayer=window.dataLayer||[];
 const P=new URLSearchParams(location.search);
 const sup=P.get('supplier')||'',src=P.get('utm_source')||'',med=P.get('utm_medium')||'',camp=P.get('utm_campaign')||'';
 
+// shared state flags - must be outer scope so both handleSubmit and DOMContentLoaded can access them
+let formSt=0, dn=0;
+
 /* cookie */
 function acceptCookie(){localStorage.setItem('ck','1');document.getElementById('cookieBanner').style.display='none';}
 
@@ -356,6 +369,7 @@ async function handleSubmit(){
   try{
     await fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
   }catch(e){}
+  dn=1;
   dataLayer.push({event:'form_submitted',variant:VARIANT,page:PAGE,name:data.name,email:data.email,phone:data.phone,supplier:sup});
   if(typeof fbq!=='undefined')fbq('track','Lead');
   document.getElementById('formWrap').style.display='none';
@@ -379,7 +393,7 @@ document.addEventListener('DOMContentLoaded',function(){
   },{passive:true});
 
   /* time on page + form abandon */
-  const t0=Date.now();let formSt=0,dn=0;
+  const t0=Date.now();
   window.addEventListener('beforeunload',function(){
     dataLayer.push({event:'page_time',seconds:Math.round((Date.now()-t0)/1000),variant:VARIANT});
     if(formSt&&!dn) dataLayer.push({event:'form_abandoned',variant:VARIANT,page:PAGE});
@@ -419,13 +433,14 @@ document.addEventListener('DOMContentLoaded',function(){
 
     <h1>יש סיבה שאתה עדיין לא מגיע<br>ל<span class="gold">תוצאות שאתה רוצה</span></h1>
 
-    <p class="sub">וזה לא עניין של לעבוד יותר — זה משהו שרוב האנשים בכלל לא מבינים</p>
+    <p class="sub">וזה לא בגללך — זה משהו שרוב האנשים בכלל לא רואים</p>
+    <p class="sub-small">ברגע שתבין את זה — הכל מתחיל להתחבר אחרת</p>
 
     <button class="main-cta" onclick="openModal()">
-      📩 שלח לי את ההסבר עכשיו
+      👁️ תן לי לראות את זה
     </button>
     <div class="cta-shadow"></div>
-    <p class="cta-sub">הגישה נשלחת מיד · ללא עלות</p>
+    <p class="cta-sub">זה לוקח פחות מ-5 דקות</p>
 
   </div>
 </div>
