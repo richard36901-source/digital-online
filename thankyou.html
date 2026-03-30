@@ -7,7 +7,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;800;900&family=Assistant:wght@400;500;600&display=swap" rel="stylesheet"/>
+<!-- GTM -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-WNJN9XQT');</script>
+<!-- Facebook Pixel -->
 <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','10211443525862398');fbq('track','PageView');fbq('track','Lead');</script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -60,20 +62,66 @@ button{font-family:inherit;outline:none;-webkit-tap-highlight-color:transparent}
 /* VID LABEL */
 .vid-label{text-align:center;font-family:'Heebo',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,.7);margin-bottom:8px;line-height:1.55}
 
-/* VIDEO SQUARE */
+/* VIDEO — 3:4 portrait */
 .vid-wrap{
-  position:relative;width:100%;aspect-ratio:1/1;
+  position:relative;
+  width:100%;
+  aspect-ratio:3/4;
   border-radius:10px;overflow:hidden;
   background:#111;cursor:pointer;
   border:1px solid rgba(255,255,255,.08);
   box-shadow:0 8px 32px rgba(0,0,0,.5);
   margin-bottom:6px;
 }
-.vid-wrap video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
-.vid-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.3);border:none;width:100%;cursor:pointer;transition:background .2s}
+.vid-wrap video{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  object-fit:cover;display:block;
+}
+.vid-overlay{
+  position:absolute;inset:0;
+  display:none; /* hidden — video autoplays */
+  align-items:center;justify-content:center;
+  background:rgba(0,0,0,.3);border:none;
+  width:100%;cursor:pointer;transition:background .2s;
+}
+.vid-overlay.visible{display:flex}
 .vid-overlay:hover{background:rgba(0,0,0,.4)}
-.play-circle{width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,#d4a843,#f0c060);display:flex;align-items:center;justify-content:center;box-shadow:0 0 30px rgba(212,168,67,.5)}
-.time-badge{position:absolute;top:10px;left:10px;background:rgba(0,0,0,.65);color:#d4a843;font-family:'Heebo',sans-serif;font-size:13px;font-weight:700;padding:3px 9px;border-radius:4px;border:1px solid rgba(212,168,67,.2)}
+.play-circle{
+  width:68px;height:68px;border-radius:50%;
+  background:linear-gradient(135deg,#d4a843,#f0c060);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 30px rgba(212,168,67,.5);
+}
+.time-badge{
+  position:absolute;top:10px;left:10px;
+  background:rgba(0,0,0,.65);color:#d4a843;
+  font-family:'Heebo',sans-serif;font-size:13px;font-weight:700;
+  padding:3px 9px;border-radius:4px;
+  border:1px solid rgba(212,168,67,.2);
+  z-index:5;
+}
+
+/* UNMUTE BUTTON */
+.unmute-btn{
+  position:absolute;bottom:14px;left:50%;transform:translateX(-50%);
+  background:rgba(0,0,0,.78);
+  color:#fff;
+  border:1px solid rgba(255,255,255,.25);
+  font-family:'Heebo',sans-serif;font-weight:800;font-size:14px;
+  padding:9px 22px;border-radius:24px;
+  cursor:pointer;z-index:10;
+  display:flex;align-items:center;gap:6px;
+  white-space:nowrap;
+  animation:pulseMute 2s ease-in-out infinite;
+  transition:background .2s;
+}
+.unmute-btn:hover{background:rgba(212,168,67,.85);color:#000}
+@keyframes pulseMute{
+  0%,100%{box-shadow:0 0 0 0 rgba(212,168,67,.0)}
+  50%{box-shadow:0 0 0 6px rgba(212,168,67,.25)}
+}
+
 .vid-below{font-family:'Assistant',sans-serif;font-size:13px;color:rgba(255,255,255,.4);text-align:center;margin:8px 0 0;line-height:1.5}
 
 /* DIVIDER */
@@ -145,7 +193,7 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.1)}
 <body>
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WNJN9XQT" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
-<!-- PROGRESS -->
+<!-- PROGRESS BAR -->
 <div class="prog">
   <div class="prog-steps">
     <div class="prog-step done">✓</div>
@@ -170,30 +218,48 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.1)}
       יש שם <strong>משהו קטן שרוב האנשים מפספסים</strong> — וזה כל ההבדל.
     </p>
 
-    <!-- SMS -->
+    <!-- SMS NOTICE -->
     <div class="sms-row">
       <span>📲</span>
       <span>בדקות הקרובות תקבל את זה גם למייל וגם ל-SMS. כדי שלא תפספס — שים לב שזה נכנס.</span>
     </div>
 
-    <!-- VIDEO -->
+    <!-- VIDEO (3:4 portrait, autoplay muted) -->
     <div class="vid-label">▶️ חשוב: תראה את הסרטון עד הסוף<br>בסוף הכל מתחבר לך בצורה ברורה.</div>
-    <div class="vid-wrap" onclick="togglePlay()">
-      <video id="mainVid" preload="metadata" playsinline poster="assets/video-preview-bg.jpg">
+
+    <div class="vid-wrap" id="vidWrap" onclick="handleWrapClick()">
+      <video
+        id="mainVid"
+        preload="auto"
+        playsinline
+        autoplay
+        muted
+        poster="assets/video-preview-bg.jpg"
+      >
         <source src="assets/video-1.mp4" type="video/mp4"/>
       </video>
+
+      <!-- Time badge -->
       <div class="time-badge">⏱ <span id="timeBadge">04:57</span></div>
-      <button class="vid-overlay" id="vidOverlay">
+
+      <!-- Play overlay (shown only when paused after user interaction) -->
+      <button class="vid-overlay" id="vidOverlay" onclick="handleOverlayClick(event)">
         <div class="play-circle">
           <svg width="26" height="26" viewBox="0 0 24 24" fill="#000"><polygon points="6,3 20,12 6,21"/></svg>
         </div>
       </button>
+
+      <!-- Unmute button (shown while muted) -->
+      <button class="unmute-btn" id="unmuteBtn" onclick="unmute(event)">
+        🔇 לחץ להפעלת הסאונד
+      </button>
     </div>
+
     <p class="vid-below">זה רק 5 דקות… אבל זה יכול לשנות לך את הזווית לגמרי.</p>
 
     <div class="div"></div>
 
-    <!-- GROUP -->
+    <!-- GROUP SECTION -->
     <p class="gb-title">יש לך יתרון קטן עכשיו 👇</p>
     <p class="gb-sub">פתחתי קבוצה שקטה למי שרוצה לקחת את זה צעד קדימה.</p>
     <div class="ben-list">
@@ -212,7 +278,7 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.1)}
 
     <div class="div"></div>
 
-    <!-- IG -->
+    <!-- INSTAGRAM -->
     <p class="ig-title">רוצה לראות עוד דברים כאלה ביומיום?</p>
     <p class="ig-desc">באינסטגרם אני מעלה תוכן קצר, תובנות מהשטח ודברים שלא תמיד מגיעים למייל. זה נותן לך להישאר מחובר ולהבין את זה לעומק.</p>
     <a class="btn-ig" href="https://www.instagram.com/ben_nahum_1" target="_blank" rel="noopener" onclick="trackIG()">
@@ -221,14 +287,14 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.1)}
     </a>
     <p class="ig-note">לעדכונים יומיים, סיכומים ותוכן בלעדי.</p>
 
-  </div>
+  </div><!-- /card -->
 
   <!-- CLOSING -->
   <div class="closing">
     <p>תתחיל מהסרטון ששלחתי לך עכשיו.</p>
     <p class="bold">שם הכל מתחיל להתחבר. ⬆️</p>
   </div>
-</div>
+</div><!-- /main -->
 
 <!-- FOOTER -->
 <footer>
@@ -238,82 +304,180 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.1)}
 </footer>
 
 <script>
-const PAGE='thank_you';
-const WEBHOOK='https://hook.eu1.make.com/jp6ukjt7tpk3y4yly9c691g01f47cq8q';
-window.dataLayer=window.dataLayer||[];
-const P=new URLSearchParams(location.search);
-const variant=P.get('variant')||'',sup=P.get('supplier')||'',src=P.get('utm_source')||'',med=P.get('utm_medium')||'';
+/* ─── CONSTANTS ─── */
+const PAGE    = 'thank_you';
+const WEBHOOK = 'https://hook.eu1.make.com/jp6ukjt7tpk3y4yly9c691g01f47cq8q';
 
-dataLayer.push({event:'page_view',page:PAGE,source_variant:variant,supplier:sup,utm_source:src});
-if(typeof fbq!=='undefined'){fbq('track','PageView');fbq('track','Lead');}
+window.dataLayer = window.dataLayer || [];
+const P        = new URLSearchParams(location.search);
+const variant  = P.get('variant')    || '';
+const sup      = P.get('supplier')   || '';
+const src      = P.get('utm_source') || '';
+const med      = P.get('utm_medium') || '';
 
-/* scroll */
-const sd={};[25,50,75,100].forEach(d=>sd[d]=0);
-window.addEventListener('scroll',()=>{const s=document.body.scrollHeight-window.innerHeight;if(!s)return;const p=Math.round(window.scrollY/s*100);[25,50,75,100].forEach(d=>{if(!sd[d]&&p>=d){sd[d]=1;dataLayer.push({event:'scroll_depth',depth:d+'%',page:PAGE});}});},{passive:true});
+/* ─── PAGE VIEW ─── */
+dataLayer.push({event:'page_view', page:PAGE, source_variant:variant, supplier:sup, utm_source:src});
+if(typeof fbq !== 'undefined'){ fbq('track','PageView'); fbq('track','Lead'); }
 
-/* VIDEO */
-let vp=0;
-const vid=document.getElementById('mainVid');
-const vm={};[25,50,75,100].forEach(m=>vm[m]=0);
+/* ─── SCROLL DEPTH ─── */
+const sd = {};
+[25,50,75,100].forEach(d => sd[d] = 0);
+window.addEventListener('scroll', () => {
+  const s = document.body.scrollHeight - window.innerHeight;
+  if(!s) return;
+  const p = Math.round(window.scrollY / s * 100);
+  [25,50,75,100].forEach(d => {
+    if(!sd[d] && p >= d){
+      sd[d] = 1;
+      dataLayer.push({event:'scroll_depth', depth:d+'%', page:PAGE});
+    }
+  });
+}, {passive:true});
 
-function togglePlay(){if(vp){vid.pause();}else{vid.play();}}
+/* ─── VIDEO ─── */
+const vid        = document.getElementById('mainVid');
+const overlay    = document.getElementById('vidOverlay');
+const unmuteBtn  = document.getElementById('unmuteBtn');
+const timeBadge  = document.getElementById('timeBadge');
+let   vp         = 0;   // is playing
+const vm         = {};
+[25,50,75,100].forEach(m => vm[m] = 0);
 
-vid.addEventListener('play',()=>{
-  vp=1;document.getElementById('vidOverlay').style.display='none';
-  dataLayer.push({event:'video_play',page:PAGE,time:Math.round(vid.currentTime)});
-});
-vid.addEventListener('pause',()=>{
-  vp=0;if(!vid.ended)document.getElementById('vidOverlay').style.display='flex';
-  const pos=Math.round(vid.currentTime),pct=vid.duration?Math.round((pos/vid.duration)*100):0;
-  dataLayer.push({event:'video_pause',page:PAGE,time:pos,pct_watched:pct});
-  try{localStorage.setItem('ty_pos',pos);}catch(e){}
-  const u=new URL(location.href);u.searchParams.set('t',pos);history.replaceState(null,'',u.toString());
-  fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-    event:'video_pause',page:PAGE,position_sec:pos,pct_watched:pct,
-    resume_link:location.origin+location.pathname+'?t='+pos,
-    supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')
-  })}).catch(()=>{});
-});
-vid.addEventListener('timeupdate',()=>{
-  if(!vid.duration)return;
-  const pct=(vid.currentTime/vid.duration)*100;
-  const rem=Math.max(0,vid.duration-vid.currentTime);
-  document.getElementById('timeBadge').textContent=fmt(rem);
-  [25,50,75,100].forEach(m=>{if(!vm[m]&&pct>=m){vm[m]=1;
-    dataLayer.push({event:'video_progress',milestone:m+'%',time:Math.round(vid.currentTime),page:PAGE});
-  }});
-  if(Math.round(vid.currentTime)%5===0)try{localStorage.setItem('ty_pos',Math.round(vid.currentTime));}catch(e){}
-});
-vid.addEventListener('ended',()=>{
-  vp=0;document.getElementById('vidOverlay').style.display='flex';
-  dataLayer.push({event:'video_ended',page:PAGE});
-  if(typeof fbq!=='undefined')fbq('track','ViewContent',{content_name:'thankyou_video'});
-  fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-    event:'video_completed',page:PAGE,pct_watched:100,
-    supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')
-  })}).catch(()=>{});
-});
+/* Unmute */
+function unmute(e){
+  if(e) e.stopPropagation();
+  vid.muted = false;
+  unmuteBtn.style.display = 'none';
+  dataLayer.push({event:'video_unmute', page:PAGE, time:Math.round(vid.currentTime)});
+}
 
-/* resume from URL param */
-const tParam=parseInt(P.get('t')||0);
-if(tParam>3)vid.addEventListener('loadedmetadata',()=>{vid.currentTime=tParam;},{once:true});
+/* Clicking the wrap toggles play/pause */
+function handleWrapClick(){
+  if(vp){ vid.pause(); } else { vid.play(); }
+}
 
-/* page exit + time */
-const t0=Date.now();
-window.addEventListener('beforeunload',()=>{
-  const pos=Math.round(vid.currentTime),pct=vid.duration?Math.round((pos/vid.duration)*100):0;
-  if(navigator.sendBeacon)navigator.sendBeacon(WEBHOOK,JSON.stringify({
-    event:'page_exit',page:PAGE,position_sec:pos,pct_watched:pct,
-    resume_link:location.origin+location.pathname+'?t='+pos,
-    seconds_on_page:Math.round((Date.now()-t0)/1000),
-    supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')
-  }));
-  dataLayer.push({event:'page_time',seconds:Math.round((Date.now()-t0)/1000),page:PAGE,video_pos:pos,pct_watched:pct});
+/* Clicking the overlay plays */
+function handleOverlayClick(e){
+  e.stopPropagation();
+  vid.play();
+}
+
+/* PLAY event */
+vid.addEventListener('play', () => {
+  vp = 1;
+  overlay.classList.remove('visible');
+  dataLayer.push({event:'video_play', page:PAGE, time:Math.round(vid.currentTime)});
 });
 
-function fmt(s){const m=Math.floor(s/60),sc=Math.floor(s%60);return String(m).padStart(2,'0')+':'+String(sc).padStart(2,'0');}
-function trackWA(){dataLayer.push({event:'wa_click',page:PAGE,source_variant:variant,supplier:sup});if(typeof fbq!=='undefined')fbq('track','Contact');}
-function trackIG(){dataLayer.push({event:'ig_click',page:PAGE,source_variant:variant});}
+/* PAUSE event */
+vid.addEventListener('pause', () => {
+  vp = 0;
+  if(!vid.ended) overlay.classList.add('visible');
+  const pos = Math.round(vid.currentTime);
+  const pct = vid.duration ? Math.round((pos / vid.duration) * 100) : 0;
+  dataLayer.push({event:'video_pause', page:PAGE, time:pos, pct_watched:pct});
+  try{ localStorage.setItem('ty_pos', pos); } catch(e){}
+  const u = new URL(location.href);
+  u.searchParams.set('t', pos);
+  history.replaceState(null, '', u.toString());
+  fetch(WEBHOOK, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({
+      event:'video_pause', page:PAGE,
+      position_sec:pos, pct_watched:pct,
+      resume_link: location.origin + location.pathname + '?t=' + pos,
+      supplier:sup, utm_source:src,
+      timestamp: new Date().toLocaleString('he-IL')
+    })
+  }).catch(()=>{});
+});
+
+/* TIMEUPDATE — badge + milestones + autosave */
+vid.addEventListener('timeupdate', () => {
+  if(!vid.duration) return;
+  const pct = (vid.currentTime / vid.duration) * 100;
+  const rem = Math.max(0, vid.duration - vid.currentTime);
+  timeBadge.textContent = fmt(rem);
+  [25,50,75,100].forEach(m => {
+    if(!vm[m] && pct >= m){
+      vm[m] = 1;
+      dataLayer.push({event:'video_progress', milestone:m+'%', time:Math.round(vid.currentTime), page:PAGE});
+    }
+  });
+  if(Math.round(vid.currentTime) % 5 === 0){
+    try{ localStorage.setItem('ty_pos', Math.round(vid.currentTime)); } catch(e){}
+  }
+});
+
+/* ENDED */
+vid.addEventListener('ended', () => {
+  vp = 0;
+  overlay.classList.add('visible');
+  dataLayer.push({event:'video_ended', page:PAGE});
+  if(typeof fbq !== 'undefined') fbq('track','ViewContent',{content_name:'thankyou_video'});
+  fetch(WEBHOOK, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({
+      event:'video_completed', page:PAGE, pct_watched:100,
+      supplier:sup, utm_source:src,
+      timestamp: new Date().toLocaleString('he-IL')
+    })
+  }).catch(()=>{});
+});
+
+/* RESUME from URL ?t= param */
+const tParam = parseInt(P.get('t') || 0);
+if(tParam > 3){
+  vid.addEventListener('loadedmetadata', () => { vid.currentTime = tParam; }, {once:true});
+}
+
+/* Autoplay — if browser blocks it, show overlay */
+const autoplayPromise = vid.play();
+if(autoplayPromise !== undefined){
+  autoplayPromise.catch(() => {
+    /* Autoplay blocked — show overlay so user can tap to play */
+    overlay.classList.add('visible');
+    unmuteBtn.style.display = 'none'; /* hide unmute until they play */
+  });
+}
+
+/* PAGE EXIT */
+const t0 = Date.now();
+window.addEventListener('beforeunload', () => {
+  const pos = Math.round(vid.currentTime);
+  const pct = vid.duration ? Math.round((pos / vid.duration) * 100) : 0;
+  if(navigator.sendBeacon){
+    navigator.sendBeacon(WEBHOOK, JSON.stringify({
+      event:'page_exit', page:PAGE,
+      position_sec:pos, pct_watched:pct,
+      resume_link: location.origin + location.pathname + '?t=' + pos,
+      seconds_on_page: Math.round((Date.now() - t0) / 1000),
+      supplier:sup, utm_source:src,
+      timestamp: new Date().toLocaleString('he-IL')
+    }));
+  }
+  dataLayer.push({
+    event:'page_time',
+    seconds: Math.round((Date.now() - t0) / 1000),
+    page:PAGE, video_pos:pos, pct_watched:pct
+  });
+});
+
+/* HELPERS */
+function fmt(s){
+  const m  = Math.floor(s / 60);
+  const sc = Math.floor(s % 60);
+  return String(m).padStart(2,'0') + ':' + String(sc).padStart(2,'0');
+}
+function trackWA(){
+  dataLayer.push({event:'wa_click', page:PAGE, source_variant:variant, supplier:sup});
+  if(typeof fbq !== 'undefined') fbq('track','Contact');
+}
+function trackIG(){
+  dataLayer.push({event:'ig_click', page:PAGE, source_variant:variant});
+}
 </script>
 </body>
 </html>
