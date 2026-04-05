@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-<title>דיגיטל אונליין | שלב 1 מתוך 4</title>
+<title>דיגיטל אונליין | 1 מתוך 4</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;800;900&family=Assistant:wght@400;500;600&display=swap" rel="stylesheet"/>
@@ -13,109 +13,247 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-text-size-adjust:100%}
 body{
+  font-family:'Heebo',sans-serif;
+  background:#040200;
+  color:#fff;
+  direction:rtl;
+  overflow-x:hidden;
+  min-height:100svh;
+  display:flex;flex-direction:column;align-items:center;
+  position:relative;
+}
+.bg-bloom{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 80% 45% at 50% 0%,rgba(180,120,10,.55) 0%,rgba(120,70,0,.2) 40%,transparent 70%),
+    radial-gradient(ellipse 50% 30% at 20% 100%,rgba(100,60,0,.3) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 30% at 80% 90%,rgba(100,60,0,.2) 0%,transparent 55%);
+}
+#particles{position:fixed;inset:0;z-index:1;pointer-events:none;}
+.wrap{
+  position:relative;z-index:2;
+  width:100%;max-width:460px;
+  padding:28px 20px 52px;
+  display:flex;flex-direction:column;align-items:center;
+}
+/* BADGE */
+.badge{
+  display:inline-flex;align-items:center;gap:10px;
+  background:linear-gradient(135deg,#1c1200,#2c1d00);
+  border:1.5px solid #c8960a;
+  border-radius:99px;
+  padding:7px 14px 7px 16px;
+  margin-bottom:22px;
+  box-shadow:0 0 20px rgba(200,150,10,.25);
+  direction:rtl;
+}
+.badge-label{font-size:13px;font-weight:800;color:#f0c040;white-space:nowrap;letter-spacing:.5px;}
+.badge-dots{display:flex;gap:5px;direction:rtl;}
+.bd{width:32px;height:5px;border-radius:99px;background:rgba(255,255,255,.1);}
+.bd.active{background:linear-gradient(90deg,#f5c842,#d4920a);box-shadow:0 0 8px rgba(245,200,66,.7);}
+.bd.done{background:rgba(212,168,67,.4);}
+/* HEADLINE */
+.headline{
+  font-family:'Heebo',sans-serif;
+  font-size:clamp(26px,7vw,34px);font-weight:900;
+  text-align:center;line-height:1.25;margin-bottom:10px;
+  background:linear-gradient(160deg,#fff5aa 0%,#f5c842 35%,#d4920a 65%,#fff0a0 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 2px 16px rgba(212,168,67,.5));
+}
+.subline{
   font-family:'Assistant',sans-serif;
-  background:#fff;color:#111;
-  direction:rtl;overflow-x:hidden;
-  min-height:100svh;display:flex;flex-direction:column;align-items:center;
+  font-size:clamp(13px,3.8vw,16px);color:rgba(255,255,255,.55);
+  text-align:center;line-height:1.7;margin-bottom:22px;max-width:340px;
 }
-.topbar{
-  width:100%;background:#fff;border-bottom:1px solid #eee;
-  padding:10px 20px;display:flex;align-items:center;justify-content:center;
+/* VIDEO */
+.vid-outer{
+  width:100%;margin-bottom:14px;
+  border-radius:12px;
+  animation:vidGlow 3s ease-in-out infinite;
 }
-.logo{font-family:'Heebo',sans-serif;font-size:17px;font-weight:900;color:#111;letter-spacing:-.3px;}
-.logo span{color:#f07800;}
-.main{width:100%;max-width:640px;padding:28px 18px 48px;display:flex;flex-direction:column;align-items:center;}
-.step-wrap{display:flex;flex-direction:column;align-items:center;margin-bottom:18px;width:100%;}
-.step-label{font-family:'Heebo',sans-serif;font-size:13px;font-weight:700;color:#888;margin-bottom:8px;letter-spacing:.3px;}
-.step-dots{display:flex;gap:8px;align-items:center;}
-.dot{width:32px;height:5px;border-radius:99px;background:#eee;transition:background .4s;}
-.dot.active{background:#f07800;}
-.dot.done{background:#f0c080;}
-.headline{font-family:'Heebo',sans-serif;font-size:clamp(24px,6vw,34px);font-weight:900;color:#111;text-align:center;line-height:1.25;margin-bottom:10px;}
-.subline{font-family:'Assistant',sans-serif;font-size:clamp(15px,4vw,18px);font-weight:500;color:#555;text-align:center;line-height:1.6;margin-bottom:22px;}
-.vid-container{width:100%;position:relative;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.12);background:#000;}
+@keyframes vidGlow{
+  0%,100%{filter:drop-shadow(0 0 18px rgba(212,168,67,.55)) drop-shadow(0 0 40px rgba(180,130,10,.3));}
+  50%{filter:drop-shadow(0 0 30px rgba(255,200,50,.75)) drop-shadow(0 0 60px rgba(212,168,67,.4));}
+}
+.vid-box{
+  width:100%;border:2px solid #c8960a;border-radius:12px;
+  overflow:hidden;background:#000;position:relative;
+  box-shadow:inset 0 0 0 1px rgba(255,220,80,.08),0 12px 40px rgba(0,0,0,.95);
+}
 .vid-ratio{padding:56.25% 0 0 0;position:relative;}
 .vid-ratio iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none;display:block;}
-.vid-shield{
-  position:absolute;bottom:0;left:0;right:0;height:52px;
-  z-index:10;cursor:default;background:transparent;
+/* Shield blocks seekbar */
+.vid-shield{position:absolute;bottom:0;left:0;right:0;height:44px;z-index:10;cursor:default;background:transparent;}
+/* Red YouTube play */
+.vid-thumb{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  z-index:5;cursor:pointer;
 }
-.below-vid{width:100%;padding:16px 0 0;text-align:center;}
-.below-text{font-family:'Heebo',sans-serif;font-size:15px;font-weight:700;color:#333;line-height:1.6;}
-.redirect-overlay{
-  display:none;position:fixed;inset:0;
-  background:rgba(255,255,255,.96);z-index:100;
-  flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;
+.vid-thumb.gone{display:none;}
+.yt-btn{
+  width:72px;height:52px;background:linear-gradient(135deg,#ff1a1a,#cc0000);
+  border-radius:14px;display:flex;align-items:center;justify-content:center;
+  animation:playPulse 2.5s ease-in-out infinite;
 }
-.redirect-overlay.visible{display:flex;}
-.redirect-title{font-family:'Heebo',sans-serif;font-size:22px;font-weight:900;color:#111;text-align:center;line-height:1.3;}
-.redirect-sub{font-family:'Assistant',sans-serif;font-size:15px;color:#666;text-align:center;}
-.redirect-bar-wrap{width:220px;height:6px;background:#eee;border-radius:99px;overflow:hidden;}
-.redirect-bar{height:100%;width:0%;background:#f07800;border-radius:99px;transition:width 3s linear;}
-.redirect-btn{
-  display:inline-flex;align-items:center;gap:8px;
-  background:#f07800;color:#fff;
-  font-family:'Heebo',sans-serif;font-size:17px;font-weight:800;
-  border:none;border-radius:8px;padding:13px 28px;
-  cursor:pointer;text-decoration:none;margin-top:4px;
-  box-shadow:0 4px 16px rgba(240,120,0,.3);
-  transition:background .2s,transform .15s;
+@keyframes playPulse{
+  0%,100%{box-shadow:0 4px 28px rgba(255,0,0,.7);transform:scale(1);}
+  50%{box-shadow:0 4px 44px rgba(255,0,0,.95);transform:scale(1.06);}
 }
-.redirect-btn:hover{background:#d96a00;transform:translateY(-1px);}
+.vid-thumb:hover .yt-btn{transform:scale(1.1)!important;animation:none;box-shadow:0 6px 44px rgba(255,0,0,.9);}
+/* BUTTON BOX — same width as video */
+.btn-box{
+  width:100%;
+  background:linear-gradient(135deg,rgba(30,20,0,.9),rgba(20,12,0,.95));
+  border:1.5px solid rgba(200,150,10,.35);
+  border-radius:14px;
+  padding:16px 14px 18px;
+  margin-bottom:14px;
+  box-shadow:0 0 30px rgba(200,150,10,.1);
+  position:relative;overflow:hidden;
+}
+.btn-box::before{
+  content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,200,50,.04),transparent);
+  animation:boxShine 4s ease-in-out infinite;
+}
+@keyframes boxShine{0%{left:-100%}100%{left:160%}}
+.btn-next{
+  display:flex;width:100%;height:56px;
+  background:linear-gradient(135deg,#aa0000,#dd1010);
+  color:#fff;font-family:'Heebo',sans-serif;font-size:20px;font-weight:900;
+  border:none;border-radius:10px;
+  align-items:center;justify-content:center;gap:8px;
+  text-decoration:none;letter-spacing:.3px;
+  position:relative;overflow:hidden;
+  opacity:.38;cursor:not-allowed;pointer-events:none;
+  transition:opacity .5s,box-shadow .5s;
+  border:1.5px solid rgba(255,80,80,.2);
+}
+.btn-next.unlocked{
+  opacity:1;cursor:pointer;pointer-events:auto;
+  border-color:rgba(255,120,120,.4);
+  background:linear-gradient(135deg,#cc0000,#ff2020,#cc0000);
+  background-size:200% auto;
+  animation:btnShimmer 2s linear infinite,btnGlow 1.8s ease-in-out infinite;
+}
+@keyframes btnShimmer{0%{background-position:200% center;}100%{background-position:0% center;}}
+@keyframes btnGlow{
+  0%,100%{box-shadow:0 4px 24px rgba(220,0,0,.5);}
+  50%{box-shadow:0 6px 40px rgba(255,0,0,.85);}
+}
+.btn-next.unlocked::after{
+  content:'';position:absolute;top:0;left:-120%;width:45%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);
+  animation:shine 1.8s ease-in-out infinite;
+}
+@keyframes shine{0%{left:-120%}100%{left:160%}}
+.btn-next.unlocked:hover{transform:translateY(-2px);}
+/* Preview rows */
+.preview-rows{padding-top:12px;display:flex;flex-direction:column;gap:2px;}
+.preview-row{
+  font-family:'Assistant',sans-serif;font-size:13px;
+  color:rgba(255,255,255,.35);text-align:center;line-height:1.9;min-height:22px;
+}
 footer{
-  width:100%;border-top:1px solid #eee;padding:14px 20px;
-  text-align:center;font-family:'Assistant',sans-serif;font-size:11px;
-  color:#aaa;line-height:2;margin-top:auto;
+  position:relative;z-index:2;width:100%;
+  border-top:1px solid rgba(255,255,255,.05);
+  padding:14px 20px;text-align:center;
+  font-family:'Assistant',sans-serif;font-size:11px;
+  color:rgba(255,255,255,.15);line-height:2;margin-top:auto;
 }
-footer a{color:#aaa;text-decoration:none;}
-footer a:hover{color:#f07800;}
-footer .sep{margin:0 6px;color:#ddd;}
+footer a{color:rgba(255,255,255,.2);text-decoration:none;}
+footer a:hover{color:#d4a843;}
+footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
 </style>
 </head>
 <body>
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WNJN9XQT" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<div class="topbar"><div class="logo">דיגיטל <span>אונליין</span></div></div>
-<div class="main">
-  <div class="step-wrap">
-    <div class="step-label">שלב 1 מתוך 4</div>
-    <div class="step-dots">
-      <div class="dot active"></div>
-      <div class="dot "></div>
-      <div class="dot "></div>
-      <div class="dot "></div>
+<div class="bg-bloom"></div>
+<canvas id="particles"></canvas>
+<div class="wrap">
+
+  <div class="badge">
+    <div class="badge-label">1 מתוך 4</div>
+    <div class="badge-dots">
+      <div class="bd active"></div>
+      <div class="bd "></div>
+      <div class="bd "></div>
+      <div class="bd "></div>
     </div>
   </div>
-  <h1 class="headline">יש משהו מעניין<br>שקורה היום באינטרנט</h1>
-  <p class="subline">ורוב האנשים בכלל<br>לא שמים לב אליו</p>
-  <div class="vid-container">
-    <div class="vid-ratio">
-      <iframe
-        id="vimeoPlayer"
-        src="https://player.vimeo.com/video/1178984555?badge=0&autopause=0&player_id=0&app_id=58479&autoplay=1&muted=0&controls=1&title=0&byline=0&portrait=0"
-        frameborder="0"
-        allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
-        referrerpolicy="strict-origin-when-cross-origin"
-        title="funnel-video-1"
-      ></iframe>
+
+  <h1 class="headline">יש משהו מעניין שקורה היום באינטרנט</h1>
+  <p class="subline">ורוב האנשים בכלל לא שמים לב אליו</p>
+
+  <div class="vid-outer">
+    <div class="vid-box">
+      <div class="vid-ratio">
+        <iframe id="vimeoPlayer"
+          src="https://player.vimeo.com/video/1178984555?badge=0&autopause=0&player_id=0&app_id=58479&autoplay=1&muted=0&controls=1&title=0&byline=0&portrait=0"
+          frameborder="0"
+          allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
+          referrerpolicy="strict-origin-when-cross-origin"
+          title="funnel-video-1">
+        </iframe>
+      </div>
+      <div class="vid-shield"></div>
+      <div class="vid-thumb" id="vidThumb">
+        <div class="yt-btn">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><polygon points="6,3 20,12 6,21"/></svg>
+        </div>
+      </div>
     </div>
-    <div class="vid-shield"></div>
   </div>
-  <div class="below-vid"><p class="below-text">אבל כאן מתחילה השאלה האמיתית:</p></div>
+
+  <div class="btn-box">
+    <a class="btn-next" id="btnNext" href="funnel-video-2.html">
+      🔒&nbsp; עבור לשלב הבא
+    </a>
+    <div class="preview-rows">
+      <div class="preview-row">&nbsp;</div>
+      <div class="preview-row">&nbsp;</div>
+      <div class="preview-row">&nbsp;</div>
+    </div>
+  </div>
+
 </div>
-<div class="redirect-overlay" id="redirectOverlay">
-  <div class="redirect-title">כל הכבוד! ✅<br>ממשיכים לשלב הבא</div>
-  <div class="redirect-sub">עובר לסרטון הבא בעוד 3 שניות…</div>
-  <div class="redirect-bar-wrap"><div class="redirect-bar" id="redirectBar"></div></div>
-  <a class="redirect-btn" href="funnel-video-2.html">המשך עכשיו ←</a>
-</div>
+
 <footer>
   דיגיטל אונליין מבית או די מסחר אונליין בע"מ<br>
   <a href="mailto:support@digitalonline.co.il">support@digitalonline.co.il</a><br>
   <a href="privacy.html">מדיניות פרטיות</a><span class="sep">|</span><a href="terms.html">תנאי שימוש</a>
 </footer>
+
 <script src="https://player.vimeo.com/api/player.js"></script>
 <script>
-const PAGE='funnel_video_1',WEBHOOK='https://hook.eu1.make.com/jp6ukjt7tpk3y4yly9c691g01f47cq8q',NEXT='funnel-video-2.html';
+(function(){
+  const c=document.getElementById('particles'),ctx=c.getContext('2d');
+  let W,H,pts=[];
+  function rsz(){W=c.width=window.innerWidth;H=c.height=window.innerHeight;}
+  rsz();window.addEventListener('resize',rsz);
+  function rnd(a,b){return Math.random()*(b-a)+a;}
+  function mk(){return{x:rnd(0,W),y:rnd(H*.1,H),r:rnd(.3,2.2),dx:rnd(-.35,.35),dy:rnd(-1.1,-.1),o:rnd(.5,1),fade:rnd(.002,.007),gold:Math.random()>.2,phase:rnd(0,6.28)};}
+  for(let i=0;i<140;i++)pts.push(mk());
+  let fr=0;
+  function draw(){
+    ctx.clearRect(0,0,W,H);fr++;
+    pts.forEach((p,i)=>{
+      let a=p.o*(.65+.35*Math.sin(fr*.04+p.phase));
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=p.gold?`rgba(212,168,67,${a})`:`rgba(255,235,100,${a*.4})`;
+      ctx.fill();
+      p.x+=p.dx;p.y+=p.dy;p.o-=p.fade;
+      if(p.o<=0||p.y<-10)pts[i]=mk();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+const PAGE='funnel_video_1';
+const WEBHOOK='https://hook.eu1.make.com/jp6ukjt7tpk3y4yly9c691g01f47cq8q';
 window.dataLayer=window.dataLayer||[];
 const P=new URLSearchParams(location.search);
 const variant=P.get('variant')||'',sup=P.get('supplier')||'',src=P.get('utm_source')||'';
@@ -125,50 +263,54 @@ const sd={};[25,50,75,100].forEach(d=>sd[d]=0);
 window.addEventListener('scroll',()=>{
   const s=document.body.scrollHeight-window.innerHeight;if(!s)return;
   const p=Math.round(window.scrollY/s*100);
-  [25,50,75,100].forEach(d=>{if(!sd[d]&&p>=d){sd[d]=1;dataLayer.push({event:'scroll_depth',depth:d+'%',page:PAGE});}}); 
+  [25,50,75,100].forEach(d=>{if(!sd[d]&&p>=d){sd[d]=1;dataLayer.push({event:'scroll_depth',depth:d+'%',page:PAGE});}});
 },{passive:true});
 const t0=Date.now();
 const vm={};[25,50,75,100].forEach(m=>vm[m]=0);
 window.addEventListener('load',()=>{
   const iframe=document.getElementById('vimeoPlayer');
   const player=new Vimeo.Player(iframe);
+  const thumb=document.getElementById('vidThumb');
+  const btnNext=document.getElementById('btnNext');
+  player.on('play',(data)=>{
+    thumb.classList.add('gone');
+    dataLayer.push({event:'video_play',page:PAGE,time:Math.round(data.seconds)});
+  });
   let lastTime=0,isSeeking=false;
   player.on('timeupdate',(data)=>{
     if(!isSeeking&&data.seconds-lastTime>2){
-      isSeeking=true;
-      player.setCurrentTime(lastTime).then(()=>{isSeeking=false;});
-      return;
+      isSeeking=true;player.setCurrentTime(lastTime).then(()=>{isSeeking=false;});return;
     }
     if(!isSeeking)lastTime=data.seconds;
     const pct=data.percent*100;
-    [25,50,75,100].forEach(m=>{
-      if(!vm[m]&&pct>=m){vm[m]=1;dataLayer.push({event:'video_progress',milestone:m+'%',time:Math.round(data.seconds),page:PAGE});}
-    });
+    [25,50,75,100].forEach(m=>{if(!vm[m]&&pct>=m){vm[m]=1;dataLayer.push({event:'video_progress',milestone:m+'%',time:Math.round(data.seconds),page:PAGE});}});
   });
-  player.on('play',(data)=>{dataLayer.push({event:'video_play',page:PAGE,time:Math.round(data.seconds)});});
   player.on('pause',(data)=>{
     const pos=Math.round(data.seconds),pct=Math.round(data.percent*100);
     dataLayer.push({event:'video_pause',page:PAGE,time:pos,pct_watched:pct});
-    fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event:'video_pause',page:PAGE,position_sec:pos,pct_watched:pct,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')})}).catch(()=>{});
+    fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({event:'video_pause',page:PAGE,position_sec:pos,pct_watched:pct,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')})
+    }).catch(()=>{});
   });
   player.on('ended',()=>{
     dataLayer.push({event:'video_ended',page:PAGE});
     if(typeof fbq!=='undefined')fbq('track','ViewContent',{content_name:PAGE});
-    fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event:'video_completed',page:PAGE,pct_watched:100,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')})}).catch(()=>{});
-    const overlay=document.getElementById('redirectOverlay');
-    const bar=document.getElementById('redirectBar');
-    overlay.classList.add('visible');
-    requestAnimationFrame(()=>{requestAnimationFrame(()=>{bar.style.width='100%';});});
-    setTimeout(()=>{location.href=NEXT;},3000);
+    fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({event:'video_completed',page:PAGE,pct_watched:100,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')})
+    }).catch(()=>{});
+    btnNext.classList.add('unlocked');
+    btnNext.innerHTML='▶&nbsp; עבור לשלב הבא';
   });
   window.addEventListener('beforeunload',()=>{
-    player.getCurrentTime().then((pos)=>{
-      player.getDuration().then((dur)=>{
-        const pct=dur?Math.round((pos/dur)*100):0;
-        if(navigator.sendBeacon)navigator.sendBeacon(WEBHOOK,JSON.stringify({event:'page_exit',page:PAGE,position_sec:Math.round(pos),pct_watched:pct,seconds_on_page:Math.round((Date.now()-t0)/1000),supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')}));
-        dataLayer.push({event:'page_time',seconds:Math.round((Date.now()-t0)/1000),page:PAGE,video_pos:Math.round(pos),pct_watched:pct});
-      });
-    });
+    player.getCurrentTime().then((pos)=>{player.getDuration().then((d)=>{
+      const pct=d?Math.round((pos/d)*100):0;
+      if(navigator.sendBeacon)navigator.sendBeacon(WEBHOOK,JSON.stringify({
+        event:'page_exit',page:PAGE,position_sec:Math.round(pos),pct_watched:pct,
+        seconds_on_page:Math.round((Date.now()-t0)/1000),supplier:sup,utm_source:src,
+        timestamp:new Date().toLocaleString('he-IL')
+      }));
+      dataLayer.push({event:'page_time',seconds:Math.round((Date.now()-t0)/1000),page:PAGE,video_pos:Math.round(pos),pct_watched:pct});
+    });});
   });
 });
 </script>
