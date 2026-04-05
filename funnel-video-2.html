@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-<title>דיגיטל אונליין | 3 מתוך 4</title>
+<title>דיגיטל אונליין | 2 מתוך 4</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;800;900&family=Assistant:wght@400;500;600&display=swap" rel="stylesheet"/>
@@ -175,27 +175,27 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
 <div class="wrap">
 
   <div class="badge">
-    <div class="badge-label">3 מתוך 4</div>
+    <div class="badge-label">2 מתוך 4</div>
     <div class="badge-dots">
       <div class="bd done"></div>
-      <div class="bd done"></div>
       <div class="bd active"></div>
+      <div class="bd "></div>
       <div class="bd "></div>
     </div>
   </div>
 
-  <h1 class="headline">הנה הדבר שרוב האנשים מפספסים</h1>
-  <p class="subline">וזה בדיוק מה שאנחנו הולכים לפתור יחד</p>
+  <h1 class="headline">עכשיו מבינים איך זה עובד בפועל</h1>
+  <p class="subline">זה פשוט יותר ממה שרוב האנשים חושבים</p>
 
   <div class="vid-outer">
     <div class="vid-box">
       <div class="vid-ratio">
         <iframe id="vimeoPlayer"
-          src="https://player.vimeo.com/video/1178984471?badge=0&autopause=0&player_id=0&app_id=58479&autoplay=1&muted=0&controls=1&title=0&byline=0&portrait=0"
+          src="https://player.vimeo.com/video/1178984527?badge=0&autopause=0&player_id=0&app_id=58479&autoplay=1&muted=0&controls=1&title=0&byline=0&portrait=0"
           frameborder="0"
           allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
           referrerpolicy="strict-origin-when-cross-origin"
-          title="funnel-video-3">
+          title="funnel-video-2">
         </iframe>
       </div>
       <div class="vid-shield"></div>
@@ -208,8 +208,8 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
   </div>
 
   <div class="btn-box">
-    <a class="btn-next" id="btnNext" href="funnel-video-4.html">
-      🔒&nbsp; עבור לשלב הבא
+    <a class="btn-next" id="btnNext" href="funnel-video-3.html">
+      🔒&nbsp; לראות את החלק הבא
     </a>
     <div class="preview-rows">
       <div class="preview-row">&nbsp;</div>
@@ -252,7 +252,7 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
   draw();
 })();
 
-const PAGE='funnel_video_3';
+const PAGE='funnel_video_2';
 const WEBHOOK='https://hook.eu1.make.com/jp6ukjt7tpk3y4yly9c691g01f47cq8q';
 window.dataLayer=window.dataLayer||[];
 const P=new URLSearchParams(location.search);
@@ -299,7 +299,7 @@ window.addEventListener('load',()=>{
       body:JSON.stringify({event:'video_completed',page:PAGE,pct_watched:100,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')})
     }).catch(()=>{});
     btnNext.classList.add('unlocked');
-    btnNext.innerHTML='▶&nbsp; עבור לשלב הבא';
+    btnNext.innerHTML='▶&nbsp; לראות את החלק הבא';
   });
   window.addEventListener('beforeunload',()=>{
     player.getCurrentTime().then((pos)=>{player.getDuration().then((d)=>{
