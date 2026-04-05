@@ -36,7 +36,6 @@ body{
   padding:28px 20px 52px;
   display:flex;flex-direction:column;align-items:center;
 }
-/* BADGE */
 .badge{
   display:inline-flex;align-items:center;gap:10px;
   background:linear-gradient(135deg,#1c1200,#2c1d00);
@@ -52,7 +51,6 @@ body{
 .bd{width:32px;height:5px;border-radius:99px;background:rgba(255,255,255,.1);}
 .bd.active{background:linear-gradient(90deg,#f5c842,#d4920a);box-shadow:0 0 8px rgba(245,200,66,.7);}
 .bd.done{background:rgba(212,168,67,.4);}
-/* HEADLINE */
 .headline{
   font-family:'Heebo',sans-serif;
   font-size:clamp(26px,7vw,34px);font-weight:900;
@@ -66,9 +64,10 @@ body{
   font-size:clamp(13px,3.8vw,16px);color:rgba(255,255,255,.55);
   text-align:center;line-height:1.7;margin-bottom:22px;max-width:340px;
 }
-/* VIDEO */
+/* VIDEO — full width, correct aspect ratio */
 .vid-outer{
-  width:100%;margin-bottom:14px;
+  width:100%;
+  margin-bottom:14px;
   border-radius:12px;
   animation:vidGlow 3s ease-in-out infinite;
 }
@@ -77,32 +76,60 @@ body{
   50%{filter:drop-shadow(0 0 30px rgba(255,200,50,.75)) drop-shadow(0 0 60px rgba(212,168,67,.4));}
 }
 .vid-box{
-  width:100%;border:2px solid #c8960a;border-radius:12px;
-  overflow:hidden;background:#000;position:relative;
-  box-shadow:inset 0 0 0 1px rgba(255,220,80,.08),0 12px 40px rgba(0,0,0,.95);
+  width:100%;
+  border:2px solid #c8960a;
+  border-radius:12px;
+  overflow:hidden;
+  background:#000;
+  position:relative;
 }
-.vid-ratio{padding:56.25% 0 0 0;position:relative;}
-.vid-ratio iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none;display:block;}
-/* Shield blocks seekbar */
-.vid-shield{position:absolute;bottom:0;left:0;right:0;height:44px;z-index:10;cursor:default;background:transparent;}
-/* Red YouTube play */
+/* Correct 16:9 ratio — iframe fills 100% */
+.vid-ratio{
+  position:relative;
+  width:100%;
+  padding-bottom:56.25%;
+  height:0;
+  overflow:hidden;
+}
+.vid-ratio iframe{
+  position:absolute;
+  top:0;left:0;
+  width:100%;height:100%;
+  border:none;
+  display:block;
+}
+/* Shield covers bottom 44px to block Vimeo seekbar */
+.vid-shield{
+  position:absolute;
+  bottom:0;left:0;right:0;
+  height:44px;
+  z-index:10;
+  cursor:default;
+  background:transparent;
+}
+/* Red play overlay — hidden once playing */
 .vid-thumb{
   position:absolute;inset:0;
   display:flex;align-items:center;justify-content:center;
   z-index:5;cursor:pointer;
+  background:rgba(0,0,0,.15);
+  transition:background .2s;
 }
+.vid-thumb:hover{background:rgba(0,0,0,.05);}
 .vid-thumb.gone{display:none;}
 .yt-btn{
-  width:72px;height:52px;background:linear-gradient(135deg,#ff1a1a,#cc0000);
-  border-radius:14px;display:flex;align-items:center;justify-content:center;
+  width:72px;height:52px;
+  background:linear-gradient(135deg,#ff1a1a,#cc0000);
+  border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
   animation:playPulse 2.5s ease-in-out infinite;
 }
 @keyframes playPulse{
   0%,100%{box-shadow:0 4px 28px rgba(255,0,0,.7);transform:scale(1);}
   50%{box-shadow:0 4px 44px rgba(255,0,0,.95);transform:scale(1.06);}
 }
-.vid-thumb:hover .yt-btn{transform:scale(1.1)!important;animation:none;box-shadow:0 6px 44px rgba(255,0,0,.9);}
-/* BUTTON BOX — same width as video */
+.vid-thumb:hover .yt-btn{transform:scale(1.1)!important;animation:none;}
+/* BUTTON BOX */
 .btn-box{
   width:100%;
   background:linear-gradient(135deg,rgba(30,20,0,.9),rgba(20,12,0,.95));
@@ -121,21 +148,22 @@ body{
 @keyframes boxShine{0%{left:-100%}100%{left:160%}}
 .btn-next{
   display:flex;width:100%;height:56px;
-  background:linear-gradient(135deg,#aa0000,#dd1010);
-  color:#fff;font-family:'Heebo',sans-serif;font-size:20px;font-weight:900;
-  border:none;border-radius:10px;
+  background:linear-gradient(135deg,#6b0000,#8a0000);
+  color:rgba(255,255,255,.5);
+  font-family:'Heebo',sans-serif;font-size:20px;font-weight:900;
+  border:1.5px solid rgba(255,80,80,.15);
+  border-radius:10px;
   align-items:center;justify-content:center;gap:8px;
   text-decoration:none;letter-spacing:.3px;
-  position:relative;overflow:hidden;
-  opacity:.38;cursor:not-allowed;pointer-events:none;
-  transition:opacity .5s,box-shadow .5s;
-  border:1.5px solid rgba(255,80,80,.2);
+  cursor:not-allowed;pointer-events:none;
+  transition:all .5s;
 }
 .btn-next.unlocked{
-  opacity:1;cursor:pointer;pointer-events:auto;
-  border-color:rgba(255,120,120,.4);
   background:linear-gradient(135deg,#cc0000,#ff2020,#cc0000);
   background-size:200% auto;
+  color:#fff;
+  border-color:rgba(255,120,120,.4);
+  cursor:pointer;pointer-events:auto;
   animation:btnShimmer 2s linear infinite,btnGlow 1.8s ease-in-out infinite;
 }
 @keyframes btnShimmer{0%{background-position:200% center;}100%{background-position:0% center;}}
@@ -150,7 +178,6 @@ body{
 }
 @keyframes shine{0%{left:-120%}100%{left:160%}}
 .btn-next.unlocked:hover{transform:translateY(-2px);}
-/* Preview rows */
 .preview-rows{padding-top:12px;display:flex;flex-direction:column;gap:2px;}
 .preview-row{
   font-family:'Assistant',sans-serif;font-size:13px;
@@ -190,10 +217,12 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
   <div class="vid-outer">
     <div class="vid-box">
       <div class="vid-ratio">
-        <iframe id="vimeoPlayer"
-          src="https://player.vimeo.com/video/1178984527?badge=0&autopause=0&player_id=0&app_id=58479&autoplay=1&muted=0&controls=1&title=0&byline=0&portrait=0"
+        <iframe
+          id="vimeoPlayer"
+          src="https://player.vimeo.com/video/1178984527?badge=0&autopause=0&player_id=0&app_id=58479&title=0&byline=0&portrait=0&dnt=1&controls=1"
           frameborder="0"
-          allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
+          allow="autoplay; fullscreen; picture-in-picture"
+          allowfullscreen
           referrerpolicy="strict-origin-when-cross-origin"
           title="funnel-video-2">
         </iframe>
@@ -228,6 +257,7 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
 
 <script src="https://player.vimeo.com/api/player.js"></script>
 <script>
+/* PARTICLES */
 (function(){
   const c=document.getElementById('particles'),ctx=c.getContext('2d');
   let W,H,pts=[];
@@ -252,6 +282,7 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
   draw();
 })();
 
+/* TRACKING */
 const PAGE='funnel_video_2';
 const WEBHOOK='https://hook.eu1.make.com/jp6ukjt7tpk3y4yly9c691g01f47cq8q';
 window.dataLayer=window.dataLayer||[];
@@ -259,32 +290,47 @@ const P=new URLSearchParams(location.search);
 const variant=P.get('variant')||'',sup=P.get('supplier')||'',src=P.get('utm_source')||'';
 dataLayer.push({event:'page_view',page:PAGE,source_variant:variant,supplier:sup,utm_source:src});
 if(typeof fbq!=='undefined')fbq('track','PageView');
+
 const sd={};[25,50,75,100].forEach(d=>sd[d]=0);
 window.addEventListener('scroll',()=>{
   const s=document.body.scrollHeight-window.innerHeight;if(!s)return;
   const p=Math.round(window.scrollY/s*100);
   [25,50,75,100].forEach(d=>{if(!sd[d]&&p>=d){sd[d]=1;dataLayer.push({event:'scroll_depth',depth:d+'%',page:PAGE});}});
 },{passive:true});
+
 const t0=Date.now();
 const vm={};[25,50,75,100].forEach(m=>vm[m]=0);
+
 window.addEventListener('load',()=>{
   const iframe=document.getElementById('vimeoPlayer');
   const player=new Vimeo.Player(iframe);
   const thumb=document.getElementById('vidThumb');
   const btnNext=document.getElementById('btnNext');
+
+  /* Click overlay to play */
+  thumb.addEventListener('click',()=>{
+    player.play();
+  });
+
   player.on('play',(data)=>{
     thumb.classList.add('gone');
     dataLayer.push({event:'video_play',page:PAGE,time:Math.round(data.seconds)});
   });
+
+  /* Seek block */
   let lastTime=0,isSeeking=false;
   player.on('timeupdate',(data)=>{
     if(!isSeeking&&data.seconds-lastTime>2){
-      isSeeking=true;player.setCurrentTime(lastTime).then(()=>{isSeeking=false;});return;
+      isSeeking=true;
+      player.setCurrentTime(lastTime).then(()=>{isSeeking=false;});
+      return;
     }
     if(!isSeeking)lastTime=data.seconds;
     const pct=data.percent*100;
-    [25,50,75,100].forEach(m=>{if(!vm[m]&&pct>=m){vm[m]=1;dataLayer.push({event:'video_progress',milestone:m+'%',time:Math.round(data.seconds),page:PAGE});}});
+    [25,50,75,100].forEach(m=>{
+      if(!vm[m]&&pct>=m){vm[m]=1;dataLayer.push({event:'video_progress',milestone:m+'%',time:Math.round(data.seconds),page:PAGE});}});
   });
+
   player.on('pause',(data)=>{
     const pos=Math.round(data.seconds),pct=Math.round(data.percent*100);
     dataLayer.push({event:'video_pause',page:PAGE,time:pos,pct_watched:pct});
@@ -292,25 +338,30 @@ window.addEventListener('load',()=>{
       body:JSON.stringify({event:'video_pause',page:PAGE,position_sec:pos,pct_watched:pct,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')})
     }).catch(()=>{});
   });
+
   player.on('ended',()=>{
     dataLayer.push({event:'video_ended',page:PAGE});
     if(typeof fbq!=='undefined')fbq('track','ViewContent',{content_name:PAGE});
     fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({event:'video_completed',page:PAGE,pct_watched:100,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')})
     }).catch(()=>{});
+    /* Unlock button */
     btnNext.classList.add('unlocked');
-    btnNext.innerHTML='▶&nbsp; לראות את החלק הבא';
+    btnNext.innerHTML='&#9658;&nbsp; לראות את החלק הבא';
   });
+
   window.addEventListener('beforeunload',()=>{
-    player.getCurrentTime().then((pos)=>{player.getDuration().then((d)=>{
-      const pct=d?Math.round((pos/d)*100):0;
-      if(navigator.sendBeacon)navigator.sendBeacon(WEBHOOK,JSON.stringify({
-        event:'page_exit',page:PAGE,position_sec:Math.round(pos),pct_watched:pct,
-        seconds_on_page:Math.round((Date.now()-t0)/1000),supplier:sup,utm_source:src,
-        timestamp:new Date().toLocaleString('he-IL')
-      }));
-      dataLayer.push({event:'page_time',seconds:Math.round((Date.now()-t0)/1000),page:PAGE,video_pos:Math.round(pos),pct_watched:pct});
-    });});
+    player.getCurrentTime().then((pos)=>{
+      player.getDuration().then((d)=>{
+        const pct=d?Math.round((pos/d)*100):0;
+        if(navigator.sendBeacon)navigator.sendBeacon(WEBHOOK,JSON.stringify({
+          event:'page_exit',page:PAGE,position_sec:Math.round(pos),pct_watched:pct,
+          seconds_on_page:Math.round((Date.now()-t0)/1000),supplier:sup,utm_source:src,
+          timestamp:new Date().toLocaleString('he-IL')
+        }));
+        dataLayer.push({event:'page_time',seconds:Math.round((Date.now()-t0)/1000),page:PAGE,video_pos:Math.round(pos),pct_watched:pct});
+      });
+    });
   });
 });
 </script>
