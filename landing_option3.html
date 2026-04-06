@@ -153,11 +153,11 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.08);}
 
 <footer>
   דיגיטל אונליין מבית או די מסחר אונליין בע"מ<br>
-  <a href="mailto:support@digitalonline.co.il">support@digitalonline.co.il</a><br>
+  <a href="/cdn-cgi/l/email-protection#c3b0b6b3b3acb1b783a7aaa4aab7a2afacadafaaada6eda0acedaaaf"><span class="__cf_email__" data-cfemail="2d5e585d5d425f596d49444a44594c41424341444348034e42034441">[email&#160;protected]</span></a><br>
   <a href="privacy.html">מדיניות פרטיות</a><span class="sep">|</span><a href="terms.html">תנאי שימוש</a>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 function openPopup() {
   document.getElementById('popup').classList.add('open');
   try { dataLayer.push({event:'cta_click',page:'landing_option3'}); } catch(e) {}
@@ -197,8 +197,7 @@ function submitForm() {
       timestamp: new Date().toLocaleString('he-IL')
     })
   }).then(function() {
-    document.getElementById('formFields').style.display = 'none';
-    document.getElementById('successMsg').classList.add('show');
+    window.location.href = 'thankyou_orange.html';
   }).catch(function() {
     btn.disabled = false;
     btn.textContent = 'קבל גישה עכשיו';
@@ -265,12 +264,4 @@ window.addEventListener('scroll', function() {
   });
 }, {passive:true});
 
-window.addEventListener('beforeunload', function() {
-  try {
-    navigator.sendBeacon('https://hook.eu1.make.com/jp6ukjt7tpk3y4yly9c691g01f47cq8q',
-      JSON.stringify({event:'page_exit',page:'landing_option3',timestamp:new Date().toLocaleString('he-IL')}));
-  } catch(e) {}
-});
-</script>
-</body>
-</html>
+window.addEventListener('beforeunload', functi
