@@ -84,6 +84,55 @@ footer a{color:rgba(255,255,255,.22);text-decoration:none;}
 footer a:hover{color:#d4a843;}
 footer .sep{margin:0 6px;color:rgba(255,255,255,.08);}
 </style>
+<script>
+window.openPopup = function openPopup() {
+  document.getElementById('popup').classList.add('open');
+  try { dataLayer.push({event:'cta_click',page:'landing_option2'}); } catch(e) {}
+  try { if(typeof fbq==='function') fbq('track','InitiateCheckout'); } catch(e) {}
+}
+
+window.submitForm = function submitForm() {
+  var name  = document.getElementById('fName').value.trim();
+  var phone = document.getElementById('fPhone').value.trim();
+  var email = document.getElementById('fEmail').value.trim();
+  var ok = true;
+  document.getElementById('eName').classList.remove('show');
+  document.getElementById('ePhone').classList.remove('show');
+  document.getElementById('eEmail').classList.remove('show');
+  if(!name)  { document.getElementById('eName').classList.add('show');  ok=false; }
+  if(!phone) { document.getElementById('ePhone').classList.add('show'); ok=false; }
+  if(!email || email.indexOf('@')<0) { document.getElementById('eEmail').classList.add('show'); ok=false; }
+  if(!ok) return;
+  var btn = document.getElementById('popupBtn');
+  btn.disabled = true;
+  btn.textContent = 'שולח…';
+  try { dataLayer.push({event:'form_submit',page:'landing_option2'}); } catch(e) {}
+  try { if(typeof fbq==='function') fbq('track','Lead'); } catch(e) {}
+  var urlP = new URLSearchParams(location.search);
+  fetch('https://hook.eu1.make.com/jp6ukjt7tpk3y4yly9c691g01f47cq8q', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({
+      event: 'lead_form',
+      page: 'landing_option2',
+      name: name,
+      phone: phone,
+      email: email,
+      supplier: urlP.get('supplier') || '',
+      utm_source: urlP.get('utm_source') || '',
+      variant: urlP.get('variant') || '',
+      timestamp: new Date().toLocaleString('he-IL')
+    })
+  }).then(function() {
+    window.location.href = 'thankyou_orange.html';
+  }).catch(function() {
+    btn.disabled = false;
+    btn.textContent = 'שלח לי עכשיו';
+    alert('שגיאה בשליחה, נסה שוב');
+  });
+}
+
+</script>
 </head>
 <body>
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WNJN9XQT" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -150,13 +199,13 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.08);}
 </footer>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-function openPopup() {
+window.openPopup = function openPopup() {
   document.getElementById('popup').classList.add('open');
   try { dataLayer.push({event:'cta_click',page:'landing_option2'}); } catch(e) {}
   try { if(typeof fbq==='function') fbq('track','InitiateCheckout'); } catch(e) {}
 }
 
-function submitForm() {
+window.submitForm = function submitForm() {
   var name  = document.getElementById('fName').value.trim();
   var phone = document.getElementById('fPhone').value.trim();
   var email = document.getElementById('fEmail').value.trim();
