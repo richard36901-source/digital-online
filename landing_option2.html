@@ -99,9 +99,11 @@ window.submitForm = function submitForm() {
   document.getElementById('eName').classList.remove('show');
   document.getElementById('ePhone').classList.remove('show');
   document.getElementById('eEmail').classList.remove('show');
+  document.getElementById('eLegal').classList.remove('show');
   if(!name)  { document.getElementById('eName').classList.add('show');  ok=false; }
   if(!phone) { document.getElementById('ePhone').classList.add('show'); ok=false; }
   if(!email || email.indexOf('@')<0) { document.getElementById('eEmail').classList.add('show'); ok=false; }
+  if(!document.getElementById('legalBox').checked) { document.getElementById('eLegal').classList.add('show'); ok=false; }
   if(!ok) return;
   var btn = document.getElementById('popupBtn');
   btn.disabled = true;
@@ -181,7 +183,13 @@ window.submitForm = function submitForm() {
       <input class="field" id="fEmail" type="email" placeholder="אימייל" autocomplete="email"/>
       <div class="err" id="eEmail">נא להזין אימייל תקין</div>
       <button class="btn-popup" id="popupBtn" onclick="submitForm()">שלח לי עכשיו</button>
-      <p class="legal">אני מאשר/ת קבלת דיוור, תוכן שיווקי והודעות במייל, SMS ו-WhatsApp. ניתן להסיר בכל עת.</p>
+      <div class="legal-check" id="legalWrap">
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;direction:rtl;">
+          <input type="checkbox" id="legalBox" style="width:18px;height:18px;flex-shrink:0;margin-top:2px;accent-color:#f5c842;cursor:pointer;"/>
+          <span style="font-size:12px;color:rgba(255,255,255,.45);line-height:1.6;">אני מאשר/ת קבלת דיוור, תוכן שיווקי והודעות במייל, SMS ו-WhatsApp. ניתן להסיר בכל עת.</span>
+        </label>
+        <div class="err" id="eLegal" style="margin-top:4px;">יש לאשר את תנאי השימוש להמשך</div>
+      </div>
       <p class="reassure">הפרטים שלך מוגנים ולא מועברים לאף גורם</p>
     </div>
     <div class="success-msg" id="successMsg">
@@ -213,9 +221,11 @@ window.submitForm = function submitForm() {
   document.getElementById('eName').classList.remove('show');
   document.getElementById('ePhone').classList.remove('show');
   document.getElementById('eEmail').classList.remove('show');
+  document.getElementById('eLegal').classList.remove('show');
   if(!name)  { document.getElementById('eName').classList.add('show');  ok=false; }
   if(!phone) { document.getElementById('ePhone').classList.add('show'); ok=false; }
   if(!email || email.indexOf('@')<0) { document.getElementById('eEmail').classList.add('show'); ok=false; }
+  if(!document.getElementById('legalBox').checked) { document.getElementById('eLegal').classList.add('show'); ok=false; }
   if(!ok) return;
   var btn = document.getElementById('popupBtn');
   btn.disabled = true;
