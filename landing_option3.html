@@ -84,6 +84,55 @@ footer a{color:rgba(255,255,255,.22);text-decoration:none;}
 footer a:hover{color:#d4a843;}
 footer .sep{margin:0 6px;color:rgba(255,255,255,.08);}
 </style>
+<script>
+window.openPopup = function openPopup() {
+  document.getElementById('popup').classList.add('open');
+  try { dataLayer.push({event:'cta_click',page:'landing_option3'}); } catch(e) {}
+  try { if(typeof fbq==='function') fbq('track','InitiateCheckout'); } catch(e) {}
+}
+
+window.submitForm = function submitForm() {
+  var name  = document.getElementById('fName').value.trim();
+  var phone = document.getElementById('fPhone').value.trim();
+  var email = document.getElementById('fEmail').value.trim();
+  var ok = true;
+  document.getElementById('eName').classList.remove('show');
+  document.getElementById('ePhone').classList.remove('show');
+  document.getElementById('eEmail').classList.remove('show');
+  if(!name)  { document.getElementById('eName').classList.add('show');  ok=false; }
+  if(!phone) { document.getElementById('ePhone').classList.add('show'); ok=false; }
+  if(!email || email.indexOf('@')<0) { document.getElementById('eEmail').classList.add('show'); ok=false; }
+  if(!ok) return;
+  var btn = document.getElementById('popupBtn');
+  btn.disabled = true;
+  btn.textContent = 'שולח…';
+  try { dataLayer.push({event:'form_submit',page:'landing_option3'}); } catch(e) {}
+  try { if(typeof fbq==='function') fbq('track','Lead'); } catch(e) {}
+  var urlP = new URLSearchParams(location.search);
+  fetch('https://hook.eu1.make.com/jp6ukjt7tpk3y4yly9c691g01f47cq8q', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({
+      event: 'lead_form',
+      page: 'landing_option3',
+      name: name,
+      phone: phone,
+      email: email,
+      supplier: urlP.get('supplier') || '',
+      utm_source: urlP.get('utm_source') || '',
+      variant: urlP.get('variant') || '',
+      timestamp: new Date().toLocaleString('he-IL')
+    })
+  }).then(function() {
+    window.location.href = 'thankyou_orange.html';
+  }).catch(function() {
+    btn.disabled = false;
+    btn.textContent = 'קבל גישה עכשיו';
+    alert('שגיאה בשליחה, נסה שוב');
+  });
+}
+
+</script>
 </head>
 <body>
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WNJN9XQT" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -106,11 +155,11 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.08);}
       </div>
       <div class="step-item" style="background:linear-gradient(135deg,rgba(20,40,100,.3),rgba(4,8,20,.8));border:1px solid rgba(60,120,255,.2);">
         <div class="step-num" style="background:linear-gradient(135deg,#1a4acc,#4a7fff);color:#fff;box-shadow:0 0 12px rgba(74,127,255,.5);">2</div>
-        <div class="step-text">מבין בדיוק איך זה עובד</div>
+        <div class="step-text">הכל יתחיל להתחבר</div>
       </div>
       <div class="step-item" style="background:linear-gradient(135deg,rgba(20,40,100,.3),rgba(4,8,20,.8));border:1px solid rgba(60,120,255,.2);">
         <div class="step-num" style="background:linear-gradient(135deg,#1a4acc,#4a7fff);color:#fff;box-shadow:0 0 12px rgba(74,127,255,.5);">3</div>
-        <div class="step-text">מחליט אם להיכנס</div>
+        <div class="step-text">מבין אם זה מתאים לך</div>
       </div>
     </div>
     <button class="btn-main" onclick="openPopup()">פתח לי עכשיו</button>
@@ -158,13 +207,13 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.08);}
 </footer>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-function openPopup() {
+window.openPopup = function openPopup() {
   document.getElementById('popup').classList.add('open');
   try { dataLayer.push({event:'cta_click',page:'landing_option3'}); } catch(e) {}
   try { if(typeof fbq==='function') fbq('track','InitiateCheckout'); } catch(e) {}
 }
 
-function submitForm() {
+window.submitForm = function submitForm() {
   var name  = document.getElementById('fName').value.trim();
   var phone = document.getElementById('fPhone').value.trim();
   var email = document.getElementById('fEmail').value.trim();
