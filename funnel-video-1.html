@@ -96,7 +96,7 @@ body{
   overflow:hidden;background:#000;position:relative;
   box-shadow:inset 0 0 0 1px rgba(255,220,80,.08),0 12px 40px rgba(0,0,0,.95);
 }
-.vid-ratio{position:relative;width:100%;padding-bottom:56.25%;height:0;overflow:hidden;}
+.vid-ratio{position:relative;width:100%;padding-bottom:177.78%;height:0;overflow:hidden;}
 .vid-ratio iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none;display:block;}
 
 /* ── PLAY OVERLAY ── */
@@ -294,11 +294,11 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
 
 <footer>
   דיגיטל אונליין מבית או די מסחר אונליין בע"מ<br>
-  <a href="mailto:support@digitalonline.co.il">support@digitalonline.co.il</a><br>
+  <a href="/cdn-cgi/l/email-protection#7f0c0a0f0f100d0b3f1b1618160b1e1310111316111a511c10511613"><span class="__cf_email__" data-cfemail="f3808683839c8187b3979a949a87929f9c9d9f9a9d96dd909cdd9a9f">[email&#160;protected]</span></a><br>
   <a href="privacy.html">מדיניות פרטיות</a><span class="sep">|</span><a href="terms.html">תנאי שימוש</a>
 </footer>
 
-<script src="https://player.vimeo.com/api/player.js"></script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://player.vimeo.com/api/player.js"></script>
 <script>
 /* PARTICLES */
 (function(){
@@ -398,13 +398,4 @@ window.addEventListener('load',()=>{
       const pct=d?Math.round((pos/d)*100):0;
       if(navigator.sendBeacon)navigator.sendBeacon(WEBHOOK,JSON.stringify({
         event:'page_exit',page:PAGE,position_sec:Math.round(pos),pct_watched:pct,
-        seconds_on_page:Math.round((Date.now()-t0)/1000),supplier:sup,utm_source:src,
-        timestamp:new Date().toLocaleString('he-IL')
-      }));
-      dataLayer.push({event:'page_time',seconds:Math.round((Date.now()-t0)/1000),page:PAGE,video_pos:Math.round(pos),pct_watched:pct});
-    });});
-  });
-});
-</script>
-</body>
-</html>
+        seconds_on_page:Math.round((Date.now()-t0)/1000),supplier:sup,utm
