@@ -126,6 +126,22 @@ window.submitForm = function submitForm() {
       timestamp: new Date().toLocaleString('he-IL')
     })
   }).then(function() {
+    /* ── LEADMANAGER ── */
+    var lmParams = new URLSearchParams();
+    lmParams.append('lm_form', '89907');
+    lmParams.append('lm_key', '28250230ddcd4b8a9f3929b7ab8744a1');
+    lmParams.append('subscribers_name', name);
+    lmParams.append('subscribers_phone', phone);
+    lmParams.append('subscribers_email', email);
+    lmParams.append('fld_144377', '1'); /* מאשר דיוור */
+    lmParams.append('fld_105911', urlP.get('utm_source') || ''); /* מזהה ניתוב */
+    lmParams.append('fld_107862', urlP.get('utm_source') || ''); /* כלי פרסומי */
+    lmParams.append('lm_supplier', urlP.get('supplier') || '');
+    lmParams.append('lm_bc', urlP.get('utm_source') || '');
+    lmParams.append('fields[REF]', urlP.get('ref') || urlP.get('variant') || '');
+    fetch('https://api.leadmanager.co.il/handlers/lm/submit.cms?' + lmParams.toString(), {
+      method: 'GET', mode: 'no-cors'
+    }).catch(function(){});
     window.location.href = 'thankyou_orange.html';
   }).catch(function() {
     btn.disabled = false;
@@ -256,6 +272,22 @@ window.submitForm = function submitForm() {
       timestamp: new Date().toLocaleString('he-IL')
     })
   }).then(function() {
+    /* ── LEADMANAGER ── */
+    var lmParams = new URLSearchParams();
+    lmParams.append('lm_form', '89907');
+    lmParams.append('lm_key', '28250230ddcd4b8a9f3929b7ab8744a1');
+    lmParams.append('subscribers_name', name);
+    lmParams.append('subscribers_phone', phone);
+    lmParams.append('subscribers_email', email);
+    lmParams.append('fld_144377', '1'); /* מאשר דיוור */
+    lmParams.append('fld_105911', urlP.get('utm_source') || ''); /* מזהה ניתוב */
+    lmParams.append('fld_107862', urlP.get('utm_source') || ''); /* כלי פרסומי */
+    lmParams.append('lm_supplier', urlP.get('supplier') || '');
+    lmParams.append('lm_bc', urlP.get('utm_source') || '');
+    lmParams.append('fields[REF]', urlP.get('ref') || urlP.get('variant') || '');
+    fetch('https://api.leadmanager.co.il/handlers/lm/submit.cms?' + lmParams.toString(), {
+      method: 'GET', mode: 'no-cors'
+    }).catch(function(){});
     window.location.href = 'thankyou_orange.html';
   }).catch(function() {
     btn.disabled = false;
