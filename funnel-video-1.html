@@ -247,6 +247,14 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
 .cookie-btn.manage{background:rgba(255,255,255,.08);color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.15);}
 </style>
 <script src="https://player.vimeo.com/api/player.js"></script>
+<script>
+function playVideo(){
+  var t=document.getElementById('vidThumb');
+  if(t)t.classList.add('gone');
+  if(window._vimeoPlayer){window._vimeoPlayer.play();}
+  else{setTimeout(playVideo,200);}
+}
+</script>
 </head>
 <body>
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WNJN9XQT" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -280,7 +288,7 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
     <div class="vid-box">
       <div class="vid-ratio">
         <iframe id="vimeoPlayer"
-          src="https://player.vimeo.com/video/1178984555?badge=0&autopause=0&player_id=0&app_id=58479&title=0&byline=0&portrait=0&dnt=1&controls=1&transparent=0"
+          src="https://player.vimeo.com/video/1178984555?badge=0&autopause=0&player_id=0&app_id=58479&title=0&byline=0&portrait=0&dnt=1&controls=0"
           frameborder="0"
           allow="autoplay; fullscreen; picture-in-picture"
           allowfullscreen
@@ -288,7 +296,7 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
           title="funnel-video-1">
         </iframe>
       </div>
-      <div class="vid-thumb" id="vidThumb" onclick="if(window._vimeoPlayer){window._vimeoPlayer.play();}document.getElementById('vidThumb').classList.add('gone');">
+      <div class="vid-thumb" id="vidThumb" onclick="playVideo()">
         <div class="yt-btn">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><polygon points="6,3 20,12 6,21"/></svg>
         </div>
@@ -363,7 +371,7 @@ window.addEventListener('scroll',()=>{
 const t0=Date.now();
 const vm={};[25,50,75,100].forEach(m=>vm[m]=0);
 
-window.addEventListener('load',()=>{
+document.addEventListener('DOMContentLoaded',function(){
   const iframe=document.getElementById('vimeoPlayer');
   const player=new Vimeo.Player(iframe); window._vimeoPlayer=player;
   const thumb=document.getElementById('vidThumb');
