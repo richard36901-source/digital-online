@@ -31,7 +31,7 @@ function submitWebinar() {
     body: JSON.stringify({
       event:'webinar_signup', page:'webinar-signup',
       name:name, phone:phone, email:email,
-      supplier:urlP.get('supplier')||'',
+      supplier:urlP.get('lm_supplier')||P.get('supplier')||'',
       utm_source:urlP.get('utm_source')||'',
       timestamp:new Date().toLocaleString('he-IL')
     })
@@ -457,7 +457,7 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
 window.dataLayer=window.dataLayer||[];
 try{
   var urlP=new URLSearchParams(location.search);
-  dataLayer.push({event:'page_view',page:'webinar-signup',utm_source:urlP.get('utm_source')||'',supplier:urlP.get('supplier')||''});
+  dataLayer.push({event:'page_view',page:'webinar-signup',utm_source:urlP.get('utm_source')||'',supplier:urlP.get('lm_supplier')||P.get('supplier')||''});
 }catch(e){}
 try{if(typeof fbq==='function')fbq('track','PageView');}catch(e){}
 
