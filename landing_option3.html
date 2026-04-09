@@ -120,7 +120,7 @@ window.submitForm = function submitForm() {
       name: name,
       phone: phone,
       email: email,
-      supplier: urlP.get('supplier') || '',
+      supplier: urlP.get('lm_supplier') || urlP.get('supplier') || '',
       utm_source: urlP.get('utm_source') || '',
       variant: urlP.get('variant') || '',
       timestamp: new Date().toLocaleString('he-IL')
@@ -136,7 +136,7 @@ window.submitForm = function submitForm() {
     lmParams.append('fld_144377', '1');
     lmParams.append('fld_105911', urlP.get('utm_source') || '');
     lmParams.append('fld_107862', urlP.get('utm_source') || '');
-    lmParams.append('lm_supplier', urlP.get('supplier') || '');
+    lmParams.append('lm_supplier', urlP.get('lm_supplier') || urlP.get('supplier') || '');
     lmParams.append('lm_bc', urlP.get('utm_source') || '');
     lmParams.append('fields[REF]', urlP.get('ref') || urlP.get('variant') || '');
     lmParams.append('utm_medium', urlP.get('utm_medium') || '');
@@ -269,7 +269,7 @@ window.submitForm = function submitForm() {
       name: name,
       phone: phone,
       email: email,
-      supplier: urlP.get('supplier') || '',
+      supplier: urlP.get('lm_supplier') || urlP.get('supplier') || '',
       utm_source: urlP.get('utm_source') || '',
       variant: urlP.get('variant') || '',
       timestamp: new Date().toLocaleString('he-IL')
@@ -285,7 +285,7 @@ window.submitForm = function submitForm() {
     lmParams.append('fld_144377', '1');
     lmParams.append('fld_105911', urlP.get('utm_source') || '');
     lmParams.append('fld_107862', urlP.get('utm_source') || '');
-    lmParams.append('lm_supplier', urlP.get('supplier') || '');
+    lmParams.append('lm_supplier', urlP.get('lm_supplier') || urlP.get('supplier') || '');
     lmParams.append('lm_bc', urlP.get('utm_source') || '');
     lmParams.append('fields[REF]', urlP.get('ref') || urlP.get('variant') || '');
     lmParams.append('utm_medium', urlP.get('utm_medium') || '');
