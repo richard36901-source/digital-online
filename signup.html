@@ -31,7 +31,7 @@ function submitWebinar() {
     body: JSON.stringify({
       event:'webinar_signup', page:'webinar-signup',
       name:name, phone:phone, email:email,
-      supplier:urlP.get('lm_supplier')||P.get('supplier')||'',
+      supplier:urlP.get('lm_supplier')||urlP.get('supplier')||'',
       utm_source:urlP.get('utm_source')||'',
       timestamp:new Date().toLocaleString('he-IL')
     })
@@ -46,7 +46,7 @@ function submitWebinar() {
     lmP.append('fld_144377', '1');
     lmP.append('fld_105911', urlP.get('utm_source') || '');
     lmP.append('fld_107862', urlP.get('utm_source') || '');
-    lmP.append('lm_supplier', urlP.get('supplier') || '');
+    lmP.append('lm_supplier', urlP.get('lm_supplier') || urlP.get('supplier') || '');
     lmP.append('lm_bc', urlP.get('utm_source') || '');
     lmP.append('fields[REF]', urlP.get('ref') || urlP.get('variant') || '');
     lmP.append('utm_medium', urlP.get('utm_medium') || '');
@@ -457,7 +457,7 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
 window.dataLayer=window.dataLayer||[];
 try{
   var urlP=new URLSearchParams(location.search);
-  dataLayer.push({event:'page_view',page:'webinar-signup',utm_source:urlP.get('utm_source')||'',supplier:urlP.get('lm_supplier')||P.get('supplier')||''});
+  dataLayer.push({event:'page_view',page:'webinar-signup',utm_source:urlP.get('utm_source')||'',supplier:urlP.get('lm_supplier')||urlP.get('supplier')||''});
 }catch(e){}
 try{if(typeof fbq==='function')fbq('track','PageView');}catch(e){}
 
