@@ -36,6 +36,25 @@ function submitWebinar() {
       timestamp:new Date().toLocaleString('he-IL')
     })
   }).then(function() {
+    /* ── LEADMANAGER ── */
+    var lmP = new URLSearchParams();
+    lmP.append('lm_form', '89939');
+    lmP.append('lm_key', '43d15d99e2ac4aa9b97519cde7569297');
+    lmP.append('subscribers_name', name);
+    lmP.append('subscribers_phone', phone);
+    lmP.append('subscribers_email', email);
+    lmP.append('fld_144377', '1');
+    lmP.append('fld_105911', urlP.get('utm_source') || '');
+    lmP.append('fld_107862', urlP.get('utm_source') || '');
+    lmP.append('lm_supplier', urlP.get('supplier') || '');
+    lmP.append('lm_bc', urlP.get('utm_source') || '');
+    lmP.append('fields[REF]', urlP.get('ref') || urlP.get('variant') || '');
+    lmP.append('utm_medium', urlP.get('utm_medium') || '');
+    lmP.append('utm_campaign', urlP.get('utm_campaign') || '');
+    lmP.append('page', 'webinar-signup');
+    fetch('https://api.leadmanager.co.il/handlers/lm/submit.cms?' + lmP.toString(), {
+      method: 'GET', mode: 'no-cors'
+    }).catch(function(){});
     document.getElementById('formWrap').style.display='none';
     document.getElementById('successMsg').style.display='block';
     try { if(typeof fbq==='function') fbq('track','CompleteRegistration'); } catch(e) {}
@@ -405,11 +424,11 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
 
 <footer>
   דיגיטל אונליין מבית או די מסחר אונליין בע"מ<br>
-  <a href="mailto:support@digitalonline.co.il">support@digitalonline.co.il</a><br>
+  <a href="/cdn-cgi/l/email-protection#f4878184849b8680b4909d939d8095989b9a989d9a91da979bda9d98"><span class="__cf_email__" data-cfemail="d2a1a7a2a2bda0a692b6bbb5bba6b3bebdbcbebbbcb7fcb1bdfcbbbe">[email&#160;protected]</span></a><br>
   <a href="privacy.html">מדיניות פרטיות</a><span class="sep">|</span><a href="terms.html">תנאי שימוש</a>
 </footer>
 
-<script src="https://player.vimeo.com/api/player.js"></script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://player.vimeo.com/api/player.js"></script>
 <script>
 (function(){
   var c=document.getElementById('particles'),ctx=c.getContext('2d');
@@ -453,9 +472,4 @@ window.addEventListener('scroll',function(){
 
 var t0=Date.now();
 window.addEventListener('beforeunload',function(){
-  try{navigator.sendBeacon('https://hook.eu1.make.com/jp6ukjt7tpk3y4yly9c691g01f47cq8q',
-    JSON.stringify({event:'page_exit',page:'webinar-signup',seconds_on_page:Math.round((Date.now()-t0)/1000),timestamp:new Date().toLocaleString('he-IL')}));}catch(e){}
-});
-</script>
-</body>
-</html>
+  try{navigator.sendBeacon('
