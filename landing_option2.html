@@ -339,7 +339,7 @@ setTimeout(function() {
 window.dataLayer = window.dataLayer || [];
 try {
   var urlP = new URLSearchParams(location.search);
-  dataLayer.push({event:'page_view',page:'landing_option2',utm_source:urlP.get('utm_source')||'',supplier:urlP.get('supplier')||''});
+  dataLayer.push({event:'page_view',page:'landing_option2',utm_source:urlP.get('utm_source')||'',supplier:urlP.get('lm_supplier')||P.get('supplier')||''});
 } catch(e) {}
 
 /* SCROLL DEPTH */
