@@ -283,6 +283,7 @@ footer a{color:rgba(255,255,255,.28);text-decoration:none;}
 footer a:hover{color:rgba(255,255,255,.55);}
 footer .sep{margin:0 6px;color:rgba(255,255,255,.1);}
 </style>
+<script src="https://player.vimeo.com/api/player.js"></script>
 </head>
 <body>
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WNJN9XQT" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -401,8 +402,7 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.1);}
   <a href="privacy.html">מדיניות פרטיות</a><span class="sep">|</span><a href="terms.html">תנאי שימוש</a>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://player.vimeo.com/api/player.js"></script>
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 /* ══════════════════════════════════════════
    PAGE CONFIG — add more pages here easily
    ══════════════════════════════════════════ */
@@ -450,7 +450,7 @@ const pageNum = parseInt(P.get('p') || '1');
 const cfg     = PAGES[pageNum] || PAGES[1];
 const PAGE_ID = 'lp_video_' + pageNum;
 const variant = P.get('variant')    || '';
-const sup     = P.get('supplier')   || '';
+const sup     = P.get('lm_supplier') || P.get('supplier') || '';
 const src     = P.get('utm_source') || '';
 
 /* ══════════════════════════════════════════
@@ -500,9 +500,10 @@ let duration = 0;
 
 function startVideo(){
   document.getElementById('vidThumb').classList.add('gone');
-  dataLayer.push({event:'cta_click', page:PAGE_ID, video_id:cfg.vimeo});
-  if(typeof fbq !== 'undefined') fbq('track','InitiateCheckout');
+  try{dataLayer.push({event:'cta_click', page:PAGE_ID, video_id:cfg.vimeo});}catch(e){}
+  try{if(typeof fbq !== 'undefined') fbq('track','InitiateCheckout');}catch(e){}
   if(player){ player.play(); return; }
+  if(typeof Vimeo === 'undefined'){ setTimeout(startVideo, 300); return; }
   const iframe = document.getElementById('vimeoPlayer');
   player = new Vimeo.Player(iframe);
   player.play();
@@ -579,37 +580,35 @@ function submitForm(){
   dataLayer.push({event:'form_submit',page:PAGE_ID,video_id:cfg.vimeo});
   if(typeof fbq !== 'undefined') fbq('track','Lead');
 
+  /* Fire both in parallel — don't wait for either */
   fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({event:'lead_form',page:PAGE_ID,video_id:cfg.vimeo,name,phone,email,supplier:sup,utm_source:src,variant,timestamp:new Date().toLocaleString('he-IL')})
-  })
-  .then(()=>{
-    /* ── LEADMANAGER ── */
-    const lmP = new URLSearchParams();
-    lmP.append('lm_form', '89940');
-    lmP.append('lm_key', 'd0f578976510416caa04130780197377');
-    lmP.append('subscribers_name', name);
-    lmP.append('subscribers_phone', phone);
-    lmP.append('subscribers_email', email);
-    lmP.append('fld_144377', '1');
-    lmP.append('fld_105911', src);
-    lmP.append('fld_107862', src);
-    lmP.append('lm_supplier', sup);
-    lmP.append('lm_bc', src);
-    lmP.append('fields[REF]', variant || P.get('ref') || '');
-    lmP.append('utm_medium', P.get('utm_medium') || '');
-    lmP.append('utm_campaign', P.get('utm_campaign') || '');
-    lmP.append('page', PAGE_ID);
-    lmP.append('video_id', cfg.vimeo);
-    fetch('https://api.leadmanager.co.il/handlers/lm/submit.cms?' + lmP.toString(), {
-      method: 'GET', mode: 'no-cors'
-    }).catch(()=>{});
-    document.getElementById('formFields').style.display='none';
-    document.getElementById('successMsg').classList.add('show');
-  })
-  .catch(()=>{
-    btn.disabled=false; btn.textContent='לשליחת פרטים >>';
-    alert('שגיאה בשליחה, נסה שוב');
-  });
+  }).catch(()=>{});
+
+  /* ── LEADMANAGER ── */
+  const lmP = new URLSearchParams();
+  lmP.append('lm_form', '89940');
+  lmP.append('lm_key', 'd0f578976510416caa04130780197377');
+  lmP.append('subscribers_name', name);
+  lmP.append('subscribers_phone', phone);
+  lmP.append('subscribers_email', email);
+  lmP.append('fld_144377', '1');
+  lmP.append('fld_105911', src);
+  lmP.append('fld_107862', src);
+  lmP.append('lm_supplier', sup);
+  lmP.append('lm_bc', src);
+  lmP.append('fields[REF]', variant || P.get('ref') || '');
+  lmP.append('utm_medium', P.get('utm_medium') || '');
+  lmP.append('utm_campaign', P.get('utm_campaign') || '');
+  lmP.append('page', PAGE_ID);
+  lmP.append('video_id', cfg.vimeo);
+  fetch('https://api.leadmanager.co.il/handlers/lm/submit.cms?' + lmP.toString(), {
+    method: 'GET', mode: 'no-cors'
+  }).catch(()=>{});
+
+  /* Always show success immediately */
+  document.getElementById('formFields').style.display='none';
+  document.getElementById('successMsg').classList.add('show');
 }
 
 /* ══════════════════════════════════════════
