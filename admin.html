@@ -3,486 +3,425 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>דיגיטל אונליין | ניהול תוכן</title>
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700;800;900&family=Assistant:wght@400;500;600&display=swap" rel="stylesheet"/>
+<title>Admin — ניהול דפי תוכן</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;800;900&display=swap" rel="stylesheet"/>
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Assistant',sans-serif;background:#f0f2f5;color:#1a1a1a;direction:rtl;min-height:100vh}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Heebo',sans-serif;background:#0d0d0d;color:#fff;padding:24px 16px;direction:rtl;}
+h1{font-size:22px;font-weight:900;background:linear-gradient(135deg,#f5c842,#d4920a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px;}
+.subtitle{font-size:13px;color:rgba(255,255,255,.4);margin-bottom:24px;}
+.save-all{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#d4920a,#f5c842);color:#000;font-family:'Heebo',sans-serif;font-size:16px;font-weight:900;border:none;border-radius:8px;padding:12px 28px;cursor:pointer;margin-bottom:20px;transition:opacity .2s;}
+.save-all:hover{opacity:.85;}
+.note{font-size:12px;color:rgba(255,255,255,.35);margin-bottom:20px;line-height:1.6;}
+table{width:100%;border-collapse:collapse;max-width:700px;}
+th{font-size:12px;color:rgba(255,255,255,.4);text-align:right;padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.08);}
+td{padding:6px 10px;border-bottom:1px solid rgba(255,255,255,.05);vertical-align:middle;}
+.pnum{font-size:13px;font-weight:800;color:#f5c842;width:40px;}
+.vinput{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:6px;color:#fff;font-family:'Heebo',sans-serif;font-size:14px;padding:8px 12px;outline:none;transition:border .2s;}
+.vinput:focus{border-color:rgba(212,168,67,.5);background:rgba(255,255,255,.09);}
+.vinput.dirty{border-color:rgba(255,180,50,.5);}
+.preview-btn{display:inline-block;font-size:12px;color:#f5c842;text-decoration:none;padding:4px 10px;border:1px solid rgba(212,168,67,.3);border-radius:4px;white-space:nowrap;}
+.preview-btn:hover{background:rgba(212,168,67,.1);}
+.status{font-size:11px;min-width:60px;display:inline-block;}
+.status.saved{color:#4ade80;}
+.status.error{color:#f87171;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a1a1a;border:1px solid rgba(212,168,67,.4);border-radius:10px;padding:12px 24px;font-size:14px;font-weight:700;color:#f5c842;opacity:0;transition:opacity .4s;pointer-events:none;z-index:999;}
+.toast.show{opacity:1;}
 
-/* LOGIN */
-.login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
-.login-card{background:#fff;border-radius:20px;box-shadow:0 8px 40px rgba(0,0,0,.1);padding:44px 36px;max-width:380px;width:100%;text-align:center}
-.login-logo{font-size:44px;margin-bottom:12px}
-.login-card h1{font-family:'Heebo',sans-serif;font-size:22px;font-weight:900;margin-bottom:6px}
-.login-card .sub{font-size:14px;color:#888;margin-bottom:32px}
-.login-card input{width:100%;height:50px;border:1.5px solid #e0e0e0;border-radius:12px;padding:0 16px;font-size:16px;font-family:'Assistant',sans-serif;margin-bottom:14px;direction:ltr;transition:border-color .2s}
-.login-card input:focus{border-color:#00C853;outline:none;box-shadow:0 0 0 3px rgba(0,200,83,.1)}
-.login-btn{width:100%;height:50px;background:#00C853;color:#fff;font-family:'Heebo',sans-serif;font-size:18px;font-weight:800;border:none;border-radius:12px;cursor:pointer;transition:background .2s}
-.login-btn:hover{background:#00A843}
-.login-err{color:#e53935;font-size:13px;margin-top:10px;display:none}
+.title-section{max-width:700px;background:rgba(255,255,255,.04);border:1px solid rgba(212,168,67,.2);border-radius:10px;padding:16px 18px;margin-bottom:18px;}
+.title-label{display:block;font-size:12px;color:rgba(255,255,255,.45);margin-bottom:6px;font-weight:700;}
+.title-input{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:6px;color:#fff;font-family:'Heebo',sans-serif;font-size:15px;padding:10px 14px;outline:none;resize:vertical;transition:border .2s;direction:rtl;}
+.title-input:focus{border-color:rgba(212,168,67,.5);}
 
-/* ADMIN */
-.admin{display:none}
-.topbar{background:#fff;border-bottom:1px solid #e0e0e0;padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
-.topbar h1{font-family:'Heebo',sans-serif;font-size:16px;font-weight:900}
-.badge{background:#00C853;color:#fff;font-size:10px;font-weight:800;border-radius:6px;padding:2px 8px;margin-right:8px}
-.logout-btn{background:none;border:1px solid #ddd;border-radius:8px;padding:7px 16px;font-family:'Heebo',sans-serif;font-size:13px;cursor:pointer;color:#666}
-.logout-btn:hover{background:#f5f5f5}
-
-/* TABS */
-.nav-tabs{background:#fff;border-bottom:1px solid #e0e0e0;padding:0 24px;display:flex;gap:4px;overflow-x:auto}
-.tab{padding:14px 18px;font-family:'Heebo',sans-serif;font-size:13px;font-weight:700;color:#888;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:all .2s;user-select:none}
-.tab:hover{color:#333}
-.tab.active{color:#00C853;border-bottom-color:#00C853}
-
-/* MAIN */
-.admin-main{max-width:760px;margin:0 auto;padding:28px 20px 100px}
-.tab-panel{display:none}
-.tab-panel.active{display:block}
-
-/* CARD */
-.sec-card{background:#fff;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,.06);margin-bottom:20px;overflow:hidden}
-.sec-header{padding:18px 22px;border-bottom:1px solid #f5f5f5;display:flex;align-items:center;gap:12px}
-.sec-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.ic-green{background:#e8f5e9}
-.ic-blue{background:#e3f2fd}
-.ic-orange{background:#fff3e0}
-.ic-purple{background:#f3e5f5}
-.ic-pink{background:#fce4ec}
-.sec-title{font-family:'Heebo',sans-serif;font-size:15px;font-weight:900;color:#1a1a1a}
-.sec-sub{font-size:12px;color:#aaa;margin-top:2px}
-.sec-body{padding:22px}
-
-/* FIELDS */
-.field{margin-bottom:18px}
-.field:last-child{margin-bottom:0}
-.fl{font-family:'Heebo',sans-serif;font-size:13px;font-weight:700;color:#333;margin-bottom:5px}
-.fh{font-size:11px;color:#bbb;margin-bottom:7px;line-height:1.5}
-.field input[type=text],.field textarea{width:100%;border:1.5px solid #e0e0e0;border-radius:10px;padding:11px 14px;font-size:14px;font-family:'Assistant',sans-serif;color:#1a1a1a;transition:border-color .2s,box-shadow .2s;direction:rtl;resize:vertical}
-.field input[type=text]:focus,.field textarea:focus{border-color:#00C853;outline:none;box-shadow:0 0 0 3px rgba(0,200,83,.1)}
-.url-input{direction:ltr!important;text-align:left!important}
-.url-input:focus{border-color:#2962FF!important;box-shadow:0 0 0 3px rgba(41,98,255,.1)!important}
-.field-div{height:1px;background:#f5f5f5;margin:18px 0}
-
-/* STATUS */
-.spill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;font-family:'Heebo',sans-serif;border-radius:20px;padding:3px 10px;margin-top:6px}
-.spill.ok{background:#e8f5e9;color:#00913c}
-.spill.mt{background:#fff8e1;color:#f57f17}
-
-/* VIDEO PREVIEW */
-.vprev{margin-top:10px;display:none}
-.vprev video{width:100%;border-radius:10px;max-height:130px;object-fit:contain;background:#000;border:1px solid #e8e8e8}
-
-/* PREVIEW LINK */
-.prev-link{display:inline-flex;align-items:center;gap:5px;margin-top:14px;font-family:'Heebo',sans-serif;font-size:13px;font-weight:700;color:#00913c;text-decoration:none}
-.prev-link:hover{text-decoration:underline}
-
-/* INFO BOX */
-.info-box{background:#fff8e1;border:1px solid #ffe082;border-radius:12px;padding:16px;font-size:13px;color:#795548;line-height:1.75}
-
-/* LINKS GRID */
-.lg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.lc{background:#f8f9fa;border:1px solid #e8e8e8;border-radius:12px;padding:14px;text-align:center}
-.lc .le{font-size:22px;margin-bottom:6px}
-.lc .lt{font-family:'Heebo',sans-serif;font-size:12px;font-weight:800;color:#333;margin-bottom:5px}
-.lc a{font-size:11px;color:#00913c;word-break:break-all;display:block;margin-bottom:8px;text-decoration:none}
-.lc a:hover{text-decoration:underline}
-.cbtn{width:100%;background:#1a1a1a;color:#fff;border:none;border-radius:7px;padding:7px;font-size:12px;font-family:'Heebo',sans-serif;font-weight:700;cursor:pointer;transition:background .2s}
-.cbtn:hover{background:#333}
-
-/* SAVE BAR */
-.save-bar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e0e0e0;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;z-index:99;box-shadow:0 -4px 20px rgba(0,0,0,.06)}
-.unsaved-msg{font-family:'Heebo',sans-serif;font-size:13px;color:#ff9800;display:flex;align-items:center;gap:6px;visibility:hidden}
-.unsaved-msg.show{visibility:visible}
-.save-btn{background:#00C853;color:#fff;font-family:'Heebo',sans-serif;font-size:16px;font-weight:800;border:none;border-radius:12px;padding:12px 40px;cursor:pointer;transition:background .2s,transform .15s}
-.save-btn:hover{background:#00A843;transform:translateY(-1px)}
-
-/* TOAST */
-.toast{position:fixed;bottom:84px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;font-family:'Heebo',sans-serif;font-size:14px;font-weight:700;padding:13px 28px;border-radius:12px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
-.toast.show{opacity:1}
-
-@media(max-width:520px){.lg{grid-template-columns:1fr}.save-bar{flex-direction:column;gap:10px;text-align:center}.admin-main{padding-bottom:120px}}
 </style>
 </head>
 <body>
-
-<!-- LOGIN -->
-<div class="login-screen" id="loginScreen">
-  <div class="login-card">
-    <div class="login-logo">🎬</div>
-    <h1>כניסה לניהול תוכן</h1>
-    <p class="sub">דיגיטל אונליין — פאנל עריכה</p>
-    <input type="password" id="passInput" placeholder="סיסמה"/>
-    <button class="login-btn" onclick="tryLogin()">כניסה →</button>
-    <p class="login-err" id="loginErr">❌ סיסמה שגויה</p>
-  </div>
+<h1>ניהול דפי תוכן — 50 דפים</h1>
+<p class="subtitle">כל יום 5 דקות — שמזיזות אותך קדימה</p>
+<p class="note">
+  הכנס Vimeo ID לכל דף (המספר בלבד, לדוגמה: <strong>1178990134</strong>)<br>
+  הכותרת קבועה בכל הדפים — רק הסרטון משתנה.<br>
+  לינק לדף: <strong>funnel.digitalonline.co.il/lp.html?p=1</strong> (שנה את המספר)
+</p>
+<div class="title-section">
+  <label class="title-label">כותרת קבועה לכל הדפים:</label>
+  <input class="title-input" id="fixedTitle" type="text" value="כל יום 5 דקות — שמזיזות אותך קדימה" placeholder="כותרת..."/>
+  <label class="title-label" style="margin-top:10px;">תת כותרת קבועה לכל הדפים:</label>
+  <textarea class="title-input" id="fixedSub" rows="2" placeholder="תת כותרת...">לא תיאוריה. לא מוטיבציה ריקה.
+👉 תוכן קצר יומי שמחדד חשיבה ומייצר תנועה אמיתית</textarea>
 </div>
-
-<!-- ADMIN -->
-<div class="admin" id="adminWrap">
-
-  <div class="topbar">
-    <div style="display:flex;align-items:center">
-      <span class="badge">דיגיטל אונליין</span>
-      <h1>ניהול תוכן 🎬</h1>
-    </div>
-    <button class="logout-btn" onclick="logout()">יציאה</button>
-  </div>
-
-  <div class="nav-tabs">
-    <div class="tab active" data-tab="funnel">🎬 סרטוני פאנל</div>
-    <div class="tab" data-tab="content">📄 דפי תוכן</div>
-    <div class="tab" data-tab="links">🔗 קישורים</div>
-  </div>
-
-  <div class="admin-main">
-
-    <!-- TAB: FUNNEL -->
-    <div class="tab-panel active" id="tab-funnel">
-
-      <div class="sec-card">
-        <div class="sec-header">
-          <div class="sec-icon ic-pink">✅</div>
-          <div><div class="sec-title">סרטון דף תודה</div><div class="sec-sub">מופיע מיד אחרי שמישהו משאיר פרטים</div></div>
-        </div>
-        <div class="sec-body">
-          <div class="field">
-            <div class="fl">🎬 כתובת הסרטון</div>
-            <div class="fh">שם קובץ בתיקיית assets — או לינק מ-Google Drive / YouTube</div>
-            <input type="text" class="url-input" id="f_vidTY" placeholder="assets/video-1.mp4" oninput="onVid(this,'pTY','sTY')"/>
-            <div class="spill mt" id="sTY">ריק</div>
-            <div class="vprev" id="pTY"><video controls><source id="vsTY" src=""/></video></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="sec-card">
-        <div class="sec-header">
-          <div class="sec-icon ic-green">1️⃣</div>
-          <div><div class="sec-title">הדרכה 1 — תמיד פתוחה</div><div class="sec-sub">כולם רואים אותה — הסרטון הראשון</div></div>
-        </div>
-        <div class="sec-body">
-          <div class="field">
-            <div class="fl">🎬 כתובת הסרטון</div>
-            <input type="text" class="url-input" id="f_v1" placeholder="assets/funnel-video-1.mp4" oninput="onVid(this,'p1','s1')"/>
-            <div class="spill mt" id="s1">ריק</div>
-            <div class="vprev" id="p1"><video controls><source id="vs1" src=""/></video></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="sec-card">
-        <div class="sec-header">
-          <div class="sec-icon ic-blue">2️⃣</div>
-          <div><div class="sec-title">הדרכה 2 — נפתחת אחרי סיום 1</div><div class="sec-sub">חייבים לסיים סרטון 1 כדי לראות את זה</div></div>
-        </div>
-        <div class="sec-body">
-          <div class="field">
-            <div class="fl">🎬 כתובת הסרטון</div>
-            <input type="text" class="url-input" id="f_v2" placeholder="assets/funnel-video-2.mp4" oninput="onVid(this,'p2','s2')"/>
-            <div class="spill mt" id="s2">ריק</div>
-            <div class="vprev" id="p2"><video controls><source id="vs2" src=""/></video></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="sec-card">
-        <div class="sec-header">
-          <div class="sec-icon ic-orange">3️⃣</div>
-          <div><div class="sec-title">הדרכה 3 — נפתחת אחרי סיום 2</div><div class="sec-sub">חייבים לסיים סרטון 2 כדי לראות את זה</div></div>
-        </div>
-        <div class="sec-body">
-          <div class="field">
-            <div class="fl">🎬 כתובת הסרטון</div>
-            <input type="text" class="url-input" id="f_v3" placeholder="assets/funnel-video-3.mp4" oninput="onVid(this,'p3','s3')"/>
-            <div class="spill mt" id="s3">ריק</div>
-            <div class="vprev" id="p3"><video controls><source id="vs3" src=""/></video></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="sec-card">
-        <div class="sec-header">
-          <div class="sec-icon ic-purple">4️⃣</div>
-          <div><div class="sec-title">הדרכה 4 — נפתחת אחרי סיום 3</div><div class="sec-sub">הסרטון האחרון בפאנל</div></div>
-        </div>
-        <div class="sec-body">
-          <div class="field">
-            <div class="fl">🎬 כתובת הסרטון</div>
-            <input type="text" class="url-input" id="f_v4" placeholder="assets/funnel-video-4.mp4" oninput="onVid(this,'p4','s4')"/>
-            <div class="spill mt" id="s4">ריק</div>
-            <div class="vprev" id="p4"><video controls><source id="vs4" src=""/></video></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="info-box">
-        <strong>💡 3 דרכים להחליף סרטון:</strong><br><br>
-        <strong>🔵 Google Drive (מומלץ):</strong><br>
-        1. העלה ל-Drive → לחץ ימני → "שתף" → "כל מי שיש לו לינק"<br>
-        2. העתק לינק → הדבק כאן → הלינק מתמיר אוטומטית ✅<br><br>
-        <strong>🔴 YouTube:</strong><br>
-        1. העלה ב-YouTube כ-Unlisted → העתק לינק → הדבק כאן ✅<br><br>
-        <strong>⚫ GitHub assets:</strong><br>
-        העלה קובץ לתיקיית assets ← כתוב: <strong>assets/שם.mp4</strong>
-      </div>
-    </div>
-
-    <!-- TAB: CONTENT -->
-    <div class="tab-panel" id="tab-content">
-
-      <div class="sec-card">
-        <div class="sec-header">
-          <div class="sec-icon ic-green">📄</div>
-          <div><div class="sec-title">דף תוכן 1</div><div class="sec-sub">content-page-1.html</div></div>
-        </div>
-        <div class="sec-body">
-          <div class="field">
-            <div class="fl">✏️ כותרת הדף</div>
-            <div class="fh">הכותרת הגדולה שמופיעה בראש הדף</div>
-            <input type="text" id="c1_title" placeholder="לדוגמה: הדרכה מיוחדת לחברי הקבוצה" oninput="dirty()"/>
-          </div>
-          <div class="field">
-            <div class="fl">📝 תיאור קצר</div>
-            <div class="fh">כמה משפטים מתחת לכותרת</div>
-            <textarea id="c1_desc" rows="3" placeholder="לדוגמה: בסרטון הזה תראה בדיוק איך..." oninput="dirty()"></textarea>
-          </div>
-          <div class="field">
-            <div class="fl">📌 טקסט מתחת לסרטון</div>
-            <input type="text" id="c1_below" placeholder="לדוגמה: זה רק 5 דקות — שווה כל שנייה" oninput="dirty()"/>
-          </div>
-          <div class="field-div"></div>
-          <div class="field">
-            <div class="fl">🎬 כתובת הסרטון</div>
-            <input type="text" class="url-input" id="c1_vid" placeholder="assets/video-1.mp4 או URL חיצוני" oninput="onVid(this,'pc1','sc1')"/>
-            <div class="spill mt" id="sc1">ריק</div>
-            <div class="vprev" id="pc1"><video controls><source id="vsc1" src=""/></video></div>
-          </div>
-          <div class="field-div"></div>
-          <div class="field">
-            <div class="fl">🔗 כפתור CTA (אופציונלי)</div>
-            <div class="fh">השאר ריק אם לא צריך כפתור</div>
-            <input type="text" id="c1_ctaTxt" placeholder="טקסט מעל הכפתור — לדוגמה: רוצה להמשיך?" oninput="dirty()" style="margin-bottom:8px"/>
-            <input type="text" id="c1_ctaBtn" placeholder="טקסט הכפתור — לדוגמה: לחץ כאן" oninput="dirty()" style="margin-bottom:8px"/>
-            <input type="text" class="url-input" id="c1_ctaUrl" placeholder="https://... כתובת היעד" oninput="dirty()"/>
-          </div>
-          <a class="prev-link" href="content-page-1.html" target="_blank">👁️ תצוגה מקדימה →</a>
-        </div>
-      </div>
-
-      <div class="sec-card">
-        <div class="sec-header">
-          <div class="sec-icon ic-blue">📄</div>
-          <div><div class="sec-title">דף תוכן 2</div><div class="sec-sub">content-page-2.html</div></div>
-        </div>
-        <div class="sec-body">
-          <div class="field">
-            <div class="fl">✏️ כותרת הדף</div>
-            <input type="text" id="c2_title" placeholder="לדוגמה: שלב הבא — מה עושים עכשיו?" oninput="dirty()"/>
-          </div>
-          <div class="field">
-            <div class="fl">📝 תיאור קצר</div>
-            <textarea id="c2_desc" rows="3" placeholder="לדוגמה: עכשיו שהבנת את הבסיס..." oninput="dirty()"></textarea>
-          </div>
-          <div class="field">
-            <div class="fl">📌 טקסט מתחת לסרטון</div>
-            <input type="text" id="c2_below" placeholder="לדוגמה: שמור את הלינק הזה לחזרה" oninput="dirty()"/>
-          </div>
-          <div class="field-div"></div>
-          <div class="field">
-            <div class="fl">🎬 כתובת הסרטון</div>
-            <input type="text" class="url-input" id="c2_vid" placeholder="assets/video-2.mp4 או URL חיצוני" oninput="onVid(this,'pc2','sc2')"/>
-            <div class="spill mt" id="sc2">ריק</div>
-            <div class="vprev" id="pc2"><video controls><source id="vsc2" src=""/></video></div>
-          </div>
-          <div class="field-div"></div>
-          <div class="field">
-            <div class="fl">🔗 כפתור CTA (אופציונלי)</div>
-            <input type="text" id="c2_ctaTxt" placeholder="טקסט מעל הכפתור" oninput="dirty()" style="margin-bottom:8px"/>
-            <input type="text" id="c2_ctaBtn" placeholder="טקסט הכפתור" oninput="dirty()" style="margin-bottom:8px"/>
-            <input type="text" class="url-input" id="c2_ctaUrl" placeholder="https://..." oninput="dirty()"/>
-          </div>
-          <a class="prev-link" href="content-page-2.html" target="_blank">👁️ תצוגה מקדימה →</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB: LINKS -->
-    <div class="tab-panel" id="tab-links">
-      <div class="sec-card">
-        <div class="sec-header">
-          <div class="sec-icon ic-green">🔗</div>
-          <div><div class="sec-title">כל הקישורים — העתק בלחיצה</div></div>
-        </div>
-        <div class="sec-body">
-          <div class="lg">
-            <div class="lc"><div class="le">🟢</div><div class="lt">דף נחיתה ירוק</div><a href="landing_option1.html" target="_blank">landing_option1.html</a><button class="cbtn" onclick="cp('https://richard36901-source.github.io/digital-online/landing_option1.html')">📋 העתק</button></div>
-            <div class="lc"><div class="le">🟠</div><div class="lt">דף נחיתה כתום</div><a href="landing_option2.html" target="_blank">landing_option2.html</a><button class="cbtn" onclick="cp('https://richard36901-source.github.io/digital-online/landing_option2.html')">📋 העתק</button></div>
-            <div class="lc"><div class="le">🔵</div><div class="lt">דף נחיתה כחול</div><a href="landing_option3.html" target="_blank">landing_option3.html</a><button class="cbtn" onclick="cp('https://richard36901-source.github.io/digital-online/landing_option3.html')">📋 העתק</button></div>
-            <div class="lc"><div class="le">✅</div><div class="lt">דף תודה ירוק</div><a href="thankyou.html" target="_blank">thankyou.html</a><button class="cbtn" onclick="cp('https://richard36901-source.github.io/digital-online/thankyou.html')">📋 העתק</button></div>
-            <div class="lc"><div class="le">🎬</div><div class="lt">פאנל — סרטון 1</div><a href="funnel-video-1.html" target="_blank">funnel-video-1.html</a><button class="cbtn" onclick="cp('https://richard36901-source.github.io/digital-online/funnel-video-1.html')">📋 העתק</button></div>
-            <div class="lc"><div class="le">📄</div><div class="lt">דף תוכן 1</div><a href="content-page-1.html" target="_blank">content-page-1.html</a><button class="cbtn" onclick="cp('https://richard36901-source.github.io/digital-online/content-page-1.html')">📋 העתק</button></div>
-            <div class="lc"><div class="le">📄</div><div class="lt">דף תוכן 2</div><a href="content-page-2.html" target="_blank">content-page-2.html</a><button class="cbtn" onclick="cp('https://richard36901-source.github.io/digital-online/content-page-2.html')">📋 העתק</button></div>
-            <div class="lc"><div class="le">📊</div><div class="lt">Google Sheets</div><a href="https://docs.google.com/spreadsheets/d/12YXxvoZqFX2nFIjtT-QLG2ooB9sCsDy2uMbP4jE1Hhc/edit" target="_blank">פתח גיליון</a><button class="cbtn" onclick="cp('https://docs.google.com/spreadsheets/d/12YXxvoZqFX2nFIjtT-QLG2ooB9sCsDy2uMbP4jE1Hhc/edit')">📋 העתק</button></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- SAVE BAR -->
-  <div class="save-bar">
-    <div class="unsaved-msg" id="unsavedMsg">⚠️ יש שינויים שלא נשמרו</div>
-    <button class="save-btn" onclick="saveAll()">💾 שמור הכל</button>
-  </div>
-</div>
-
+<button class="save-all" onclick="saveAll()">💾 שמור הכל ועדכן את lp.html</button>
+<table>
+  <thead>
+    <tr>
+      <th>דף</th>
+      <th>Vimeo ID</th>
+      <th>תצוגה מקדימה</th>
+      <th>סטטוס</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td class="pnum">1</td>
+        <td><input class="vinput" id="v1" type="text" placeholder="Vimeo ID" value="1178990134" oninput="markDirty(1)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=1" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s1"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">2</td>
+        <td><input class="vinput" id="v2" type="text" placeholder="Vimeo ID" value="1178990248" oninput="markDirty(2)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=2" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s2"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">3</td>
+        <td><input class="vinput" id="v3" type="text" placeholder="Vimeo ID" value="1178990207" oninput="markDirty(3)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=3" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s3"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">4</td>
+        <td><input class="vinput" id="v4" type="text" placeholder="Vimeo ID" value="1178990178" oninput="markDirty(4)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=4" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s4"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">5</td>
+        <td><input class="vinput" id="v5" type="text" placeholder="Vimeo ID" value="1178990134" oninput="markDirty(5)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=5" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s5"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">6</td>
+        <td><input class="vinput" id="v6" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(6)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=6" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s6"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">7</td>
+        <td><input class="vinput" id="v7" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(7)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=7" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s7"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">8</td>
+        <td><input class="vinput" id="v8" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(8)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=8" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s8"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">9</td>
+        <td><input class="vinput" id="v9" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(9)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=9" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s9"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">10</td>
+        <td><input class="vinput" id="v10" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(10)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=10" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s10"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">11</td>
+        <td><input class="vinput" id="v11" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(11)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=11" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s11"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">12</td>
+        <td><input class="vinput" id="v12" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(12)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=12" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s12"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">13</td>
+        <td><input class="vinput" id="v13" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(13)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=13" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s13"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">14</td>
+        <td><input class="vinput" id="v14" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(14)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=14" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s14"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">15</td>
+        <td><input class="vinput" id="v15" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(15)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=15" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s15"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">16</td>
+        <td><input class="vinput" id="v16" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(16)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=16" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s16"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">17</td>
+        <td><input class="vinput" id="v17" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(17)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=17" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s17"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">18</td>
+        <td><input class="vinput" id="v18" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(18)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=18" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s18"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">19</td>
+        <td><input class="vinput" id="v19" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(19)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=19" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s19"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">20</td>
+        <td><input class="vinput" id="v20" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(20)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=20" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s20"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">21</td>
+        <td><input class="vinput" id="v21" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(21)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=21" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s21"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">22</td>
+        <td><input class="vinput" id="v22" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(22)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=22" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s22"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">23</td>
+        <td><input class="vinput" id="v23" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(23)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=23" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s23"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">24</td>
+        <td><input class="vinput" id="v24" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(24)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=24" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s24"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">25</td>
+        <td><input class="vinput" id="v25" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(25)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=25" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s25"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">26</td>
+        <td><input class="vinput" id="v26" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(26)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=26" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s26"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">27</td>
+        <td><input class="vinput" id="v27" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(27)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=27" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s27"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">28</td>
+        <td><input class="vinput" id="v28" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(28)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=28" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s28"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">29</td>
+        <td><input class="vinput" id="v29" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(29)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=29" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s29"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">30</td>
+        <td><input class="vinput" id="v30" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(30)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=30" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s30"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">31</td>
+        <td><input class="vinput" id="v31" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(31)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=31" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s31"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">32</td>
+        <td><input class="vinput" id="v32" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(32)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=32" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s32"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">33</td>
+        <td><input class="vinput" id="v33" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(33)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=33" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s33"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">34</td>
+        <td><input class="vinput" id="v34" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(34)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=34" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s34"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">35</td>
+        <td><input class="vinput" id="v35" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(35)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=35" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s35"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">36</td>
+        <td><input class="vinput" id="v36" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(36)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=36" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s36"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">37</td>
+        <td><input class="vinput" id="v37" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(37)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=37" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s37"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">38</td>
+        <td><input class="vinput" id="v38" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(38)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=38" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s38"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">39</td>
+        <td><input class="vinput" id="v39" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(39)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=39" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s39"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">40</td>
+        <td><input class="vinput" id="v40" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(40)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=40" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s40"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">41</td>
+        <td><input class="vinput" id="v41" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(41)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=41" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s41"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">42</td>
+        <td><input class="vinput" id="v42" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(42)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=42" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s42"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">43</td>
+        <td><input class="vinput" id="v43" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(43)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=43" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s43"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">44</td>
+        <td><input class="vinput" id="v44" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(44)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=44" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s44"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">45</td>
+        <td><input class="vinput" id="v45" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(45)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=45" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s45"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">46</td>
+        <td><input class="vinput" id="v46" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(46)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=46" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s46"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">47</td>
+        <td><input class="vinput" id="v47" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(47)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=47" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s47"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">48</td>
+        <td><input class="vinput" id="v48" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(48)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=48" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s48"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">49</td>
+        <td><input class="vinput" id="v49" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(49)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=49" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s49"></span></td>
+      </tr>
+      <tr>
+        <td class="pnum">50</td>
+        <td><input class="vinput" id="v50" type="text" placeholder="Vimeo ID" value="" oninput="markDirty(50)"/></td>
+        <td><a class="preview-btn" href="lp.html?p=50" target="_blank">צפייה</a></td>
+        <td><span class="status" id="s50"></span></td>
+      </tr>
+  </tbody>
+</table>
 <div class="toast" id="toast"></div>
 
 <script>
-const PASS='digital2025'; /* ← שנה סיסמה כאן */
-const FK='do_admin_vids';
-const CK='do_admin_content';
+var dirty = {};
+function markDirty(n){ dirty[n]=true; document.getElementById('v'+n).classList.add('dirty'); }
 
-/* AUTH */
-function tryLogin(){
-  if(document.getElementById('passInput').value===PASS){
-    sessionStorage.setItem('do_auth','1');
-    showAdmin();
-  }else{
-    document.getElementById('loginErr').style.display='block';
-    document.getElementById('passInput').value='';
+function saveAll(){
+  // Build the new PAGES object
+  var lines = [];
+  var fixedHL = document.getElementById('fixedTitle').value.trim() || 'כל יום 5 דקות — שמזיזות אותך קדימה';
+  var fixedSub = document.getElementById('fixedSub').value.trim().replace(/\n/g,'<br>') || 'לא תיאוריה. לא מוטיבציה ריקה.<br>👉 תוכן קצר יומי שמחדד חשיבה ומייצר תנועה אמיתית';
+  for(var i=1;i<=50;i++){
+    var vimeo = document.getElementById('v'+i).value.trim();
+    lines.push('  '+i+':{vimeo:\''+vimeo+'\',hlTop:\'צפה עכשיו:\',hlMain:\''+fixedHL+'\',subline:\''+fixedSub+'\'}');
   }
-}
-document.getElementById('passInput').addEventListener('keydown',e=>{if(e.key==='Enter')tryLogin();});
-function logout(){sessionStorage.removeItem('do_auth');location.reload();}
-function showAdmin(){
-  document.getElementById('loginScreen').style.display='none';
-  document.getElementById('adminWrap').style.display='block';
-  loadAll();
-}
-if(sessionStorage.getItem('do_auth')==='1') window.addEventListener('DOMContentLoaded',showAdmin);
+  var pagesJs = 'var PAGES = {\n' + lines.join(',\n') + '\n};';
 
-/* TABS */
-document.querySelectorAll('.tab').forEach(tab=>{
-  tab.addEventListener('click',()=>{
-    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
-    tab.classList.add('active');
-    document.getElementById('tab-'+tab.dataset.tab).classList.add('active');
+  // Copy to clipboard
+  navigator.clipboard.writeText(pagesJs).then(function(){
+    showToast('✅ הקוד הועתק! הדבק בתוך lp.html בתוך var PAGES = {...}');
+    for(var i=1;i<=50;i++){
+      document.getElementById('v'+i).classList.remove('dirty');
+      document.getElementById('s'+i).textContent='✓';
+      document.getElementById('s'+i).className='status saved';
+    }
+    dirty={};
+  }).catch(function(){
+    showToast('❌ שגיאה בהעתקה — נסה שוב');
   });
+}
+
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},4000);
+}
+
+// Load saved values from localStorage
+window.addEventListener('DOMContentLoaded',function(){
+  for(var i=1;i<=50;i++){
+    var saved=localStorage.getItem('vimeo_'+i);
+    if(saved){document.getElementById('v'+i).value=saved;}
+  }
+  var t=localStorage.getItem('fixedTitle');
+  var s=localStorage.getItem('fixedSub');
+  if(t)document.getElementById('fixedTitle').value=t;
+  if(s)document.getElementById('fixedSub').value=s;
 });
 
-/* VIDEO INPUT */
-function onVid(input,prevId,statId){
-  const val=input.value.trim();
-  const stat=document.getElementById(statId);
-  const prev=document.getElementById(prevId);
-  const src=prev.querySelector('source');
-  if(val){
-    stat.textContent='✅ יש כתובת';stat.className='spill ok';
-    src.src=val;prev.style.display='block';prev.querySelector('video').load();
-  }else{
-    stat.textContent='ריק';stat.className='spill mt';prev.style.display='none';
+// Auto-save to localStorage on input
+document.addEventListener('input',function(e){
+  if(e.target.classList.contains('vinput')){
+    var id=e.target.id.replace('v','');
+    localStorage.setItem('vimeo_'+id,e.target.value);
   }
-  dirty();
-}
-
-/* DIRTY STATE */
-let isDirty=false;
-function dirty(){
-  isDirty=true;
-  document.getElementById('unsavedMsg').classList.add('show');
-}
-
-/* SAVE */
-function saveAll(){
-  localStorage.setItem(FK,JSON.stringify({
-    vidTY:v('f_vidTY'),v1:v('f_v1'),v2:v('f_v2'),v3:v('f_v3'),v4:v('f_v4'),
-    savedAt:new Date().toLocaleString('he-IL')
-  }));
-  localStorage.setItem(CK,JSON.stringify({
-    page1:{title:v('c1_title'),desc:v('c1_desc'),below:v('c1_below'),videoUrl:v('c1_vid'),ctaTxt:v('c1_ctaTxt'),ctaBtn:v('c1_ctaBtn'),ctaUrl:v('c1_ctaUrl')},
-    page2:{title:v('c2_title'),desc:v('c2_desc'),below:v('c2_below'),videoUrl:v('c2_vid'),ctaTxt:v('c2_ctaTxt'),ctaBtn:v('c2_ctaBtn'),ctaUrl:v('c2_ctaUrl')}
-  }));
-  isDirty=false;
-  document.getElementById('unsavedMsg').classList.remove('show');
-  toast('✅ נשמר בהצלחה!');
-}
-
-/* LOAD */
-function loadAll(){
-  try{
-    const f=JSON.parse(localStorage.getItem(FK)||'{}');
-    const fmap={vidTY:'f_vidTY',v1:'f_v1',v2:'f_v2',v3:'f_v3',v4:'f_v4'};
-    const pmap={vidTY:['pTY','sTY'],v1:['p1','s1'],v2:['p2','s2'],v3:['p3','s3'],v4:['p4','s4']};
-    Object.entries(fmap).forEach(([k,id])=>{
-      if(f[k]){const el=document.getElementById(id);el.value=f[k];onVid(el,...pmap[k]);}
-    });
-  }catch(e){}
-  try{
-    const c=JSON.parse(localStorage.getItem(CK)||'{}');
-    const cmap={
-      page1:['c1_title','c1_desc','c1_below','c1_vid','c1_ctaTxt','c1_ctaBtn','c1_ctaUrl','pc1','sc1'],
-      page2:['c2_title','c2_desc','c2_below','c2_vid','c2_ctaTxt','c2_ctaBtn','c2_ctaUrl','pc2','sc2']
-    };
-    ['page1','page2'].forEach(pg=>{
-      if(!c[pg])return;
-      const p=c[pg],[t,d,b,vid,ct,cb,cu,pv,sv]=cmap[pg];
-      sv_(t,p.title);sv_(d,p.desc);sv_(b,p.below);
-      sv_(ct,p.ctaTxt);sv_(cb,p.ctaBtn);sv_(cu,p.ctaUrl);
-      if(p.videoUrl){const el=document.getElementById(vid);el.value=p.videoUrl;onVid(el,pv,sv);}
-    });
-  }catch(e){}
-  isDirty=false;
-  document.getElementById('unsavedMsg').classList.remove('show');
-}
-
-function v(id){return(document.getElementById(id)||{}).value?.trim()||'';}
-function sv_(id,val){if(val&&document.getElementById(id))document.getElementById(id).value=val;}
-
-/* TOAST */
-function toast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2800);
-}
-
-/* COPY */
-function cp(url){navigator.clipboard.writeText(url).then(()=>toast('✅ הלינק הועתק!'));}
-
-
-/* GOOGLE DRIVE URL CONVERTER */
-function convertDriveUrl(url) {
-  if (!url) return url;
-  // Handle drive.google.com/file/d/FILE_ID/view
-  const match = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
-  if (match) {
-    return 'https://drive.google.com/uc?export=download&id=' + match[1];
-  }
-  // Handle drive.google.com/open?id=FILE_ID
-  const match2 = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-  if (match2) {
-    return 'https://drive.google.com/uc?export=download&id=' + match2[1];
-  }
-  return url;
-}
-
-/* Override onVid to auto-convert Drive links */
-const _origOnVid = onVid;
-function onVid(input, prevId, statId) {
-  const converted = convertDriveUrl(input.value.trim());
-  if (converted !== input.value.trim()) {
-    input.value = converted;
-    input.style.borderColor = '#2962FF';
-    setTimeout(() => input.style.borderColor = '', 1500);
-  }
-  _origOnVid(input, prevId, statId);
-}
-
-/* WARN UNSAVED */
-window.addEventListener('beforeunload',e=>{if(isDirty){e.preventDefault();e.returnValue='';}});
+  if(e.target.id==='fixedTitle')localStorage.setItem('fixedTitle',e.target.value);
+  if(e.target.id==='fixedSub')localStorage.setItem('fixedSub',e.target.value);
+});
 </script>
 </body>
 </html>
