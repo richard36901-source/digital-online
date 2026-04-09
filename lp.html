@@ -7,611 +7,277 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;800;900&family=Assistant:wght@400;500;600&display=swap" rel="stylesheet"/>
-<!-- GTM -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-WNJN9XQT');</script>
-<!-- Facebook Pixel -->
 <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','10211443525862398');fbq('track','PageView');</script>
+<script src="https://player.vimeo.com/api/player.js"></script>
+<script>
+/* ALL JS IN HEAD — functions available immediately */
+var PAGES = {
+  1:{vimeo:'1178990134',hlTop:'צפה עכשיו:',hlMain:'מה אם זה לא "או זה… או זה"…\nאלא יש לך אפשרות להחזיק את שניהם?',subline:'▶️ צפה עכשיו (5 דקות) &nbsp;&nbsp;⏳ נמחק תוך 24 שעות'},
+  2:{vimeo:'1178990248',hlTop:'צפה עכשיו:',hlMain:'ברגע שאתה משנה את המבט—\nהמציאות שלך מרגישה אחרת לגמרי.',subline:'▶️ צפה עכשיו (5 דקות) &nbsp;&nbsp;⏳ נמחק תוך 24 שעות'},
+  3:{vimeo:'1178990207',hlTop:'צפה עכשיו:',hlMain:'המוח שלך נבנה מהדברים שאתה חוזר עליהם—\n3 שורות ביום יכולות לבנות משהו חדש.',subline:'▶️ צפה עכשיו (5 דקות) &nbsp;&nbsp;⏳ זמין ל־24 שעות בלבד &nbsp;📩 תעביר את זה למי שחשוב לך'},
+  4:{vimeo:'1178990178',hlTop:'צפה עכשיו:',hlMain:'מה אם זה לא ההיגיון שמוביל אותך—\nאלא משהו שקורה הרבה לפניו?',subline:'▶️ צפה עכשיו (5 דקות) &nbsp;&nbsp;⏳ זמין ל־24 שעות בלבד &nbsp;📩 תעביר למישהו שצריך להבין את עצמו'},
+  5:{vimeo:'1178990134',hlTop:'צפה עכשיו:',hlMain:'יש דברים שפעם נחשבו מיתוס—\nוהיום המדע כבר מסתכל עליהם אחרת.',subline:'▶️ צפה עכשיו (5 דקות) &nbsp;&nbsp;⏳ נמחק תוך 24 שעות'}
+};
+
+var WEBHOOK = 'https://hook.eu1.make.com/jp6ukjt7tpk3y4yly9c691g01f47cq8q';
+window.dataLayer = window.dataLayer || [];
+var P = new URLSearchParams(location.search);
+var pageNum = parseInt(P.get('p') || '1');
+var cfg = PAGES[pageNum] || PAGES[1];
+var PAGE_ID = 'lp_video_' + pageNum;
+var variant = P.get('variant') || '';
+var sup = P.get('lm_supplier') || P.get('supplier') || '';
+var src = P.get('utm_source') || '';
+
+var player = null;
+var vm = {}; [25,50,75,100].forEach(function(m){vm[m]=0;});
+
+document.addEventListener('DOMContentLoaded', function(){
+  document.getElementById('pageTitle').textContent = cfg.hlMain.split('\n')[0] + ' | דיגיטל אונליין';
+  document.getElementById('hlTop').textContent = cfg.hlTop;
+  document.getElementById('hlMain').innerHTML = cfg.hlMain.replace(/\n/g,'<br>');
+  document.getElementById('subline').innerHTML = cfg.subline;
+  document.getElementById('vimeoPlayer').src = 'https://player.vimeo.com/video/'+cfg.vimeo+'?badge=0&autopause=0&player_id=0&app_id=58479&title=0&byline=0&portrait=0';
+
+  try{dataLayer.push({event:'page_view',page:PAGE_ID,video_id:cfg.vimeo,source_variant:variant,supplier:sup,utm_source:src});}catch(e){}
+  try{if(typeof fbq!=='undefined')fbq('track','PageView');}catch(e){}
+
+  var sd={};[25,50,75,100].forEach(function(d){sd[d]=0;});
+  window.addEventListener('scroll',function(){
+    var s=document.body.scrollHeight-window.innerHeight;if(!s)return;
+    var p=Math.round(window.scrollY/s*100);
+    [25,50,75,100].forEach(function(d){if(!sd[d]&&p>=d){sd[d]=1;try{dataLayer.push({event:'scroll_depth',depth:d+'%',page:PAGE_ID});}catch(e){}}});
+  },{passive:true});
+
+  var t0=Date.now();
+  window.addEventListener('beforeunload',function(){
+    var secs=Math.round((Date.now()-t0)/1000);
+    try{navigator.sendBeacon(WEBHOOK,JSON.stringify({event:'page_exit',page:PAGE_ID,video_id:cfg.vimeo,seconds_on_page:secs,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')}));}catch(e){}
+    try{dataLayer.push({event:'page_time',seconds:secs,page:PAGE_ID});}catch(e){}
+  });
+});
+
+function startVideo(){
+  var thumb=document.getElementById('vidThumb');
+  if(thumb)thumb.classList.add('gone');
+  try{dataLayer.push({event:'cta_click',page:PAGE_ID,video_id:cfg.vimeo});}catch(e){}
+  try{if(typeof fbq!=='undefined')fbq('track','InitiateCheckout');}catch(e){}
+  if(typeof Vimeo==='undefined'){setTimeout(startVideo,200);return;}
+  if(player){player.play();return;}
+  var iframe=document.getElementById('vimeoPlayer');
+  player=new Vimeo.Player(iframe);
+  player.play();
+  player.on('play',function(data){try{dataLayer.push({event:'video_play',page:PAGE_ID,time:Math.round(data.seconds),video_id:cfg.vimeo});}catch(e){}});
+  player.on('pause',function(data){
+    var pos=Math.round(data.seconds),pct=Math.round(data.percent*100);
+    try{dataLayer.push({event:'video_pause',page:PAGE_ID,time:pos,pct_watched:pct,video_id:cfg.vimeo});}catch(e){}
+    fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event:'video_pause',page:PAGE_ID,video_id:cfg.vimeo,position_sec:pos,pct_watched:pct,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')})}).catch(function(){});
+  });
+  player.on('timeupdate',function(data){
+    var fill=document.getElementById('fakeFill');
+    if(fill)fill.style.width=(data.percent*100)+'%';
+    var pct=data.percent*100;
+    [25,50,75,100].forEach(function(m){if(!vm[m]&&pct>=m){vm[m]=1;try{dataLayer.push({event:'video_progress',milestone:m+'%',time:Math.round(data.seconds),page:PAGE_ID,video_id:cfg.vimeo});}catch(e){}}});
+  });
+  player.on('ended',function(){
+    try{dataLayer.push({event:'video_ended',page:PAGE_ID,video_id:cfg.vimeo});}catch(e){}
+    try{if(typeof fbq!=='undefined')fbq('track','ViewContent',{content_name:PAGE_ID});}catch(e){}
+    fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event:'video_completed',page:PAGE_ID,video_id:cfg.vimeo,pct_watched:100,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')})}).catch(function(){});
+  });
+}
+
+function submitForm(){
+  try{
+    var nameEl=document.getElementById('fName');
+    var phoneEl=document.getElementById('fPhone');
+    var emailEl=document.getElementById('fEmail');
+    if(!nameEl||!phoneEl||!emailEl)return;
+    var name=nameEl.value.trim();
+    var phone=phoneEl.value.trim();
+    var email=emailEl.value.trim();
+    var ok=true;
+    ['eName','ePhone','eEmail'].forEach(function(id){var el=document.getElementById(id);if(el)el.classList.remove('show');});
+    if(!name){var en=document.getElementById('eName');if(en)en.classList.add('show');ok=false;}
+    if(!phone){var ep=document.getElementById('ePhone');if(ep)ep.classList.add('show');ok=false;}
+    if(!email||email.indexOf('@')<0){var ee=document.getElementById('eEmail');if(ee)ee.classList.add('show');ok=false;}
+    if(!ok)return;
+    var btn=document.getElementById('submitBtn');
+    if(btn){btn.disabled=true;btn.textContent='שולח…';}
+    var vimeoId=(typeof cfg!=='undefined'&&cfg)?cfg.vimeo:'';
+    var pageId=(typeof PAGE_ID!=='undefined')?PAGE_ID:'lp';
+    var webhook=(typeof WEBHOOK!=='undefined')?WEBHOOK:'https://hook.eu1.make.com/jp6ukjt7tpk3y4yly9c691g01f47cq8q';
+    var supVal=(typeof sup!=='undefined')?sup:'';
+    var srcVal=(typeof src!=='undefined')?src:'';
+    var varVal=(typeof variant!=='undefined')?variant:'';
+    try{if(window.dataLayer)dataLayer.push({event:'form_submit',page:pageId,video_id:vimeoId});}catch(e){}
+    try{if(typeof fbq!=='undefined')fbq('track','Lead');}catch(e){}
+    /* Make webhook */
+    try{fetch(webhook,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({event:'lead_form',page:pageId,video_id:vimeoId,name:name,phone:phone,email:email,supplier:supVal,utm_source:srcVal,variant:varVal,timestamp:new Date().toLocaleString('he-IL')})
+    }).catch(function(){});}catch(e){}
+    /* LeadManager */
+    try{
+      var lmP=new URLSearchParams();
+      lmP.append('lm_form','89940');
+      lmP.append('lm_key','d0f578976510416caa04130780197377');
+      lmP.append('subscribers_name',name);
+      lmP.append('subscribers_phone',phone);
+      lmP.append('subscribers_email',email);
+      lmP.append('fld_144377','1');
+      lmP.append('fld_105911',srcVal);
+      lmP.append('fld_107862',srcVal);
+      lmP.append('lm_supplier',supVal);
+      lmP.append('lm_bc',srcVal);
+      lmP.append('fields[REF]',varVal||(typeof P!=='undefined'?P.get('ref')||'':''));
+      lmP.append('utm_medium',typeof P!=='undefined'?P.get('utm_medium')||'':'');
+      lmP.append('utm_campaign',typeof P!=='undefined'?P.get('utm_campaign')||'':'');
+      lmP.append('page',pageId);
+      lmP.append('video_id',vimeoId);
+      fetch('https://api.leadmanager.co.il/handlers/lm/submit.cms?'+lmP.toString(),{method:'GET',mode:'no-cors'}).catch(function(){});
+    }catch(e){}
+    /* Always show success */
+    var ff=document.getElementById('formFields');
+    var sm=document.getElementById('successMsg');
+    if(ff)ff.style.display='none';
+    if(sm)sm.classList.add('show');
+  }catch(e){
+    var btn2=document.getElementById('submitBtn');
+    if(btn2){btn2.disabled=false;btn2.textContent='לשליחת פרטים >>';}
+    console.error('submitForm error:',e);
+  }
+}
+
+function trackWA(){try{dataLayer.push({event:'wa_click',page:PAGE_ID,video_id:cfg.vimeo});}catch(e){}try{if(typeof fbq!=='undefined')fbq('track','Contact');}catch(e){}}
+function trackIG(){try{dataLayer.push({event:'ig_click',page:PAGE_ID,video_id:cfg.vimeo});}catch(e){}}
+</script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-text-size-adjust:100%}
-
-body{
-  font-family:'Assistant',sans-serif;
-  direction:rtl;
-  overflow-x:hidden;
-  min-height:100svh;
-  /* Dark textured background exactly like screenshot */
-  background-color:#1a1208;
-  background-image:
-    radial-gradient(ellipse 90% 55% at 50% 2%, rgba(180,110,40,.55) 0%, rgba(140,70,15,.3) 30%, transparent 65%),
-    radial-gradient(ellipse 70% 40% at 15% 85%, rgba(90,40,10,.4) 0%, transparent 55%),
-    radial-gradient(ellipse 60% 45% at 85% 70%, rgba(70,30,8,.35) 0%, transparent 50%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
-  background-size:auto,auto,auto,300px 300px;
-  color:#fff;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-}
-
-.wrap{
-  width:100%;
-  max-width:480px;
-  padding:28px 16px 48px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-}
-
-/* ── HEADLINE ── */
-.hl-top{
-  font-family:'Heebo',sans-serif;
-  font-size:clamp(26px,7vw,34px);
-  font-weight:900;
-  color:#fff;
-  text-align:center;
-  line-height:1.2;
-  margin-bottom:2px;
-  text-shadow:0 2px 18px rgba(0,0,0,.7);
-}
-.hl-main{
-  font-family:'Heebo',sans-serif;
-  font-size:clamp(22px,6vw,28px);
-  font-weight:900;
-  color:#fff;
-  text-align:center;
-  line-height:1.25;
-  margin-bottom:10px;
-  text-shadow:0 2px 18px rgba(0,0,0,.7);
-}
-.subline{
-  font-family:'Assistant',sans-serif;
-  font-size:clamp(14px,3.8vw,16px);
-  color:rgba(255,255,255,.8);
-  text-align:center;
-  line-height:1.6;
-  margin-bottom:18px;
-}
-
-/* ── VIDEO BOX ── */
-.vid-box{
-  width:100%;
-  border:2px solid rgba(255,255,255,.18);
-  border-radius:6px;
-  overflow:hidden;
-  background:#000;
-  margin-bottom:14px;
-  position:relative;
-  box-shadow:0 6px 28px rgba(0,0,0,.7);
-}
-.vid-ratio{
-  padding:56.25% 0 0 0;
-  position:relative;
-}
-.vid-ratio iframe{
-  position:absolute;top:0;left:0;
-  width:100%;height:100%;
-  border:none;display:block;
-}
-
-/* Thumbnail overlay with YouTube-style play */
-.vid-thumb{
-  position:absolute;inset:0;
-  display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  cursor:pointer;z-index:5;
-  background:rgba(0,0,0,.25);
-  transition:background .2s;
-}
+body{font-family:'Assistant',sans-serif;direction:rtl;overflow-x:hidden;min-height:100svh;background-color:#1a1208;background-image:radial-gradient(ellipse 90% 55% at 50% 2%,rgba(180,110,40,.55) 0%,rgba(140,70,15,.3) 30%,transparent 65%),radial-gradient(ellipse 70% 40% at 15% 85%,rgba(90,40,10,.4) 0%,transparent 55%),radial-gradient(ellipse 60% 45% at 85% 70%,rgba(70,30,8,.35) 0%,transparent 50%),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");background-size:auto,auto,auto,300px 300px;color:#fff;display:flex;flex-direction:column;align-items:center;}
+.wrap{width:100%;max-width:480px;padding:28px 16px 48px;display:flex;flex-direction:column;align-items:center;}
+.hl-top{font-family:'Heebo',sans-serif;font-size:clamp(26px,7vw,34px);font-weight:900;color:#fff;text-align:center;line-height:1.2;margin-bottom:2px;text-shadow:0 2px 18px rgba(0,0,0,.7);}
+.hl-main{font-family:'Heebo',sans-serif;font-size:clamp(22px,6vw,28px);font-weight:900;color:#fff;text-align:center;line-height:1.25;margin-bottom:10px;text-shadow:0 2px 18px rgba(0,0,0,.7);}
+.subline{font-family:'Assistant',sans-serif;font-size:clamp(14px,3.8vw,16px);color:rgba(255,255,255,.8);text-align:center;line-height:1.6;margin-bottom:18px;}
+.vid-box{width:100%;border:2px solid rgba(255,255,255,.18);border-radius:6px;overflow:hidden;background:#000;margin-bottom:14px;position:relative;box-shadow:0 6px 28px rgba(0,0,0,.7);}
+.vid-ratio{padding:56.25% 0 0 0;position:relative;}
+.vid-ratio iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none;display:block;}
+.vid-thumb{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;z-index:5;background:rgba(0,0,0,.25);transition:background .2s;}
 .vid-thumb:hover{background:rgba(0,0,0,.1);}
 .vid-thumb.gone{display:none;}
-
-/* Fake control bar at bottom (cosmetic — matches screenshot) */
-.fake-bar{
-  position:absolute;bottom:0;left:0;right:0;
-  height:36px;
-  background:linear-gradient(transparent,rgba(0,0,0,.75));
-  display:flex;align-items:center;
-  padding:0 10px;gap:8px;
-  pointer-events:none;
-  z-index:4;
-}
+.fake-bar{position:absolute;bottom:0;left:0;right:0;height:36px;background:linear-gradient(transparent,rgba(0,0,0,.75));display:flex;align-items:center;padding:0 10px;gap:8px;pointer-events:none;z-index:4;}
 .fake-bar svg{opacity:.85;}
-.fake-progress{
-  flex:1;height:3px;background:rgba(255,255,255,.3);border-radius:2px;
-}
+.fake-progress{flex:1;height:3px;background:rgba(255,255,255,.3);border-radius:2px;}
 .fake-progress-fill{width:0%;height:100%;background:#fff;border-radius:2px;}
-
-/* YouTube-style red play button */
-.yt-play{
-  width:68px;height:48px;
-  background:#ff0000;
-  border-radius:10px;
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 4px 24px rgba(255,0,0,.55);
-  transition:transform .15s,background .15s;
-}
+.yt-play{width:68px;height:48px;background:#ff0000;border-radius:10px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 24px rgba(255,0,0,.55);transition:transform .15s,background .15s;}
 .vid-thumb:hover .yt-play{transform:scale(1.08);background:#cc0000;}
-
-/* ── RED CTA BUTTON ── */
-.btn-watch{
-  display:flex;width:100%;height:52px;
-  background:linear-gradient(135deg,#e52020,#c40000);
-  color:#fff;
-  font-family:'Heebo',sans-serif;font-size:19px;font-weight:800;
-  border:none;border-radius:28px;cursor:pointer;
-  align-items:center;justify-content:center;gap:8px;
-  text-decoration:none;
-  margin-bottom:12px;
-  box-shadow:0 4px 20px rgba(220,0,0,.45);
-  transition:background .2s,transform .15s;
-  letter-spacing:.2px;
-}
+.btn-watch{display:flex;width:100%;height:52px;background:linear-gradient(135deg,#e52020,#c40000);color:#fff;font-family:'Heebo',sans-serif;font-size:19px;font-weight:800;border:none;border-radius:28px;cursor:pointer;align-items:center;justify-content:center;gap:8px;text-decoration:none;margin-bottom:12px;box-shadow:0 4px 20px rgba(220,0,0,.45);transition:background .2s,transform .15s;letter-spacing:.2px;}
 .btn-watch:hover{background:linear-gradient(135deg,#ff2a2a,#dd0000);transform:translateY(-1px);}
 .btn-watch .arrow{font-size:20px;margin-left:2px;}
-
-/* ── SOCIAL ROW ── */
-.social-row{
-  display:flex;gap:10px;width:100%;margin-bottom:22px;
-}
-.btn-wa{
-  flex:1;height:46px;
-  background:#25D366;color:#fff;
-  font-family:'Heebo',sans-serif;font-size:14px;font-weight:800;
-  border:none;border-radius:6px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;gap:6px;
-  text-decoration:none;
-  box-shadow:0 3px 12px rgba(37,211,102,.35);
-  transition:background .2s,transform .15s;
-}
+.social-row{display:flex;gap:10px;width:100%;margin-bottom:22px;}
+.btn-wa{width:100%;height:50px;background:#25D366;color:#fff;font-family:'Heebo',sans-serif;font-size:14px;font-weight:800;border:none;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;box-shadow:0 3px 12px rgba(37,211,102,.35);transition:background .2s,transform .15s;}
 .btn-wa:hover{background:#1dbb58;transform:translateY(-1px);}
-.btn-ig{
-  flex:1;height:46px;
-  background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);
-  color:#fff;
-  font-family:'Heebo',sans-serif;font-size:14px;font-weight:800;
-  border:none;border-radius:6px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;gap:6px;
-  text-decoration:none;
-  box-shadow:0 3px 12px rgba(253,29,29,.3);
-  transition:opacity .2s,transform .15s;
-}
+.btn-ig{width:100%;height:50px;background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);color:#fff;font-family:'Heebo',sans-serif;font-size:14px;font-weight:800;border:none;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;box-shadow:0 3px 12px rgba(253,29,29,.3);transition:opacity .2s,transform .15s;}
 .btn-ig:hover{opacity:.88;transform:translateY(-1px);}
-
-/* ── CHECKLIST ── */
-.checklist{
-  width:100%;
-  display:flex;flex-direction:column;gap:14px;
-  margin-bottom:26px;
-  padding:0 4px;
-}
-.ci{
-  display:flex;align-items:center;gap:12px;
-  font-family:'Heebo',sans-serif;
-  font-size:clamp(15px,4vw,17px);font-weight:700;
-  color:#fff;line-height:1.3;
-}
-/* Orange circle check — exactly like screenshot */
-.ci-icon{
-  width:30px;height:30px;flex-shrink:0;
-  border-radius:50%;
-  border:2px solid rgba(255,165,40,.6);
-  background:rgba(255,140,20,.1);
-  display:flex;align-items:center;justify-content:center;
-  color:#ffaa30;
-}
-
-/* ── FORM SECTION ── */
-.form-wrap{
-  width:100%;
-}
-.form-title{
-  font-family:'Heebo',sans-serif;
-  font-size:clamp(17px,4.5vw,20px);font-weight:900;
-  color:#fff;text-align:center;
-  margin-bottom:6px;line-height:1.3;
-}
-.form-sub{
-  font-family:'Assistant',sans-serif;
-  font-size:13px;color:rgba(255,255,255,.55);
-  text-align:center;margin-bottom:14px;line-height:1.5;
-}
-.field{
-  width:100%;height:50px;
-  background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.14);
-  border-radius:5px;
-  color:#fff;
-  font-family:'Assistant',sans-serif;font-size:15px;
-  padding:0 14px;margin-bottom:10px;
-  outline:none;
-  -webkit-appearance:none;direction:rtl;
-  transition:border .2s,background .2s;
-}
+.checklist{width:100%;display:flex;flex-direction:column;gap:14px;margin-bottom:26px;padding:0 4px;}
+.ci{display:flex;align-items:center;gap:12px;font-family:'Heebo',sans-serif;font-size:clamp(15px,4vw,17px);font-weight:700;color:#fff;line-height:1.3;}
+.ci-icon{width:30px;height:30px;flex-shrink:0;border-radius:50%;border:2px solid rgba(255,165,40,.6);background:rgba(255,140,20,.1);display:flex;align-items:center;justify-content:center;color:#ffaa30;}
+.form-wrap{width:100%;}
+.form-title{font-family:'Heebo',sans-serif;font-size:clamp(17px,4.5vw,20px);font-weight:900;color:#fff;text-align:center;margin-bottom:6px;line-height:1.3;}
+.form-sub{font-family:'Assistant',sans-serif;font-size:13px;color:rgba(255,255,255,.55);text-align:center;margin-bottom:14px;line-height:1.5;}
+.field{width:100%;height:50px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:5px;color:#fff;font-family:'Assistant',sans-serif;font-size:15px;padding:0 14px;margin-bottom:10px;outline:none;-webkit-appearance:none;direction:rtl;transition:border .2s,background .2s;}
 .field::placeholder{color:rgba(255,255,255,.3);text-align:right;}
 .field:focus{border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.1);}
-
-.btn-submit{
-  display:flex;width:100%;height:52px;
-  background:linear-gradient(135deg,#e52020,#c40000);
-  color:#fff;
-  font-family:'Heebo',sans-serif;font-size:18px;font-weight:800;
-  border:none;border-radius:6px;cursor:pointer;
-  align-items:center;justify-content:center;gap:8px;
-  margin-top:4px;
-  box-shadow:0 4px 18px rgba(200,0,0,.4);
-  transition:background .2s,transform .15s;
-  letter-spacing:.3px;
-  position:relative;overflow:hidden;
-}
+.btn-submit{display:flex;width:100%;height:52px;background:linear-gradient(135deg,#e52020,#c40000);color:#fff;font-family:'Heebo',sans-serif;font-size:18px;font-weight:800;border:none;border-radius:6px;cursor:pointer;align-items:center;justify-content:center;gap:8px;margin-top:4px;box-shadow:0 4px 18px rgba(200,0,0,.4);transition:background .2s,transform .15s;letter-spacing:.3px;position:relative;overflow:hidden;}
 .btn-submit:hover{background:linear-gradient(135deg,#ff2828,#dd0000);transform:translateY(-1px);}
 .btn-submit:disabled{opacity:.55;cursor:not-allowed;transform:none;}
-.btn-submit::after{
-  content:'';position:absolute;top:0;left:-120%;width:50%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);
-  animation:shine 2.5s ease-in-out infinite;
-}
+.btn-submit::after{content:'';position:absolute;top:0;left:-120%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);animation:shine 2.5s ease-in-out infinite;}
 @keyframes shine{0%{left:-120%}100%{left:160%}}
-
-.err{
-  font-size:12px;color:#ff7070;
-  margin:-6px 0 8px 2px;display:none;
-}
+.err{font-size:12px;color:#ff7070;margin:-6px 0 8px 2px;display:none;}
 .err.show{display:block;}
-
-.success-msg{
-  display:none;text-align:center;padding:24px 0 8px;
-}
+.success-msg{display:none;text-align:center;padding:24px 0 8px;}
 .success-msg.show{display:block;}
 .success-msg .s-icon{font-size:40px;margin-bottom:10px;}
-.success-msg .s-title{
-  font-family:'Heebo',sans-serif;font-size:20px;font-weight:900;
-  color:#4ade80;margin-bottom:6px;
-}
-.success-msg .s-sub{
-  font-family:'Assistant',sans-serif;font-size:14px;
-  color:rgba(255,255,255,.6);line-height:1.6;
-}
-
-footer{
-  width:100%;border-top:1px solid rgba(255,255,255,.07);
-  padding:14px 20px;text-align:center;
-  font-family:'Assistant',sans-serif;font-size:11px;
-  color:rgba(255,255,255,.22);line-height:2;margin-top:auto;
-}
+.success-msg .s-title{font-family:'Heebo',sans-serif;font-size:20px;font-weight:900;color:#4ade80;margin-bottom:6px;}
+.success-msg .s-sub{font-family:'Assistant',sans-serif;font-size:14px;color:rgba(255,255,255,.6);line-height:1.6;}
+footer{width:100%;border-top:1px solid rgba(255,255,255,.07);padding:14px 20px;text-align:center;font-family:'Assistant',sans-serif;font-size:11px;color:rgba(255,255,255,.22);line-height:2;margin-top:auto;}
 footer a{color:rgba(255,255,255,.28);text-decoration:none;}
 footer a:hover{color:rgba(255,255,255,.55);}
 footer .sep{margin:0 6px;color:rgba(255,255,255,.1);}
 </style>
-<script src="https://player.vimeo.com/api/player.js"></script>
 </head>
 <body>
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WNJN9XQT" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-
 <div class="wrap">
-
-  <!-- HEADLINE -->
   <h1 class="hl-top" id="hlTop">צפה עכשיו:</h1>
-  <h2 class="hl-main" id="hlMain">שלשת השאלות שיחזירו אותך לעצמך!</h2>
-  <p class="subline" id="subline">איך לפרק את תסבל ולחיות מתוך בחירה אמיתית.</p>
-
-  <!-- VIDEO -->
+  <h2 class="hl-main" id="hlMain"></h2>
+  <p class="subline" id="subline"></p>
   <div class="vid-box">
     <div class="vid-ratio">
-      <iframe
-        id="vimeoPlayer"
-        src=""
-        frameborder="0"
-        allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
-        referrerpolicy="strict-origin-when-cross-origin"
-        title="video"
-      ></iframe>
+      <iframe id="vimeoPlayer" src="" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen title="video"></iframe>
     </div>
-
-    <!-- Fake bottom control bar (cosmetic) -->
     <div class="fake-bar">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><polygon points="6,3 20,12 6,21"/></svg>
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><polygon points="11,5 6,9 2,9 2,15 6,15 11,19 11,5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12,5 5,12 12,19"/></svg>
       <div class="fake-progress"><div class="fake-progress-fill" id="fakeFill"></div></div>
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
     </div>
-
-    <!-- Thumbnail overlay -->
     <div class="vid-thumb" id="vidThumb" onclick="startVideo()">
       <div class="yt-play">
         <svg width="26" height="26" viewBox="0 0 24 24" fill="white"><polygon points="6,3 20,12 6,21"/></svg>
       </div>
     </div>
   </div>
-
-  <!-- RED WATCH BUTTON -->
   <button class="btn-watch" onclick="startVideo()">
     <span class="arrow">&rsaquo;</span>
-    לצפייה בסרטון עכשוו
+    לצפייה בסרטון עכשיו
   </button>
 
-  <!-- SOCIAL ROW -->
-  <div class="social-row">
-    <a class="btn-wa" href="https://chat.whatsapp.com/K7XPJIokm9sHvjk6d89JBI?mode=gi_t" target="_blank" rel="noopener" onclick="trackWA()">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-      לכנסו לקבוצת הווטסאפ
-    </a>
-    <a class="btn-ig" href="https://www.instagram.com/ben_nahum_1" target="_blank" rel="noopener" onclick="trackIG()">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
-      עקבו באינסטגרם
-    </a>
-  </div>
-
-  <!-- CHECKLIST -->
   <div class="checklist">
     <div class="ci">
-      <div class="ci-icon">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-      </div>
+      <div class="ci-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
       <span>תכנים יומיים להתפתחות אישית</span>
     </div>
     <div class="ci">
-      <div class="ci-icon">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-      </div>
+      <div class="ci-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
       <span>תובנות וכלים לפריצת גבולות</span>
     </div>
     <div class="ci">
-      <div class="ci-icon">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-      </div>
-      <span>תביבה תומכת <strong>בלי רעש</strong></span>
+      <div class="ci-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <span>סביבה תומכת <strong>בלי רעש</strong></span>
     </div>
   </div>
 
-  <!-- FORM -->
+  <a class="btn-wa" href="https://chat.whatsapp.com/K7XPJIokm9sHvjk6d89JBI?mode=gi_t" target="_blank" rel="noopener" onclick="trackWA()" style="width:100%;margin-bottom:10px;">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    לכנסו לקבוצת הווטסאפ
+  </a>
+
+  <a class="btn-ig" href="https://www.instagram.com/ben_nahum_1" target="_blank" rel="noopener" onclick="trackIG()" style="width:100%;margin-bottom:22px;">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+    עקבו באינסטגרם
+  </a>
+
   <div class="form-wrap">
     <p class="form-title">מעוניין במידע על הקהילה הסגורה שלנו?</p>
     <p class="form-sub">מלא את הפרטים ואנחנו נשלח לך את כל המידע!</p>
-
     <div id="formFields">
-      <input class="field" id="fName"  type="text"  placeholder="שם מלא"   autocomplete="name"/>
+      <input class="field" id="fName"  type="text"  placeholder="שם מלא"  autocomplete="name"/>
       <div class="err" id="eName">נא להזין שם מלא</div>
-
-      <input class="field" id="fPhone" type="tel"   placeholder="טלפון"    autocomplete="tel" inputmode="numeric"/>
+      <input class="field" id="fPhone" type="tel"   placeholder="טלפון"   autocomplete="tel" inputmode="numeric"/>
       <div class="err" id="ePhone">נא להזין מספר טלפון</div>
-
-      <input class="field" id="fEmail" type="email" placeholder="אימייל"   autocomplete="email"/>
+      <input class="field" id="fEmail" type="email" placeholder="אימייל"  autocomplete="email"/>
       <div class="err" id="eEmail">נא להזין כתובת אימייל תקינה</div>
-
-      <button class="btn-submit" id="submitBtn" onclick="submitForm()">
-        לשליחת פרטים &gt;&gt;
-      </button>
+      <button class="btn-submit" id="submitBtn" onclick="submitForm()">לשליחת פרטים &gt;&gt;</button>
     </div>
-
     <div class="success-msg" id="successMsg">
       <div class="s-icon">✅</div>
       <div class="s-title">הפרטים התקבלו בהצלחה!</div>
       <div class="s-sub">ניצור איתך קשר בהקדם.<br>תודה שהצטרפת!</div>
     </div>
   </div>
-
-</div><!-- /wrap -->
-
+</div>
+</div>
 <footer>
   דיגיטל אונליין מבית או די מסחר אונליין בע"מ<br>
-  <a href="/cdn-cgi/l/email-protection#364543464659444276525f515f42575a59585a5f5853185559185f5a"><span class="__cf_email__" data-cfemail="41323431312e3335012528262835202d2e2f2d282f246f222e6f282d">[email&#160;protected]</span></a><br>
-  <a href="privacy.html">מדיניות פרטיות</a><span class="sep">|</span><a href="terms.html">תנאי שימוש</a>
-</footer>
-
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-/* ══════════════════════════════════════════
-   PAGE CONFIG — add more pages here easily
-   ══════════════════════════════════════════ */
-const PAGES = {
-  1: {
-    vimeo:   '1178990134',
-    hlTop:   'צפה עכשיו:',
-    hlMain:  'מה אם זה לא "או זה… או זה"…\nאלא יש לך אפשרות להחזיק את שניהם?',
-    subline: '▶️ צפה עכשיו (5 דקות) &nbsp;&nbsp;⏳ נמחק תוך 24 שעות'
-  },
-  2: {
-    vimeo:   '1178990248',
-    hlTop:   'צפה עכשיו:',
-    hlMain:  'ברגע שאתה משנה את המבט—\nהמציאות שלך מרגישה אחרת לגמרי.',
-    subline: '▶️ צפה עכשיו (5 דקות) &nbsp;&nbsp;⏳ נמחק תוך 24 שעות'
-  },
-  3: {
-    vimeo:   '1178990207',
-    hlTop:   'צפה עכשיו:',
-    hlMain:  'המוח שלך נבנה מהדברים שאתה חוזר עליהם—\n3 שורות ביום יכולות לבנות משהו חדש.',
-    subline: '▶️ צפה עכשיו (5 דקות) &nbsp;&nbsp;⏳ זמין ל־24 שעות בלבד &nbsp;📩 תעביר את זה למי שחשוב לך'
-  },
-  4: {
-    vimeo:   '1178990178',
-    hlTop:   'צפה עכשיו:',
-    hlMain:  'מה אם זה לא ההיגיון שמוביל אותך—\nאלא משהו שקורה הרבה לפניו?',
-    subline: '▶️ צפה עכשיו (5 דקות) &nbsp;&nbsp;⏳ זמין ל־24 שעות בלבד &nbsp;📩 תעביר למישהו שצריך להבין את עצמו'
-  },
-  5: {
-    vimeo:   '1178990134',
-    hlTop:   'צפה עכשיו:',
-    hlMain:  'יש דברים שפעם נחשבו מיתוס—\nוהיום המדע כבר מסתכל עליהם אחרת.',
-    subline: '▶️ צפה עכשיו (5 דקות) &nbsp;&nbsp;⏳ נמחק תוך 24 שעות'
-  }
-};
-
-/* ══════════════════════════════════════════
-   CONSTANTS
-   ══════════════════════════════════════════ */
-const WEBHOOK = 'https://hook.eu1.make.com/jp6ukjt7tpk3y4yly9c691g01f47cq8q';
-window.dataLayer = window.dataLayer || [];
-
-const P       = new URLSearchParams(location.search);
-const pageNum = parseInt(P.get('p') || '1');
-const cfg     = PAGES[pageNum] || PAGES[1];
-const PAGE_ID = 'lp_video_' + pageNum;
-const variant = P.get('variant')    || '';
-const sup     = P.get('lm_supplier') || P.get('supplier') || '';
-const src     = P.get('utm_source') || '';
-
-/* ══════════════════════════════════════════
-   POPULATE CONTENT
-   ══════════════════════════════════════════ */
-document.getElementById('pageTitle').textContent = cfg.hlMain.split('\n')[0] + ' | דיגיטל אונליין';
-document.getElementById('hlTop').textContent     = cfg.hlTop;
-document.getElementById('hlMain').innerHTML      = cfg.hlMain.replace(/\n/g,'<br>');
-document.getElementById('subline').innerHTML     = cfg.subline;
-
-/* Set Vimeo iframe src */
-document.getElementById('vimeoPlayer').src =
-  'https://player.vimeo.com/video/' + cfg.vimeo +
-  '?badge=0&autopause=0&player_id=0&app_id=58479&title=0&byline=0&portrait=0';
-
-/* ══════════════════════════════════════════
-   PAGE VIEW TRACKING
-   ══════════════════════════════════════════ */
-dataLayer.push({event:'page_view', page:PAGE_ID, video_id:cfg.vimeo, source_variant:variant, supplier:sup, utm_source:src});
-if(typeof fbq !== 'undefined') fbq('track','PageView');
-
-/* ══════════════════════════════════════════
-   SCROLL DEPTH
-   ══════════════════════════════════════════ */
-const sd = {};
-[25,50,75,100].forEach(d => sd[d] = 0);
-window.addEventListener('scroll', () => {
-  const s = document.body.scrollHeight - window.innerHeight;
-  if(!s) return;
-  const p = Math.round(window.scrollY / s * 100);
-  [25,50,75,100].forEach(d => {
-    if(!sd[d] && p >= d){
-      sd[d] = 1;
-      dataLayer.push({event:'scroll_depth', depth:d+'%', page:PAGE_ID});
-    }
-  });
-}, {passive:true});
-
-/* ══════════════════════════════════════════
-   VIDEO
-   ══════════════════════════════════════════ */
-let player = null;
-const t0   = Date.now();
-const vm   = {};
-[25,50,75,100].forEach(m => vm[m] = 0);
-let duration = 0;
-
-function startVideo(){
-  document.getElementById('vidThumb').classList.add('gone');
-  try{dataLayer.push({event:'cta_click', page:PAGE_ID, video_id:cfg.vimeo});}catch(e){}
-  try{if(typeof fbq !== 'undefined') fbq('track','InitiateCheckout');}catch(e){}
-  if(player){ player.play(); return; }
-  if(typeof Vimeo === 'undefined'){ setTimeout(startVideo, 300); return; }
-  const iframe = document.getElementById('vimeoPlayer');
-  player = new Vimeo.Player(iframe);
-  player.play();
-  player.getDuration().then(d => { duration = d; });
-
-  player.on('play', (data) => {
-    dataLayer.push({event:'video_play', page:PAGE_ID, time:Math.round(data.seconds), video_id:cfg.vimeo});
-  });
-
-  player.on('pause', (data) => {
-    const pos = Math.round(data.seconds);
-    const pct = Math.round(data.percent * 100);
-    dataLayer.push({event:'video_pause', page:PAGE_ID, time:pos, pct_watched:pct, video_id:cfg.vimeo});
-    fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({event:'video_pause',page:PAGE_ID,video_id:cfg.vimeo,position_sec:pos,pct_watched:pct,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')})
-    }).catch(()=>{});
-  });
-
-  player.on('timeupdate', (data) => {
-    /* Update fake progress bar */
-    document.getElementById('fakeFill').style.width = (data.percent*100)+'%';
-    const pct = data.percent * 100;
-    [25,50,75,100].forEach(m => {
-      if(!vm[m] && pct >= m){
-        vm[m]=1;
-        dataLayer.push({event:'video_progress',milestone:m+'%',time:Math.round(data.seconds),page:PAGE_ID,video_id:cfg.vimeo});
-      }
-    });
-  });
-
-  player.on('ended', () => {
-    dataLayer.push({event:'video_ended', page:PAGE_ID, video_id:cfg.vimeo});
-    if(typeof fbq !== 'undefined') fbq('track','ViewContent',{content_name:PAGE_ID});
-    fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({event:'video_completed',page:PAGE_ID,video_id:cfg.vimeo,pct_watched:100,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')})
-    }).catch(()=>{});
-  });
-}
-
-/* ══════════════════════════════════════════
-   PAGE EXIT
-   ══════════════════════════════════════════ */
-window.addEventListener('beforeunload', () => {
-  const secs = Math.round((Date.now()-t0)/1000);
-  if(navigator.sendBeacon){
-    navigator.sendBeacon(WEBHOOK, JSON.stringify({
-      event:'page_exit',page:PAGE_ID,video_id:cfg.vimeo,
-      seconds_on_page:secs,supplier:sup,utm_source:src,
-      timestamp:new Date().toLocaleString('he-IL')
-    }));
-  }
-  dataLayer.push({event:'page_time',seconds:secs,page:PAGE_ID});
-});
-
-/* ══════════════════════════════════════════
-   FORM SUBMIT
-   ══════════════════════════════════════════ */
-function submitForm(){
-  const name  = document.getElementById('fName').value.trim();
-  const phone = document.getElementById('fPhone').value.trim();
-  const email = document.getElementById('fEmail').value.trim();
-  let ok = true;
-
-  ['eName','ePhone','eEmail'].forEach(id => document.getElementById(id).classList.remove('show'));
-
-  if(!name) { document.getElementById('eName').classList.add('show'); ok=false; }
-  if(!phone){ document.getElementById('ePhone').classList.add('show'); ok=false; }
-  if(!email||!email.includes('@')){ document.getElementById('eEmail').classList.add('show'); ok=false; }
-  if(!ok) return;
-
-  const btn = document.getElementById('submitBtn');
-  btn.disabled = true; btn.textContent = 'שולח…';
-
-  dataLayer.push({event:'form_submit',page:PAGE_ID,video_id:cfg.vimeo});
-  if(typeof fbq !== 'undefined') fbq('track','Lead');
-
-  /* Fire both in parallel — don't wait for either */
-  fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({event:'lead_form',page:PAGE_ID,video_id:cfg.vimeo,name,phone,email,supplier:sup,utm_source:src,variant,timestamp:new Date().toLocaleString('he-IL')})
-  }).catch(()=>{});
-
-  /* ── LEADMANAGER ── */
-  const lmP = new URLSearchParams();
-  lmP.append('lm_form', '89940');
-  lmP.append('lm_key', 'd0f578976510416caa04130780197377');
-  lmP.append('subscribers_name', name);
-  lmP.append('subscribers_phone', phone);
-  lmP.append('subscribers_email', email);
-  lmP.append('fld_144377', '1');
-  lmP.append('fld_105911', src);
-  lmP.append('fld_107862', src);
-  lmP.append('lm_supplier', sup);
-  lmP.append('lm_bc', src);
-  lmP.append('fields[REF]', variant || P.get('ref') || '');
-  lmP.append('utm_medium', P.get('utm_medium') || '');
-  lmP.append('utm_campaign', P.get('utm_campaign') || '');
-  lmP.append('page', PAGE_ID);
-  lmP.append('video_id', cfg.vimeo);
-  fetch('https://api.leadmanager.co.il/handlers/lm/submit.cms?' + lmP.toString(), {
-    method: 'GET', mode: 'no-cors'
-  }).catch(()=>{});
-
-  /* Always show success immediately */
-  document.getElementById('formFields').style.display='none';
-  document.getElementById('successMsg').classList.add('show');
-}
-
-/* ══════════════════════════════════════════
-   SOCIAL TRACKING
-   ══════════════════════════════════════════ */
-function
+  <a href="/cdn-cgi/l/email-protection#f0838580809f8284b09499979984919c9f9e9c999e95de939fde999
