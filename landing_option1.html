@@ -92,7 +92,7 @@ const PAGE='landing_option1';
 
 window.dataLayer=window.dataLayer||[];
 const P=new URLSearchParams(location.search);
-const sup=P.get('supplier')||'',src=P.get('utm_source')||'',med=P.get('utm_medium')||'',camp=P.get('utm_campaign')||'';
+const sup=P.get('lm_supplier')||P.get('supplier')||'',src=P.get('utm_source')||'',med=P.get('utm_medium')||'',camp=P.get('utm_campaign')||'';
 
 let formSt=0, dn=0;
 
@@ -240,7 +240,7 @@ document.addEventListener('DOMContentLoaded',function(){
 
 <footer>
   דיגיטל אונליין מבית או די מסחר אונליין בע"מ<br>
-  <a href="mailto:support@digitalonline.co.il">support@digitalonline.co.il</a><br>
+  <a href="/cdn-cgi/l/email-protection#a3d0d6d3d3ccd1d7e3c7cac4cad7c2cfcccdcfcacdc68dc0cc8dcacf"><span class="__cf_email__" data-cfemail="e4979194948b9690a4808d838d9085888b8a888d8a81ca878bca8d88">[email&#160;protected]</span></a><br>
   <a href="privacy.html">מדיניות פרטיות</a><span class="sep">|</span><a href="terms.html">תנאי שימוש</a>
 </footer>
 
@@ -269,12 +269,3 @@ document.addEventListener('DOMContentLoaded',function(){
       </p>
     </div>
     <div class="success" id="successBox">
-      <div class="si">✅</div>
-      <h2>נשלח בהצלחה!</h2>
-      <p>מעבירים אותך...</p>
-    </div>
-  </div>
-</div>
-
-</body>
-</html>
