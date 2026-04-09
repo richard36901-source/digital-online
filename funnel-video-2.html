@@ -240,6 +240,14 @@ footer a:hover{color:#d4a843;}
 footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
 </style>
 <script src="https://player.vimeo.com/api/player.js"></script>
+<script>
+function playVideo2(){
+  var t=document.getElementById('vidThumb');
+  if(t)t.classList.add('gone');
+  if(window._vp2){window._vp2.play();}
+  else{setTimeout(playVideo2,200);}
+}
+</script>
 </head>
 <body>
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WNJN9XQT" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -273,7 +281,7 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
           title="funnel-video-2">
         </iframe>
       </div>
-      <div class="vid-thumb" id="vidThumb" onclick="if(window._vp2){window._vp2.play();}this.classList.add('gone');">
+      <div class="vid-thumb" id="vidThumb" onclick="playVideo2()">
         <div class="yt-btn">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><polygon points="6,3 20,12 6,21"/></svg>
         </div>
@@ -348,13 +356,13 @@ window.addEventListener('scroll',()=>{
 const t0=Date.now();
 const vm={};[25,50,75,100].forEach(m=>vm[m]=0);
 
-window.addEventListener('load',()=>{
+window.addEventListener('load',function(){
   const iframe=document.getElementById('vimeoPlayer');
   const player=new Vimeo.Player(iframe); window._vp2=player;
   const thumb=document.getElementById('vidThumb');
+  thumb.onclick=function(){thumb.classList.add('gone');player.play();};
   const btnNext=document.getElementById('btnNext');
 
-  thumb.addEventListener('click',()=>{player.play();});
 
   player.on('play',(data)=>{
     thumb.classList.add('gone');
@@ -372,12 +380,12 @@ window.addEventListener('load',()=>{
   });
 
   /* Seek block */
-  let lastTime=0,isSeeking=false;
+  let lastTime=0,maxTime=0,isSeeking=false;
   player.on('timeupdate',(data)=>{
-    if(!isSeeking&&data.seconds-lastTime>2){
-      isSeeking=true;player.setCurrentTime(lastTime).then(()=>{isSeeking=false;});return;
+    if(!isSeeking&&data.seconds>maxTime+1.5){
+      isSeeking=true;player.setCurrentTime(maxTime).then(()=>{isSeeking=false;});return;
     }
-    if(!isSeeking)lastTime=data.seconds;
+    if(!isSeeking){lastTime=data.seconds;if(data.seconds>maxTime)maxTime=data.seconds;}
     const pct=data.percent*100;
     [25,50,75,100].forEach(m=>{
       if(!vm[m]&&pct>=m){vm[m]=1;dataLayer.push({event:'video_progress',milestone:m+'%',time:Math.round(data.seconds),page:PAGE});}});
