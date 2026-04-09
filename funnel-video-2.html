@@ -239,6 +239,7 @@ footer a{color:rgba(255,255,255,.2);text-decoration:none;}
 footer a:hover{color:#d4a843;}
 footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
 </style>
+<script src="https://player.vimeo.com/api/player.js"></script>
 </head>
 <body>
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WNJN9XQT" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -272,7 +273,7 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
           title="funnel-video-2">
         </iframe>
       </div>
-      <div class="vid-thumb" id="vidThumb">
+      <div class="vid-thumb" id="vidThumb" onclick="if(window._vp2){window._vp2.play();}this.classList.add('gone');">
         <div class="yt-btn">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><polygon points="6,3 20,12 6,21"/></svg>
         </div>
@@ -349,7 +350,7 @@ const vm={};[25,50,75,100].forEach(m=>vm[m]=0);
 
 window.addEventListener('load',()=>{
   const iframe=document.getElementById('vimeoPlayer');
-  const player=new Vimeo.Player(iframe);
+  const player=new Vimeo.Player(iframe); window._vp2=player;
   const thumb=document.getElementById('vidThumb');
   const btnNext=document.getElementById('btnNext');
 
