@@ -122,6 +122,7 @@ body{
 .vid-thumb:hover .yt-btn{transform:scale(1.12)!important;animation:none;box-shadow:0 6px 44px rgba(255,0,0,.9);}
 
 /* ── WATCH HINT ── */
+.lock-hint{font-family:'Assistant',sans-serif;font-size:13px;color:rgba(255,200,60,.7);text-align:center;margin-bottom:4px;font-weight:700;letter-spacing:.3px;}
 .watch-hint{
   font-family:'Assistant',sans-serif;
   font-size:12px;color:rgba(255,255,255,.35);
@@ -237,10 +238,26 @@ footer{
 footer a{color:rgba(255,255,255,.2);text-decoration:none;}
 footer a:hover{color:#d4a843;}
 footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
+
+.cookie-banner{position:fixed;bottom:0;left:0;right:0;z-index:999;background:rgba(10,8,0,.97);border-top:1px solid rgba(212,168,67,.2);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.cookie-text{font-family:'Assistant',sans-serif;font-size:12px;color:rgba(255,255,255,.5);line-height:1.5;flex:1;}
+.cookie-text a{color:#d4a843;text-decoration:underline;}
+.cookie-btns{display:flex;gap:8px;flex-shrink:0;}
+.cookie-btn{background:linear-gradient(135deg,#d4a843,#f0c060);color:#000;border:none;border-radius:6px;padding:8px 16px;font-family:'Heebo',sans-serif;font-size:12px;font-weight:800;cursor:pointer;}
+.cookie-btn.manage{background:rgba(255,255,255,.08);color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.15);}
 </style>
+<script src="https://player.vimeo.com/api/player.js"></script>
 </head>
 <body>
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WNJN9XQT" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+<div class="cookie-banner" id="cookieBanner">
+  <p class="cookie-text">אנחנו משתמשים בעוגיות כדי לשפר את החוויה שלך ולספק לך תוכן מדויק יותר. <a href="privacy.html">מדיניות פרטיות</a></p>
+  <div class="cookie-btns">
+    <button class="cookie-btn" onclick="document.getElementById('cookieBanner').style.display='none';localStorage.setItem('ck','1');">אישור</button>
+
+  </div>
+</div>
 <div class="bg-bloom"></div>
 <canvas id="particles"></canvas>
 
@@ -255,9 +272,10 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
     </div>
   </div>
 
-  <h1 class="headline">יש משהו מעניין שקורה היום באינטרנט</h1>
-  <p class="subline">ורוב האנשים בכלל לא שמים לב אליו</p>
+  <h1 class="headline">הדבר שרוב האנשים לא רואים — והוא זה שמשאיר אותם באותו מקום</h1>
+  <p class="subline">אם תבין את זה — אתה תתחיל לראות למה דברים לא זזים כמו שאתה רוצה</p>
 
+  <p class="watch-hint">תן לעצמך כמה דקות להיות כאן<br>בלי הסחות — זה בדיוק החלק שרוב האנשים מפספסים</p>
   <div class="vid-outer">
     <div class="vid-box">
       <div class="vid-ratio">
@@ -270,7 +288,7 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
           title="funnel-video-1">
         </iframe>
       </div>
-      <div class="vid-thumb" id="vidThumb">
+      <div class="vid-thumb" id="vidThumb" onclick="if(window._vimeoPlayer){window._vimeoPlayer.play();}document.getElementById('vidThumb').classList.add('gone');">
         <div class="yt-btn">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><polygon points="6,3 20,12 6,21"/></svg>
         </div>
@@ -278,27 +296,28 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
     </div>
   </div>
 
-  <p class="watch-hint">צפה עד הסוף — הכפתור ייפתח <b>אוטומטית</b> 🔓</p>
 
+  <p class="lock-hint">🔒 הכפתור ייפתח בסיום הסרטון</p>
   <div class="btn-box">
     <a class="btn-next" id="btnNext" href="funnel-video-2.html">
       🔒&nbsp; עבור לשלב הבא &nbsp;<span class="btn-arrow">←</span>
     </a>
     <div class="preview-rows">
-      <div class="preview-row">&nbsp;</div>
-      <div class="preview-row">&nbsp;</div>
-      <div class="preview-row">&nbsp;</div>
+      <div class="preview-row">⚡ וברגע שתראה את החלק הבא — אתה תבין משהו שרוב האנשים לא שמים לב אליו…</div>
+      <div class="preview-row">🧠 זה תהליך קצר של 4 שלבים — כל שלב פותח משהו שלא היה ברור לפני</div>
+      <div class="preview-row">💣 רוב האנשים עוצרים באמצע ומפספסים את החלק שבאמת עושה את ההבדל</div>
+      <div class="preview-row" style="color:rgba(255,200,80,.5);">✨ אם הגעת עד לכאן — כנראה שזה כבר נוגע בך ברמה אחרת</div>
     </div>
+  </div>
   </div>
 </div>
 
 <footer>
   דיגיטל אונליין מבית או די מסחר אונליין בע"מ<br>
-  <a href="/cdn-cgi/l/email-protection#7f0c0a0f0f100d0b3f1b1618160b1e1310111316111a511c10511613"><span class="__cf_email__" data-cfemail="f3808683839c8187b3979a949a87929f9c9d9f9a9d96dd909cdd9a9f">[email&#160;protected]</span></a><br>
+  <a href="mailto:support@digitalonline.co.il">&#115;upport&#64;digitalonline.co.il</a><br>
   <a href="privacy.html">מדיניות פרטיות</a><span class="sep">|</span><a href="terms.html">תנאי שימוש</a>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://player.vimeo.com/api/player.js"></script>
 <script>
 /* PARTICLES */
 (function(){
@@ -346,7 +365,7 @@ const vm={};[25,50,75,100].forEach(m=>vm[m]=0);
 
 window.addEventListener('load',()=>{
   const iframe=document.getElementById('vimeoPlayer');
-  const player=new Vimeo.Player(iframe);
+  const player=new Vimeo.Player(iframe); window._vimeoPlayer=player;
   const thumb=document.getElementById('vidThumb');
   const btnNext=document.getElementById('btnNext');
 
@@ -388,7 +407,7 @@ window.addEventListener('load',()=>{
     }).catch(()=>{});
     /* UNLOCK — shake then pulse */
     btnNext.classList.add('unlocked');
-    btnNext.innerHTML='&#9658;&nbsp; עבור לשלב הבא &nbsp;<span class="btn-arrow">←</span>';
+    btnNext.innerHTML='&#9658;&nbsp; לעבור לשלב הבא &nbsp;<span class="btn-arrow">←</span>';
     /* Scroll to button smoothly */
     setTimeout(()=>{btnNext.scrollIntoView({behavior:'smooth',block:'center'});},300);
   });
