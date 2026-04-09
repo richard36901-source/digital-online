@@ -280,7 +280,7 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
     <div class="vid-box">
       <div class="vid-ratio">
         <iframe id="vimeoPlayer"
-          src="https://player.vimeo.com/video/1178984555?badge=0&autopause=0&player_id=0&app_id=58479&title=0&byline=0&portrait=0&dnt=1&controls=1"
+          src="https://player.vimeo.com/video/1178984555?badge=0&autopause=0&player_id=0&app_id=58479&title=0&byline=0&portrait=0&dnt=1&controls=1&transparent=0"
           frameborder="0"
           allow="autoplay; fullscreen; picture-in-picture"
           allowfullscreen
@@ -387,12 +387,12 @@ window.addEventListener('load',()=>{
   });
 
   /* Seek block */
-  let lastTime=0,isSeeking=false;
+  let lastTime=0,maxTime=0,isSeeking=false;
   player.on('timeupdate',(data)=>{
-    if(!isSeeking&&data.seconds-lastTime>2){
-      isSeeking=true;player.setCurrentTime(lastTime).then(()=>{isSeeking=false;});return;
+    if(!isSeeking&&data.seconds>maxTime+1.5){
+      isSeeking=true;player.setCurrentTime(maxTime).then(()=>{isSeeking=false;});return;
     }
-    if(!isSeeking)lastTime=data.seconds;
+    if(!isSeeking){lastTime=data.seconds;if(data.seconds>maxTime)maxTime=data.seconds;}
     const pct=data.percent*100;
     [25,50,75,100].forEach(m=>{
       if(!vm[m]&&pct>=m){vm[m]=1;dataLayer.push({event:'video_progress',milestone:m+'%',time:Math.round(data.seconds),page:PAGE});}});
