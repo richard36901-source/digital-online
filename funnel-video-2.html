@@ -273,12 +273,11 @@ function playVideo2(){
     <div class="vid-box">
       <div class="vid-ratio">
         <iframe id="vimeoPlayer"
-          src="https://player.vimeo.com/video/1178984527?badge=0&autopause=0&player_id=0&app_id=58479&title=0&byline=0&portrait=0&dnt=1&controls=1"
+          src="https://player.vimeo.com/video/1178984527?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479"
           frameborder="0"
-          allow="autoplay; fullscreen; picture-in-picture"
-          allowfullscreen
+          allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
           referrerpolicy="strict-origin-when-cross-origin"
-          title="funnel-video-2">
+          title="סרטון 2">
         </iframe>
       </div>
       <div class="vid-thumb" id="vidThumb" onclick="playVideo2()">
@@ -296,10 +295,10 @@ function playVideo2(){
       🔒&nbsp; לראות את החלק הבא &nbsp;<span class="btn-arrow">←</span>
     </a>
     <div class="preview-rows">
-      <div class="preview-row">⚡ וברגע שתראה את החלק הבא — אתה תבין משהו שרוב האנשים לא שמים לב אליו…</div>
-      <div class="preview-row">🧠 זה תהליך קצר של 4 שלבים — כל שלב פותח משהו שלא היה ברור לפני</div>
-      <div class="preview-row">💣 רוב האנשים עוצרים באמצע ומפספסים את החלק שבאמת עושה את ההבדל</div>
-      <div class="preview-row" style="color:rgba(255,200,80,.5);">✨ אם הגעת עד לכאן — כנראה שזה כבר נוגע בך ברמה אחרת</div>
+      <div class="preview-row">וברגע שתראה את החלק הבא — אתה תבין משהו שרוב האנשים לא שמים לב אליו…</div>
+      <div class="preview-row">זה תהליך קצר של 4 שלבים — כל שלב פותח משהו שלא היה ברור לפני</div>
+      <div class="preview-row">רוב האנשים עוצרים באמצע ומפספסים את החלק שבאמת עושה את ההבדל</div>
+      <div class="preview-row" style="color:rgba(255,200,80,.5);">אם הגעת עד לכאן — כנראה שזה כבר נוגע בך ברמה אחרת</div>
     </div>
   </div>
   </div>
@@ -307,11 +306,11 @@ function playVideo2(){
 
 <footer>
   דיגיטל אונליין מבית או די מסחר אונליין בע"מ<br>
-  <a href="mailto:support@digitalonline.co.il">&#115;upport&#64;digitalonline.co.il</a><br>
+  <a href="/cdn-cgi/l/email-protection#1b686e6b6b74696f5b7f727c726f7a7774757772757e357874357277">&#115;upport&#64;digitalonline.co.il</a><br>
   <a href="privacy.html">מדיניות פרטיות</a><span class="sep">|</span><a href="terms.html">תנאי שימוש</a>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 /* PARTICLES */
 (function(){
   const c=document.getElementById('particles'),ctx=c.getContext('2d');
@@ -408,6 +407,4 @@ window.addEventListener('load',function(){
   window.addEventListener('beforeunload',()=>{
     player.getCurrentTime().then((pos)=>{player.getDuration().then((d)=>{
       const pct=d?Math.round((pos/d)*100):0;
-      if(navigator.sendBeacon)navigator.sendBeacon(WEBHOOK,JSON.stringify({
-        event:'page_exit',page:PAGE,position_sec:Math.round(pos),pct_watched:pct,
-        seconds_on_page:Math.round((Date.now()-t0)/1000),supplier:sup,utm
+      if(navigator.sendBeacon)navigator.sendBeacon(WEBHOOK,JSON.stringify
