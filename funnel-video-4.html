@@ -96,7 +96,7 @@ body{
   overflow:hidden;background:#000;position:relative;
   box-shadow:inset 0 0 0 1px rgba(255,220,80,.08),0 12px 40px rgba(0,0,0,.95);
 }
-.vid-ratio{position:relative;width:100%;padding-bottom:56.25%;height:0;overflow:hidden;}
+.vid-ratio{position:relative;width:100%;padding-bottom:55.77%;height:0;overflow:hidden;}
 .vid-ratio iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none;display:block;}
 
 /* ── PLAY OVERLAY ── */
@@ -248,6 +248,7 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
 .reinforce-line{font-size:13px;font-weight:700;color:rgba(255,180,50,.7);text-align:center;}
 
 </style>
+<script src="https://player.vimeo.com/api/player.js"></script>
 </head>
 <body>
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WNJN9XQT" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -273,15 +274,14 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
     <div class="vid-box">
       <div class="vid-ratio">
         <iframe id="vimeoPlayer"
-          src="https://player.vimeo.com/video/1178984431?badge=0&autopause=0&player_id=0&app_id=58479&title=0&byline=0&portrait=0&dnt=1&controls=1"
+          src="https://player.vimeo.com/video/1178984431?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479"
           frameborder="0"
-          allow="autoplay; fullscreen; picture-in-picture"
-          allowfullscreen
+          allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
           referrerpolicy="strict-origin-when-cross-origin"
-          title="funnel-video-4">
+          title="סרטון 4">
         </iframe>
       </div>
-      <div class="vid-thumb" id="vidThumb">
+      <div class="vid-thumb" id="vidThumb" onclick="this.classList.add('gone');if(window._vp4){window._vp4.play();}else{window._pendingPlay4=true;}">
         <div class="yt-btn">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><polygon points="6,3 20,12 6,21"/></svg>
         </div>
@@ -313,10 +313,10 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
       🔒&nbsp; לעבור לשלב האחרון &nbsp;<span class="btn-arrow">←</span>
     </a>
     <div class="preview-rows">
-      <div class="preview-row">⚡ הגישה לא נשארת פתוחה לאורך זמן</div>
-      <div class="preview-row">🧠 זה לא עוד תוכן — זה השלב שבו הדברים מתחילים לזוז באמת</div>
-      <div class="preview-row">💣 ההבדל בין מי שמתקדם לבין מי שנשאר — זה הרגע שהוא מחליט להיכנס לעומק</div>
-      <div class="preview-row" style="color:rgba(255,200,80,.5);">✨ אם הגעת עד לכאן — אתה כבר בצד הנכון</div>
+      <div class="preview-row">הגישה לא נשארת פתוחה לאורך זמן</div>
+      <div class="preview-row">זה לא עוד תוכן — זה השלב שבו הדברים מתחילים לזוז באמת</div>
+      <div class="preview-row">ההבדל בין מי שמתקדם לבין מי שנשאר — זה הרגע שהוא מחליט להיכנס לעומק</div>
+      <div class="preview-row" style="color:rgba(255,200,80,.5);">אם הגעת עד לכאן — אתה כבר בצד הנכון</div>
     </div>
   </div>
   </div>
@@ -324,11 +324,11 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
 
 <footer>
   דיגיטל אונליין מבית או די מסחר אונליין בע"מ<br>
-  <a href="mailto:support@digitalonline.co.il">&#115;upport&#64;digitalonline.co.il</a><br>
+  <a href="/cdn-cgi/l/email-protection#d6a5a3a6a6b9a4a296b2bfb1bfa2b7bab9b8babfb8b3f8b5b9f8bfba">&#115;upport&#64;digitalonline.co.il</a><br>
   <a href="privacy.html">מדיניות פרטיות</a><span class="sep">|</span><a href="terms.html">תנאי שימוש</a>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 /* PARTICLES */
 (function(){
   const c=document.getElementById('particles'),ctx=c.getContext('2d');
@@ -375,7 +375,7 @@ const vm={};[25,50,75,100].forEach(m=>vm[m]=0);
 
 window.addEventListener('load',()=>{
   const iframe=document.getElementById('vimeoPlayer');
-  const player=new Vimeo.Player(iframe);
+  const player=new Vimeo.Player(iframe); window._vp4=player; if(window._pendingPlay4){player.play();}
   const thumb=document.getElementById('vidThumb');
   const btnNext=document.getElementById('btnNext');
 
@@ -397,12 +397,12 @@ window.addEventListener('load',()=>{
   });
 
   /* Seek block */
-  let lastTime=0,isSeeking=false;
+  let lastTime=0,maxTime=0,isSeeking=false;
   player.on('timeupdate',(data)=>{
-    if(!isSeeking&&data.seconds-lastTime>2){
-      isSeeking=true;player.setCurrentTime(lastTime).then(()=>{isSeeking=false;});return;
+    if(!isSeeking&&data.seconds>maxTime+1.5){
+      isSeeking=true;player.setCurrentTime(maxTime).then(()=>{isSeeking=false;});return;
     }
-    if(!isSeeking)lastTime=data.seconds;
+    if(!isSeeking){lastTime=data.seconds;if(data.seconds>maxTime)maxTime=data.seconds;}
     const pct=data.percent*100;
     [25,50,75,100].forEach(m=>{
       if(!vm[m]&&pct>=m){vm[m]=1;dataLayer.push({event:'video_progress',milestone:m+'%',time:Math.round(data.seconds),page:PAGE});}});
@@ -425,6 +425,4 @@ window.addEventListener('load',()=>{
   window.addEventListener('beforeunload',()=>{
     player.getCurrentTime().then((pos)=>{player.getDuration().then((d)=>{
       const pct=d?Math.round((pos/d)*100):0;
-      if(navigator.sendBeacon)navigator.sendBeacon(WEBHOOK,JSON.stringify({
-        event:'page_exit',page:PAGE,position_sec:Math.round(pos),pct_watched:pct,
-        seconds_on_page:Math.round((Date.now()-t0)/1000),supplier:sup,utm
+      if(navigator.sendBeacon)navigator.sendBeacon(WEBHOOK,JSON.stringify
