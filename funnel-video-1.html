@@ -251,8 +251,11 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
 function playVideo(){
   var t=document.getElementById('vidThumb');
   if(t)t.classList.add('gone');
-  if(window._vimeoPlayer){window._vimeoPlayer.play();}
-  else{setTimeout(playVideo,200);}
+  if(window._vimeoPlayer){
+    window._vimeoPlayer.play();
+  } else {
+    window._pendingPlay=true;
+  }
 }
 </script>
 </head>
@@ -311,10 +314,10 @@ function playVideo(){
       🔒&nbsp; עבור לשלב הבא &nbsp;<span class="btn-arrow">←</span>
     </a>
     <div class="preview-rows">
-      <div class="preview-row">⚡ וברגע שתראה את החלק הבא — אתה תבין משהו שרוב האנשים לא שמים לב אליו…</div>
-      <div class="preview-row">🧠 זה תהליך קצר של 4 שלבים — כל שלב פותח משהו שלא היה ברור לפני</div>
-      <div class="preview-row">💣 רוב האנשים עוצרים באמצע ומפספסים את החלק שבאמת עושה את ההבדל</div>
-      <div class="preview-row" style="color:rgba(255,200,80,.5);">✨ אם הגעת עד לכאן — כנראה שזה כבר נוגע בך ברמה אחרת</div>
+      <div class="preview-row">וברגע שתראה את החלק הבא — אתה תבין משהו שרוב האנשים לא שמים לב אליו…</div>
+      <div class="preview-row">זה תהליך קצר של 4 שלבים — כל שלב פותח משהו שלא היה ברור לפני</div>
+      <div class="preview-row">רוב האנשים עוצרים באמצע ומפספסים את החלק שבאמת עושה את ההבדל</div>
+      <div class="preview-row" style="color:rgba(255,200,80,.5);">אם הגעת עד לכאן — כנראה שזה כבר נוגע בך ברמה אחרת</div>
     </div>
   </div>
   </div>
@@ -322,11 +325,11 @@ function playVideo(){
 
 <footer>
   דיגיטל אונליין מבית או די מסחר אונליין בע"מ<br>
-  <a href="mailto:support@digitalonline.co.il">&#115;upport&#64;digitalonline.co.il</a><br>
+  <a href="/cdn-cgi/l/email-protection#03707673736c717743676a646a77626f6c6d6f6a6d662d606c2d6a6f">&#115;upport&#64;digitalonline.co.il</a><br>
   <a href="privacy.html">מדיניות פרטיות</a><span class="sep">|</span><a href="terms.html">תנאי שימוש</a>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 /* PARTICLES */
 (function(){
   const c=document.getElementById('particles'),ctx=c.getContext('2d');
@@ -373,7 +376,7 @@ const vm={};[25,50,75,100].forEach(m=>vm[m]=0);
 
 document.addEventListener('DOMContentLoaded',function(){
   const iframe=document.getElementById('vimeoPlayer');
-  const player=new Vimeo.Player(iframe); window._vimeoPlayer=player;
+  const player=new Vimeo.Player(iframe); window._vimeoPlayer=player; if(window._pendingPlay){player.play();window._pendingPlay=false;}
   const thumb=document.getElementById('vidThumb');
   const btnNext=document.getElementById('btnNext');
 
@@ -423,6 +426,4 @@ document.addEventListener('DOMContentLoaded',function(){
   window.addEventListener('beforeunload',()=>{
     player.getCurrentTime().then((pos)=>{player.getDuration().then((d)=>{
       const pct=d?Math.round((pos/d)*100):0;
-      if(navigator.sendBeacon)navigator.sendBeacon(WEBHOOK,JSON.stringify({
-        event:'page_exit',page:PAGE,position_sec:Math.round(pos),pct_watched:pct,
-        seconds_on_page:Math.round((Date.now()-t0)/1000),supplier:sup,utm
+      if(navigator.sendBeacon)navigator.sendBeacon(WEBHOOK,JSON.stringify
