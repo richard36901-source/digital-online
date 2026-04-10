@@ -239,6 +239,7 @@ footer a{color:rgba(255,255,255,.2);text-decoration:none;}
 footer a:hover{color:#d4a843;}
 footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
 </style>
+<script src="https://player.vimeo.com/api/player.js"></script>
 </head>
 <body>
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WNJN9XQT" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -264,15 +265,14 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
     <div class="vid-box">
       <div class="vid-ratio">
         <iframe id="vimeoPlayer"
-          src="https://player.vimeo.com/video/1178984471?badge=0&autopause=0&player_id=0&app_id=58479&title=0&byline=0&portrait=0&dnt=1&controls=1"
+          src="https://player.vimeo.com/video/1178984471?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479"
           frameborder="0"
-          allow="autoplay; fullscreen; picture-in-picture"
-          allowfullscreen
+          allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
           referrerpolicy="strict-origin-when-cross-origin"
-          title="funnel-video-3">
+          title="סרטון 3">
         </iframe>
       </div>
-      <div class="vid-thumb" id="vidThumb">
+      <div class="vid-thumb" id="vidThumb" onclick="this.classList.add('gone');if(window._vp3){window._vp3.play();}else{window._pendingPlay3=true;}">
         <div class="yt-btn">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><polygon points="6,3 20,12 6,21"/></svg>
         </div>
@@ -287,10 +287,10 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
       🔒&nbsp; עבור לשלב הבא &nbsp;<span class="btn-arrow">←</span>
     </a>
     <div class="preview-rows">
-      <div class="preview-row">⚡ וברגע שתראה את החלק הבא — אתה תבין משהו שרוב האנשים לא שמים לב אליו…</div>
-      <div class="preview-row">🧠 זה תהליך קצר של 4 שלבים — כל שלב פותח משהו שלא היה ברור לפני</div>
-      <div class="preview-row">💣 רוב האנשים עוצרים באמצע ומפספסים את החלק שבאמת עושה את ההבדל</div>
-      <div class="preview-row" style="color:rgba(255,200,80,.5);">✨ אם הגעת עד לכאן — כנראה שזה כבר נוגע בך ברמה אחרת</div>
+      <div class="preview-row">וברגע שתראה את החלק הבא — אתה תבין משהו שרוב האנשים לא שמים לב אליו…</div>
+      <div class="preview-row">זה תהליך קצר של 4 שלבים — כל שלב פותח משהו שלא היה ברור לפני</div>
+      <div class="preview-row">רוב האנשים עוצרים באמצע ומפספסים את החלק שבאמת עושה את ההבדל</div>
+      <div class="preview-row" style="color:rgba(255,200,80,.5);">אם הגעת עד לכאן — כנראה שזה כבר נוגע בך ברמה אחרת</div>
     </div>
   </div>
   </div>
@@ -298,11 +298,11 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
 
 <footer>
   דיגיטל אונליין מבית או די מסחר אונליין בע"מ<br>
-  <a href="mailto:support@digitalonline.co.il">&#115;upport&#64;digitalonline.co.il</a><br>
+  <a href="/cdn-cgi/l/email-protection#ccbfb9bcbca3beb88ca8a5aba5b8ada0a3a2a0a5a2a9e2afa3e2a5a0">&#115;upport&#64;digitalonline.co.il</a><br>
   <a href="privacy.html">מדיניות פרטיות</a><span class="sep">|</span><a href="terms.html">תנאי שימוש</a>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 /* PARTICLES */
 (function(){
   const c=document.getElementById('particles'),ctx=c.getContext('2d');
@@ -349,7 +349,7 @@ const vm={};[25,50,75,100].forEach(m=>vm[m]=0);
 
 window.addEventListener('load',()=>{
   const iframe=document.getElementById('vimeoPlayer');
-  const player=new Vimeo.Player(iframe);
+  const player=new Vimeo.Player(iframe); window._vp3=player; if(window._pendingPlay3){player.play();}
   const thumb=document.getElementById('vidThumb');
   const btnNext=document.getElementById('btnNext');
 
@@ -371,12 +371,12 @@ window.addEventListener('load',()=>{
   });
 
   /* Seek block */
-  let lastTime=0,isSeeking=false;
+  let lastTime=0,maxTime=0,isSeeking=false;
   player.on('timeupdate',(data)=>{
-    if(!isSeeking&&data.seconds-lastTime>2){
-      isSeeking=true;player.setCurrentTime(lastTime).then(()=>{isSeeking=false;});return;
+    if(!isSeeking&&data.seconds>maxTime+1.5){
+      isSeeking=true;player.setCurrentTime(maxTime).then(()=>{isSeeking=false;});return;
     }
-    if(!isSeeking)lastTime=data.seconds;
+    if(!isSeeking){lastTime=data.seconds;if(data.seconds>maxTime)maxTime=data.seconds;}
     const pct=data.percent*100;
     [25,50,75,100].forEach(m=>{
       if(!vm[m]&&pct>=m){vm[m]=1;dataLayer.push({event:'video_progress',milestone:m+'%',time:Math.round(data.seconds),page:PAGE});}});
@@ -399,6 +399,4 @@ window.addEventListener('load',()=>{
   window.addEventListener('beforeunload',()=>{
     player.getCurrentTime().then((pos)=>{player.getDuration().then((d)=>{
       const pct=d?Math.round((pos/d)*100):0;
-      if(navigator.sendBeacon)navigator.sendBeacon(WEBHOOK,JSON.stringify({
-        event:'page_exit',page:PAGE,position_sec:Math.round(pos),pct_watched:pct,
-        seconds_on_page:Math.round((Date.now()-t0)/1000),supplier:sup,utm
+      if(navigator.sendBeacon)navigator.sendBeacon(WEBHOOK,JSON.stringify
