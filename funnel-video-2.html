@@ -248,6 +248,12 @@ function playVideo2(){
   else{setTimeout(playVideo2,200);}
 }
 </script>
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+  var t=document.getElementById('vidThumb');
+  if(t)t.style.display='none';
+});
+</script>
 </head>
 <body>
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WNJN9XQT" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -272,8 +278,8 @@ function playVideo2(){
   <div class="vid-outer">
     <div class="vid-box">
       <div class="vid-ratio">
-        <iframe id="vimeoPlayer"
-          src="https://player.vimeo.com/video/1178984527?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;title=0&amp;byline=0&amp;portrait=0"
+        <iframe id="vimeoPlayer" autoplay muted
+          src="https://player.vimeo.com/video/1178984527?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;title=0&amp;byline=0&amp;portrait=0&amp;autoplay=1&amp;muted=1"
           frameborder="0"
           allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
           referrerpolicy="strict-origin-when-cross-origin"
