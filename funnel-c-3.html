@@ -61,7 +61,7 @@ body{
   50%{filter:drop-shadow(0 0 28px rgba(168,85,247,.4));}
 }
 .vid-box{width:100%;border:1.5px solid #7c3aed;border-radius:14px;overflow:hidden;background:#000;position:relative;}
-.vid-ratio{position:relative;width:100%;padding-bottom:75%;height:0;overflow:hidden;}
+.vid-ratio{position:relative;width:100%;padding-bottom:177.78%;height:0;overflow:hidden;}
 .vid-ratio iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none;display:block;}
 .vid-thumb{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:5;cursor:pointer;background:rgba(0,0,0,.12);transition:background .2s;}
 .vid-thumb:hover{background:rgba(0,0,0,.04);}
@@ -141,12 +141,7 @@ footer a:hover{color:#c084fc;}
 footer .sep{margin:0 6px;color:rgba(255,255,255,.06);}
 
 </style>
-<script>
-document.addEventListener('DOMContentLoaded',function(){
-  var t=document.getElementById('vidThumb');
-  if(t)t.style.display='none';
-});
-</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var t=document.getElementById("vidThumb");if(t)t.style.display="none";});</script>
 </head>
 <body>
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WNJN9XQT" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -181,20 +176,19 @@ document.addEventListener('DOMContentLoaded',function(){
       </div>
     </div>
   </div>
-  
-  <p class="lock-hint">🔒 הכפתור ייפתח בסיום הסרטון</p>
   <div class="btn-box">
-    
-    <a class="btn-next" id="btnNext" href="funnel-c-4.html">
-      🔒&nbsp; לעבור לשלב הבא &nbsp;<span class="btn-arrow">←</span>
-    </a>
     <div class="preview-rows">
       <div class="preview-row">וברגע שתראה את החלק הבא — אתה תבין משהו שרוב האנשים לא שמים לב אליו…</div>
       <div class="preview-row">זה תהליך קצר של 4 שלבים — כל שלב פותח משהו שלא היה ברור לפני</div>
       <div class="preview-row">רוב האנשים עוצרים באמצע ומפספסים את החלק שבאמת עושה את ההבדל</div>
-      <div class="preview-row dim">אם הגעת עד לכאן — כנראה שזה כבר נוגע בך ברמה אחרת</div>
+      <div class="preview-row" style="color:rgba(192,132,252,.35);">אם הגעת עד לכאן — כנראה שזה כבר נוגע בך ברמה אחרת</div>
     </div>
+    <a class="btn-next" id="btnNext" data-text="לעבור לשלב הבא" href="funnel-c-4.html">
+      🔒&nbsp; לעבור לשלב הבא &nbsp;<span class="btn-arrow">←</span>
+    </a>
+    <p class="lock-hint" style="margin-top:10px;margin-bottom:0;">🔒 הכפתור ייפתח בסיום הסרטון</p>
   </div>
+
 </div>
 <footer>
   דיגיטל אונליין מבית או די מסחר אונליין בע"מ<br>
