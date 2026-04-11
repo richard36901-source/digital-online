@@ -328,15 +328,7 @@ function playVideo(){
   <a href="privacy.html">מדיניות פרטיות</a><span class="sep">|</span><a href="terms.html">תנאי שימוש</a>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js">
-/* UNLOCK AFTER 60 SECONDS */
-setTimeout(function(){
-  var btn=document.getElementById('btnNext');
-  if(!btn||btn.classList.contains('unlocked'))return;
-  btn.classList.add('unlocked');
-  setTimeout(function(){btn.scrollIntoView({behavior:'smooth',block:'center'});},300);
-},60000);
-</script><script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 /* PARTICLES */
 (function(){
   const c=document.getElementById('particles'),ctx=c.getContext('2d');
@@ -434,3 +426,14 @@ document.addEventListener('DOMContentLoaded',function(){
     player.getCurrentTime().then((pos)=>{player.getDuration().then((d)=>{
       const pct=d?Math.round((pos/d)*100):0;
       if(navigator.sendBeacon)navigator.sendBeacon(WEBHOOK,JSON.stringify
+<script>
+setTimeout(function(){
+  var b=document.getElementById('btnNext');
+  if(b&&!b.classList.contains('unlocked')){
+    b.classList.add('unlocked');
+    b.style.cursor='pointer';
+    b.style.pointerEvents='auto';
+    setTimeout(function(){b.scrollIntoView({behavior:'smooth',block:'center'});},300);
+  }
+},60000);
+</script>
