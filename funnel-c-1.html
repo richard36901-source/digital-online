@@ -204,7 +204,15 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.06);}
   <a href="/cdn-cgi/l/email-protection#b4c7c1c4c4dbc6c0f4d0ddd3ddc0d5d8dbdad8dddad19ad7db9addd8">&#115;upport&#64;digitalonline.co.il</a><br>
   <a href="privacy.html">מדיניות פרטיות</a><span class="sep">|</span><a href="terms.html">תנאי שימוש</a>
 </footer>
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js">
+/* UNLOCK AFTER 60 SECONDS */
+setTimeout(function(){
+  var btn=document.getElementById('btnNext');
+  if(!btn||btn.classList.contains('unlocked'))return;
+  btn.classList.add('unlocked');
+  setTimeout(function(){btn.scrollIntoView({behavior:'smooth',block:'center'});},300);
+},60000);
+</script><script>
 (function(){
   const c=document.getElementById('particles'),ctx=c.getContext('2d');
   let W,H,pts=[];
