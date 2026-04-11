@@ -301,18 +301,23 @@ window.addEventListener('load',()=>{
     btnNext.innerHTML='&#9658;&nbsp; שריין מקום לוובינר &nbsp;<span class="btn-arrow">←</span>';
     setTimeout(()=>{btnNext.scrollIntoView({behavior:'smooth',block:'center'});},300);
   });
-
-  function unlock(){
-    if(btnNext.classList.contains('unlocked'))return;
-    btnNext.classList.remove('watching');
-    btnNext.classList.add('unlocked');
-    btnNext.innerHTML='&#9658;&nbsp; שריין מקום לוובינר &nbsp;<span class="btn-arrow">←</span>';
-    setTimeout(function(){btnNext.scrollIntoView({behavior:'smooth',block:'center'});},300);
-  }
-  setTimeout(unlock,60000);
   window.addEventListener('beforeunload',()=>{
     player.getCurrentTime().then((pos)=>{player.getDuration().then((d)=>{
       const pct=d?Math.round((pos/d)*100):0;
       if(navigator.sendBeacon)navigator.sendBeacon(WEBHOOK,JSON.stringify({
         event:'page_exit',page:PAGE,position_sec:Math.round(pos),pct_watched:pct,
         seconds_on_page:Math.round((Dat
+
+<script>
+setTimeout(function(){
+  var b=document.getElementById('btnNext');
+  if(!b)return;
+  if(b.classList.contains('unlocked'))return;
+  b.classList.remove('watching');
+  b.classList.add('unlocked');
+  b.innerHTML='&#9658;&nbsp; שריין מקום לוובינר &nbsp;<span class="btn-arrow">&#8592;</span>';
+  b.style.cursor='pointer';
+  b.style.pointerEvents='auto';
+  setTimeout(function(){b.scrollIntoView({behavior:'smooth',block:'center'});},300);
+},60000);
+</script>
