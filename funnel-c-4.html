@@ -294,16 +294,15 @@ window.addEventListener('load',()=>{
     btnNext.innerHTML='&#9658;&nbsp; שריין מקום לוובינר &nbsp;<span class="btn-arrow">←</span>';
     setTimeout(()=>{btnNext.scrollIntoView({behavior:'smooth',block:'center'});},300);
   });
+
   function unlock(){
     if(btnNext.classList.contains('unlocked'))return;
     btnNext.classList.remove('watching');
     btnNext.classList.add('unlocked');
-    btnNext.innerHTML='&#9658;&nbsp; '+btnNext.textContent.replace('🔒','').trim()+' &nbsp;<span class="btn-arrow">←</span>';
-    setTimeout(()=>{btnNext.scrollIntoView({behavior:'smooth',block:'center'});},300);
+    btnNext.innerHTML='&#9658;&nbsp; שריין מקום לוובינר &nbsp;<span class="btn-arrow">←</span>';
+    setTimeout(function(){btnNext.scrollIntoView({behavior:'smooth',block:'center'});},300);
   }
-
   setTimeout(unlock,60000);
-
   window.addEventListener('beforeunload',()=>{
     player.getCurrentTime().then((pos)=>{player.getDuration().then((d)=>{
       const pct=d?Math.round((pos/d)*100):0;
