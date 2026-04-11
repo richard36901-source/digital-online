@@ -238,6 +238,27 @@ footer{width:100%;border-top:1px solid rgba(255,255,255,.07);padding:14px 20px;t
 footer a{color:rgba(255,255,255,.28);text-decoration:none;}
 footer a:hover{color:rgba(255,255,255,.55);}
 footer .sep{margin:0 6px;color:rgba(255,255,255,.1);}
+
+.vid-loading{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  background:#0a0a0a;z-index:3;
+  gap:14px;
+}
+.loading-spinner{
+  width:40px;height:40px;
+  border:3px solid rgba(255,255,255,.1);
+  border-top:3px solid #d4a843;
+  border-radius:50%;
+  animation:spin 0.9s linear infinite;
+}
+@keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
+.loading-text{
+  font-family:'Assistant',sans-serif;
+  font-size:13px;color:rgba(255,255,255,.4);
+}
+
 </style>
 </head>
 <body>
@@ -248,7 +269,11 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.1);}
   <p class="subline" id="subline"></p>
   <div class="vid-box">
     <div class="vid-ratio">
-      <iframe id="vimeoPlayer" autoplay muted src="" frameborder="0" allow="autoplay; fullscreen" allowfullscreen title="video"></iframe>
+      <div class="vid-loading" id="vidLoading">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">הסרטון נטען…</p>
+      </div>
+      <iframe id="vimeoPlayer" autoplay muted src="" frameborder="0" allow="autoplay; fullscreen" allowfullscreen title="video" onload="document.getElementById('vidLoading').style.display='none';"></iframe>
     </div>
     <div class="fake-bar">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><polygon points="6,3 20,12 6,21"/></svg>
