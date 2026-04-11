@@ -295,17 +295,16 @@ window.addEventListener('load',()=>{
       if(navigator.sendBeacon)navigator.sendBeacon(WEBHOOK,JSON.stringify({
         event:'page_exit',page:PAGE,position_sec:Math.round(pos),pct_watched:pct,
         seconds_on_page:Math.round((Dat
-
+</script>
 <script>
 setTimeout(function(){
   var b=document.getElementById('btnNext');
-  if(!b)return;
-  if(b.classList.contains('unlocked'))return;
+  if(!b||b.classList.contains('unlocked'))return;
   b.classList.remove('watching');
   b.classList.add('unlocked');
-  b.innerHTML='&#9658;&nbsp; לעבור לשלב הבא &nbsp;<span class="btn-arrow">&#8592;</span>';
   b.style.cursor='pointer';
   b.style.pointerEvents='auto';
+  b.innerHTML='&#9658;&nbsp; לעבור לשלב הבא &nbsp;<span class="btn-arrow">&#8592;</span>';
   setTimeout(function(){b.scrollIntoView({behavior:'smooth',block:'center'});},300);
 },60000);
 </script>
