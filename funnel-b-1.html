@@ -90,7 +90,7 @@ body{
 }
 
 .vid-outer{
-  width:100%;max-width:320px;align-self:center;margin-bottom:10px;border-radius:14px;
+  width:100%;margin-bottom:10px;border-radius:14px;
   animation:vidGlow 3.5s ease-in-out infinite;
 }
 @keyframes vidGlow{
@@ -289,7 +289,7 @@ setTimeout(function(){
   if(!btn||btn.classList.contains('unlocked'))return;
   btn.classList.add('unlocked');
   setTimeout(function(){btn.scrollIntoView({behavior:'smooth',block:'center'});},300);
-},60000);
+},30000);
 </script><script>
 (function(){
   const c=document.getElementById('particles'),ctx=c.getContext('2d');
