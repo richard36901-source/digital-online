@@ -90,7 +90,7 @@ body{
 }
 
 .vid-outer{
-  width:100%;margin-bottom:10px;border-radius:14px;
+  width:100%;max-width:320px;align-self:center;margin-bottom:10px;border-radius:14px;
   animation:vidGlow 3.5s ease-in-out infinite;
 }
 @keyframes vidGlow{
@@ -387,16 +387,3 @@ window.addEventListener('load',()=>{
   });
 });
 <script>if(localStorage.getItem('ck'))document.a
-</script>
-<script>
-setTimeout(function(){
-  var b=document.getElementById('btnNext');
-  if(!b||b.classList.contains('unlocked'))return;
-  b.classList.remove('watching');
-  b.classList.add('unlocked');
-  b.style.cursor='pointer';
-  b.style.pointerEvents='auto';
-  b.innerHTML='&#9658;&nbsp; לעבור לשלב הבא &nbsp;<span class="btn-arrow">&#8592;</span>';
-  setTimeout(function(){b.scrollIntoView({behavior:'smooth',block:'center'});},300);
-},60000);
-</script>
