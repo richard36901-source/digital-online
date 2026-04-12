@@ -90,7 +90,7 @@ body{
 }
 
 .vid-outer{
-  width:100%;margin-bottom:10px;border-radius:14px;
+  width:100%;max-width:320px;align-self:center;margin-bottom:10px;border-radius:14px;
   animation:vidGlow 3.5s ease-in-out infinite;
 }
 @keyframes vidGlow{
@@ -273,13 +273,17 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.06);}
   <a href="privacy.html">מדיניות פרטיות</a><span class="sep">|</span><a href="terms.html">תנאי שימוש</a>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js">
-/* UNLOCK AFTER 60 SECONDS */
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+<script>
 setTimeout(function(){
-  var btn=document.getElementById('btnNext');
-  if(!btn||btn.classList.contains('unlocked'))return;
-  btn.classList.add('unlocked');
-  setTimeout(function(){btn.scrollIntoView({behavior:'smooth',block:'center'});},300);
+  var b=document.getElementById('btnNext');
+  if(!b||b.classList.contains('unlocked'))return;
+  b.classList.remove('watching');
+  b.classList.add('unlocked');
+  b.style.cursor='pointer';
+  b.style.pointerEvents='auto';
+  b.innerHTML='&#9658;&nbsp; לעבור לשלב הבא &nbsp;<span class="btn-arrow">&#8592;</span>';
+  setTimeout(function(){b.scrollIntoView({behavior:'smooth',block:'center'});},300);
 },30000);
 </script><script>
 (function(){
