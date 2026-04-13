@@ -9,6 +9,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;800;900&family=Assistant:wght@400;500;600&display=swap" rel="stylesheet"/>
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-WNJN9XQT');</script>
 <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','10211443525862398');fbq('track','PageView');</script>
+<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','959594580048559');fbq('track','PageView');</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=959594580048559&ev=PageView&noscript=1"/></noscript>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-text-size-adjust:100%}
@@ -23,7 +25,7 @@ canvas#particles{position:fixed;inset:0;z-index:0;pointer-events:none;}
 @keyframes btnWiggle{0%,100%{transform:translateY(0);}20%{transform:translateY(-5px);}40%{transform:translateY(0);}60%{transform:translateY(-3px);}80%{transform:translateY(0);}}
 @keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
 @keyframes iconPop{0%,100%{transform:scale(1);}50%{transform:scale(1.18);}}
-@keyframes flicker{0%,100%{opacity:1;}45%{opacity:.65;}50%{opacity:1;}55%{opacity:.55;}60%{opacity:1);}}
+@keyframes flicker{0%,100%{opacity:1;}45%{opacity:.65;}50%{opacity:1;}55%{opacity:.55;}60%{opacity:1;}}
 @keyframes slideInRight{from{opacity:0;transform:translateX(24px);}to{opacity:1;transform:translateX(0);}}
 @keyframes badgeGlow{0%,100%{box-shadow:0 0 8px rgba(212,168,67,.2);}50%{box-shadow:0 0 22px rgba(212,168,67,.55);}}
 @keyframes triggerBlink{0%,100%{opacity:1;}50%{opacity:.45;}}
@@ -115,18 +117,14 @@ window.submitForm = function submitForm() {
     method: 'POST',
     headers: {'Content-Type':'application/json'},
     body: JSON.stringify({
-      event: 'lead_form',
-      page: 'landing_option2',
-      name: name,
-      phone: phone,
-      email: email,
+      event: 'lead_form', page: 'landing_option2',
+      name: name, phone: phone, email: email,
       supplier: urlP.get('lm_supplier') || urlP.get('supplier') || '',
       utm_source: urlP.get('utm_source') || '',
       variant: urlP.get('variant') || '',
       timestamp: new Date().toLocaleString('he-IL')
     })
   }).then(function() {
-    /* ── LEADMANAGER ── */
     var lmParams = new URLSearchParams();
     lmParams.append('lm_form', '89937');
     lmParams.append('lm_key', '5403c690523845fdadf0c18bfe002da0');
@@ -152,7 +150,6 @@ window.submitForm = function submitForm() {
     alert('שגיאה בשליחה, נסה שוב');
   });
 }
-
 </script>
 </head>
 <body>
@@ -160,7 +157,6 @@ window.submitForm = function submitForm() {
 <canvas id="particles"></canvas>
 
 <div class="page-wrap">
-
   <div class="top-badge">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
     אלפי אנשים כבר נכנסו לזה
@@ -181,7 +177,6 @@ window.submitForm = function submitForm() {
       <div class="trigger-line">⚡ זה נסגר מהר</div>
     </div>
   </div>
-
 </div>
 
 <div class="sticky-cta" id="stickyCta">
@@ -221,80 +216,11 @@ window.submitForm = function submitForm() {
 
 <footer>
   דיגיטל אונליין מבית או די מסחר אונליין בע"מ<br>
-  <a href="/cdn-cgi/l/email-protection#99eaece9e9f6ebedd9fdf0fef0edf8f5f6f7f5f0f7fcb7faf6b7f0f5"><span class="__cf_email__" data-cfemail="285b5d5858475a5c684c414f415c494447464441464d064b47064144">[email&#160;protected]</span></a><br>
+  <a href="mailto:support@digitalonline.co.il">&#115;upport&#64;digitalonline.co.il</a><br>
   <a href="privacy.html">מדיניות פרטיות</a><span class="sep">|</span><a href="terms.html">תנאי שימוש</a>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-window.openPopup = function openPopup() {
-  document.getElementById('popup').classList.add('open');
-  try { dataLayer.push({event:'cta_click',page:'landing_option2'}); } catch(e) {}
-  try { if(typeof fbq==='function') fbq('track','InitiateCheckout'); } catch(e) {}
-}
-
-window.submitForm = function submitForm() {
-  var name  = document.getElementById('fName').value.trim();
-  var phone = document.getElementById('fPhone').value.trim();
-  var email = document.getElementById('fEmail').value.trim();
-  var ok = true;
-  document.getElementById('eName').classList.remove('show');
-  document.getElementById('ePhone').classList.remove('show');
-  document.getElementById('eEmail').classList.remove('show');
-  document.getElementById('eLegal').classList.remove('show');
-  if(!name)  { document.getElementById('eName').classList.add('show');  ok=false; }
-  if(!phone) { document.getElementById('ePhone').classList.add('show'); ok=false; }
-  if(!email || email.indexOf('@')<0) { document.getElementById('eEmail').classList.add('show'); ok=false; }
-  if(!document.getElementById('legalBox').checked) { document.getElementById('eLegal').classList.add('show'); ok=false; }
-  if(!ok) return;
-  var btn = document.getElementById('popupBtn');
-  btn.disabled = true;
-  btn.textContent = 'שולח…';
-  try { dataLayer.push({event:'form_submit',page:'landing_option2'}); } catch(e) {}
-  try { if(typeof fbq==='function') fbq('track','Lead'); } catch(e) {}
-  var urlP = new URLSearchParams(location.search);
-  fetch('https://hook.eu1.make.com/jp6ukjt7tpk3y4yly9c691g01f47cq8q', {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({
-      event: 'lead_form',
-      page: 'landing_option2',
-      name: name,
-      phone: phone,
-      email: email,
-      supplier: urlP.get('lm_supplier') || urlP.get('supplier') || '',
-      utm_source: urlP.get('utm_source') || '',
-      variant: urlP.get('variant') || '',
-      timestamp: new Date().toLocaleString('he-IL')
-    })
-  }).then(function() {
-    /* ── LEADMANAGER ── */
-    var lmParams = new URLSearchParams();
-    lmParams.append('lm_form', '89937');
-    lmParams.append('lm_key', '5403c690523845fdadf0c18bfe002da0');
-    lmParams.append('subscribers_name', name);
-    lmParams.append('subscribers_phone', phone);
-    lmParams.append('subscribers_email', email);
-    lmParams.append('fld_144377', '1');
-    lmParams.append('fld_105911', urlP.get('utm_source') || '');
-    lmParams.append('fld_107862', urlP.get('utm_source') || '');
-    lmParams.append('lm_supplier', urlP.get('lm_supplier') || urlP.get('supplier') || '');
-    lmParams.append('lm_bc', urlP.get('utm_source') || '');
-    lmParams.append('fields[REF]', urlP.get('ref') || urlP.get('variant') || '');
-    lmParams.append('utm_medium', urlP.get('utm_medium') || '');
-    lmParams.append('utm_campaign', urlP.get('utm_campaign') || '');
-    lmParams.append('page', 'landing_option2');
-    fetch('https://api.leadmanager.co.il/handlers/lm/submit.cms?' + lmParams.toString(), {
-      method: 'GET', mode: 'no-cors'
-    }).catch(function(){});
-    window.location.href = 'thankyou_orange.html';
-  }).catch(function() {
-    btn.disabled = false;
-    btn.textContent = 'שלח לי עכשיו';
-    alert('שגיאה בשליחה, נסה שוב');
-  });
-}
-
-/* PARTICLES */
+<script>
 (function() {
   var c = document.getElementById('particles');
   var ctx = c.getContext('2d');
@@ -321,12 +247,10 @@ window.submitForm = function submitForm() {
   draw();
 })();
 
-/* STICKY */
 window.addEventListener('scroll', function() {
   document.getElementById('stickyCta').classList.toggle('visible', window.scrollY > 180);
 }, {passive:true});
 
-/* SHAKE after 5s */
 setTimeout(function() {
   var btns = document.querySelectorAll('.btn-main');
   for(var i=0;i<btns.length;i++) {
@@ -335,14 +259,12 @@ setTimeout(function() {
   }
 }, 5000);
 
-/* TRACKING */
 window.dataLayer = window.dataLayer || [];
 try {
   var urlP = new URLSearchParams(location.search);
-  dataLayer.push({event:'page_view',page:'landing_option2',utm_source:urlP.get('utm_source')||'',supplier:urlP.get('lm_supplier')||P.get('supplier')||''});
+  dataLayer.push({event:'page_view',page:'landing_option2',utm_source:urlP.get('utm_source')||'',supplier:urlP.get('lm_supplier')||urlP.get('supplier')||''});
 } catch(e) {}
 
-/* SCROLL DEPTH */
 var sd = {};
 [25,50,75,100].forEach(function(d) { sd[d]=0; });
 window.addEventListener('scroll', function() {
@@ -353,4 +275,9 @@ window.addEventListener('scroll', function() {
   });
 }, {passive:true});
 
-window.addEventListener('beforeunload', functi
+window.addEventListener('beforeunload', function() {
+  try { dataLayer.push({event:'page_exit',page:'landing_option2'}); } catch(e) {}
+});
+</script>
+</body>
+</html>
