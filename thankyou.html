@@ -11,7 +11,7 @@
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-WNJN9XQT');</script>
 <!-- Facebook Pixel -->
 <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','10211443525862398');fbq('track','PageView');fbq('track','Lead');</script>
-<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','1146960790861406');fbq('track','PageView');</script>
+<script>fbq('init','1146960790861406');fbq('track','PageView');</script>
 <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1146960790861406&ev=PageView&noscript=1"/></noscript>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -83,6 +83,11 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.1)}
   <div class="prog-track"><div class="prog-fill"></div></div>
   <div class="prog-label">✅ הושלם</div>
 </div>
+<div style="position:fixed;bottom:0;left:0;right:0;z-index:999;background:rgba(10,10,10,.97);border-top:1px solid rgba(212,168,67,.2);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-family:'Assistant',sans-serif;font-size:12px;color:rgba(255,255,255,.5);" id="cookieBanner">
+  <span>אנו משתמשים בעוגיות לשיפור חווית הגלישה. <a href="privacy.html" style="color:#d4a843;text-decoration:underline;">מדיניות פרטיות</a></span>
+  <button onclick="document.getElementById('cookieBanner').style.display='none';localStorage.setItem('ck','1');" style="background:linear-gradient(135deg,#d4a843,#f0c060);color:#000;border:none;border-radius:6px;padding:7px 16px;font-family:'Heebo',sans-serif;font-size:12px;font-weight:800;cursor:pointer;flex-shrink:0;">אישור</button>
+</div>
+<script>if(localStorage.getItem('ck'))document.getElementById('cookieBanner').style.display='none';</script>
 <div class="bg-glow"></div>
 <div class="main">
   <div class="card">
@@ -141,10 +146,10 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.1)}
 </div>
 <footer>
   דיגיטל אונליין מבית או די מסחר אונליין בע"מ<br>
-  <a href="mailto:support@digitalonline.co.il">support@digitalonline.co.il</a><br>
+  <a href="/cdn-cgi/l/email-protection#8ffcfaffffe0fdfbcfebe6e8e6fbeee3e0e1e3e6e1eaa1ece0a1e6e3"><span class="__cf_email__" data-cfemail="562523262639242216323f313f22373a39383a3f3833783539783f3a">[email&#160;protected]</span></a><br>
   <a href="privacy.html">מדיניות פרטיות</a><span class="sep">|</span><a href="terms.html">תנאי שימוש</a>
 </footer>
-<script src="https://player.vimeo.com/api/player.js"></script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://player.vimeo.com/api/player.js"></script>
 <script>
 const PAGE    = 'thank_you';
 const WEBHOOK = 'https://hook.eu1.make.com/jp6ukjt7tpk3y4yly9c691g01f47cq8q';
@@ -202,12 +207,4 @@ window.addEventListener('load', () => {
   });
 });
 function trackWA(){
-  dataLayer.push({event:'wa_click', page:PAGE, source_variant:variant, supplier:sup});
-  if(typeof fbq !== 'undefined') fbq('track','Contact');
-}
-function trackIG(){
-  dataLayer.push({event:'ig_click', page:PAGE, source_variant:variant});
-}
-</script>
-</body>
-</html>
+  dataLa
