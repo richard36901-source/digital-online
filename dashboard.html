@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Digital Online — Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --gold:      #C9A84C;
+      --gold-dim:  #8a6e2f;
+      --gold-pale: rgba(201,168,76,0.12);
+      --bg:        #0d0d0d;
+      --bg2:       #141414;
+      --bg3:       #1c1c1c;
+      --border:    rgba(201,168,76,0.18);
+      --text:      #e8e0d0;
+      --muted:     #7a7060;
+      --green:     #4caf82;
+      --red:       #c9504c;
+      --blue:      #4c82c9;
+      --radius:    12px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; direction: rtl; }
+
+    /* ── LOGIN ─────────────────────────────────── */
+    #login-screen {
+      position: fixed; inset: 0;
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 999;
+    }
+    .login-box {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 48px 40px;
+      width: 360px;
+      text-align: center;
+    }
+    .login-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+    .login-sub { font-size: 0.82rem; color: var(--muted); margin-bottom: 32px; }
+    .login-box input {
+      width: 100%;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      padding: 12px 16px;
+      text-align: center;
+      letter-spacing: 0.15em;
+      outline: none;
+      margin-bottom: 16px;
+    }
+    .login-box input:focus { border-color: var(--gold); }
+    .login-btn {
+      width: 100%;
+      background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+      border: none;
+      border-radius: 8px;
+      color: #0d0d0d;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 13px;
+      cursor: pointer;
+      letter-spacing: 0.06em;
+      transition: opacity 0.2s;
+    }
+    .login-btn:hover { opacity: 0.85; }
+    .login-err { color: var(--red); font-size: 0.78rem; margin-top: 10px; min-height: 18px; }
+    #dashboard { display: none; }
+
+    /* ── HEADER ────────────────────────────────── */
+    header {
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 32px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .logo { font-family: 'Playfair Display', serif; font-size: 1.25rem; color: var(--gold); }
+    .logo span { color: var(--text); font-weight: 300; font-size: 0.85rem; margin-right: 10px; }
+    .header-right { display: flex; align-items: center; gap: 14px; }
+    #last-updated { font-size: 0.76rem; color: var(--muted); }
+    .refresh-btn {
+      background: var(--gold-pale); border: 1px solid var(--border);
+      color: var(--gold); padding: 7px 16px; border-radius: 8px;
+      cursor: pointer; font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem; font-weight: 500; letter-spacing: 0.04em;
+      transition: all 0.2s;
+    }
+    .refresh-btn:hover { background: rgba(201,168,76,0.22); }
+    .refresh-btn.loading { opacity: 0.5; cursor: wait; }
+
+    /* ── NAV TABS ──────────────────────────────── */
+    .tab-bar {
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      display: flex; gap: 0;
+    }
+    .tab {
+      padding: 14px 22px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+      letter-spacing: 0.04em;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+    /* ── TAB PANELS ────────────────────────────── */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── MAIN ──────────────────────────────────── */
+    main { max-width: 1400px; margin: 0 auto; padding: 28px 32px 60px; }
+
+    /* ── KPI GRID ──────────────────────────────── */
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(170px,1fr)); gap: 14px; margin-bottom: 28px; }
+    .kpi {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px 18px;
+      position: relative; overflow: hidden; transition: border-color 0.2s;
+    }
+    .kpi::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent); opacity: 0.4;
+    }
+    .kpi:hover { border-color: var(--gold-dim); }
+    .kpi-icon { font-size: 1.2rem; margin-bottom: 8px; }
+    .kpi-label { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
+    .kpi-value { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--text); line-height: 1; }
+    .kpi-sub { font-size: 0.7rem; color: var(--muted); margin-top: 5px; }
+    .kpi-delta { font-size: 0.74rem; margin-top: 6px; }
+    .kpi-delta.up { color: var(--green); }
+    .kpi-delta.down { color: var(--red); }
+
+    /* ── PANELS ────────────────────────────────── */
+    .panel { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; }
+    .panel-title {
+      font-size: 0.76rem; color: var(--gold); letter-spacing: 0.1em;
+      text-transform: uppercase; font-weight: 600; margin-bottom: 18px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .badge { background: var(--gold-pale); color: var(--gold); border-radius: 20px; padding: 2px 10px; font-size: 0.68rem; font-weight: 500; }
+
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 20px; }
+    .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; margin-bottom: 20px; }
+    @media (max-width: 960px) { .row-2, .row-3 { grid-template-columns: 1fr; } }
+    .mb { margin-bottom: 20px; }
+
+    /* ── FUNNEL BARS ───────────────────────────── */
+    .funnel-steps { display: flex; flex-direction: column; gap: 9px; }
+    .funnel-step { display: flex; align-items: center; gap: 10px; }
+    .step-name { width: 130px; font-size: 0.79rem; color: var(--text); text-align: right; flex-shrink: 0; }
+    .step-bar-wrap { flex: 1; background: var(--bg3); border-radius: 4px; height: 24px; overflow: hidden; }
+    .step-bar {
+      height: 100%; border-radius: 4px;
+      transition: width 0.9s cubic-bezier(.4,0,.2,1);
+      display: flex; align-items: center; justify-content: flex-end; padding-left: 6px;
+    }
+    .step-count { font-size: 0.75rem; font-weight: 600; color: #fff; }
+    .step-pct { font-size: 0.68rem; color: var(--muted); width: 40px; text-align: left; flex-shrink: 0; }
+
+    /* ── TABLE ─────────────────────────────────── */
+    .data-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+    .data-table th {
+      text-align: right; color: var(--muted); font-weight: 500;
+      font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 0 10px 12px; border-bottom: 1px solid var(--border);
+    }
+    .data-table td { padding: 10px 10px; border-bottom: 1px solid rgba(201,168,76,0.07); color: var(--text); vertical-align: middle; }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: var(--gold-pale); }
+
+    /* ── BADGES ────────────────────────────────── */
+    .pill {
+      display: inline-block; padding: 2px 9px; border-radius: 20px;
+      font-size: 0.68rem; font-weight: 500; white-space: nowrap;
+    }
+    .pill-lead      { background: rgba(76,130,201,0.15); color: #7aabf5; }
+    .pill-sequence  { background: rgba(201,168,76,0.15); color: var(--gold); }
+    .pill-panel     { background: rgba(180,100,180,0.15); color: #c47aca; }
+    .pill-webinar   { background: rgba(76,175,130,0.15); color: var(--green); }
+    .pill-buyer     { background: rgba(76,200,180,0.15); color: #4cc9b0; }
+    .pill-unsubscribed { background: rgba(201,80,76,0.15); color: var(--red); }
+
+    .pill-sent      { background: rgba(76,130,201,0.15); color: #7aabf5; }
+    .pill-delivered { background: rgba(201,168,76,0.15); color: var(--gold); }
+    .pill-read      { background: rgba(76,175,130,0.15); color: var(--green); }
+    .pill-failed    { background: rgba(201,80,76,0.15); color: var(--red); }
+    .pill-wa        { background: rgba(76,175,130,0.12); color: var(--green); }
+    .pill-email     { background: rgba(76,130,201,0.12); color: #7aabf5; }
+
+    /* ── MSG LOG ───────────────────────────────── */
+    .msg-row { display: flex; align-items: flex-start; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--border); }
+    .msg-row:last-child { border-bottom: none; }
+    .msg-icon { width: 28px; height: 28px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; flex-shrink: 0; }
+    .msg-body { flex: 1; }
+    .msg-name { font-size: 0.82rem; font-weight: 500; }
+    .msg-detail { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+    .msg-right { text-align: left; flex-shrink: 0; }
+    .msg-time { font-size: 0.68rem; color: var(--muted); }
+
+    /* ── DELIVERY STAT ROW ─────────────────────── */
+    .stat-row { display: flex; gap: 0; margin-bottom: 20px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+    .stat-cell { flex: 1; padding: 18px 16px; text-align: center; border-left: 1px solid var(--border); }
+    .stat-cell:last-child { border-left: none; }
+    .stat-cell .num { font-family: 'Playfair Display', serif; font-size: 1.8rem; }
+    .stat-cell .lbl { font-size: 0.68rem; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 4px; }
+    .stat-cell .pct { font-size: 0.75rem; margin-top: 4px; }
+
+    /* ── SOURCE BARS ───────────────────────────── */
+    .src-bar-row { margin-bottom: 10px; }
+    .src-bar-label { display: flex; justify-content: space-between; font-size: 0.76rem; margin-bottom: 4px; }
+    .src-bar-wrap { background: var(--bg3); border-radius: 4px; height: 9px; overflow: hidden; }
+    .src-bar-fill { height: 100%; border-radius: 4px; transition: width 0.9s; }
+
+    /* ── CONV TABLE ────────────────────────────── */
+    .conv-bar-wrap { background: var(--bg3); border-radius: 3px; height: 7px; width: 80px; display: inline-block; overflow: hidden; vertical-align: middle; }
+    .conv-bar-fill { height: 100%; border-radius: 3px; }
+
+    /* ── LOADER / ERROR ────────────────────────── */
+    .loader { text-align: center; padding: 36px 20px; color: var(--muted); font-size: 0.82rem; }
+    .err { color: var(--red); font-size: 0.78rem; text-align: center; padding: 20px; }
+    .empty { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 24px; }
+  </style>
+</head>
+<body>
+
+<!-- ══ LOGIN SCREEN ══════════════════════════════════════════ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">Digital Online</div>
+    <div class="login-sub">לוח בקרה פנימי — אנא הזן סיסמה</div>
+    <input type="password" id="pw-input" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')tryLogin()" />
+    <button class="login-btn" onclick="tryLogin()">כניסה</button>
+    <div class="login-err" id="pw-err"></div>
+  </div>
+</div>
+
+<!-- ══ DASHBOARD ═════════════════════════════════════════════ -->
+<div id="dashboard">
+
+  <header>
+    <div class="logo">Digital Online <span>| לוח בקרה</span></div>
+    <div class="header-right">
+      <span id="last-updated">טוען...</span>
+      <button class="refresh-btn" id="refresh-btn" onclick="loadAll()">↻ רענן</button>
+    </div>
+  </header>
+
+  <div class="tab-bar">
+    <div class="tab active" onclick="switchTab('overview')">📊 סקירה כללית</div>
+    <div class="tab" onclick="switchTab('funnel')">🔀 משפך</div>
+    <div class="tab" onclick="switchTab('messages')">💬 הודעות</div>
+    <div class="tab" onclick="switchTab('pages')">🌐 עמודים</div>
+    <div class="tab" onclick="switchTab('leads')">👥 לידים</div>
+  </div>
+
+  <main>
+
+    <!-- ══ OVERVIEW TAB ══════════════════════════════════════ -->
+    <div class="tab-panel active" id="tab-overview">
+
+      <div class="kpi-grid">
+        <div class="kpi"><div class="kpi-icon">👥</div><div class="kpi-label">סה"כ לידים</div><div class="kpi-value" id="kpi-total">—</div><div class="kpi-sub" id="kpi-today-sub"></div></div>
+        <div class="kpi"><div class="kpi-icon">🔥</div><div class="kpi-label">לידים היום</div><div class="kpi-value" id="kpi-today">—</div><div class="kpi-sub" id="kpi-week-sub"></div></div>
+        <div class="kpi"><div class="kpi-icon">💬</div><div class="kpi-label">WA נשלחו</div><div class="kpi-value" id="kpi-wa">—</div><div class="kpi-sub" id="kpi-wa-read-sub"></div></div>
+        <div class="kpi"><div class="kpi-icon">📧</div><div class="kpi-label">מיילים נשלחו</div><div class="kpi-value" id="kpi-email">—</div><div class="kpi-sub" id="kpi-email-open-sub"></div></div>
+        <div class="kpi"><div class="kpi-icon">📈</div><div class="kpi-label">הגיעו לוובינאר</div><div class="kpi-value" id="kpi-webinar">—</div><div class="kpi-sub" id="kpi-conv-sub"></div></div>
+        <div class="kpi"><div class="kpi-icon">💰</div><div class="kpi-label">רוכשים</div><div class="kpi-value" id="kpi-buyers">—</div><div class="kpi-sub" id="kpi-buyers-sub"></div></div>
+        <div class="kpi"><div class="kpi-icon">✅</div><div class="kpi-label">קצב קריאה WA</div><div class="kpi-value" id="kpi-read-rate">—</div><div class="kpi-sub">מתוך שנמסרו</div></div>
+        <div class="kpi"><div class="kpi-icon">🚫</div><div class="kpi-label">הסרות</div><div class="kpi-value" id="kpi-unsub">—</div><div class="kpi-sub" id="kpi-unsub-sub"></div></div>
+      </div>
+
+      <div class="row-2">
+        <div class="panel">
+          <div class="panel-title">שלבי המשפך — תמונת מצב <span class="badge" id="ov-funnel-badge">—</span></div>
+          <div class="funnel-steps" id="ov-funnel"><div class="loader">טוען</div></div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">מקור הלידים — פיצול</div>
+          <div id="ov-source"><div class="loader">טוען</div></div>
+        </div>
+      </div>
+
+      <div class="panel mb">
+        <div class="panel-title">לידים אחרונים <span class="badge" id="ov-today-badge">היום: —</span></div>
+        <div id="ov-recent"><div class="loader">טוען</div></div>
+      </div>
+
+    </div>
+
+    <!-- ══ FUNNEL TAB ═════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-funnel">
+
+      <div class="row-3 mb">
+        <div class="panel">
+          <div class="panel-title">המרה כוללת</div>
+          <div style="text-align:center;padding:10px 0">
+            <div style="font-family:'Playfair Display',serif;font-size:3rem;color:var(--gold)" id="fn-total-conv">—</div>
+            <div style="font-size:0.76rem;color:var(--muted);margin-top:6px">מליד לרוכש</div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">Drop-off הגדול ביותר</div>
+          <div style="text-align:center;padding:10px 0">
+            <div style="font-size:1.05rem;font-weight:600;color:var(--red)" id="fn-max-drop-label">—</div>
+            <div style="font-family:'Playfair Display',serif;font-size:2.5rem;color:var(--red);margin-top:4px" id="fn-max-drop-val">—</div>
+            <div style="font-size:0.72rem;color:var(--muted);margin-top:4px">נשרו בשלב זה</div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">ממוצע עד וובינאר</div>
+          <div style="text-align:center;padding:10px 0">
+            <div style="font-family:'Playfair Display',serif;font-size:3rem;color:var(--text)" id="fn-avg-days">—</div>
+            <div style="font-size:0.76rem;color:var(--muted);margin-top:6px">ימים מהכניסה</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel mb">
+        <div class="panel-title">פירוט שלבי המשפך + המרה בין שלבים</div>
+        <div id="fn-detail"><div class="loader">טוען</div></div>
+      </div>
+
+      <div class="row-2">
+        <div class="panel">
+          <div class="panel-title">לידים פעילים בתהליך</div>
+          <div id="fn-active"><div class="loader">טוען</div></div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">A/B — השוואת וריאנטים</div>
+          <div id="fn-ab"><div class="loader">טוען</div></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══ MESSAGES TAB ════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-messages">
+
+      <div class="stat-row mb">
+        <div class="stat-cell">
+          <div class="num" id="msg-total-wa">—</div>
+          <div class="lbl">WA נשלחו</div>
+        </div>
+        <div class="stat-cell">
+          <div class="num" id="msg-delivered">—</div>
+          <div class="lbl">נמסרו</div>
+          <div class="pct" id="msg-delivered-pct" style="color:var(--gold)"></div>
+        </div>
+        <div class="stat-cell">
+          <div class="num" id="msg-read">—</div>
+          <div class="lbl">נקראו</div>
+          <div class="pct" id="msg-read-pct" style="color:var(--green)"></div>
+        </div>
+        <div class="stat-cell">
+          <div class="num" id="msg-failed">—</div>
+          <div class="lbl">נכשלו</div>
+          <div class="pct" id="msg-failed-pct" style="color:var(--red)"></div>
+        </div>
+        <div class="stat-cell">
+          <div class="num" id="msg-total-email">—</div>
+          <div class="lbl">מיילים</div>
+        </div>
+      </div>
+
+      <div class="row-2">
+        <div class="panel">
+          <div class="panel-title">הודעות לפי שלב ברצף</div>
+          <div id="msg-by-step"><div class="loader">טוען</div></div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">קצב קריאה לפי שעה ביום</div>
+          <div id="msg-by-hour"><div class="loader">טוען</div></div>
+        </div>
+      </div>
+
+      <div class="panel mb" style="margin-top:20px;">
+        <div class="panel-title">יומן הודעות מלא</div>
+        <div id="msg-full-log"><div class="loader">טוען</div></div>
+      </div>
+
+    </div>
+
+    <!-- ══ PAGES TAB ══════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-pages">
+
+      <div class="panel mb">
+        <div class="panel-title">ביצועי עמודים — המרה לליד</div>
+        <div id="pg-table"><div class="loader">טוען</div></div>
+      </div>
+
+      <div class="row-2">
+        <div class="panel">
+          <div class="panel-title">העמוד הכי חזק</div>
+          <div style="text-align:center;padding:14px 0">
+            <div style="font-size:1.1rem;font-weight:600;color:var(--gold)" id="pg-best-name">—</div>
+            <div style="font-family:'Playfair Display',serif;font-size:2.8rem;margin-top:8px" id="pg-best-leads">—</div>
+            <div style="font-size:0.74rem;color:var(--muted);margin-top:4px">לידים</div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">המרה גבוהה ביותר (ליד → קנייה)</div>
+          <div style="text-align:center;padding:14px 0">
+            <div style="font-size:1.1rem;font-weight:600;color:var(--gold)" id="pg-conv-name">—</div>
+            <div style="font-family:'Playfair Display',serif;font-size:2.8rem;margin-top:8px;color:var(--green)" id="pg-conv-pct">—</div>
+            <div style="font-size:0.74rem;color:var(--muted);margin-top:4px">המרה לרוכש</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══ LEADS TAB ══════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-leads">
+
+      <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
+        <input id="leads-search" placeholder="חפש שם / טלפון / מייל..." oninput="renderLeadsTable()"
+          style="flex:1;min-width:220px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.82rem;padding:10px 14px;outline:none;" />
+        <select id="leads-filter-step" onchange="renderLeadsTable()"
+          style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.82rem;padding:10px 14px;outline:none;">
+          <option value="">כל השלבים</option>
+          <option value="lead">ליד נכנס</option>
+          <option value="sequence">רצף הודעות</option>
+          <option value="panel">פאנל וידאו</option>
+          <option value="webinar">וובינאר</option>
+          <option value="buyer">רוכש</option>
+          <option value="unsubscribed">הסרה</option>
+        </select>
+        <select id="leads-filter-source" onchange="renderLeadsTable()"
+          style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.82rem;padding:10px 14px;outline:none;">
+          <option value="">כל המקורות</option>
+        </select>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">רשימת לידים <span class="badge" id="leads-count-badge">—</span></div>
+        <div id="leads-table"><div class="loader">טוען</div></div>
+      </div>
+
+    </div>
+
+  </main>
+</div><!-- /dashboard -->
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   CONFIG — Richard: edit these values only
+═══════════════════════════════════════════════════════════════
+
+  SHEET_ID  → Google Sheet ID
+  API_KEY   → Google Cloud API Key (Sheets API, read-only)
+  PASSWORD  → what Ben uses to log in
+
+  SHEET "Leads" columns (0-indexed, Column A = 0):
+    A(0)  Timestamp      e.g. "2024-06-10 14:30:00"
+    B(1)  Name           שם מלא
+    C(2)  Phone          מספר טלפון
+    D(3)  Email          כתובת מייל
+    E(4)  Source         e.g. "landing_option1" / "lp_2"
+    F(5)  Step           lead / sequence / panel / webinar / buyer / unsubscribed
+    G(6)  WA_Sent        מספר הודעות WA שנשלחו (מספר)
+    H(7)  Email_Sent     מספר מיילים שנשלחו (מספר)
+    I(8)  Notes          הערות / פעילות אחרונה
+
+  SHEET "Messages" columns (for delivery tracking):
+    A(0)  Timestamp      מתי נשלחה
+    B(1)  Phone          טלפון הנמען
+    C(2)  Name           שם הנמען
+    D(3)  Type           "WA" or "Email"
+    E(4)  Status         "sent" / "delivered" / "read" / "failed"
+    F(5)  Step_Num       מספר ההודעה ברצף (1–5)
+    G(6)  Preview        תצוגה מקדימה של תוכן ההודעה
+
+═══════════════════════════════════════════════════════════════ */
+const CFG = {
+  SHEET_ID:    '1v9iKOsNYJGYdGmA0CDH7tJaCvKVsG1uivWvLDLe2Z5A',
+  API_KEY:     'YOUR_GOOGLE_API_KEY_HERE',
+  PASSWORD:    'digital2024',   // ← שנה לסיסמה שתרצה
+
+  LEADS_SHEET:    'Leads',
+  MESSAGES_SHEET: 'Messages',
+
+  COL_L: { TS:0, NAME:1, PHONE:2, EMAIL:3, SOURCE:4, STEP:5, WA:6, EMAIL:7, NOTES:8 },
+  COL_M: { TS:0, PHONE:1, NAME:2, TYPE:3, STATUS:4, STEP_NUM:5, PREVIEW:6 },
+
+  FUNNEL: [
+    { key:'lead',         label:'ליד נכנס',   color:'#4c82c9' },
+    { key:'sequence',     label:'רצף הודעות', color:'#c9a84c' },
+    { key:'panel',        label:'פאנל וידאו', color:'#9a6ec9' },
+    { key:'webinar',      label:'וובינאר',    color:'#4caf82' },
+    { key:'buyer',        label:'רוכש',       color:'#4cc9b0' },
+    { key:'unsubscribed', label:'הסרה',       color:'#c9504c' },
+  ],
+
+  PAGES: {
+    'landing_option1': 'Landing 1 (מלאה)',
+    'landing_option2': 'Landing 2',
+    'landing_option3': 'Landing 3',
+    'lp_1': 'LP Variant 1',
+    'lp_2': 'LP Variant 2',
+    'lp_3': 'LP Variant 3',
+    'lp_4': 'LP Variant 4',
+    'lp_5': 'LP Variant 5',
+    'unknown': 'לא ידוע',
+  },
+
+  SRC_COLORS: ['#4c82c9','#c9a84c','#4caf82','#9a6ec9','#c94c82','#4cc9b0','#c9504c','#82c94c'],
+};
+
+/* ── LOGIN ────────────────────────────────────────────────── */
+function tryLogin() {
+  const v = document.getElementById('pw-input').value;
+  if (v === CFG.PASSWORD) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    loadAll();
+  } else {
+    document.getElementById('pw-err').textContent = 'סיסמה שגויה, נסה שוב';
+    document.getElementById('pw-input').value = '';
+  }
+}
+
+/* ── TABS ─────────────────────────────────────────────────── */
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    const names = ['overview','funnel','messages','pages','leads'];
+    t.classList.toggle('active', names[i]===name);
+  });
+  document.querySelectorAll('.tab-panel').forEach(p => {
+    p.classList.toggle('active', p.id === 'tab-'+name);
+  });
+}
+
+/* ── DATA FETCH ───────────────────────────────────────────── */
+let LEADS = [], MSGS = [];
+
+async function fetchRange(sheet) {
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${CFG.SHEET_ID}/values/${encodeURIComponent(sheet)}?key=${CFG.API_KEY}`;
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(`Sheets ${sheet}: ${r.status}`);
+  const d = await r.json();
+  return (d.values || []).slice(1);
+}
+
+function parseLeads(rows) {
+  const C = CFG.COL_L;
+  return rows.map(r => ({
+    ts:     r[C.TS]    || '',
+    name:   r[C.NAME]  || '',
+    phone:  r[C.PHONE] || '',
+    email:  r[C.EMAIL] || '',
+    source: r[C.SOURCE]|| 'unknown',
+    step:   (r[C.STEP] || 'lead').toLowerCase().trim(),
+    wa:     parseInt(r[C.WA])    || 0,
+    email_s:parseInt(r[C.EMAIL]) || 0,
+    notes:  r[C.NOTES] || '',
+  }));
+}
+
+function parseMsgs(rows) {
+  const C = CFG.COL_M;
+  return rows.map(r => ({
+    ts:      r[C.TS]       || '',
+    phone:   r[C.PHONE]    || '',
+    name:    r[C.NAME]     || '',
+    type:    (r[C.TYPE]    || 'WA').toUpperCase(),
+    status:  (r[C.STATUS]  || 'sent').toLowerCase(),
+    stepNum: parseInt(r[C.STEP_NUM]) || 0,
+    preview: r[C.PREVIEW]  || '',
+  }));
+}
+
+/* ── HELPERS ──────────────────────────────────────────────── */
+function set(id, v) { const el=document.getElementById(id); if(el) el.textContent=v; }
+
+function isToday(ts) {
+  if (!ts) return false;
+  const d=new Date(ts), t=new Date();
+  return d.getDate()===t.getDate()&&d.getMonth()===t.getMonth()&&d.getFullYear()===t.getFullYear();
+}
+function isThisWeek(ts) {
+  if (!ts) return false;
+  return (Date.now()-new Date(ts))/86400000 < 7;
+}
+function timeAgo(ts) {
+  if (!ts) return '';
+  const diff=(Date.now()-new Date(ts))/1000;
+  if (diff<60) return 'עכשיו';
+  if (diff<3600) return `לפני ${Math.floor(diff/60)} דק׳`;
+  if (diff<86400) return `לפני ${Math.floor(diff/3600)} שע׳`;
+  return `לפני ${Math.floor(diff/86400)} ימים`;
+}
+function fmtDate(ts) {
+  if (!ts) return '—';
+  return new Date(ts).toLocaleDateString('he-IL',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+}
+function stepLabel(s) { return CFG.FUNNEL.find(f=>f.key===s)?.label || s; }
+function stepPill(s) { return `<span class="pill pill-${s}">${stepLabel(s)}</span>`; }
+function pageName(src) { return CFG.PAGES[src] || src; }
+
+/* ── OVERVIEW TAB ─────────────────────────────────────────── */
+function renderOverview() {
+  const L = LEADS, M = MSGS;
+  const total   = L.length;
+  const today   = L.filter(l=>isToday(l.ts)).length;
+  const week    = L.filter(l=>isThisWeek(l.ts)).length;
+  const waTotal = L.reduce((s,l)=>s+l.wa,0);
+  const emTotal = L.reduce((s,l)=>s+l.email_s,0);
+  const webinar = L.filter(l=>l.step==='webinar'||l.step==='buyer').length;
+  const buyers  = L.filter(l=>l.step==='buyer').length;
+  const unsub   = L.filter(l=>l.step==='unsubscribed').length;
+
+  const read     = M.filter(m=>m.status==='read').length;
+  const delivered= M.filter(m=>m.status==='delivered'||m.status==='read').length;
+  const waM      = M.filter(m=>m.type==='WA').length;
+  const readRate = waM>0 ? Math.round(read/waM*100)+'%' : '—';
+
+  set('kpi-total',    total);
+  set('kpi-today',    today);
+  set('kpi-wa',       waTotal || M.filter(m=>m.type==='WA').length || '—');
+  set('kpi-email',    emTotal || M.filter(m=>m.type==='Email').length || '—');
+  set('kpi-webinar',  webinar);
+  set('kpi-buyers',   buyers);
+  set('kpi-read-rate',readRate);
+  set('kpi-unsub',    unsub);
+  set('kpi-today-sub',`השבוע: ${week}`);
+  set('kpi-week-sub', `${week} השבוע`);
+  set('kpi-wa-read-sub', `נקראו: ${read}`);
+  set('kpi-email-open-sub','');
+  set('kpi-conv-sub', total>0 ? `${Math.round(webinar/total*100)}% מהלידים`:'');
+  set('kpi-buyers-sub', webinar>0 ? `${Math.round(buyers/webinar*100)}% מהוובינאר`:'');
+  set('kpi-unsub-sub', total>0 ? `${Math.round(unsub/total*100)}% מהלידים`:'');
+
+  renderFunnelBars('ov-funnel', L, 'ov-funnel-badge');
+  renderSourceBars('ov-source', L);
+  renderRecentLeads('ov-recent', L, 8);
+  set('ov-today-badge', `היום: ${today}`);
+}
+
+/* ── FUNNEL TAB ───────────────────────────────────────────── */
+function renderFunnelTab() {
+  const L = LEADS;
+  const total = L.length || 1;
+  const counts = {};
+  CFG.FUNNEL.forEach(s => counts[s.key]=L.filter(l=>l.step===s.key).length);
+
+  // overall conv
+  const buyers = counts.buyer || 0;
+  set('fn-total-conv', total>0 ? Math.round(buyers/total*100)+'%' : '—');
+
+  // biggest dropoff (non-unsubscribed)
+  const activeSteps = CFG.FUNNEL.filter(s=>s.key!=='unsubscribed');
+  let maxDrop=0, maxDropLabel='';
+  for (let i=0;i<activeSteps.length-1;i++) {
+    const from=counts[activeSteps[i].key]||0;
+    const to=counts[activeSteps[i+1].key]||0;
+    const drop=from-to;
+    if (drop>maxDrop) { maxDrop=drop; maxDropLabel=activeSteps[i].label+' → '+activeSteps[i+1].label; }
+  }
+  set('fn-max-drop-label', maxDropLabel||'—');
+  set('fn-max-drop-val', maxDrop>0?maxDrop:'—');
+
+  // avg days to webinar
+  const webinarLeads = L.filter(l=>l.step==='webinar'||l.step==='buyer').filter(l=>l.ts);
+  if (webinarLeads.length) {
+    const allLeads = L.filter(l=>l.ts);
+    const firstTs = allLeads.length ? Math.min(...allLeads.map(l=>new Date(l.ts))) : null;
+    if (firstTs) {
+      const avgMs = webinarLeads.reduce((s,l)=>s+(new Date(l.ts)-firstTs),0)/webinarLeads.length;
+      set('fn-avg-days', Math.round(avgMs/86400000)||'<1');
+    }
+  } else { set('fn-avg-days','—'); }
+
+  // step detail table
+  let detailHtml = `<table class="data-table">
+    <thead><tr><th>שלב</th><th style="text-align:center">כמות</th><th style="text-align:center">% מסך הלידים</th><th style="text-align:center">המרה מהשלב הקודם</th></tr></thead><tbody>`;
+  CFG.FUNNEL.forEach((s,i) => {
+    const n = counts[s.key]||0;
+    const pctTotal = Math.round(n/total*100);
+    let convPrev = '—';
+    if (i>0) {
+      const prevN = counts[CFG.FUNNEL[i-1].key]||0;
+      convPrev = prevN>0 ? Math.round(n/prevN*100)+'%' : '—';
+    }
+    const barW = Math.round(n/total*100);
+    detailHtml += `<tr>
+      <td>${stepPill(s.key)}</td>
+      <td style="text-align:center;font-family:'Playfair Display',serif;font-size:1.2rem">${n}</td>
+      <td style="text-align:center">
+        <div style="display:flex;align-items:center;gap:8px;justify-content:center">
+          <div class="conv-bar-wrap"><div class="conv-bar-fill" style="width:${barW}%;background:${s.color}"></div></div>
+          <span style="font-size:0.78rem">${pctTotal}%</span>
+        </div>
+      </td>
+      <td style="text-align:center;font-size:0.82rem;color:${i===0?'var(--muted)':'var(--text)'}">${i===0?'—':convPrev}</td>
+    </tr>`;
+  });
+  detailHtml += '</tbody></table>';
+  document.getElementById('fn-detail').innerHTML = detailHtml;
+
+  // active in sequence
+  const active = L.filter(l=>l.step!=='buyer'&&l.step!=='unsubscribed');
+  const activeHtml = active.length ? `<table class="data-table">
+    <thead><tr><th>שם</th><th>שלב</th><th>WA שנשלחו</th><th>מתי נכנס</th></tr></thead>
+    <tbody>${active.slice(0,15).map(l=>`<tr>
+      <td>${l.name||l.phone}</td>
+      <td>${stepPill(l.step)}</td>
+      <td style="text-align:center">${l.wa}</td>
+      <td style="color:var(--muted);font-size:0.74rem">${timeAgo(l.ts)}</td>
+    </tr>`).join('')}</tbody></table>` : '<div class="empty">אין לידים פעילים</div>';
+  document.getElementById('fn-active').innerHTML = activeHtml;
+
+  // A/B variants
+  const variantKeys = ['lp_1','lp_2','lp_3','lp_4','lp_5'];
+  const variantData = variantKeys.map(k => ({
+    name: CFG.PAGES[k]||k,
+    leads: L.filter(l=>l.source===k).length,
+    buyers: L.filter(l=>l.source===k&&l.step==='buyer').length,
+  })).filter(v=>v.leads>0).sort((a,b)=>b.leads-a.leads);
+
+  if (variantData.length) {
+    const maxL = Math.max(...variantData.map(v=>v.leads),1);
+    document.getElementById('fn-ab').innerHTML = variantData.map(v=>{
+      const conv = v.leads>0?Math.round(v.buyers/v.leads*100):0;
+      return `<div class="src-bar-row">
+        <div class="src-bar-label">
+          <span style="color:var(--text)">${v.name}</span>
+          <span style="color:var(--muted)">${v.leads} לידים · ${conv}% המרה</span>
+        </div>
+        <div class="src-bar-wrap"><div class="src-bar-fill" style="width:${Math.round(v.leads/maxL*100)}%;background:var(--gold)"></div></div>
+      </div>`;
+    }).join('');
+  } else {
+    document.getElementById('fn-ab').innerHTML = '<div class="empty">אין נתוני A/B עדיין</div>';
+  }
+}
+
+/* ── MESSAGES TAB ─────────────────────────────────────────── */
+function renderMessagesTab() {
+  const M = MSGS;
+  const wa    = M.filter(m=>m.type==='WA');
+  const email = M.filter(m=>m.type==='Email');
+  const deliv = wa.filter(m=>m.status==='delivered'||m.status==='read').length;
+  const read  = wa.filter(m=>m.status==='read').length;
+  const fail  = wa.filter(m=>m.status==='failed').length;
+  const pct   = n => wa.length>0 ? `${Math.round(n/wa.length*100)}%` : '—';
+
+  set('msg-total-wa',    wa.length);
+  set('msg-delivered',   deliv);
+  set('msg-read',        read);
+  set('msg-failed',      fail);
+  set('msg-total-email', email.length);
+  set('msg-delivered-pct', pct(deliv));
+  set('msg-read-pct',    pct(read));
+  set('msg-failed-pct',  pct(fail));
+
+  // By step num
+  const byStep = {};
+  wa.forEach(m => {
+    const k = m.stepNum || 0;
+    if (!byStep[k]) byStep[k]={sent:0,delivered:0,read:0,failed:0};
+    byStep[k].sent++;
+    if(m.status==='delivered'||m.status==='read') byStep[k].delivered++;
+    if(m.status==='read') byStep[k].read++;
+    if(m.status==='failed') byStep[k].failed++;
+  });
+  const steps = Object.keys(byStep).sort((a,b)=>+a-+b);
+  if (steps.length) {
+    document.getElementById('msg-by-step').innerHTML = `<table class="data-table">
+      <thead><tr><th>שלב</th><th style="text-align:center">נשלחו</th><th style="text-align:center">נמסרו</th><th style="text-align:center">נקראו</th><th style="text-align:center">% קריאה</th></tr></thead>
+      <tbody>${steps.map(k=>{
+        const d=byStep[k];
+        const rPct=d.sent>0?Math.round(d.read/d.sent*100):0;
+        const cls=rPct>=60?'good':rPct>=30?'ok':'bad';
+        const clsColor={'good':var_('--green'),'ok':var_('--gold'),'bad':var_('--red')}[cls];
+        return `<tr>
+          <td>הודעה ${k||'?'}</td>
+          <td style="text-align:center">${d.sent}</td>
+          <td style="text-align:center">${d.delivered}</td>
+          <td style="text-align:center">${d.read}</td>
+          <td style="text-align:center;color:${rPct>=60?'var(--green)':rPct>=30?'var(--gold)':'var(--red)'};font-weight:600">${rPct}%</td>
+        </tr>`;
+      }).join('')}</tbody></table>`;
+  } else {
+    document.getElementById('msg-by-step').innerHTML = '<div class="empty">אין נתוני הודעות עדיין<br><small style="color:var(--muted)">חבר את Make.com לגיליון "Messages"</small></div>';
+  }
+
+  // By hour
+  const byHour = Array(24).fill(0).map(()=>({sent:0,read:0}));
+  wa.forEach(m=>{
+    if(!m.ts) return;
+    const h=new Date(m.ts).getHours();
+    byHour[h].sent++;
+    if(m.status==='read') byHour[h].read++;
+  });
+  const maxSent=Math.max(...byHour.map(h=>h.sent),1);
+  const hourHtml = byHour.map((h,i)=>{
+    if(!h.sent) return '';
+    const rPct=Math.round(h.read/h.sent*100);
+    const barH=Math.round(h.sent/maxSent*60);
+    return `<div style="display:inline-flex;flex-direction:column;align-items:center;width:calc(100%/12);margin-bottom:6px">
+      <div style="font-size:0.58rem;color:var(--gold);font-weight:600;margin-bottom:2px">${rPct}%</div>
+      <div style="width:14px;height:${barH}px;background:var(--gold);border-radius:3px 3px 0 0;min-height:4px;"></div>
+      <div style="font-size:0.58rem;color:var(--muted);margin-top:3px">${i}:00</div>
+    </div>`;
+  }).join('');
+  document.getElementById('msg-by-hour').innerHTML = hourHtml || '<div class="empty">אין נתונים</div>';
+
+  // Full log
+  const sorted = [...M].sort((a,b)=>new Date(b.ts)-new Date(a.ts)).slice(0,30);
+  if (sorted.length) {
+    document.getElementById('msg-full-log').innerHTML = `<table class="data-table">
+      <thead><tr><th>מתי</th><th>שם</th><th>סוג</th><th>שלב</th><th>סטטוס</th><th>תוכן</th></tr></thead>
+      <tbody>${sorted.map(m=>`<tr>
+        <td style="color:var(--muted);font-size:0.72rem;white-space:nowrap">${fmtDate(m.ts)}</td>
+        <td>${m.name||m.phone}</td>
+        <td><span class="pill pill-${m.type==='WA'?'wa':'email'}">${m.type}</span></td>
+        <td style="text-align:center;color:var(--muted)">${m.stepNum||'—'}</td>
+        <td><span class="pill pill-${m.status}">${{sent:'נשלח',delivered:'נמסר',read:'נקרא',failed:'נכשל'}[m.status]||m.status}</span></td>
+        <td style="color:var(--muted);font-size:0.74rem;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${m.preview}</td>
+      </tr>`).join('')}</tbody></table>`;
+  } else {
+    document.getElementById('msg-full-log').innerHTML = '<div class="empty">אין הודעות מוקלטות עדיין</div>';
+  }
+}
+
+function var_(name) {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
+/* ── PAGES TAB ────────────────────────────────────────────── */
+function renderPagesTab() {
+  const L = LEADS;
+  const pages = {};
+  L.forEach(l=>{
+    const src = l.source || 'unknown';
+    if (!pages[src]) pages[src]={leads:0,buyers:0,webinar:0};
+    pages[src].leads++;
+    if(l.step==='buyer') pages[src].buyers++;
+    if(l.step==='webinar'||l.step==='buyer') pages[src].webinar++;
+  });
+
+  const sorted = Object.entries(pages).sort((a,b)=>b[1].leads-a[1].leads);
+
+  const html = `<table class="data-table">
+    <thead><tr><th>עמוד</th><th style="text-align:center">לידים</th><th style="text-align:center">הגיעו לוובינאר</th><th style="text-align:center">רוכשים</th><th style="text-align:center">המרה לרוכש</th></tr></thead>
+    <tbody>${sorted.map(([src,d])=>{
+      const conv=d.leads>0?Math.round(d.buyers/d.leads*100):0;
+      const convColor=conv>=10?'var(--green)':conv>=4?'var(--gold)':'var(--red)';
+      return `<tr>
+        <td style="font-weight:500">${pageName(src)}</td>
+        <td style="text-align:center;font-family:'Playfair Display',serif;font-size:1.15rem">${d.leads}</td>
+        <td style="text-align:center">${d.webinar}</td>
+        <td style="text-align:center">${d.buyers}</td>
+        <td style="text-align:center;font-weight:600;color:${convColor}">${conv}%</td>
+      </tr>`;
+    }).join('')}</tbody></table>`;
+  document.getElementById('pg-table').innerHTML = html;
+
+  if (sorted.length) {
+    const best = sorted[0];
+    set('pg-best-name', pageName(best[0]));
+    set('pg-best-leads', best[1].leads);
+    const bestConv = sorted.reduce((a,b)=>b[1].leads>=5&&b[1].buyers/b[1].leads>a[1].buyers/a[1].leads?b:a, sorted[0]);
+    set('pg-conv-name', pageName(bestConv[0]));
+    set('pg-conv-pct', bestConv[1].leads>0 ? Math.round(bestConv[1].buyers/bestConv[1].leads*100)+'%':'—');
+  }
+}
+
+/* ── LEADS TAB ────────────────────────────────────────────── */
+function populateSourceFilter() {
+  const sources = [...new Set(LEADS.map(l=>l.source))].filter(Boolean).sort();
+  const sel = document.getElementById('leads-filter-source');
+  sources.forEach(s=>{
+    const o=document.createElement('option');
+    o.value=s; o.textContent=pageName(s);
+    sel.appendChild(o);
+  });
+}
+
+function renderLeadsTable() {
+  const q     = (document.getElementById('leads-search')?.value||'').toLowerCase();
+  const step  = document.getElementById('leads-filter-step')?.value||'';
+  const source= document.getElementById('leads-filter-source')?.value||'';
+
+  let filtered = LEADS.filter(l=>{
+    if(step && l.step!==step) return false;
+    if(source && l.source!==source) return false;
+    if(q && !l.name.toLowerCase().includes(q) && !l.phone.includes(q) && !l.email.toLowerCase().includes(q)) return false;
+    return true;
+  }).sort((a,b)=>new Date(b.ts)-new Date(a.ts));
+
+  set('leads-count-badge', `${filtered.length} לידים`);
+
+  if (!filtered.length) {
+    document.getElementById('leads-table').innerHTML='<div class="empty">לא נמצאו לידים</div>';
+    return;
+  }
+
+  document.getElementById('leads-table').innerHTML = `<table class="data-table">
+    <thead><tr><th>שם</th><th>טלפון</th><th>מייל</th><th>מקור</th><th>שלב</th><th>WA</th><th>מייל</th><th>מתי נכנס</th></tr></thead>
+    <tbody>${filtered.slice(0,100).map(l=>`<tr>
+      <td style="font-weight:500">${l.name||'—'}</td>
+      <td style="direction:ltr;font-size:0.8rem">${l.phone}</td>
+      <td style="font-size:0.76rem;color:var(--muted)">${l.email||'—'}</td>
+      <td style="font-size:0.76rem">${pageName(l.source)}</td>
+      <td>${stepPill(l.step)}</td>
+      <td style="text-align:center">${l.wa}</td>
+      <td style="text-align:center">${l.email_s}</td>
+      <td style="color:var(--muted);font-size:0.72rem;white-space:nowrap">${timeAgo(l.ts)}</td>
+    </tr>`).join('')}</tbody></table>`;
+}
+
+/* ── SHARED RENDERERS ─────────────────────────────────────── */
+function renderFunnelBars(containerId, leads, badgeId) {
+  const total = leads.length || 1;
+  const counts = {};
+  CFG.FUNNEL.forEach(s=>counts[s.key]=leads.filter(l=>l.step===s.key).length);
+  const maxC = Math.max(...Object.values(counts),1);
+
+  document.getElementById(containerId).innerHTML = CFG.FUNNEL.map(s=>{
+    const n=counts[s.key]||0;
+    const barW=Math.max(n/maxC*100,n>0?3:0);
+    const pct=Math.round(n/total*100);
+    return `<div class="funnel-step">
+      <div class="step-name">${s.label}</div>
+      <div class="step-bar-wrap">
+        <div class="step-bar" style="width:${barW}%;background:linear-gradient(90deg,${s.color}88,${s.color})">
+          ${n>0?`<span class="step-count">${n}</span>`:''}
+        </div>
+      </div>
+      <div class="step-pct">${n>0?pct+'%':''}</div>
+    </div>`;
+  }).join('');
+  if(badgeId) set(badgeId, `${leads.length} סה"כ`);
+}
+
+function renderSourceBars(containerId, leads) {
+  const counts = {};
+  leads.forEach(l=>{
+    const src=pageName(l.source||'unknown');
+    counts[src]=(counts[src]||0)+1;
+  });
+  const total=leads.length||1;
+  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+  const maxN=sorted[0]?.[1]||1;
+
+  document.getElementById(containerId).innerHTML = sorted.map(([name,n],i)=>`
+    <div class="src-bar-row">
+      <div class="src-bar-label">
+        <span style="color:var(--text)">${name}</span>
+        <span style="color:var(--muted)">${n} (${Math.round(n/total*100)}%)</span>
+      </div>
+      <div class="src-bar-wrap"><div class="src-bar-fill" style="width:${Math.round(n/maxN*100)}%;background:${CFG.SRC_COLORS[i%CFG.SRC_COLORS.length]}"></div></div>
+    </div>`).join('') || '<div class="empty">אין נתונים</div>';
+}
+
+function renderRecentLeads(containerId, leads, limit=10) {
+  const sorted=[...leads].sort((a,b)=>new Date(b.ts)-new Date(a.ts)).slice(0,limit);
+  if(!sorted.length){document.getElementById(containerId).innerHTML='<div class="empty">אין לידים</div>';return;}
+  document.getElementById(containerId).innerHTML=`<table class="data-table">
+    <thead><tr><th>שם</th><th>טלפון</th><th>שלב</th><th>מקור</th><th>מתי</th></tr></thead>
+    <tbody>${sorted.map(l=>`<tr>
+      <td style="font-weight:500">${l.name||'—'}</td>
+      <td style="direction:ltr;font-size:0.8rem">${l.phone}</td>
+      <td>${stepPill(l.step)}</td>
+      <td style="font-size:0.76rem;color:var(--muted)">${pageName(l.source)}</td>
+      <td style="color:var(--muted);font-size:0.72rem;white-space:nowrap">${timeAgo(l.ts)}</td>
+    </tr>`).join('')}</tbody></table>`;
+}
+
+/* ── MAIN LOAD ────────────────────────────────────────────── */
+async function loadAll() {
+  const btn=document.getElementById('refresh-btn');
+  if(btn){btn.classList.add('loading');btn.textContent='⟳ טוען...';}
+
+  try {
+    const [leadsRows, msgsRows] = await Promise.allSettled([
+      fetchRange(CFG.LEADS_SHEET),
+      fetchRange(CFG.MESSAGES_SHEET),
+    ]);
+
+    LEADS = leadsRows.status==='fulfilled' ? parseLeads(leadsRows.value) : [];
+    MSGS  = msgsRows.status==='fulfilled'  ? parseMsgs(msgsRows.value)   : [];
+
+    renderOverview();
+    renderFunnelTab();
+    renderMessagesTab();
+    renderPagesTab();
+    populateSourceFilter();
+    renderLeadsTable();
+
+    const now=new Date().toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
+    set('last-updated',`עדכון אחרון: ${now}`);
+  } catch(e) {
+    console.error(e);
+    set('last-updated','שגיאה בטעינה — בדוק API Key');
+  }
+
+  if(btn){btn.classList.remove('loading');btn.textContent='↻ רענן';}
+}
+
+// Auto-refresh every 5 min
+setInterval(()=>{ if(document.getElementById('dashboard').style.display!=='none') loadAll(); }, 5*60*1000);
+</script>
+</body>
+</html>
