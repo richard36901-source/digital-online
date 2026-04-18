@@ -247,12 +247,23 @@ window.addEventListener('load',function(){
 
   setTimeout(unlock,60000);
 });
-</script>
-<script src="https://player.vimeo.com/api/player.js"></script>
 <script>
-(function(){
-  var iframe = document.querySelector('iframe[src*="vimeo"]');
-  if(!iframe) return;
-  var player = new Vimeo.Player(iframe);
-  var videoNum = (location.pathname.match(/funnel-video-(\d)/) || [,'?'])[1];
+window.addEventListener('beforeunload', function(){
+  var params = new URLSearchParams(location.search);
+  var phone = params.get('phone') || '';
+  var name = params.get('name') || '';
+  if(!phone) return;
+  navigator.sendBeacon(
+    'https://hook.eu1.make.com/ylf5uesfcqpyaxaxtvayjx08h9rrwqr2',
+    new Blob([JSON.stringify({
+      event:'video_abandoned',
+      phone:phone,
+      name:name,
+      page:location.pathname,
+      timestamp:new Date().toISOString()
+    })],{type:'application/json'})
+  );
+});
+</script>
+</body>
 </html>
