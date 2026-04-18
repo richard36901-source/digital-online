@@ -123,7 +123,7 @@ function playVideo(){
       <div class="preview-row">רוב האנשים עוצרים באמצע ומפספסים את החלק שבאמת עושה את ההבדל</div>
       <div class="preview-row" style="color:rgba(255,200,80,.5);">אם הגעת עד לכאן — כנראה שזה כבר נוגע בך ברמה אחרת</div>
     </div>
-    <a class="btn-next" id="btnNext" href="funnel-video-2.html">
+  <a class="btn-next" id="btnNext" href="funnel-video-2.html" onclick="this.href='funnel-video-2.html'+window.location.search">
       🔒&nbsp; עבור לשלב הבא &nbsp;<span class="btn-arrow">←</span>
     </a>
     <p class="lock-hint">🔒 הכפתור ייפתח בסיום הסרטון</p>
@@ -248,5 +248,11 @@ window.addEventListener('load',function(){
   setTimeout(unlock,60000);
 });
 </script>
-</body>
+<script src="https://player.vimeo.com/api/player.js"></script>
+<script>
+(function(){
+  var iframe = document.querySelector('iframe[src*="vimeo"]');
+  if(!iframe) return;
+  var player = new Vimeo.Player(iframe);
+  var videoNum = (location.pathname.match(/funnel-video-(\d)/) || [,'?'])[1];
 </html>
