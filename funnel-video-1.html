@@ -161,9 +161,11 @@ function playVideo(){
 
 var PAGE='funnel_video_1';
 var WEBHOOK='https://hook.eu1.make.com/jp6ukjt7tpk3y4yly9c691g01f47cq8q';
+var WEBHOOK2='https://hook.eu1.make.com/ylf5uesfcqpyaxaxtvayjx08h9rrwqr2';
 window.dataLayer=window.dataLayer||[];
 var P=new URLSearchParams(location.search);
 var variant=P.get('variant')||'',sup=P.get('lm_supplier')||P.get('supplier')||'',src=P.get('utm_source')||'';
+var leadPhone=P.get('phone')||'';
 dataLayer.push({event:'page_view',page:PAGE,source_variant:variant,supplier:sup,utm_source:src});
 if(typeof fbq!=='undefined')fbq('track','PageView');
 
@@ -185,6 +187,7 @@ window.addEventListener('load',function(){
 
   var thumb=document.getElementById('vidThumb');
   var btnNext=document.getElementById('btnNext');
+  var videoCompleted=false;
 
   thumb.addEventListener('click',function(){player.play();});
 
@@ -224,6 +227,7 @@ window.addEventListener('load',function(){
   }
 
   player.on('ended',function(){
+    videoCompleted=true;
     unlock();
     dataLayer.push({event:'video_ended',page:PAGE});
     if(typeof fbq!=='undefined')fbq('track','ViewContent',{content_name:PAGE});
@@ -241,28 +245,22 @@ window.addEventListener('load',function(){
           seconds_on_page:Math.round((Date.now()-t0)/1000),supplier:sup,utm_source:src,
           timestamp:new Date().toLocaleString('he-IL')
         }));
+        if(!videoCompleted&&leadPhone&&navigator.sendBeacon){
+          navigator.sendBeacon(WEBHOOK2,new Blob([JSON.stringify({
+            event:'video_abandoned',
+            phone:leadPhone,
+            page:PAGE,
+            video_time_seconds:Math.round(pos),
+            video_time_display:Math.floor(pos/60)+':'+(('0'+(Math.round(pos)%60)).slice(-2)),
+            percent_watched:pct,
+            timestamp:new Date().toISOString()
+          })],{type:'application/json'}));
+        }
       });
     });
   });
 
   setTimeout(unlock,60000);
-});
-<script>
-window.addEventListener('beforeunload', function(){
-  var params = new URLSearchParams(location.search);
-  var phone = params.get('phone') || '';
-  var name = params.get('name') || '';
-  if(!phone) return;
-  navigator.sendBeacon(
-    'https://hook.eu1.make.com/ylf5uesfcqpyaxaxtvayjx08h9rrwqr2',
-    new Blob([JSON.stringify({
-      event:'video_abandoned',
-      phone:phone,
-      name:name,
-      page:location.pathname,
-      timestamp:new Date().toISOString()
-    })],{type:'application/json'})
-  );
 });
 </script>
 </body>
