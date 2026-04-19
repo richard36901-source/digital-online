@@ -179,15 +179,37 @@ window.addEventListener('scroll',function(){
 var t0=Date.now();
 var vm={};[25,50,75,100].forEach(function(m){vm[m]=0;});
 
+/* KEY FIX: track currentTime synchronously every second */
+var lastPos=0;
+var totalDur=0;
+var videoCompleted=false;
+var beaconSent=false;
+
+function sendAbandonBeacon(){
+  if(beaconSent||videoCompleted||!leadPhone||lastPos<3)return;
+  beaconSent=true;
+  var pct=totalDur?Math.round((lastPos/totalDur)*100):0;
+  navigator.sendBeacon(WEBHOOK2,new Blob([JSON.stringify({
+    event:'video_abandoned',
+    phone:leadPhone,
+    page:PAGE,
+    video_time_seconds:lastPos,
+    video_time_display:Math.floor(lastPos/60)+':'+(('0'+(lastPos%60)).slice(-2)),
+    percent_watched:pct,
+    timestamp:new Date().toISOString()
+  })],{type:'application/json'}));
+}
+
 window.addEventListener('load',function(){
   var iframe=document.getElementById('vimeoPlayer');
   var player=new Vimeo.Player(iframe);
   window._vimeoPlayer=player;
   if(window._pendingPlay){player.play();window._pendingPlay=false;}
 
+  player.getDuration().then(function(d){totalDur=Math.round(d);});
+
   var thumb=document.getElementById('vidThumb');
   var btnNext=document.getElementById('btnNext');
-  var videoCompleted=false;
 
   thumb.addEventListener('click',function(){player.play();});
 
@@ -199,22 +221,25 @@ window.addEventListener('load',function(){
 
   player.on('pause',function(data){
     btnNext.classList.remove('watching');
-    var pos=Math.round(data.seconds),pct=Math.round(data.percent*100);
-    dataLayer.push({event:'video_pause',page:PAGE,time:pos,pct_watched:pct});
+    lastPos=Math.round(data.seconds);
+    var pct=Math.round(data.percent*100);
+    dataLayer.push({event:'video_pause',page:PAGE,time:lastPos,pct_watched:pct});
     fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({event:'video_pause',page:PAGE,position_sec:pos,pct_watched:pct,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')})
+      body:JSON.stringify({event:'video_pause',page:PAGE,position_sec:lastPos,pct_watched:pct,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')})
     }).catch(function(){});
   });
 
   var maxTime=0,isSeeking=false;
   player.on('timeupdate',function(data){
+    /* update lastPos every tick — synchronous, no async needed on exit */
+    lastPos=Math.round(data.seconds);
     if(!isSeeking&&data.seconds>maxTime+1.5){
       isSeeking=true;player.setCurrentTime(maxTime).then(function(){isSeeking=false;});return;
     }
     if(!isSeeking&&data.seconds>maxTime)maxTime=data.seconds;
     var pct=data.percent*100;
     [25,50,75,100].forEach(function(m){
-      if(!vm[m]&&pct>=m){vm[m]=1;dataLayer.push({event:'video_progress',milestone:m+'%',time:Math.round(data.seconds),page:PAGE});}
+      if(!vm[m]&&pct>=m){vm[m]=1;dataLayer.push({event:'video_progress',milestone:m+'%',time:lastPos,page:PAGE});}
     });
   });
 
@@ -236,28 +261,19 @@ window.addEventListener('load',function(){
     }).catch(function(){});
   });
 
+  /* fire on ANY navigation away — sync, uses lastPos not async call */
   window.addEventListener('beforeunload',function(){
-    player.getCurrentTime().then(function(pos){
-      player.getDuration().then(function(d){
-        var pct=d?Math.round((pos/d)*100):0;
-        if(navigator.sendBeacon)navigator.sendBeacon(WEBHOOK,JSON.stringify({
-          event:'page_exit',page:PAGE,position_sec:Math.round(pos),pct_watched:pct,
-          seconds_on_page:Math.round((Date.now()-t0)/1000),supplier:sup,utm_source:src,
-          timestamp:new Date().toLocaleString('he-IL')
-        }));
-        if(!videoCompleted&&leadPhone&&navigator.sendBeacon){
-          navigator.sendBeacon(WEBHOOK2,new Blob([JSON.stringify({
-            event:'video_abandoned',
-            phone:leadPhone,
-            page:PAGE,
-            video_time_seconds:Math.round(pos),
-            video_time_display:Math.floor(pos/60)+':'+(('0'+(Math.round(pos)%60)).slice(-2)),
-            percent_watched:pct,
-            timestamp:new Date().toISOString()
-          })],{type:'application/json'}));
-        }
-      });
-    });
+    sendAbandonBeacon();
+    if(navigator.sendBeacon)navigator.sendBeacon(WEBHOOK,JSON.stringify({
+      event:'page_exit',page:PAGE,position_sec:lastPos,
+      seconds_on_page:Math.round((Date.now()-t0)/1000),supplier:sup,utm_source:src,
+      timestamp:new Date().toLocaleString('he-IL')
+    }));
+  });
+
+  /* also fire when clicking the next button before video ends */
+  document.getElementById('btnNext').addEventListener('click',function(){
+    sendAbandonBeacon();
   });
 
   setTimeout(unlock,60000);
