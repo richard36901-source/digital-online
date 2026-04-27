@@ -187,7 +187,13 @@ async function loadTasks() {
   try {
     const res = await fetch(SCRIPT_URL);
     _t = await res.json();
-    _t.forEach(t => { t.open=false; t.editing=false; t.subs=(t.subs||[]).map(s=>({...s,editing:false})); });
+    _t.forEach(t => {
+      t.p = t.p || t.priority || 'm';
+      t.s = t.s || t.status || 'n';
+      t.subs = Array.isArray(t.subs) ? t.subs : (Array.isArray(t.subtasks) ? t.subtasks : []);
+      t.open = false; t.editing = false;
+      t.subs = t.subs.map(s => ({...s, editing:false}));
+    });
     document.getElementById('syncTxt').textContent = 'עודכן: '+new Date().toLocaleTimeString('he-IL');
     draw();
   } catch(e) {
@@ -357,8 +363,6 @@ function renderTask(t) {
           <span class="ob ${OC[t.owner||'ben']}">${OL[t.owner||'ben']}</span>
           <select class="ss" onchange="tStat('${t.id}',this.value)">${selOpts(SL,t.s)}</select>
           ${sc?`<span class="sub-cnt">${sc} תת-משימות</span>`:''}
-          ${t.date_created?`<span style="font-size:10px;color:var(--dim)">📅 ${t.date_created}</span>`:''}
-          ${t.date_done?`<span style="font-size:10px;color:#16a34a">✅ ${t.date_done}</span>`:''}
         </div>
       </div>
       <div class="tsk-acts">
