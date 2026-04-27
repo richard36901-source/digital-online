@@ -417,3 +417,200 @@ setInterval(loadData, 3*60*1000);
 </script>
 </body>
 </html>
+
+
+
+<!-- TASK MANAGER -->
+<style>
+.tsk-wrap { padding: 0 32px 40px; max-width: 1440px; margin: 0 auto; }
+.tsk-add { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+.tsk-in { flex: 1; min-width: 160px; background: #fff; border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 7px; font-size: 13px; font-family: 'Heebo', sans-serif; outline: none; }
+.tsk-in:focus { border-color: #1a1a2e; }
+.tsk-in::placeholder { color: var(--text-dim); }
+textarea.tsk-in { resize: none; height: 36px; line-height: 1.4; overflow: hidden; transition: height 0.2s; flex: 2; }
+textarea.tsk-in:focus { height: 80px; }
+select.tsk-in { flex: 0; min-width: 110px; cursor: pointer; }
+.tsk-btn { background: #1a1a2e; color: #fff; border: none; padding: 8px 18px; border-radius: 7px; font-size: 13px; font-family: 'Heebo', sans-serif; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.tsk-btn:hover { opacity: 0.82; }
+
+.tsk-list { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: #fff; }
+.tsk-row { display: flex; align-items: flex-start; gap: 10px; padding: 11px 14px; border-bottom: 1px solid var(--border); transition: background 0.12s; }
+.tsk-row:last-child { border-bottom: none; }
+.tsk-row:hover { background: var(--bg); }
+.tsk-row.done-row { opacity: 0.45; }
+
+.tsk-left { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 0; }
+.tsk-title { font-size: 13px; font-weight: 600; color: var(--text); }
+.tsk-title.done-t { text-decoration: line-through; color: var(--text-dim); font-weight: 400; }
+.tsk-desc { font-size: 12px; color: var(--text-dim); line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
+.tsk-badges { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+
+.pb { font-size: 10px; font-weight: 700; padding: 1px 7px; border-radius: 20px; }
+.pu { background: #fef2f2; color: #b91c1c; }
+.ph { background: #fff7ed; color: #c2410c; }
+.pm { background: #eff6ff; color: #1d4ed8; }
+.pl { background: #f0fdf4; color: #166534; }
+
+.ss { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; border: 1px solid var(--border); cursor: pointer; font-family: 'Heebo', sans-serif; outline: none; background: var(--bg); color: var(--text); }
+
+.tsk-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; padding-top: 2px; }
+.sub-toggle { background: none; border: 1px solid var(--border); color: var(--text-dim); font-size: 11px; cursor: pointer; padding: 2px 8px; border-radius: 20px; font-family: 'Heebo', sans-serif; white-space: nowrap; }
+.sub-toggle:hover { border-color: #1a1a2e; color: var(--text); }
+.sub-cnt { font-size: 10px; color: var(--text-dim); }
+.xbtn { background: none; border: none; color: var(--text-dim); font-size: 18px; line-height: 1; cursor: pointer; padding: 0 3px; }
+.xbtn:hover { color: #ef4444; }
+
+.sub-panel { background: var(--bg); border-top: 1px solid var(--border); padding: 8px 14px 12px 14px; }
+.sub-item { display: flex; align-items: center; gap: 8px; padding: 5px 0; border-bottom: 1px solid var(--border); }
+.sub-item:last-child { border-bottom: none; }
+.sub-item-title { flex: 1; font-size: 12px; color: var(--text); }
+.sub-item-title.done-t { text-decoration: line-through; color: var(--text-dim); }
+.sub-add { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+.sub-in { flex: 1; min-width: 120px; background: #fff; border: 1px solid var(--border); color: var(--text); padding: 5px 9px; border-radius: 6px; font-size: 12px; font-family: 'Heebo', sans-serif; outline: none; }
+.sub-in:focus { border-color: #1a1a2e; }
+select.sub-in { flex: 0; min-width: 90px; cursor: pointer; }
+.sub-btn { background: #1a1a2e; color: #fff; border: none; padding: 5px 12px; border-radius: 6px; font-size: 12px; font-family: 'Heebo', sans-serif; cursor: pointer; }
+.tsk-empty { padding: 28px; text-align: center; color: var(--text-dim); font-size: 13px; }
+</style>
+
+<div class="tsk-wrap">
+  <div class="sec" style="margin-top: 30px;">✅ משימות</div>
+  <div class="tsk-add">
+    <input class="tsk-in" id="tTitle" placeholder="משימה חדשה..." onkeydown="if(event.key==='Enter')tAdd()"/>
+    <textarea class="tsk-in" id="tDesc" placeholder="תיאור (אופציונלי)..."></textarea>
+    <select class="tsk-in" id="tPrio">
+      <option value="u">🔴 דחוף</option>
+      <option value="h">🟠 גבוה</option>
+      <option value="m" selected>🔵 בינוני</option>
+      <option value="l">🟢 נמוך</option>
+    </select>
+    <select class="tsk-in" id="tStat">
+      <option value="n">חדש</option>
+      <option value="s">מתוכנן</option>
+      <option value="p">בתהליך</option>
+      <option value="d">הושלם</option>
+    </select>
+    <button class="tsk-btn" onclick="tAdd()">+ הוסף</button>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap;" id="limitBar"></div>
+  <div id="tAlert" style="display:none;background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:10px 14px;font-size:13px;color:#b91c1c;margin-bottom:10px;font-weight:500;">⛔ שגיאת עדיפות</div>
+  <div class="tsk-list" id="tList"><div class="tsk-empty">אין משימות — הוסף את הראשונה</div></div>
+</div>
+
+<script>
+const _SK='do_t2';
+let _t=[];
+const PL={u:'🔴 דחוף',h:'🟠 גבוה',m:'🔵 בינוני',l:'🟢 נמוך'};
+const PC={u:'pu',h:'ph',m:'pm',l:'pl'};
+const SL={n:'חדש',s:'מתוכנן',p:'בתהליך',d:'הושלם'};
+const LIMITS={u:1,h:2,m:3,l:Infinity};
+const LIMIT_MSG={
+  u:'מותרת רק משימה דחופה אחת. הסר את הקיימת כדי להוסיף חדשה.',
+  h:'מותרות עד 2 משימות גבוהות. הסר אחת מה"גבוה" כדי להמשיך.',
+  m:'מותרות עד 3 משימות בינוניות. הסר אחת מה"בינוני" כדי להמשיך.',
+};
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2);
+const save=()=>localStorage.setItem(_SK,JSON.stringify(_t));
+const countP=p=>_t.filter(t=>t.p===p).length;
+
+function showAlert(msg, blockingP){
+  // highlight existing tasks of that priority
+  document.querySelectorAll('.tsk-row').forEach(el=>{
+    el.style.transition='background 0.3s';
+    el.style.background='';
+  });
+  const colors={u:'#fef2f2',h:'#fff7ed',m:'#eff6ff'};
+  document.querySelectorAll('[data-prio="'+blockingP+'"]').forEach(el=>{
+    el.closest('.tsk-row').style.background=colors[blockingP]||'';
+    setTimeout(()=>{ el.closest('.tsk-row') && (el.closest('.tsk-row').style.background=''); },2000);
+  });
+  const box=document.getElementById('tAlert');
+  box.textContent=msg;
+  box.style.display='block';
+  clearTimeout(box._t);
+  box._t=setTimeout(()=>{box.style.display='none';},4000);
+}
+
+function tAdd(){
+  const ti=document.getElementById('tTitle');
+  if(!ti.value.trim()){ti.focus();return;}
+  const p=document.getElementById('tPrio').value;
+  if(countP(p)>=LIMITS[p]){showAlert(LIMIT_MSG[p]||'',p);return;}
+  _t.unshift({id:uid(),title:ti.value.trim(),desc:document.getElementById('tDesc').value.trim(),p,s:document.getElementById('tStat').value,subs:[],open:false});
+  ti.value='';document.getElementById('tDesc').value='';
+  document.getElementById('tAlert').style.display='none';
+  save();draw();
+}
+
+function tDel(id){_t=_t.filter(t=>t.id!==id);save();draw();}
+function tStat(id,v){const t=_t.find(t=>t.id===id);if(t){t.s=v;save();draw();}}
+function tOpen(id){const t=_t.find(t=>t.id===id);if(t){t.open=!t.open;draw();}}
+function sAdd(tid){
+  const ti=document.getElementById('si-'+tid);
+  if(!ti.value.trim()){ti.focus();return;}
+  const t=_t.find(t=>t.id===tid);
+  if(t){t.subs.push({id:uid(),title:ti.value.trim(),p:document.getElementById('sp-'+tid).value,s:document.getElementById('ss-'+tid).value});ti.value='';save();draw();}
+}
+function sStat(tid,sid,v){const t=_t.find(t=>t.id===tid);if(t){const s=t.subs.find(s=>s.id===sid);if(s){s.s=v;save();draw();}}}
+function sDel(tid,sid){const t=_t.find(t=>t.id===tid);if(t){t.subs=t.subs.filter(s=>s.id!==sid);save();draw();}}
+
+function drawLimitBar(){
+  const items=[
+    {p:'u',label:'דחוף',max:1},
+    {p:'h',label:'גבוה',max:2},
+    {p:'m',label:'בינוני',max:3},
+  ];
+  document.getElementById('limitBar').innerHTML=items.map(({p,label,max})=>{
+    const cnt=countP(p);
+    const full=cnt>=max;
+    const bg=full?({u:'#fef2f2',h:'#fff7ed',m:'#eff6ff'}[p]):'#f3f4f6';
+    const col=full?({u:'#b91c1c',h:'#c2410c',m:'#1d4ed8'}[p]):'#9ca3af';
+    return`<div style="display:flex;align-items:center;gap:6px;padding:5px 10px;background:${bg};border-radius:20px;border:1px solid ${full?col:'#e5e7eb'}">
+      <span style="font-size:11px;font-weight:700;color:${col}">${PL[p]}</span>
+      <span style="font-size:11px;color:${col}">${cnt}/${max}</span>
+      ${full?`<span style="font-size:10px;color:${col};font-weight:600">מלא</span>`:''}
+    </div>`;
+  }).join('');
+}
+
+function draw(){
+  drawLimitBar();
+  const el=document.getElementById('tList');
+  if(!_t.length){el.innerHTML='<div class="tsk-empty">אין משימות — הוסף את הראשונה</div>';return;}
+  el.innerHTML=_t.map(t=>{
+    const done=t.s==='d';
+    const sc=t.subs.length, sd=t.subs.filter(s=>s.s==='d').length;
+    const subPanel=t.open?`<div class="sub-panel">
+      ${t.subs.map(s=>`<div class="sub-item">
+        <span class="pb ${PC[s.p]}">${PL[s.p]}</span>
+        <span class="sub-item-title ${s.s==='d'?'done-t':''}">${s.title}</span>
+        <select class="ss" onchange="sStat('${t.id}','${s.id}',this.value)">${Object.entries(SL).map(([v,l])=>`<option value="${v}"${s.s===v?' selected':''}>${l}</option>`).join('')}</select>
+        <button class="xbtn" onclick="sDel('${t.id}','${s.id}')">×</button>
+      </div>`).join('')}
+      <div class="sub-add">
+        <input class="sub-in" id="si-${t.id}" placeholder="תת-משימה..." onkeydown="if(event.key==='Enter')sAdd('${t.id}')"/>
+        <select class="sub-in" id="sp-${t.id}">${Object.entries(PL).map(([v,l])=>`<option value="${v}">${l}</option>`).join('')}</select>
+        <select class="sub-in" id="ss-${t.id}">${Object.entries(SL).map(([v,l])=>`<option value="${v}">${l}</option>`).join('')}</select>
+        <button class="sub-btn" onclick="sAdd('${t.id}')">+ הוסף</button>
+      </div>
+    </div>`:'';
+    return`<div class="tsk-row${done?' done-row':''}" data-id="${t.id}">
+      <div class="tsk-left">
+        <div class="tsk-title${done?' done-t':''}">${t.title}</div>
+        ${t.desc?`<div class="tsk-desc">${t.desc}</div>`:''}
+        <div class="tsk-badges">
+          <span class="pb ${PC[t.p]}" data-prio="${t.p}">${PL[t.p]}</span>
+          <select class="ss" onchange="tStat('${t.id}',this.value)">${Object.entries(SL).map(([v,l])=>`<option value="${v}"${t.s===v?' selected':''}>${l}</option>`).join('')}</select>
+          ${sc?`<span class="sub-cnt">${sd}/${sc} תתי-משימות</span>`:''}
+        </div>
+      </div>
+      <div class="tsk-right">
+        <button class="sub-toggle" onclick="tOpen('${t.id}')">${t.open?'▲':'▼'} תתי-משימות</button>
+        <button class="xbtn" onclick="tDel('${t.id}')">×</button>
+      </div>
+    </div>${subPanel}`;
+  }).join('');
+}
+try{_t=JSON.parse(localStorage.getItem(_SK))||[];}catch{_t=[];}
+draw();
+</script>
