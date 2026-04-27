@@ -6,192 +6,125 @@
 <title>Digital Online — משימות</title>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #f5f6fa; --white: #fff; --border: #e4e6ef;
-  --text: #1a1a2e; --text-dim: #8b8fa8;
-  --green: #22c55e; --red: #ef4444;
-  --shadow: 0 1px 3px rgba(0,0,0,0.07);
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text); direction: rtl; min-height: 100vh; }
+:root { --bg:#f5f6fa;--white:#fff;--border:#e4e6ef;--text:#1a1a2e;--dim:#8b8fa8;--shadow:0 1px 3px rgba(0,0,0,0.07); }
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direction:rtl;min-height:100vh;}
 
-.header {
-  background: #fff; border-bottom: 1px solid var(--border);
-  padding: 0 32px; height: 58px;
-  display: flex; align-items: center; justify-content: space-between;
-  position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow);
-}
-.logo { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
-.logo-badge { background: #1a1a2e; color: #c9a84c; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 5px; }
-.back-btn {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: transparent; border: 1px solid var(--border);
-  color: var(--text-dim); padding: 7px 14px; border-radius: 7px;
-  font-size: 13px; font-family: 'Heebo', sans-serif; cursor: pointer;
-  text-decoration: none; transition: all 0.15s;
-}
-.back-btn:hover { border-color: #1a1a2e; color: var(--text); }
+.header{background:#fff;border-bottom:1px solid var(--border);padding:0 32px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--shadow);}
+.logo{font-size:15px;font-weight:700;display:flex;align-items:center;gap:10px;}
+.logo-badge{background:#1a1a2e;color:#c9a84c;font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;}
+.back-btn{display:inline-flex;align-items:center;gap:6px;background:transparent;border:1px solid var(--border);color:var(--dim);padding:7px 14px;border-radius:7px;font-size:13px;font-family:'Heebo',sans-serif;cursor:pointer;text-decoration:none;transition:all .15s;}
+.back-btn:hover{border-color:#1a1a2e;color:var(--text);}
 
-.page { padding: 28px 32px; max-width: 1200px; margin: 0 auto; }
-
-/* SUMMARY BAR */
-.summary-bar {
-  display: flex; align-items: center; gap: 14px;
-  margin-bottom: 22px; flex-wrap: wrap;
-}
-.sum-stat {
-  background: #fff; border: 1px solid var(--border); border-radius: 10px;
-  padding: 12px 18px; display: flex; align-items: center; gap: 10px;
-  box-shadow: var(--shadow);
-}
-.sum-num { font-size: 22px; font-weight: 800; color: var(--text); }
-.sum-lbl { font-size: 12px; color: var(--text-dim); font-weight: 500; }
-.sum-divider { width: 1px; height: 36px; background: var(--border); }
-.done-stat { border-color: #bbf7d0; background: #f0fdf4; }
-.done-stat .sum-num { color: #16a34a; }
-.done-stat .sum-lbl { color: #16a34a; }
+.page{padding:28px 32px;max-width:1200px;margin:0 auto;}
 
 /* LIMIT BAR */
-.limit-bar { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
+.limit-bar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.l-pill{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;border:1px solid #e5e7eb;background:#f3f4f6;font-size:11px;font-weight:700;color:#9ca3af;}
+.l-pill.full{background:var(--lbg);border-color:var(--lc);color:var(--lc);}
 
 /* ALERT */
-.t-alert {
-  display: none; background: #fef2f2; border: 1px solid #fca5a5;
-  border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #b91c1c;
-  margin-bottom: 14px; font-weight: 500;
-}
+.t-alert{display:none;background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:10px 14px;font-size:13px;color:#b91c1c;margin-bottom:12px;font-weight:500;}
 
 /* ADD FORM */
-.add-form {
-  background: #fff; border: 1px solid var(--border); border-radius: 12px;
-  padding: 18px; margin-bottom: 22px; box-shadow: var(--shadow);
-}
-.add-form-title { font-size: 13px; font-weight: 700; margin-bottom: 12px; color: var(--text); }
-.form-row { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
-.t-in {
-  flex: 1; min-width: 150px;
-  background: var(--bg); border: 1px solid var(--border);
-  color: var(--text); padding: 9px 13px; border-radius: 8px;
-  font-size: 13px; font-family: 'Heebo', sans-serif; outline: none;
-  transition: border 0.2s;
-}
-.t-in:focus { border-color: #1a1a2e; }
-.t-in::placeholder { color: var(--text-dim); }
-textarea.t-in { resize: none; height: 38px; line-height: 1.4; transition: height 0.2s, border 0.2s; }
-textarea.t-in:focus { height: 80px; }
-select.t-in { flex: 0; min-width: 120px; cursor: pointer; }
-.add-btn {
-  background: #1a1a2e; color: #fff; border: none;
-  padding: 9px 22px; border-radius: 8px; font-size: 13px;
-  font-family: 'Heebo', sans-serif; font-weight: 600; cursor: pointer;
-  white-space: nowrap; transition: opacity 0.2s; align-self: flex-end;
-}
-.add-btn:hover { opacity: 0.82; }
+.add-form{background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:22px;box-shadow:var(--shadow);}
+.add-form-title{font-size:13px;font-weight:700;margin-bottom:12px;}
+.form-row{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;}
+.t-in{flex:1;min-width:140px;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:9px 13px;border-radius:8px;font-size:13px;font-family:'Heebo',sans-serif;outline:none;transition:border .2s;}
+.t-in:focus{border-color:#1a1a2e;}
+.t-in::placeholder{color:var(--dim);}
+textarea.t-in{resize:none;height:38px;line-height:1.4;transition:height .2s,border .2s;}
+textarea.t-in:focus{height:80px;}
+select.t-in{flex:0;min-width:120px;cursor:pointer;}
+.add-btn{background:#1a1a2e;color:#fff;border:none;padding:9px 22px;border-radius:8px;font-size:13px;font-family:'Heebo',sans-serif;font-weight:600;cursor:pointer;white-space:nowrap;align-self:flex-end;}
+.add-btn:hover{opacity:.82;}
 
 /* TWO COL */
-.two-col-tasks {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
-}
-.col-head {
-  font-size: 12px; font-weight: 700; color: var(--text-dim);
-  text-transform: uppercase; letter-spacing: 0.07em;
-  display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
-}
-.done-col-head { color: #16a34a; }
-.col-count {
-  font-size: 11px; font-weight: 700; padding: 1px 8px; border-radius: 20px;
-  background: var(--bg); border: 1px solid var(--border); color: var(--text);
-}
-.done-col-count { background: #f0fdf4; color: #16a34a; border-color: #bbf7d0; }
-
-.task-col {
-  display: flex; flex-direction: column; gap: 0;
-  border: 1px solid var(--border); border-radius: 12px;
-  overflow: hidden; background: #fff; min-height: 100px;
-}
-.done-col { background: #fafafa; border-color: #d1fae5; }
-.done-col .tsk-row:hover { background: #f0fdf4; }
-.done-col .tsk-row { background: #fafafa; }
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.col-head{font-size:12px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.done-col-head{color:#16a34a;}
+.col-count{font-size:11px;font-weight:700;padding:1px 8px;border-radius:20px;background:var(--bg);border:1px solid var(--border);color:var(--text);}
+.done-col-count{background:#f0fdf4;color:#16a34a;border-color:#bbf7d0;}
+.task-col{display:flex;flex-direction:column;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:#fff;min-height:80px;}
+.done-col-wrap .task-col{background:#fafafa;border-color:#d1fae5;}
 
 /* TASK ROW */
-.tsk-row {
-  display: flex; align-items: flex-start; gap: 10px;
-  padding: 11px 14px; border-bottom: 1px solid var(--border);
-  transition: background 0.12s; background: #fff;
-}
-.tsk-row:last-child { border-bottom: none; }
-.tsk-row:hover { background: var(--bg); }
-.tsk-row.is-done { opacity: 0.5; }
-
-.tsk-left { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
-.tsk-title { font-size: 13px; font-weight: 600; color: var(--text); }
-.tsk-title.done-t { text-decoration: line-through; color: var(--text-dim); font-weight: 400; }
-.tsk-desc { font-size: 12px; color: var(--text-dim); line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
-.tsk-meta { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
-.tsk-right { display: flex; align-items: center; gap: 5px; flex-shrink: 0; padding-top: 1px; }
+.tsk-row{border-bottom:1px solid var(--border);transition:background .12s;}
+.tsk-row:last-child{border-bottom:none;}
+.tsk-row:hover{background:var(--bg);}
+.done-col-wrap .tsk-row:hover{background:#f0fdf4;}
+.tsk-main{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;}
+.tsk-body{flex:1;min-width:0;}
+.tsk-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px;}
+.tsk-title.done-t{text-decoration:line-through;color:var(--dim);font-weight:400;}
+.tsk-desc{font-size:12px;color:var(--dim);line-height:1.5;white-space:pre-wrap;word-break:break-word;margin-bottom:5px;}
+.tsk-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.tsk-acts{display:flex;align-items:center;gap:4px;flex-shrink:0;padding-top:1px;}
 
 /* BADGES */
-.pb { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
-.pu { background: #fef2f2; color: #b91c1c; }
-.ph { background: #fff7ed; color: #c2410c; }
-.pm { background: #eff6ff; color: #1d4ed8; }
-.pl { background: #f0fdf4; color: #166534; }
+.pb{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap;}
+.pu{background:#fef2f2;color:#b91c1c;} .ph{background:#fff7ed;color:#c2410c;}
+.pm{background:#eff6ff;color:#1d4ed8;} .pl{background:#f0fdf4;color:#166534;}
+.ob{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;border:1px solid var(--border);background:var(--bg);}
+.ob-ben{background:#fdf6e3;border-color:#fcd34d;color:#92400e;}
+.ob-richard{background:#eff6ff;border-color:#93c5fd;color:#1e40af;}
+.ss{font-size:11px;font-weight:600;padding:2px 7px;border-radius:20px;border:1px solid var(--border);cursor:pointer;font-family:'Heebo',sans-serif;outline:none;background:var(--bg);}
 
-/* OWNER BADGE */
-.owner-badge {
-  font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 20px;
-  border: 1px solid var(--border); background: var(--bg);
-  white-space: nowrap;
-}
-.owner-ben { background: #fdf6e3; border-color: #fcd34d; color: #92400e; }
-.owner-richard { background: #eff6ff; border-color: #93c5fd; color: #1e40af; }
-.owner-both { background: #f5f3ff; border-color: #c4b5fd; color: #5b21b6; }
+/* ICON BUTTONS */
+.ico-btn{background:none;border:none;color:var(--dim);cursor:pointer;padding:3px 5px;border-radius:5px;font-size:13px;line-height:1;transition:color .15s;}
+.ico-btn:hover{color:var(--text);}
+.ico-btn.del:hover{color:#ef4444;}
+.sub-toggle{background:none;border:1px solid var(--border);color:var(--dim);font-size:11px;cursor:pointer;padding:2px 8px;border-radius:20px;font-family:'Heebo',sans-serif;white-space:nowrap;}
+.sub-toggle:hover{border-color:#1a1a2e;color:var(--text);}
+.sub-cnt{font-size:10px;color:var(--dim);}
 
-.ss {
-  font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px;
-  border: 1px solid var(--border); cursor: pointer;
-  font-family: 'Heebo', sans-serif; outline: none; background: var(--bg);
-}
-.sub-cnt { font-size: 10px; color: var(--text-dim); }
-
-.del-btn { background: none; border: none; color: var(--text-dim); font-size: 17px; line-height: 1; cursor: pointer; padding: 0 3px; }
-.del-btn:hover { color: var(--red); }
-.sub-toggle { background: none; border: 1px solid var(--border); color: var(--text-dim); font-size: 11px; cursor: pointer; padding: 2px 7px; border-radius: 20px; font-family: 'Heebo', sans-serif; white-space: nowrap; }
-.sub-toggle:hover { border-color: #1a1a2e; color: var(--text); }
+/* EDIT MODE */
+.edit-panel{background:#f8f9ff;border-top:1px solid var(--border);padding:12px 14px;display:none;}
+.edit-panel.open{display:block;}
+.edit-row{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;}
+.e-in{flex:1;min-width:120px;background:#fff;border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:7px;font-size:13px;font-family:'Heebo',sans-serif;outline:none;}
+.e-in:focus{border-color:#1a1a2e;}
+textarea.e-in{resize:none;height:60px;line-height:1.4;}
+select.e-in{flex:0;min-width:110px;cursor:pointer;}
+.save-btn{background:#1a1a2e;color:#fff;border:none;padding:7px 16px;border-radius:7px;font-size:12px;font-family:'Heebo',sans-serif;font-weight:600;cursor:pointer;}
+.save-btn:hover{opacity:.82;}
+.cancel-btn{background:transparent;border:1px solid var(--border);color:var(--dim);padding:7px 14px;border-radius:7px;font-size:12px;font-family:'Heebo',sans-serif;cursor:pointer;}
+.cancel-btn:hover{border-color:#1a1a2e;color:var(--text);}
 
 /* SUBTASKS */
-.sub-panel { border-top: 1px solid var(--border); padding: 8px 14px 12px; background: var(--bg); }
-.sub-item { display: flex; align-items: center; gap: 7px; padding: 5px 0; border-bottom: 1px solid var(--border); }
-.sub-item:last-child { border-bottom: none; }
-.sub-title { flex: 1; font-size: 12px; color: var(--text); }
-.sub-title.done-t { text-decoration: line-through; color: var(--text-dim); }
-.sub-add { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
-.sub-in { flex: 1; min-width: 110px; background: #fff; border: 1px solid var(--border); color: var(--text); padding: 5px 9px; border-radius: 6px; font-size: 12px; font-family: 'Heebo', sans-serif; outline: none; }
-.sub-in:focus { border-color: #1a1a2e; }
-select.sub-in { flex: 0; min-width: 90px; cursor: pointer; }
-.sub-btn { background: #1a1a2e; color: #fff; border: none; padding: 5px 12px; border-radius: 6px; font-size: 12px; font-family: 'Heebo', sans-serif; cursor: pointer; }
+.sub-panel{border-top:1px solid var(--border);padding:8px 14px 12px;background:#fafafa;display:none;}
+.sub-panel.open{display:block;}
+.sub-item{display:flex;align-items:center;gap:7px;padding:6px 0;border-bottom:1px solid var(--border);}
+.sub-item:last-child{border-bottom:none;}
+.sub-title{flex:1;font-size:12px;color:var(--text);}
+.sub-title.done-t{text-decoration:line-through;color:var(--dim);}
+.sub-add{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
+.sub-in{flex:1;min-width:100px;background:#fff;border:1px solid var(--border);color:var(--text);padding:6px 9px;border-radius:6px;font-size:12px;font-family:'Heebo',sans-serif;outline:none;}
+.sub-in:focus{border-color:#1a1a2e;}
+select.sub-in{flex:0;min-width:88px;cursor:pointer;}
+.sub-btn{background:#1a1a2e;color:#fff;border:none;padding:6px 12px;border-radius:6px;font-size:12px;font-family:'Heebo',sans-serif;cursor:pointer;}
 
-.t-empty { text-align: center; padding: 28px 16px; color: var(--text-dim); font-size: 13px; }
+/* SUB EDIT */
+.sub-edit{display:none;gap:6px;flex-wrap:wrap;padding:6px 0;}
+.sub-edit.open{display:flex;}
+.sub-e-in{flex:1;min-width:100px;background:#fff;border:1px solid var(--border);color:var(--text);padding:5px 8px;border-radius:6px;font-size:12px;font-family:'Heebo',sans-serif;outline:none;}
+.sub-e-in:focus{border-color:#1a1a2e;}
+select.sub-e-in{flex:0;min-width:88px;cursor:pointer;}
+
+.t-empty{text-align:center;padding:28px;color:var(--dim);font-size:13px;}
 </style>
 </head>
 <body>
 
 <div class="header">
-  <div class="logo">
-    <div class="logo-badge">DO</div>
-    Digital Online — משימות
-  </div>
-  <a href="dashboard.html" class="back-btn">← חזור לדשבורד</a>
+  <div class="logo"><div class="logo-badge">DO</div>משימות</div>
+  <a href="dashboard.html" class="back-btn">← דשבורד</a>
 </div>
 
 <div class="page">
-  <!-- LIMIT BAR -->
   <div class="limit-bar" id="limitBar"></div>
-
-  <!-- ALERT -->
   <div class="t-alert" id="tAlert"></div>
 
-  <!-- ADD FORM -->
   <div class="add-form">
     <div class="add-form-title">+ משימה חדשה</div>
     <div class="form-row">
@@ -215,22 +148,20 @@ select.sub-in { flex: 0; min-width: 90px; cursor: pointer; }
         <option value="ben">👑 בן</option>
         <option value="richard">⚡ ריצארד</option>
       </select>
-      <button class="add-btn" onclick="tAdd()">+ הוסף משימה</button>
+      <button class="add-btn" onclick="tAdd()">+ הוסף</button>
     </div>
   </div>
 
-  <!-- TWO COL -->
-  <div class="two-col-tasks">
+  <div class="two-col">
     <div>
-      <div class="col-head">פעיל <span class="col-count" id="activeCount">0</span></div>
+      <div class="col-head">פעיל <span class="col-count" id="cntActive">0</span></div>
       <div class="task-col" id="colActive"><div class="t-empty">אין משימות פעילות</div></div>
     </div>
-    <div>
-      <div class="col-head done-col-head">✅ הושלם <span class="col-count done-col-count" id="doneCount">0</span></div>
-      <div class="task-col done-col" id="colDone"><div class="t-empty">אין משימות שהושלמו</div></div>
+    <div class="done-col-wrap">
+      <div class="col-head done-col-head">✅ הושלם <span class="col-count done-col-count" id="cntDone">0</span></div>
+      <div class="task-col" id="colDone"><div class="t-empty">עוד לא הושלמו</div></div>
     </div>
   </div>
-
 </div>
 
 <script>
@@ -240,27 +171,24 @@ const PL={u:'🚨 דחוף',h:'🔥 גבוה',m:'📌 בינוני',l:'🌿 נמ
 const PC={u:'pu',h:'ph',m:'pm',l:'pl'};
 const SL={n:'חדש',s:'מתוכנן',p:'בתהליך',d:'הושלם'};
 const OL={ben:'👑 בן',richard:'⚡ ריצארד'};
-const OC={ben:'owner-ben',richard:'owner-richard'};
+const OC={ben:'ob-ben',richard:'ob-richard'};
 const LIMITS={u:1,h:2,m:3,l:Infinity};
-const LMSG={
-  u:'מותרת רק משימה דחופה אחת — הסר את הקיימת.',
-  h:'מותרות עד 2 משימות גבוהות — הסר אחת.',
-  m:'מותרות עד 3 משימות בינוניות — הסר אחת.',
-};
+const LMSG={u:'מותרת רק משימה דחופה אחת — הסר את הקיימת.',h:'מותרות עד 2 גבוהות — הסר אחת.',m:'מותרות עד 3 בינוניות — הסר אחת.'};
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2);
 const save=()=>localStorage.setItem(SK,JSON.stringify(_t));
-const countP=p=>_t.filter(t=>t.p===p).length;
+const countP=p=>_t.filter(t=>t.p===p&&t.s!=='d').length;
+
+function selOpts(map,sel){return Object.entries(map).map(([v,l])=>`<option value="${v}"${sel===v?' selected':''}>${l}</option>`).join('');}
 
 function showAlert(msg,p){
   const b=document.getElementById('tAlert');
-  b.textContent='⛔ '+msg; b.style.display='block';
-  clearTimeout(b._t); b._t=setTimeout(()=>b.style.display='none',4000);
+  b.textContent='⛔ '+msg;b.style.display='block';
+  clearTimeout(b._t);b._t=setTimeout(()=>b.style.display='none',4000);
   document.querySelectorAll(`[data-prio="${p}"]`).forEach(el=>{
-    const row=el.closest('.tsk-row');
-    if(!row)return;
+    const row=el.closest('.tsk-row');if(!row)return;
     const orig=row.style.background;
     row.style.background={u:'#fef2f2',h:'#fff7ed',m:'#eff6ff'}[p]||'';
-    setTimeout(()=>row.style.background=orig,2000);
+    setTimeout(()=>row&&(row.style.background=orig),2000);
   });
 }
 
@@ -269,82 +197,139 @@ function tAdd(){
   if(!ti.value.trim()){ti.focus();return;}
   const p=document.getElementById('nPrio').value;
   if(countP(p)>=LIMITS[p]){showAlert(LMSG[p]||'',p);return;}
-  _t.unshift({id:uid(),title:ti.value.trim(),desc:document.getElementById('nDesc').value.trim(),p,s:document.getElementById('nStat').value,owner:document.getElementById('nOwner').value,subs:[],open:false});
-  ti.value=''; document.getElementById('nDesc').value='';
+  _t.unshift({id:uid(),title:ti.value.trim(),desc:document.getElementById('nDesc').value.trim(),p,s:document.getElementById('nStat').value,owner:document.getElementById('nOwner').value,subs:[],open:false,editing:false});
+  ti.value='';document.getElementById('nDesc').value='';
   document.getElementById('tAlert').style.display='none';
-  save(); draw();
+  save();draw();
 }
+
 function tDel(id){if(!confirm('למחוק את המשימה?'))return;_t=_t.filter(t=>t.id!==id);save();draw();}
 function tStat(id,v){const t=_t.find(t=>t.id===id);if(t){t.s=v;save();draw();}}
 function tOpen(id){const t=_t.find(t=>t.id===id);if(t){t.open=!t.open;draw();}}
-function sAdd(tid){
-  const ti=document.getElementById('si-'+tid);
-  if(!ti.value.trim()){ti.focus();return;}
-  const t=_t.find(t=>t.id===tid);
-  if(t){t.subs.push({id:uid(),title:ti.value.trim(),p:document.getElementById('sp-'+tid).value,s:document.getElementById('ss-'+tid).value});ti.value='';save();draw();}
-}
-function sStat(tid,sid,v){const t=_t.find(t=>t.id===tid);if(t){const s=t.subs.find(s=>s.id===sid);if(s){s.s=v;save();draw();}}}
-function sDel(tid,sid){if(!confirm('למחוק את התת-משימה?'))return;const t=_t.find(t=>t.id===tid);if(t){t.subs=t.subs.filter(s=>s.id!==sid);save();draw();}}
+function tEdit(id){const t=_t.find(t=>t.id===id);if(t){t.editing=!t.editing;draw();}}
 
-function renderTask(t){
-  const done=t.s==='d';
-  const sc=t.subs.length, sd=t.subs.filter(s=>s.s==='d').length;
-  const sub=t.open?`<div class="sub-panel">
-    ${t.subs.length?t.subs.map(s=>`<div class="sub-item">
-      <span class="pb ${PC[s.p]}">${PL[s.p]}</span>
-      <span class="sub-title ${s.s==='d'?'done-t':''}">${s.title}</span>
-      <select class="ss" onchange="sStat('${t.id}','${s.id}',this.value)">${Object.entries(SL).map(([v,l])=>`<option value="${v}"${s.s===v?' selected':''}>${l}</option>`).join('')}</select>
-      <button class="del-btn" onclick="sDel('${t.id}','${s.id}')">×</button>
-    </div>`).join(''):'<div style="font-size:12px;color:var(--text-dim);padding:4px 0">אין תת-משימות</div>'}
-    <div class="sub-add">
-      <input class="sub-in" id="si-${t.id}" placeholder="תת-משימה..." onkeydown="if(event.key==='Enter')sAdd('${t.id}')"/>
-      <select class="sub-in" id="sp-${t.id}">${Object.entries(PL).map(([v,l])=>`<option value="${v}">${l}</option>`).join('')}</select>
-      <select class="sub-in" id="ss-${t.id}">${Object.entries(SL).map(([v,l])=>`<option value="${v}">${l}</option>`).join('')}</select>
-      <button class="sub-btn" onclick="sAdd('${t.id}')">+ הוסף</button>
-    </div>
-  </div>`:'';
-  return`<div class="tsk-row${done?' is-done':''}" data-id="${t.id}">
-    <div class="tsk-left">
-      <div class="tsk-title${done?' done-t':''}">${t.title}</div>
-      ${t.desc?`<div class="tsk-desc">${t.desc}</div>`:''}
-      <div class="tsk-meta">
-        <span class="pb ${PC[t.p]}" data-prio="${t.p}">${PL[t.p]}</span>
-        <span class="owner-badge ${OC[t.owner||'ben']}">${OL[t.owner||'ben']}</span>
-        <select class="ss" onchange="tStat('${t.id}',this.value)">${Object.entries(SL).map(([v,l])=>`<option value="${v}"${t.s===v?' selected':''}>${l}</option>`).join('')}</select>
-        ${sc?`<span class="sub-cnt">${sc} תת-משימות</span>`:''}
-      </div>
-    </div>
-    <div class="tsk-right">
-      <button class="sub-toggle" onclick="tOpen('${t.id}')">${t.open?'▲ הסתר':'▼ תתי-משימות'}</button>
-      <button class="del-btn" onclick="tDel('${t.id}')">×</button>
-    </div>
-  </div>${sub}`;
+function tSave(id){
+  const t=_t.find(t=>t.id===id);if(!t)return;
+  const newTitle=document.getElementById('et-'+id).value.trim();
+  if(!newTitle)return;
+  const newP=document.getElementById('ep-'+id).value;
+  // check limit only if priority changed
+  if(newP!==t.p && countP(newP)>=LIMITS[newP]){showAlert(LMSG[newP]||'',newP);return;}
+  t.title=newTitle;
+  t.desc=document.getElementById('ed-'+id).value.trim();
+  t.p=newP;
+  t.s=document.getElementById('es-'+id).value;
+  t.owner=document.getElementById('eo-'+id).value;
+  t.editing=false;
+  save();draw();
+}
+
+function sAdd(tid){
+  const ti=document.getElementById('si-'+tid);if(!ti.value.trim()){ti.focus();return;}
+  const t=_t.find(t=>t.id===tid);
+  if(t){t.subs.push({id:uid(),title:ti.value.trim(),p:document.getElementById('sp-'+tid).value,s:document.getElementById('ss-'+tid).value,editing:false});ti.value='';save();draw();}
+}
+function sDel(tid,sid){if(!confirm('למחוק?'))return;const t=_t.find(t=>t.id===tid);if(t){t.subs=t.subs.filter(s=>s.id!==sid);save();draw();}}
+function sStat(tid,sid,v){const t=_t.find(t=>t.id===tid);if(t){const s=t.subs.find(s=>s.id===sid);if(s){s.s=v;save();draw();}}}
+function sEdit(tid,sid){const t=_t.find(t=>t.id===tid);if(t){const s=t.subs.find(s=>s.id===sid);if(s){s.editing=!s.editing;draw();}}}
+function sSave(tid,sid){
+  const t=_t.find(t=>t.id===tid);if(!t)return;
+  const s=t.subs.find(s=>s.id===sid);if(!s)return;
+  const v=document.getElementById('set-'+sid).value.trim();
+  if(!v)return;
+  s.title=v;
+  s.p=document.getElementById('sep-'+sid).value;
+  s.s=document.getElementById('ses-'+sid).value;
+  s.editing=false;
+  save();draw();
 }
 
 function drawLimitBar(){
   document.getElementById('limitBar').innerHTML=[
-    {p:'u',max:1},{p:'h',max:2},{p:'m',max:3}
-  ].map(({p,max})=>{
-    const cnt=countP(p); const full=cnt>=max;
-    const bg={u:'#fef2f2',h:'#fff7ed',m:'#eff6ff'}[p];
-    const col={u:'#b91c1c',h:'#c2410c',m:'#1d4ed8'}[p];
-    return`<div style="display:flex;align-items:center;gap:6px;padding:4px 10px;background:${full?bg:'#f3f4f6'};border-radius:20px;border:1px solid ${full?col:'#e5e7eb'}">
-      <span style="font-size:11px;font-weight:700;color:${full?col:'#9ca3af'}">${PL[p]}</span>
-      <span style="font-size:11px;color:${full?col:'#9ca3af'}">${cnt}/${max}</span>
-      ${full?`<span style="font-size:10px;font-weight:700;color:${col}">מלא</span>`:''}
-    </div>`;
+    {p:'u',max:1,c:'#b91c1c',bg:'#fef2f2'},
+    {p:'h',max:2,c:'#c2410c',bg:'#fff7ed'},
+    {p:'m',max:3,c:'#1d4ed8',bg:'#eff6ff'}
+  ].map(({p,max,c,bg})=>{
+    const cnt=countP(p),full=cnt>=max;
+    return`<div class="l-pill${full?' full':''}" style="${full?`--lbg:${bg};--lc:${c}`:''}">${PL[p]} ${cnt}/${max}${full?' 🚫':''}</div>`;
   }).join('');
+}
+
+function renderTask(t){
+  const done=t.s==='d';
+  const sc=t.subs.length;
+
+  const editPanel=`<div class="edit-panel${t.editing?' open':''}">
+    <div class="edit-row">
+      <input class="e-in" id="et-${t.id}" value="${t.title.replace(/"/g,'&quot;')}" placeholder="כותרת"/>
+      <textarea class="e-in" id="ed-${t.id}" placeholder="תיאור...">${t.desc||''}</textarea>
+    </div>
+    <div class="edit-row">
+      <select class="e-in" id="ep-${t.id}">${selOpts(PL,t.p)}</select>
+      <select class="e-in" id="es-${t.id}">${selOpts(SL,t.s)}</select>
+      <select class="e-in" id="eo-${t.id}">${selOpts(OL,t.owner||'ben')}</select>
+      <button class="save-btn" onclick="tSave('${t.id}')">💾 שמור</button>
+      <button class="cancel-btn" onclick="tEdit('${t.id}')">ביטול</button>
+    </div>
+  </div>`;
+
+  const subsHtml=t.subs.map(s=>{
+    const viewRow=`<div class="sub-item" id="sv-${s.id}" style="${s.editing?'display:none':''}">
+      <span class="pb ${PC[s.p]}" >${PL[s.p]}</span>
+      <span class="sub-title${s.s==='d'?' done-t':''}">${s.title}</span>
+      <select class="ss" onchange="sStat('${t.id}','${s.id}',this.value)">${selOpts(SL,s.s)}</select>
+      <button class="ico-btn" onclick="sEdit('${t.id}','${s.id}')" title="עריכה">✏️</button>
+      <button class="ico-btn del" onclick="sDel('${t.id}','${s.id}')">×</button>
+    </div>`;
+    const editRow=`<div class="sub-edit${s.editing?' open':''}" id="se-${s.id}">
+      <input class="sub-e-in" id="set-${s.id}" value="${s.title.replace(/"/g,'&quot;')}"/>
+      <select class="sub-e-in" id="sep-${s.id}">${selOpts(PL,s.p)}</select>
+      <select class="sub-e-in" id="ses-${s.id}">${selOpts(SL,s.s)}</select>
+      <button class="sub-btn" onclick="sSave('${t.id}','${s.id}')">💾</button>
+      <button class="ico-btn" onclick="sEdit('${t.id}','${s.id}')">✕</button>
+    </div>`;
+    return viewRow+editRow;
+  }).join('');
+
+  const subPanel=`<div class="sub-panel${t.open?' open':''}">
+    ${t.subs.length?subsHtml:'<div style="font-size:12px;color:var(--dim);padding:4px 0">אין תת-משימות</div>'}
+    <div class="sub-add">
+      <input class="sub-in" id="si-${t.id}" placeholder="תת-משימה חדשה..." onkeydown="if(event.key==='Enter')sAdd('${t.id}')"/>
+      <select class="sub-in" id="sp-${t.id}">${selOpts(PL,'m')}</select>
+      <select class="sub-in" id="ss-${t.id}">${selOpts(SL,'n')}</select>
+      <button class="sub-btn" onclick="sAdd('${t.id}')">+ הוסף</button>
+    </div>
+  </div>`;
+
+  return`<div class="tsk-row" data-id="${t.id}">
+    <div class="tsk-main">
+      <div class="tsk-body">
+        <div class="tsk-title${done?' done-t':''}">${t.title}</div>
+        ${t.desc&&!t.editing?`<div class="tsk-desc">${t.desc}</div>`:''}
+        <div class="tsk-meta">
+          <span class="pb ${PC[t.p]}" data-prio="${t.p}">${PL[t.p]}</span>
+          <span class="ob ${OC[t.owner||'ben']}">${OL[t.owner||'ben']}</span>
+          <select class="ss" onchange="tStat('${t.id}',this.value)">${selOpts(SL,t.s)}</select>
+          ${sc?`<span class="sub-cnt">${sc} תת-משימות</span>`:''}
+        </div>
+      </div>
+      <div class="tsk-acts">
+        <button class="sub-toggle" onclick="tOpen('${t.id}')">${t.open?'▲':'▼'} תתי</button>
+        <button class="ico-btn" onclick="tEdit('${t.id}')" title="עריכה">✏️</button>
+        <button class="ico-btn del" onclick="tDel('${t.id}')">×</button>
+      </div>
+    </div>
+    ${editPanel}
+    ${subPanel}
+  </div>`;
 }
 
 function draw(){
   drawLimitBar();
   const active=_t.filter(t=>t.s!=='d');
   const done=_t.filter(t=>t.s==='d');
-
-
-  document.getElementById('activeCount').textContent=active.length;
-  document.getElementById('doneCount').textContent=done.length;
-
+  document.getElementById('cntActive').textContent=active.length;
+  document.getElementById('cntDone').textContent=done.length;
   document.getElementById('colActive').innerHTML=active.length?active.map(renderTask).join(''):'<div class="t-empty">אין משימות פעילות 🎉</div>';
   document.getElementById('colDone').innerHTML=done.length?done.map(renderTask).join(''):'<div class="t-empty">עוד לא הושלמו</div>';
 }
