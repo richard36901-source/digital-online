@@ -542,7 +542,7 @@ function tAdd(){
   save();draw();
 }
 
-function tDel(id){_t=_t.filter(t=>t.id!==id);save();draw();}
+function tDel(id){if(!confirm('למחוק את המשימה?'))return;_t=_t.filter(t=>t.id!==id);save();draw();}
 function tStat(id,v){const t=_t.find(t=>t.id===id);if(t){t.s=v;save();draw();}}
 function tOpen(id){const t=_t.find(t=>t.id===id);if(t){t.open=!t.open;draw();}}
 function sAdd(tid){
@@ -552,7 +552,7 @@ function sAdd(tid){
   if(t){t.subs.push({id:uid(),title:ti.value.trim(),p:document.getElementById('sp-'+tid).value,s:document.getElementById('ss-'+tid).value});ti.value='';save();draw();}
 }
 function sStat(tid,sid,v){const t=_t.find(t=>t.id===tid);if(t){const s=t.subs.find(s=>s.id===sid);if(s){s.s=v;save();draw();}}}
-function sDel(tid,sid){const t=_t.find(t=>t.id===tid);if(t){t.subs=t.subs.filter(s=>s.id!==sid);save();draw();}}
+function sDel(tid,sid){if(!confirm('למחוק את התת-משימה?'))return;const t=_t.find(t=>t.id===tid);if(t){t.subs=t.subs.filter(s=>s.id!==sid);save();draw();}}
 
 function drawLimitBar(){
   const items=[
