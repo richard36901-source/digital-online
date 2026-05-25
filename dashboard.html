@@ -1,434 +1,1185 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Digital Online — Analytics</title>
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Funnel Ops · Digital Online</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet"/>
+
 <style>
-:root {
-  --bg: #f5f6fa;
-  --white: #ffffff;
-  --border: #e4e6ef;
-  --text: #1a1a2e;
-  --text-dim: #8b8fa8;
-  --gold: #c9a84c;
-  --green: #22c55e;
-  --blue: #3b82f6;
-  --red: #ef4444;
-  --purple: #8b5cf6;
-  --orange: #f97316;
-  --shadow: 0 1px 3px rgba(0,0,0,0.07);
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text); direction: rtl; min-height: 100vh; }
+  :root {
+    --bg: #0a0e14;
+    --bg-2: #0f141c;
+    --card: #121821;
+    --card-2: #1a2230;
+    --border: #1f2937;
+    --border-2: #2a3548;
+    --text: #e5e7eb;
+    --text-2: #9ca3af;
+    --text-3: #6b7280;
+    --cyan: #22d3ee;
+    --emerald: #10b981;
+    --emerald-dim: #064e3b;
+    --amber: #f59e0b;
+    --amber-dim: #78350f;
+    --rose: #f43f5e;
+    --rose-dim: #881337;
+    --gold: #c9a84c;
+    --gold-dim: #3d3414;
+    --violet: #a78bfa;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--bg); color: var(--text);
+    font-family: 'Heebo', sans-serif;
+    direction: rtl;
+  }
+  .mono { font-family: 'JetBrains Mono', monospace; font-feature-settings: "tnum"; }
 
-.header {
-  background: #fff; border-bottom: 1px solid var(--border);
-  padding: 0 32px; height: 58px;
-  display: flex; align-items: center; justify-content: space-between;
-  position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow);
-}
-.logo { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
-.logo-badge { background: #1a1a2e; color: #c9a84c; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 5px; }
-.header-right { display: flex; align-items: center; gap: 12px; }
-.sync-text { font-size: 12px; color: var(--text-dim); }
-.refresh-btn {
-  background: #1a1a2e; color: white; border: none;
-  padding: 8px 18px; border-radius: 8px; font-size: 13px;
-  font-family: 'Heebo', sans-serif; font-weight: 500; cursor: pointer;
-  transition: opacity 0.2s;
-}
-.refresh-btn:hover { opacity: 0.8; }
+  /* HEADER */
+  header.top {
+    position: sticky; top: 0; z-index: 40;
+    background: rgba(10,14,20,0.88); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 24px;
+    display: flex; align-items: center; gap: 20px;
+  }
+  .logo-wrap { display: flex; align-items: center; gap: 12px; }
+  .logo-badge {
+    background: linear-gradient(135deg, var(--gold) 0%, #8a6f2a 100%);
+    color: #0a0e14; font-weight: 800; font-size: 12px;
+    padding: 5px 9px; border-radius: 5px; letter-spacing: 0.05em;
+  }
+  .logo-text { font-size: 14px; font-weight: 600; }
+  .logo-text small { display: block; font-size: 10px; color: var(--text-3); font-weight: 400; margin-top: 1px; }
+  .header-right { margin-right: auto; display: flex; align-items: center; gap: 12px; }
+  .sync-text { font-size: 11px; color: var(--text-3); }
+  .btn-refresh {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 7px; padding: 7px 14px; color: var(--text);
+    font-family: inherit; font-size: 12px; cursor: pointer;
+    display: flex; align-items: center; gap: 6px;
+    transition: all 0.15s;
+  }
+  .btn-refresh:hover { border-color: var(--cyan); color: var(--cyan); }
+  .btn-refresh.spinning svg { animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
-.page { padding: 28px 32px; max-width: 1440px; margin: 0 auto; }
+  .setup-bar {
+    background: rgba(245, 158, 11, 0.08);
+    border: 1px solid var(--amber-dim);
+    color: var(--amber);
+    padding: 12px 18px; margin: 16px auto 0; max-width: 1100px;
+    border-radius: 8px; font-size: 12px; line-height: 1.6; display: none;
+  }
+  .setup-bar.show { display: block; }
+  .setup-bar strong { color: #fcd34d; font-weight: 700; }
+  .setup-bar a { color: #fcd34d; text-decoration: underline; }
 
-.setup-bar {
-  background: #fffbeb; border: 1px solid #fcd34d; border-radius: 10px;
-  padding: 14px 18px; margin-bottom: 24px; font-size: 13px; color: #92400e;
-  display: none; line-height: 1.7;
-}
-.setup-bar a { color: #92400e; font-weight: 700; }
+  /* ========== VERTICAL FLOW CANVAS ========== */
+  .canvas {
+    position: relative;
+    max-width: 1100px;
+    margin: 24px auto 0;
+    padding: 0 24px;
+    background-image: radial-gradient(circle at center, rgba(148, 163, 184, 0.06) 1px, transparent 1.5px);
+    background-size: 24px 24px;
+    background-position: center top;
+  }
 
-.sec { font-size: 12px; font-weight: 600; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 14px; margin-top: 30px; }
-.sec:first-child { margin-top: 0; }
+  .flow-section {
+    position: relative;
+    z-index: 2;
+    padding: 18px 20px 24px;
+    border: 1px dashed var(--border-2);
+    border-radius: 14px;
+    margin-bottom: 80px;  /* room for connector arrows */
+    background: rgba(15, 20, 28, 0.4);
+  }
+  .flow-section.no-frame { border: none; background: transparent; padding: 0 0 24px; }
 
-/* STATS */
-.stats-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
-.stat {
-  background: #fff; border: 1px solid var(--border); border-radius: 12px;
-  padding: 18px 18px 14px; box-shadow: var(--shadow); position: relative;
-}
-.stat-icon { font-size: 18px; margin-bottom: 6px; }
-.stat-num { font-size: 32px; font-weight: 800; line-height: 1; }
-.stat-lbl { font-size: 12px; color: var(--text-dim); margin-top: 5px; font-weight: 500; }
-.stat-tag {
-  position: absolute; top: 12px; left: 12px;
-  font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px;
-}
-.tg { background: #f0fdf4; color: #16a34a; }
-.tb { background: #eff6ff; color: #1d4ed8; }
-.to { background: #fff7ed; color: #c2410c; }
-.tp { background: #f5f3ff; color: #6d28d9; }
-.tgold { background: #fdf6e3; color: #92400e; }
+  /* GLOBAL CONNECTOR LAYER — computes paths from real node positions */
+  .connectors-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    overflow: visible;
+  }
+  .connectors-overlay path { fill: none; stroke-width: 2; opacity: 0.55; }
+  .connectors-overlay path.good { stroke: var(--emerald); }
+  .connectors-overlay path.warn { stroke: var(--amber); }
+  .connectors-overlay path.bad { stroke: var(--rose); }
+  .connectors-overlay path.neutral { stroke: #475569; }
+  @keyframes flow-dash {
+    0%   { stroke-dashoffset: 60; opacity: 0.85; }
+    100% { stroke-dashoffset: 0;  opacity: 0; }
+  }
+  .connectors-overlay path.active {
+    stroke-dasharray: 5 7;
+    animation: flow-dash 2.4s linear infinite;
+    opacity: 0.9;
+  }
+  /* hide the old static row arrows now that SVG handles everything */
+  .row-arrow { display: none !important; }
 
-/* GRID */
-.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .section-label {
+    position: absolute; top: -10px; right: 24px;
+    background: var(--bg);
+    padding: 0 8px;
+    font-size: 10px; font-weight: 600;
+    color: var(--text-3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
 
-/* CARD */
-.card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 20px 22px; box-shadow: var(--shadow); }
-.card-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
-.card-sub { font-size: 12px; color: var(--text-dim); margin-bottom: 16px; }
+  .section-row {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    align-items: stretch;
+    flex-wrap: wrap;
+  }
+  .section-row.split-2 { justify-content: space-around; }
+  .section-row.split-3 { justify-content: space-between; }
+  .section-row.single { justify-content: center; }
 
-/* FUNNEL */
-.funnel-steps { display: flex; flex-direction: column; gap: 7px; }
-.fstep { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 8px; background: var(--bg); border: 1px solid var(--border); }
-.fstep-icon { font-size: 13px; width: 20px; text-align: center; }
-.fstep-label { font-size: 13px; font-weight: 500; flex: 1; }
-.fstep-count { font-size: 18px; font-weight: 800; min-width: 38px; text-align: center; }
-.bar-wrap { flex: 2; height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
-.bar-fill { height: 100%; border-radius: 3px; }
-.fstep-pct { font-size: 11px; color: var(--text-dim); min-width: 35px; text-align: left; }
+  /* parallel section: two tracks side-by-side */
+  .parallel-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .parallel-track {
+    position: relative;
+    z-index: 2;
+    padding: 18px 16px 22px;
+    border: 1px dashed var(--border-2);
+    border-radius: 14px;
+    background: rgba(15, 20, 28, 0.4);
+  }
+  .parallel-track .track-label {
+    position: absolute; top: -10px; right: 18px;
+    background: var(--bg);
+    padding: 0 8px;
+    font-size: 10px; font-weight: 600;
+    color: var(--text-3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
 
-/* LP */
-.lp-item { margin-bottom: 14px; }
-.lp-item:last-child { margin-bottom: 0; }
-.lp-top { display: flex; justify-content: space-between; margin-bottom: 5px; }
-.lp-name { font-size: 13px; font-weight: 600; }
-.lp-cnt { font-size: 13px; font-weight: 700; }
-.lp-bar-bg { height: 9px; background: var(--bg); border-radius: 5px; overflow: hidden; border: 1px solid var(--border); }
-.lp-bar { height: 100%; border-radius: 5px; }
-.lp-stats { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
+  /* ========== NODES ========== */
+  .node {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex: 1 1 0;
+    min-width: 140px;
+    max-width: 220px;
+    position: relative;
+    z-index: 3;
+  }
+  .node:hover {
+    border-color: var(--cyan);
+    background: var(--card-2);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(34, 211, 238, 0.12);
+  }
+  .node-title {
+    font-size: 11px; color: var(--text-2); font-weight: 500;
+    margin-bottom: 6px; min-height: 16px;
+    display: flex; align-items: center; justify-content: space-between; gap: 6px;
+  }
+  .node-count {
+    font-size: 26px; font-weight: 700; line-height: 1;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .node-kind {
+    font-size: 9px; color: var(--text-3);
+    margin-top: 4px; letter-spacing: 0.05em;
+  }
+  .node.is-entry { border-right: 3px solid var(--violet); }
+  .node.is-landing { border-right: 3px solid var(--cyan); }
+  .node.is-tracking { border-right: 3px solid #38bdf8; }
+  .node.is-video { border-right: 3px solid var(--emerald); }
+  .node.is-drip { border-right: 3px solid #818cf8; }
+  .node.is-webinar { border-right: 3px solid var(--rose); }
 
-/* PIPELINE */
-.pipeline { display: flex; align-items: center; }
-.pipe-step { flex: 1; padding: 14px 10px; text-align: center; position: relative; }
-.pipe-step + .pipe-step::before {
-  content: '←'; position: absolute; right: -8px; top: 50%;
-  transform: translateY(-50%); color: var(--text-dim); font-size: 14px;
-}
-.pipe-num { font-size: 28px; font-weight: 800; }
-.pipe-lbl { font-size: 11px; color: var(--text-dim); font-weight: 500; margin-top: 2px; }
-.pipe-pct { font-size: 12px; color: var(--green); font-weight: 700; margin-top: 2px; }
-.pipe-divider { width: 1px; height: 50px; background: var(--border); flex-shrink: 0; }
+  .node.is-bottleneck {
+    border-color: var(--rose);
+    box-shadow: 0 0 0 1px var(--rose-dim);
+  }
+  .node.is-bottleneck .node-count { color: var(--rose); }
+  .node.is-bottleneck::after {
+    content: '🚨';
+    position: absolute;
+    top: -8px; left: -8px;
+    font-size: 14px;
+  }
 
-/* VIDEOS */
-.video-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-.vid-card { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; text-align: center; }
-.vid-num { font-size: 30px; font-weight: 800; }
-.vid-lbl { font-size: 11px; color: var(--text-dim); font-weight: 500; margin-top: 2px; }
-.vid-pct { font-size: 13px; font-weight: 700; margin-top: 6px; }
-.vid-bar { height: 4px; background: #e5e7eb; border-radius: 2px; margin-top: 8px; overflow: hidden; }
-.vid-bar-fill { height: 100%; border-radius: 2px; }
+  .winner-badge {
+    background: linear-gradient(135deg, var(--gold) 0%, #8a6f2a 100%);
+    color: #0a0e14;
+    font-size: 9px; font-weight: 700;
+    padding: 2px 6px; border-radius: 4px;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+  .nodata-badge {
+    background: var(--card-2); color: var(--text-3);
+    font-size: 9px; padding: 2px 6px; border-radius: 4px;
+    border: 1px dashed var(--border-2);
+  }
+  .loading { color: var(--text-3); }
 
-/* WA */
-.wa-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-.wa-card { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
-.wa-ico { font-size: 22px; }
-.wa-num { font-size: 22px; font-weight: 800; }
-.wa-lbl { font-size: 11px; color: var(--text-dim); }
-.wa-p { font-size: 11px; color: var(--text-dim); }
+  /* webinar — bigger / more prominent since it's the goal */
+  .node.is-webinar {
+    max-width: 280px;
+    text-align: center;
+    padding: 16px 20px;
+  }
+  .node.is-webinar .node-count { font-size: 36px; }
 
-/* FUNNEL TABLE */
-.ftable { width: 100%; border-collapse: collapse; }
-.ftable th { text-align: right; font-size: 11px; font-weight: 600; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 12px; border-bottom: 1px solid var(--border); }
-.ftable td { padding: 10px 12px; font-size: 13px; border-bottom: 1px solid var(--border); }
-.ftable tr:last-child td { border-bottom: none; }
-.ftable tr:hover td { background: var(--bg); }
-.fbadge { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 7px; font-size: 13px; font-weight: 700; }
-.f1{background:#eff6ff;color:#1d4ed8} .f2{background:#f0fdf4;color:#16a34a} .f3{background:#fff7ed;color:#c2410c} .f4{background:#f5f3ff;color:#6d28d9}
+  /* ========== CONNECTORS (between sections, drawn as SVG below each section) ========== */
+  .connector {
+    position: absolute;
+    left: 0; right: 0;
+    bottom: -64px;
+    height: 60px;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .conn-line { stroke: #475569; stroke-width: 2; fill: none; opacity: 0.5; }
+  .conn-line.good { stroke: var(--emerald); }
+  .conn-line.warn { stroke: var(--amber); }
+  .conn-line.bad { stroke: var(--rose); }
+  @keyframes flow-pulse-v {
+    0% { stroke-dashoffset: 60; opacity: 0.85; }
+    100% { stroke-dashoffset: 0; opacity: 0; }
+  }
+  .conn-line.active { stroke-dasharray: 5 7; animation: flow-pulse-v 2.2s linear infinite; opacity: 0.9; }
 
-.no-data { text-align: center; padding: 30px; color: var(--text-dim); font-size: 13px; }
+  /* connector inside a horizontal section (between nodes in the row) */
+  .row-arrow {
+    align-self: center;
+    color: var(--text-3);
+    font-size: 18px;
+    flex: 0 0 auto;
+    user-select: none;
+  }
+
+  /* ========== KPI STRIP ========== */
+  .kpi-strip {
+    max-width: 1100px; margin: 16px auto 24px; padding: 0 24px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+  }
+  .kpi {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .kpi-label { font-size: 10px; color: var(--text-3); letter-spacing: 0.08em; text-transform: uppercase; }
+  .kpi-value { font-size: 22px; font-weight: 700; margin-top: 2px; font-family: 'JetBrains Mono', monospace; }
+
+  /* ========== WINNERS ========== */
+  .winners {
+    max-width: 1100px;
+    margin: 60px auto 50px;
+    padding: 0 24px;
+  }
+  .winners-title { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+  .winners-sub { font-size: 12px; color: var(--text-3); margin-bottom: 24px; }
+
+  .winner-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+  }
+  .winner-card h3 {
+    font-size: 13px; font-weight: 700; margin-bottom: 14px;
+    color: var(--text);
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  /* Each variant row shows: NAME | SENT → RESULT | RATE | BAR */
+  .variant-row {
+    display: grid;
+    grid-template-columns: 130px 1fr auto;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .variant-row.is-best {
+    border-color: var(--gold);
+    background: rgba(201, 168, 76, 0.06);
+  }
+  .vr-name {
+    display: flex; align-items: center; gap: 8px;
+    font-weight: 600;
+  }
+  .vr-medal { font-size: 16px; }
+  .vr-math {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-2);
+    display: flex; align-items: center; gap: 8px;
+    flex-wrap: wrap;
+  }
+  .vr-math .arrow { color: var(--text-3); }
+  .vr-math .result { color: var(--emerald); font-weight: 600; }
+  .vr-rate {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px; font-weight: 700;
+    min-width: 80px; text-align: left;
+  }
+  .vr-rate.best { color: var(--gold); }
+  .vr-rate.lowsample { color: var(--amber); }
+
+  .vr-bar-row { grid-column: 1 / -1; margin-top: 6px; }
+  .vr-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .vr-bar-fill { height: 100%; background: var(--cyan); }
+  .variant-row.is-best .vr-bar-fill { background: linear-gradient(90deg, var(--gold) 0%, #8a6f2a 100%); }
+
+  .why-box {
+    margin-top: 12px; padding: 14px 16px;
+    background: rgba(201, 168, 76, 0.06);
+    border: 1px solid var(--gold-dim);
+    border-radius: 8px;
+    font-size: 13px; line-height: 1.65;
+    color: var(--text);
+  }
+  .why-box strong { color: var(--gold); }
+  .why-box .mono { background: rgba(0,0,0,0.3); padding: 1px 5px; border-radius: 3px; font-size: 11px; }
+
+  .nodata-state {
+    padding: 16px; font-size: 12px; color: var(--text-3);
+    text-align: center; line-height: 1.7;
+    background: var(--bg-2); border-radius: 6px;
+    border: 1px dashed var(--border-2);
+  }
+  .nodata-state strong { color: var(--amber); display: block; margin-bottom: 4px; }
+
+  /* ========== SIDE PANEL ========== */
+  .side-panel {
+    position: fixed; top: 0; left: -460px;
+    width: 440px; height: 100vh;
+    background: var(--bg-2);
+    border-left: 1px solid var(--border);
+    transition: left 0.3s ease;
+    z-index: 50;
+    overflow-y: auto;
+    padding: 22px;
+  }
+  .side-panel.open { left: 0; }
+  .side-panel h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+  .side-panel .closebtn {
+    position: absolute; top: 18px; left: 18px;
+    background: none; border: none; color: var(--text-3);
+    font-size: 22px; cursor: pointer; line-height: 1;
+  }
+  .side-stat {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 0; border-bottom: 1px solid var(--border);
+    font-size: 12px;
+  }
+  .side-stat .lbl { color: var(--text-3); }
+  .side-stat .val { font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+
+  .toast {
+    position: fixed; top: 70px; left: 50%; transform: translateX(-50%);
+    background: var(--card); border: 1px solid var(--emerald);
+    color: var(--emerald); padding: 8px 16px;
+    border-radius: 8px; font-size: 12px;
+    z-index: 100; opacity: 0; transition: opacity 0.3s;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; }
+
+  @media (max-width: 720px) {
+    .kpi-strip { grid-template-columns: repeat(2, 1fr); }
+    .parallel-wrap { grid-template-columns: 1fr; }
+    .variant-row { grid-template-columns: 1fr; gap: 6px; }
+    .vr-rate { text-align: right; }
+  }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="logo">
+<header class="top">
+  <div class="logo-wrap">
     <div class="logo-badge">DO</div>
-    Digital Online — Analytics Dashboard
+    <div class="logo-text">
+      Funnel Ops
+      <small>Digital Online · לוח בקרת משפך</small>
+    </div>
   </div>
   <div class="header-right">
-    <span class="sync-text" id="syncText">לא עודכן</span>
-    <button class="refresh-btn" onclick="loadData()">↻ רענן נתונים</button>
+    <span class="sync-text" id="syncText">טוען...</span>
+    <button class="btn-refresh" id="refreshBtn">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5"/></svg>
+      רענן
+    </button>
   </div>
+</header>
+
+<div class="setup-bar" id="setupBar">
+  ⚠️ <strong>נדרש שלב חיבור:</strong> פתח את הגיליון ← לחץ <strong>Share</strong> ← שנה ל-<strong>"Anyone with link · Viewer"</strong> ← שמור ← לחץ רענן.
+  <a href="https://docs.google.com/spreadsheets/d/1v9iKOsNYJGYdGmA0CDH7tJaCvKVsG1uivWvLDLe2Z5A/edit" target="_blank">פתח גיליון ↗</a>
 </div>
 
-<div class="page">
-
-  <div class="setup-bar" id="setupBar">
-    ⚠️ <strong>נדרש שלב אחד לחיבור:</strong> פתח את הגיליון ← לחץ <strong>Share</strong> (שיתוף) ← שנה ל<strong>״כל מי שיש לו קישור — Viewer״</strong> ← שמור ← חזור לכאן ולחץ רענן.
-    <a href="https://docs.google.com/spreadsheets/d/1v9iKOsNYJGYdGmA0CDH7tJaCvKVsG1uivWvLDLe2Z5A/edit" target="_blank"> &nbsp;פתח גיליון ↗</a>
-  </div>
-
-  <div style="display:flex;justify-content:flex-end;margin-bottom:20px;">
-    <a href="tasks.html" style="display:inline-flex;align-items:center;gap:8px;background:#1a1a2e;color:#fff;text-decoration:none;padding:10px 20px;border-radius:9px;font-size:13px;font-weight:600;font-family:'Heebo',sans-serif;box-shadow:0 2px 8px rgba(0,0,0,0.12);">
-      ✅ משימות &nbsp;<span style="background:rgba(255,255,255,0.15);padding:2px 8px;border-radius:20px;font-size:11px;" id="taskCountBadge">טוען...</span>
-    </a>
-  </div>
-
-  <div class="sec">📊 סיכום היום</div>
-  <div class="stats-row">
-    <div class="stat"><div class="stat-icon">👤</div><div class="stat-num" id="sToday">—</div><div class="stat-lbl">נכנסו היום</div><span class="stat-tag tb">היום</span></div>
-    <div class="stat"><div class="stat-icon">📨</div><div class="stat-num" id="sMsgsToday">—</div><div class="stat-lbl">הודעות נשלחו היום</div><span class="stat-tag tg">היום</span></div>
-    <div class="stat"><div class="stat-icon">👥</div><div class="stat-num" id="sTotal">—</div><div class="stat-lbl">סה״כ לידים</div><span class="stat-tag tgold">כולל</span></div>
-    <div class="stat"><div class="stat-icon">🎓</div><div class="stat-num" id="sWebinar">—</div><div class="stat-lbl">נרשמו לוובינר</div><span class="stat-tag tp">כולל</span></div>
-    <div class="stat"><div class="stat-icon">🏁</div><div class="stat-num" id="sVid4">—</div><div class="stat-lbl">השלימו פאנל (V4)</div><span class="stat-tag to">סרטון 4</span></div>
-    <div class="stat"><div class="stat-icon">📱</div><div class="stat-num" id="sWaTotal">—</div><div class="stat-lbl">WA נשלחו סה״כ</div><span class="stat-tag tg">WA</span></div>
-  </div>
-
-  <div class="sec">🔽 מסע הלקוח — כמה אנשים בכל שלב</div>
-  <div class="two-col">
-    <div class="card">
-      <div class="card-title">שלבי הפאנל</div>
-      <div class="card-sub">מתוך סך הלידים — כמה הגיעו לכל שלב</div>
-      <div class="funnel-steps" id="funnelSteps"><div class="no-data">טוען...</div></div>
-    </div>
-    <div class="card">
-      <div class="card-title">השוואת דפי נחיתה</div>
-      <div class="card-sub">איזה דף נחיתה מביא יותר לידים ומחלחל עמוק יותר</div>
-      <div id="lpRow"><div class="no-data">טוען...</div></div>
-    </div>
-  </div>
-
-  <div class="sec">📩 פייפליין הודעות — כמה קיבלו כל שלב</div>
-  <div class="card">
-    <div class="pipeline" id="pipeline"><div class="no-data" style="width:100%">טוען...</div></div>
-  </div>
-
-  <div class="sec">🎬 סרטונים + WhatsApp</div>
-  <div class="two-col">
-    <div class="card">
-      <div class="card-title">ביצועי סרטונים</div>
-      <div class="card-sub">כמה לידים צפו בכל סרטון</div>
-      <div class="video-row" id="videoRow"><div class="no-data" style="grid-column:1/-1">טוען...</div></div>
-    </div>
-    <div class="card">
-      <div class="card-title">WhatsApp — הודעות שנשלחו</div>
-      <div class="card-sub">כמה לידים קיבלו כל סוג הודעת WA</div>
-      <div class="wa-row" id="waRow"><div class="no-data" style="grid-column:1/-1">טוען...</div></div>
-    </div>
-  </div>
-
-  <div class="sec">🧪 השוואת 4 פאנלים — מי מבצע ומי ממיר</div>
-  <div class="card">
-    <div class="card-title">ביצועי פאנל לפי מספר</div>
-    <div class="card-sub">השוואה בין 4 גרסאות הפאנל — צפיות, המרות, וובינר</div>
-    <table class="ftable">
-      <thead><tr>
-        <th>פאנל</th><th>לידים</th><th>סרטון 1</th><th>סרטון 2</th><th>סרטון 3</th><th>סרטון 4</th><th>וובינר</th><th>המרה לוובינר</th>
-      </tr></thead>
-      <tbody id="funnelTbody"><tr><td colspan="8" class="no-data">טוען...</td></tr></tbody>
-    </table>
-  </div>
-
-  <div class="sec">🔗 מקורות תנועה (UTM)</div>
-  <div class="card">
-    <div class="card-title">מאיפה מגיעים הלידים</div>
-    <div class="card-sub">פירוט לפי UTM Source</div>
-    <div id="utmRow"><div class="no-data">טוען...</div></div>
-  </div>
-
+<!-- KPI strip -->
+<div class="kpi-strip">
+  <div class="kpi"><div class="kpi-label">סה״כ לידים</div><div class="kpi-value loading" id="kpi_total">—</div></div>
+  <div class="kpi"><div class="kpi-label">השלימו וידאו 4</div><div class="kpi-value loading" id="kpi_v4">—</div></div>
+  <div class="kpi"><div class="kpi-label">נרשמו לוובינר</div><div class="kpi-value loading" id="kpi_web" style="color: var(--emerald);">—</div></div>
+  <div class="kpi"><div class="kpi-label">צוואר בקבוק</div><div class="kpi-value loading" id="kpi_bottleneck" style="font-size: 13px; padding-top: 6px; color: var(--rose);">—</div></div>
 </div>
+
+<!-- ============ VERTICAL FLOW ============ -->
+<main class="canvas">
+
+  <!-- GLOBAL CONNECTOR LAYER — paths computed in JS from real node positions -->
+  <svg class="connectors-overlay" id="connectorsOverlay" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arrowGood"    viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#10b981"/></marker>
+      <marker id="arrowWarn"    viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker>
+      <marker id="arrowBad"     viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#f43f5e"/></marker>
+      <marker id="arrowNeutral" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker>
+    </defs>
+  </svg>
+
+  <!-- 1. ENTRIES -->
+  <section class="flow-section" id="sec_entries">
+    <span class="section-label">① כניסות · ENTRIES</span>
+    <div class="section-row split-3">
+      <div class="node is-entry" data-node="entry_wa_group">
+        <div class="node-title">📢 קבוצת WhatsApp <span class="nodata-badge">ידני</span></div>
+        <div class="node-count loading" data-bind="entry_wa_group">—</div>
+        <div class="node-kind">חברי קבוצה</div>
+      </div>
+      <div class="node is-entry" data-node="entry_wa_personal">
+        <div class="node-title">💬 WhatsApp אישי <span class="nodata-badge">10 גרסאות</span></div>
+        <div class="node-count loading" data-bind="entry_wa_personal">—</div>
+        <div class="node-kind">נשלחו</div>
+      </div>
+      <div class="node is-entry" data-node="entry_email">
+        <div class="node-title">📧 אימייל אישי <span class="nodata-badge">10 גרסאות</span></div>
+        <div class="node-count loading" data-bind="entry_email">—</div>
+        <div class="node-kind">נשלחו</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. LANDING -->
+  <section class="flow-section" id="sec_landing">
+    <span class="section-label">② דפי נחיתה · LANDING (A/B)</span>
+    <div class="section-row split-2">
+      <div class="node is-landing" data-node="landing_a">
+        <div class="node-title">דף נחיתה A <span id="badge_landing_a"></span></div>
+        <div class="node-count loading" data-bind="landing_a">—</div>
+        <div class="node-kind">לידים</div>
+      </div>
+      <div class="node is-landing" data-node="landing_b">
+        <div class="node-title">דף נחיתה B <span id="badge_landing_b"></span></div>
+        <div class="node-count loading" data-bind="landing_b">—</div>
+        <div class="node-kind">לידים</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. CAPTURE -->
+  <section class="flow-section" id="sec_capture">
+    <span class="section-label">③ קליטה · גיליון 2</span>
+    <div class="section-row single">
+      <div class="node is-tracking" data-node="sheet2" style="max-width: 280px; text-align: center;">
+        <div class="node-title" style="justify-content: center;">📋 סה״כ לידים בגיליון</div>
+        <div class="node-count loading" data-bind="sheet2" style="font-size: 36px;">—</div>
+        <div class="node-kind">בתהליך · יפוצלו לשני מסלולים</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. PARALLEL: VIDEO + DRIP -->
+  <section class="flow-section no-frame" id="sec_parallel">
+    <div class="parallel-wrap">
+      <div class="parallel-track">
+        <span class="track-label">④A · משפך וידאו</span>
+        <div class="section-row" style="gap: 8px;">
+          <div class="node is-video" data-node="video_1" style="min-width: 0; padding: 10px 8px;">
+            <div class="node-title" style="font-size: 10px;">וידאו 1</div>
+            <div class="node-count loading" data-bind="video_1" style="font-size: 22px;">—</div>
+            <div class="node-kind">צפו</div>
+          </div>
+          <span class="row-arrow">←</span>
+          <div class="node is-video" data-node="video_2" style="min-width: 0; padding: 10px 8px;">
+            <div class="node-title" style="font-size: 10px;">וידאו 2</div>
+            <div class="node-count loading" data-bind="video_2" style="font-size: 22px;">—</div>
+            <div class="node-kind">צפו</div>
+          </div>
+          <span class="row-arrow">←</span>
+          <div class="node is-video" data-node="video_3" style="min-width: 0; padding: 10px 8px;">
+            <div class="node-title" style="font-size: 10px;">וידאו 3</div>
+            <div class="node-count loading" data-bind="video_3" style="font-size: 22px;">—</div>
+            <div class="node-kind">צפו</div>
+          </div>
+          <span class="row-arrow">←</span>
+          <div class="node is-video" data-node="video_4" style="min-width: 0; padding: 10px 8px;">
+            <div class="node-title" style="font-size: 10px;">וידאו 4</div>
+            <div class="node-count loading" data-bind="video_4" style="font-size: 22px;">—</div>
+            <div class="node-kind">סיימו</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="parallel-track">
+        <span class="track-label">④B · טפטוף יומי</span>
+        <div class="section-row" style="gap: 8px;">
+          <div class="node is-drip" data-node="drip_day0" style="min-width: 0; padding: 10px 8px;">
+            <div class="node-title" style="font-size: 10px;">יום 0</div>
+            <div class="node-count loading" data-bind="drip_day0" style="font-size: 22px;">—</div>
+            <div class="node-kind">נשלחו</div>
+          </div>
+          <span class="row-arrow">←</span>
+          <div class="node is-drip" data-node="drip_day2" style="min-width: 0; padding: 10px 8px;">
+            <div class="node-title" style="font-size: 10px;">יום 2</div>
+            <div class="node-count loading" data-bind="drip_day2" style="font-size: 22px;">—</div>
+            <div class="node-kind">נשלחו</div>
+          </div>
+          <span class="row-arrow">←</span>
+          <div class="node is-drip" data-node="drip_day5" style="min-width: 0; padding: 10px 8px;">
+            <div class="node-title" style="font-size: 10px;">יום 5</div>
+            <div class="node-count loading" data-bind="drip_day5" style="font-size: 22px;">—</div>
+            <div class="node-kind">נשלחו</div>
+          </div>
+          <span class="row-arrow">←</span>
+          <div class="node is-drip" data-node="drip_5min" style="min-width: 0; padding: 10px 8px;">
+            <div class="node-title" style="font-size: 10px;">5 דק׳</div>
+            <div class="node-count loading" data-bind="drip_5min" style="font-size: 22px;">—</div>
+            <div class="node-kind">נשלחו</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. WEBINAR -->
+  <section class="flow-section" id="sec_webinar" style="margin-bottom: 30px;">
+    <span class="section-label">⑤ יעד · WEBINAR</span>
+    <div class="section-row single">
+      <div class="node is-webinar" data-node="webinar">
+        <div class="node-title" style="justify-content: center;">🎯 רישום לוובינר</div>
+        <div class="node-count loading" data-bind="webinar">—</div>
+        <div class="node-kind" id="webinar_rate">המרה מהלידים</div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+
+<!-- ============ WINNERS — WITH THE MATH AND THE "WHY" ============ -->
+<section class="winners">
+  <h2 class="winners-title">🏆 הגרסה המנצחת — עם הסבר למה</h2>
+  <p class="winners-sub">
+    מנצח נקבע לפי <strong>אחוז המרה לוובינר</strong> (לא לפי כמות גולמית). מינימום 30 דגימות.
+    כל גרסה מציגה: <span class="mono">כמות התחלתית → תוצאה → אחוז המרה</span>.
+  </p>
+
+  <div id="winner_landings"></div>
+  <div id="winner_funnels"></div>
+  <div id="winner_utms"></div>
+
+  <div class="winner-card">
+    <h3>📊 ביצועי וידאו (V1 → V4) — נשירה מצטברת</h3>
+    <div id="winner_videos"></div>
+  </div>
+
+  <!-- Missing data cards -->
+  <div class="winner-card" style="opacity: 0.65;">
+    <h3>10 הודעות פתיחה (WA + Email)</h3>
+    <div class="nodata-state">
+      <strong>חסר במידע בגיליון</strong>
+      אין עמודה שמזהה איזו גרסה מתוך 10 נשלחה לכל אדם. כדי להפעיל: הוסף UTM <span class="mono">?utm_content=v3</span> לכל גרסה ב-link tracker.
+    </div>
+  </div>
+  <div class="winner-card" style="opacity: 0.65;">
+    <h3>טפטוף יומי A/B</h3>
+    <div class="nodata-state">
+      <strong>חסר במידע בגיליון</strong>
+      הגיליון רושם רק <span class="mono">SENT</span>, לא פתיחה או קליק. צריך עמודות <span class="mono">drip_variant</span>, <span class="mono">drip_opened</span>, <span class="mono">drip_clicked</span>.
+    </div>
+  </div>
+
+</section>
+
+
+<aside class="side-panel" id="sidePanel">
+  <button class="closebtn" id="closePanelBtn">×</button>
+  <h3 id="panelTitle">פרטי שלב</h3>
+  <div id="panelBody"></div>
+</aside>
+
+<div class="toast" id="toast">הנתונים עודכנו</div>
+
 
 <script>
-const SHEET_ID = '1v9iKOsNYJGYdGmA0CDH7tJaCvKVsG1uivWvLDLe2Z5A';
-const SHEET = 'לידים';
+  // ====================================================================
+  // CONFIG
+  // ====================================================================
+  const SHEET_ID = '1v9iKOsNYJGYdGmA0CDH7tJaCvKVsG1uivWvLDLe2Z5A';
+  const SHEET_NAME = 'לידים';
 
-const C = {
-  date:0,name:1,email:2,phone:3,version:4,page:5,utm:6,supplier:7,
-  day0:8,day0w:9,day2:10,day2w:11,day5:12,day5w:13,
-  min5:14,min5w:15,webTime:16,webSigned:17,
-  vid1:19,vid1l:20,vid2:21,vid2l:22,vid3:23,vid3l:24,vid4:25,vid4l:26,
-  wa1:27,wa2:28,wa3:29,funnel:30,lastAct:31,utmSrc:32,landUrl:33,utmCamp:34
-};
+  const ENTRY_COUNTS = {
+    entry_wa_group: 12400,
+    entry_wa_personal: 5000,
+    entry_email: 5000
+  };
 
-const COLORS = ['#3b82f6','#22c55e','#f97316','#8b5cf6','#ef4444','#06b6d4','#eab308'];
-let rows = [];
+  const C = {
+    date:0, name:1, email:2, phone:3, version:4, page:5, utm:6, supplier:7,
+    day0:8, day0w:9, day2:10, day2w:11, day5:12, day5w:13,
+    min5:14, min5w:15, webTime:16, webSigned:17,
+    vid1:19, vid1l:20, vid2:21, vid2l:22, vid3:23, vid3l:24, vid4:25, vid4l:26,
+    wa1:27, wa2:28, wa3:29, funnel:30, lastAct:31, utmSrc:32, landUrl:33, utmCamp:34
+  };
 
-const today = new Date().toISOString().slice(0,10);
-const isToday = r => {
-  const d = r[C.date] || '';
-  return d.startsWith(today) || (d.includes(today.slice(5)) && d.includes(today.slice(0,4)));
-};
-const sent = v => v === 'SENT' || v === 'sent';
-const hasV = v => v && v !== '' && v !== 'false' && v !== 'FALSE' && v !== '0' && v !== 'undefined';
-const pct = (n,d) => d===0 ? '0%' : Math.round(n/d*100)+'%';
-const pn = (n,d) => d===0 ? 0 : Math.round(n/d*100);
+  const MIN_SAMPLE = 30;
 
-function bar(color, p) {
-  return `<div class="bar-wrap"><div class="bar-fill" style="width:${p}%;background:${color}"></div></div>`;
-}
+  // ====================================================================
+  // HELPERS
+  // ====================================================================
+  const sent = v => v === 'SENT' || v === 'sent';
+  const hasV = v => v && v !== '' && v !== 'false' && v !== 'FALSE' && v !== '0' && v !== 'undefined';
+  const pct = (n, d) => d === 0 ? 0 : (n / d * 100);
+  const fmt = n => n == null || isNaN(n) ? '—' : n.toLocaleString('en-US');
 
-async function loadData() {
-  document.getElementById('syncText').textContent = 'מרענן...';
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET)}&t=${Date.now()}`;
-  try {
-    const res = await fetch(url);
-    const txt = await res.text();
-    const m = txt.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);/);
-    if (!m) throw 'no match';
-    const json = JSON.parse(m[1]);
-    rows = (json.table.rows||[]).map(r=>(r.c||[]).map(c=>c&&c.v!=null?String(c.v).trim():''));
-    document.getElementById('setupBar').style.display='none';
-    document.getElementById('syncText').textContent='עודכן: '+new Date().toLocaleTimeString('he-IL');
-    render();
-  } catch(e) {
-    document.getElementById('setupBar').style.display='block';
-    document.getElementById('syncText').textContent='שגיאה — ראה הוראות';
+  let rows = [];
+  let computed = {};
+
+  // ====================================================================
+  // FETCH
+  // ====================================================================
+  async function loadData() {
+    const syncText = document.getElementById('syncText');
+    const setupBar = document.getElementById('setupBar');
+    syncText.textContent = 'מרענן...';
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}&t=${Date.now()}`;
+    try {
+      const res = await fetch(url);
+      const txt = await res.text();
+      const m = txt.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);/);
+      if (!m) throw new Error('Sheet not accessible');
+      const json = JSON.parse(m[1]);
+      rows = (json.table.rows || []).map(r => (r.c || []).map(c => c && c.v != null ? String(c.v).trim() : ''));
+      setupBar.classList.remove('show');
+      syncText.textContent = 'עודכן: ' + new Date().toLocaleTimeString('he-IL', {hour: '2-digit', minute: '2-digit'});
+      compute();
+      render();
+    } catch (e) {
+      setupBar.classList.add('show');
+      syncText.textContent = 'שגיאת חיבור';
+      console.error(e);
+    }
   }
-}
 
-function render() {
-  const total = rows.length;
-  if (!total) return;
+  // ====================================================================
+  // COMPUTE
+  // ====================================================================
+  function compute() {
+    const total = rows.length;
+    const counts = {
+      sheet2: total,
+      drip_day0: rows.filter(r => sent(r[C.day0])).length,
+      drip_day2: rows.filter(r => sent(r[C.day2])).length,
+      drip_day5: rows.filter(r => sent(r[C.day5])).length,
+      drip_5min: rows.filter(r => hasV(r[C.min5])).length,
+      webinar: rows.filter(r => hasV(r[C.webSigned])).length,
+      video_1: rows.filter(r => hasV(r[C.vid1])).length,
+      video_2: rows.filter(r => hasV(r[C.vid2])).length,
+      video_3: rows.filter(r => hasV(r[C.vid3])).length,
+      video_4: rows.filter(r => hasV(r[C.vid4])).length
+    };
 
-  const todayR = rows.filter(isToday);
-  const d0 = rows.filter(r=>sent(r[C.day0])).length;
-  const d2 = rows.filter(r=>sent(r[C.day2])).length;
-  const d5 = rows.filter(r=>sent(r[C.day5])).length;
-  const m5 = rows.filter(r=>hasV(r[C.min5])).length;
-  const web = rows.filter(r=>hasV(r[C.webSigned])).length;
-  const v1 = rows.filter(r=>hasV(r[C.vid1])).length;
-  const v2 = rows.filter(r=>hasV(r[C.vid2])).length;
-  const v3 = rows.filter(r=>hasV(r[C.vid3])).length;
-  const v4 = rows.filter(r=>hasV(r[C.vid4])).length;
-  const wa1 = rows.filter(r=>sent(r[C.wa1])||hasV(r[C.wa1])).length;
-  const wa2 = rows.filter(r=>sent(r[C.wa2])||hasV(r[C.wa2])).length;
-  const wa3 = rows.filter(r=>sent(r[C.wa3])||hasV(r[C.wa3])).length;
+    // Landing pages (from `version`)
+    const lpMap = {};
+    rows.forEach(r => {
+      const k = r[C.version] || r[C.page] || 'unknown';
+      if (!lpMap[k]) lpMap[k] = { name: k, total: 0, web: 0, v4: 0 };
+      lpMap[k].total++;
+      if (hasV(r[C.webSigned])) lpMap[k].web++;
+      if (hasV(r[C.vid4])) lpMap[k].v4++;
+    });
+    const lpArr = Object.values(lpMap).sort((a, b) => b.total - a.total);
+    counts.landing_a = lpArr[0]?.total || 0;
+    counts.landing_b = lpArr[1]?.total || 0;
 
-  // TODAY MSGS
-  const msgsToday = todayR.filter(r=>sent(r[C.day0])||sent(r[C.day2])||sent(r[C.day5])).length;
+    // Funnel 1-4
+    const fnMap = {};
+    [1,2,3,4].forEach(n => fnMap[n] = { name: `פאנל ${n}`, num: n, total: 0, web: 0, v4: 0 });
+    rows.forEach(r => {
+      const fn = parseInt(r[C.funnel]);
+      if (fn >= 1 && fn <= 4) {
+        fnMap[fn].total++;
+        if (hasV(r[C.webSigned])) fnMap[fn].web++;
+        if (hasV(r[C.vid4])) fnMap[fn].v4++;
+      }
+    });
+    const fnArr = Object.values(fnMap).filter(f => f.total > 0);
 
-  document.getElementById('sToday').textContent = todayR.length;
-  document.getElementById('sMsgsToday').textContent = msgsToday;
-  document.getElementById('sTotal').textContent = total;
-  document.getElementById('sWebinar').textContent = web;
-  document.getElementById('sVid4').textContent = v4;
-  document.getElementById('sWaTotal').textContent = wa1+wa2+wa3;
+    // UTM source
+    const utmMap = {};
+    rows.forEach(r => {
+      const k = (r[C.utmSrc] || r[C.utm] || 'ישיר').trim() || 'ישיר';
+      if (!utmMap[k]) utmMap[k] = { name: k, total: 0, web: 0 };
+      utmMap[k].total++;
+      if (hasV(r[C.webSigned])) utmMap[k].web++;
+    });
+    const utmArr = Object.values(utmMap).sort((a, b) => b.total - a.total);
 
-  // FUNNEL STEPS
-  const thankCount = rows.filter(r=>(r[C.page]||'').toLowerCase().includes('thank')||(r[C.version]||'').toLowerCase().includes('thank')).length;
-  const steps = [
-    {icon:'🏠',label:'נכנסו לדף נחיתה',count:total,color:'#3b82f6'},
-    {icon:'✅',label:'הגיעו לדף תודה',count:thankCount,color:'#22c55e'},
-    {icon:'📨',label:'קיבלו הודעה יום 0',count:d0,color:'#8b5cf6'},
-    {icon:'▶️',label:'צפו בסרטון 1',count:v1,color:'#f97316'},
-    {icon:'▶️',label:'צפו בסרטון 2',count:v2,color:'#f97316'},
-    {icon:'▶️',label:'צפו בסרטון 3',count:v3,color:'#f97316'},
-    {icon:'🏁',label:'השלימו סרטון 4 (פאנל מלא)',count:v4,color:'#ef4444'},
-    {icon:'📨',label:'קיבלו הודעה יום 2',count:d2,color:'#8b5cf6'},
-    {icon:'📨',label:'קיבלו הודעה יום 5',count:d5,color:'#8b5cf6'},
-    {icon:'🎓',label:'נרשמו לוובינר',count:web,color:'#c9a84c'},
+    // Determine winner of an array based on conversion %
+    function determineWinner(arr) {
+      const eligible = arr.filter(x => x.total >= MIN_SAMPLE);
+      if (!eligible.length) return { winner: null, status: 'low-sample' };
+      const sorted = [...eligible].sort((a, b) => pct(b.web, b.total) - pct(a.web, a.total));
+      return { winner: sorted[0], runnerUp: sorted[1] || null, status: 'ok' };
+    }
+
+    // Bottleneck detection
+    const flowStages = [
+      ['video_1','video_2'], ['video_2','video_3'], ['video_3','video_4'],
+      ['drip_day0','drip_day2'], ['drip_day2','drip_day5'], ['drip_day5','drip_5min'],
+      ['video_4','webinar']
+    ];
+    const bottlenecks = new Set();
+    let worstStage = null, worstRatio = 100;
+    flowStages.forEach(([from, to]) => {
+      const ratio = pct(counts[to], counts[from]);
+      if (counts[from] >= 10) {
+        if (ratio < 50) bottlenecks.add(to);
+        if (ratio < worstRatio) { worstRatio = ratio; worstStage = `${from} → ${to}`; }
+      }
+    });
+
+    computed = {
+      total, counts, lpArr, fnArr, utmArr,
+      winnerLanding: determineWinner(lpArr),
+      winnerFunnel: determineWinner(fnArr),
+      winnerUtm: determineWinner(utmArr),
+      bottlenecks,
+      worstStage,
+      worstRatio
+    };
+  }
+
+  // ====================================================================
+  // RENDER
+  // ====================================================================
+  function render() {
+    // KPIs
+    document.getElementById('kpi_total').textContent = fmt(computed.total);
+    document.getElementById('kpi_total').classList.remove('loading');
+    document.getElementById('kpi_v4').textContent = fmt(computed.counts.video_4);
+    document.getElementById('kpi_v4').classList.remove('loading');
+    document.getElementById('kpi_web').textContent = fmt(computed.counts.webinar);
+    document.getElementById('kpi_web').classList.remove('loading');
+
+    const bk = document.getElementById('kpi_bottleneck');
+    if (computed.worstStage && computed.worstRatio < 70) {
+      const labels = {
+        'video_1':'וידאו 1','video_2':'וידאו 2','video_3':'וידאו 3','video_4':'וידאו 4',
+        'drip_day0':'יום 0','drip_day2':'יום 2','drip_day5':'יום 5','drip_5min':'5 דק׳',
+        'webinar':'וובינר'
+      };
+      const [f, t] = computed.worstStage.split(' → ');
+      bk.textContent = `${labels[f]||f} → ${labels[t]||t} (${computed.worstRatio.toFixed(0)}%)`;
+    } else {
+      bk.textContent = 'אין צוואר בקבוק';
+      bk.style.color = 'var(--emerald)';
+    }
+    bk.classList.remove('loading');
+
+    // Entry nodes
+    Object.entries(ENTRY_COUNTS).forEach(([k, v]) => {
+      const el = document.querySelector(`[data-bind="${k}"]`);
+      if (el) { el.textContent = fmt(v); el.classList.remove('loading'); }
+    });
+
+    // Step nodes
+    Object.entries(computed.counts).forEach(([k, v]) => {
+      const el = document.querySelector(`[data-bind="${k}"]`);
+      if (el) { el.textContent = fmt(v); el.classList.remove('loading'); }
+    });
+
+    // Webinar conversion %
+    const webRate = document.getElementById('webinar_rate');
+    if (computed.total > 0) {
+      webRate.textContent = `${pct(computed.counts.webinar, computed.total).toFixed(1)}% מהלידים`;
+    }
+
+    // Bottleneck class
+    document.querySelectorAll('.node').forEach(n => n.classList.remove('is-bottleneck'));
+    computed.bottlenecks.forEach(nodeId => {
+      const n = document.querySelector(`[data-node="${nodeId}"]`);
+      if (n) n.classList.add('is-bottleneck');
+    });
+
+    // Landing badges
+    const ba = document.getElementById('badge_landing_a');
+    const bb = document.getElementById('badge_landing_b');
+    ba.innerHTML = ''; bb.innerHTML = '';
+    const winnerLp = computed.winnerLanding.winner;
+    if (winnerLp && computed.lpArr[0]) {
+      if (winnerLp.name === computed.lpArr[0].name) ba.innerHTML = '<span class="winner-badge">🥇</span>';
+      else if (computed.lpArr[1] && winnerLp.name === computed.lpArr[1].name) bb.innerHTML = '<span class="winner-badge">🥇</span>';
+    }
+
+    renderWinners();
+    // redraw connector lines after layout settles
+    requestAnimationFrame(() => requestAnimationFrame(drawConnections));
+  }
+
+  // ====================================================================
+  // CONNECTOR LINES — computed from real node positions
+  // ====================================================================
+  // [fromNodeId, toNodeId, status, active?]
+  const CONNECTIONS = [
+    // entries → landings
+    ['entry_wa_group',    'landing_a', 'neutral', false],
+    ['entry_wa_group',    'landing_b', 'neutral', false],
+    ['entry_wa_personal', 'landing_a', 'neutral', true],
+    ['entry_wa_personal', 'landing_b', 'neutral', true],
+    ['entry_email',       'landing_a', 'neutral', true],
+    ['entry_email',       'landing_b', 'neutral', true],
+    // landings → sheet 2
+    ['landing_a', 'sheet2', 'good', true],
+    ['landing_b', 'sheet2', 'good', true],
+    // sheet 2 → video / drip
+    ['sheet2', 'video_1',   'good', true],
+    ['sheet2', 'drip_day0', 'good', true],
+    // video chain (horizontal within section, RTL)
+    ['video_1', 'video_2', 'good', true],
+    ['video_2', 'video_3', 'good', true],
+    ['video_3', 'video_4', 'warn', true],
+    // drip chain (horizontal within section, RTL)
+    ['drip_day0', 'drip_day2', 'good', true],
+    ['drip_day2', 'drip_day5', 'good', true],
+    ['drip_day5', 'drip_5min', 'warn', true],
+    // video_4 / drip_5min → webinar
+    ['video_4',  'webinar', 'warn', true],
+    ['drip_5min','webinar', 'warn', true]
   ];
-  document.getElementById('funnelSteps').innerHTML = steps.map(s=>`
-    <div class="fstep">
-      <span class="fstep-icon">${s.icon}</span>
-      <span class="fstep-label">${s.label}</span>
-      <span class="fstep-count">${s.count}</span>
-      ${bar(s.color, pn(s.count,total))}
-      <span class="fstep-pct">${pct(s.count,total)}</span>
-    </div>`).join('');
 
-  // LANDING PAGES
-  const lpMap = {};
-  rows.forEach(r=>{
-    const k = r[C.version]||r[C.page]||'אחר';
-    if(!lpMap[k]) lpMap[k]={total:0,v1:0,v4:0,web:0};
-    lpMap[k].total++;
-    if(hasV(r[C.vid1]))lpMap[k].v1++;
-    if(hasV(r[C.vid4]))lpMap[k].v4++;
-    if(hasV(r[C.webSigned]))lpMap[k].web++;
+  function drawConnections() {
+    const canvas = document.querySelector('.canvas');
+    const svg = document.getElementById('connectorsOverlay');
+    if (!canvas || !svg) return;
+
+    // Size SVG to match canvas content height
+    const cb = canvas.getBoundingClientRect();
+    svg.setAttribute('viewBox', `0 0 ${cb.width} ${canvas.offsetHeight}`);
+    svg.style.height = canvas.offsetHeight + 'px';
+
+    // Remove existing paths (keep <defs>)
+    [...svg.querySelectorAll('path')].forEach(p => p.remove());
+
+    CONNECTIONS.forEach(([fromId, toId, status, active]) => {
+      const fromEl = document.querySelector(`[data-node="${fromId}"]`);
+      const toEl   = document.querySelector(`[data-node="${toId}"]`);
+      if (!fromEl || !toEl) return;
+
+      const a = fromEl.getBoundingClientRect();
+      const b = toEl.getBoundingClientRect();
+
+      // Position relative to canvas
+      const aTop = a.top - cb.top, aBot = a.bottom - cb.top;
+      const aMidY = aTop + a.height / 2;
+      const aMidX = a.left - cb.left + a.width / 2;
+      const aLeft = a.left - cb.left;
+      const bTop = b.top - cb.top, bBot = b.bottom - cb.top;
+      const bMidY = bTop + b.height / 2;
+      const bMidX = b.left - cb.left + b.width / 2;
+      const bRight = b.right - cb.left;
+
+      // Detect direction: if Y differs significantly → vertical flow,
+      // otherwise horizontal (RTL flow within same row)
+      const isVertical = Math.abs(aMidY - bMidY) > 30;
+
+      let pathD;
+      if (isVertical) {
+        // bottom of source → top of target
+        const sx = aMidX, sy = aBot;
+        const ex = bMidX, ey = bTop;
+        const dy = Math.abs(ey - sy);
+        const cp = Math.max(20, dy * 0.45);
+        pathD = `M ${sx} ${sy} C ${sx} ${sy + cp}, ${ex} ${ey - cp}, ${ex} ${ey}`;
+      } else {
+        // horizontal RTL: exit LEFT edge of source, enter RIGHT edge of target
+        const sx = aLeft, sy = aMidY;
+        const ex = bRight, ey = bMidY;
+        const dx = Math.abs(sx - ex);
+        const cp = Math.max(20, dx * 0.35);
+        pathD = `M ${sx} ${sy} C ${sx - cp} ${sy}, ${ex + cp} ${ey}, ${ex} ${ey}`;
+      }
+
+      const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      p.setAttribute('d', pathD);
+      p.classList.add(status);
+      if (active) p.classList.add('active');
+      const arrow = { good: 'arrowGood', warn: 'arrowWarn', bad: 'arrowBad', neutral: 'arrowNeutral' }[status];
+      if (arrow) p.setAttribute('marker-end', `url(#${arrow})`);
+      svg.appendChild(p);
+    });
+  }
+
+  // Redraw on resize + when fonts finish loading (font swap shifts layout)
+  window.addEventListener('resize', drawConnections);
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(drawConnections);
+  }
+
+  // ====================================================================
+  // RENDER WINNER CARDS — with sent → result → % AND a "why" sentence
+  // ====================================================================
+
+  function renderVariantRow(v, isWinner, label, sentLabel, resultLabel) {
+    const conv = pct(v.web, v.total);
+    const lowSample = v.total < MIN_SAMPLE;
+    const sortedAll = Math.max(...currentArr.map(x => pct(x.web, x.total)), 0.01);
+    const barWidth = (conv / sortedAll) * 100;
+    return `
+      <div class="variant-row ${isWinner ? 'is-best' : ''}">
+        <div class="vr-name">
+          ${isWinner ? '<span class="vr-medal">🥇</span>' : ''}
+          <span>${label}</span>
+        </div>
+        <div class="vr-math">
+          <span>${sentLabel}: <strong>${fmt(v.total)}</strong></span>
+          <span class="arrow">→</span>
+          <span>${resultLabel}: <span class="result">${fmt(v.web)}</span></span>
+        </div>
+        <div class="vr-rate ${isWinner ? 'best' : ''} ${lowSample ? 'lowsample' : ''}">
+          ${conv.toFixed(1)}%${lowSample ? ' ⚠' : ''}
+        </div>
+        <div class="vr-bar-row">
+          <div class="vr-bar"><div class="vr-bar-fill" style="width: ${barWidth}%;"></div></div>
+        </div>
+      </div>`;
+  }
+
+  let currentArr = []; // used by renderVariantRow for bar scaling
+
+  function explainWhy(winner, runnerUp, arr, what) {
+    if (!winner) {
+      return `<div class="why-box"><strong>אין מנצח עדיין:</strong> כל הגרסאות מתחת ל-${MIN_SAMPLE} דגימות. חכה שיגיעו עוד לידים כדי להכריז.</div>`;
+    }
+    const wRate = pct(winner.web, winner.total);
+    if (!runnerUp) {
+      return `<div class="why-box"><strong>${winner.name} מנצח:</strong> רק גרסה אחת עם מספיק דגימות (${fmt(winner.total)} לידים, ${wRate.toFixed(1)}% המרה לוובינר).</div>`;
+    }
+    const rRate = pct(runnerUp.web, runnerUp.total);
+    const gap = wRate - rRate;
+    const relLift = rRate > 0 ? ((wRate - rRate) / rRate * 100) : 0;
+    const volumeNote = winner.total < runnerUp.total
+      ? `למרות ש-${winner.name} קיבל פחות לידים (${fmt(winner.total)} מול ${fmt(runnerUp.total)} של ${runnerUp.name}), הוא ממיר באחוז גבוה יותר.`
+      : `${winner.name} מוביל גם בכמות (${fmt(winner.total)} לידים) וגם באחוז ההמרה.`;
+    let strength;
+    if (gap >= 5) strength = `<strong>פער מובהק (${gap.toFixed(1)} נקודות אחוז, ${relLift.toFixed(0)}% יותר טוב)</strong>`;
+    else if (gap >= 2) strength = `<strong>פער מתון (${gap.toFixed(1)} נקודות אחוז)</strong> — שווה להמשיך לבדוק כדי לוודא יציבות`;
+    else strength = `<strong>פער קטן מאוד (${gap.toFixed(1)} נקודות אחוז)</strong> — לא בטוח שזה אמיתי, צריך עוד דגימות`;
+    return `<div class="why-box">
+      ${volumeNote}<br>
+      <span class="mono">${winner.name}: ${winner.web}/${winner.total} = ${wRate.toFixed(1)}%</span>
+      &nbsp;מול&nbsp;
+      <span class="mono">${runnerUp.name}: ${runnerUp.web}/${runnerUp.total} = ${rRate.toFixed(1)}%</span><br>
+      ${strength}.
+    </div>`;
+  }
+
+  function renderWinners() {
+    // ----- LANDINGS -----
+    const elLand = document.getElementById('winner_landings');
+    if (!computed.lpArr.length) {
+      elLand.innerHTML = '<div class="winner-card"><h3>📄 דפי נחיתה</h3><div class="nodata-state">אין נתונים עדיין</div></div>';
+    } else {
+      currentArr = computed.lpArr;
+      const winnerName = computed.winnerLanding.winner?.name;
+      const rows = computed.lpArr.slice(0, 6).map(v =>
+        renderVariantRow(v, v.name === winnerName, v.name, 'נכנסו', 'נרשמו לוובינר')
+      ).join('');
+      elLand.innerHTML = `<div class="winner-card">
+        <h3>📄 דפי נחיתה — לפי המרה לוובינר</h3>
+        ${rows}
+        ${explainWhy(computed.winnerLanding.winner, computed.winnerLanding.runnerUp, computed.lpArr)}
+      </div>`;
+    }
+
+    // ----- FUNNELS 1-4 -----
+    const elFn = document.getElementById('winner_funnels');
+    if (!computed.fnArr.length) {
+      elFn.innerHTML = '<div class="winner-card"><h3>🎬 משפכים 1–4</h3><div class="nodata-state">אין נתונים בעמודת Funnel number עדיין</div></div>';
+    } else {
+      currentArr = computed.fnArr;
+      const winnerName = computed.winnerFunnel.winner?.name;
+      const rows = computed.fnArr.map(v =>
+        renderVariantRow(v, v.name === winnerName, v.name, 'נכנסו', 'נרשמו לוובינר')
+      ).join('');
+      elFn.innerHTML = `<div class="winner-card">
+        <h3>🎬 משפכים 1–4 (Funnel number)</h3>
+        ${rows}
+        ${explainWhy(computed.winnerFunnel.winner, computed.winnerFunnel.runnerUp, computed.fnArr)}
+      </div>`;
+    }
+
+    // ----- UTM SOURCES -----
+    const elUtm = document.getElementById('winner_utms');
+    if (!computed.utmArr.length) {
+      elUtm.innerHTML = '<div class="winner-card"><h3>🔗 מקור תנועה</h3><div class="nodata-state">אין נתונים</div></div>';
+    } else {
+      currentArr = computed.utmArr;
+      const winnerName = computed.winnerUtm.winner?.name;
+      const rows = computed.utmArr.slice(0, 6).map(v =>
+        renderVariantRow(v, v.name === winnerName, v.name, 'הביא לידים', 'נרשמו לוובינר')
+      ).join('');
+      elUtm.innerHTML = `<div class="winner-card">
+        <h3>🔗 מקור תנועה (UTM)</h3>
+        ${rows}
+        ${explainWhy(computed.winnerUtm.winner, computed.winnerUtm.runnerUp, computed.utmArr)}
+      </div>`;
+    }
+
+    // ----- VIDEO CUMULATIVE DROP-OFF -----
+    const elVid = document.getElementById('winner_videos');
+    const vidStages = [
+      { label: 'וידאו 1', count: computed.counts.video_1 },
+      { label: 'וידאו 2', count: computed.counts.video_2 },
+      { label: 'וידאו 3', count: computed.counts.video_3 },
+      { label: 'וידאו 4', count: computed.counts.video_4 }
+    ];
+    const v1 = vidStages[0].count;
+    if (v1 === 0) {
+      elVid.innerHTML = '<div class="nodata-state">אין נתוני וידאו עדיין</div>';
+    } else {
+      // find biggest step-to-step drop
+      let biggestDropIdx = -1, biggestDropPct = 100;
+      for (let i = 1; i < vidStages.length; i++) {
+        const stepConv = pct(vidStages[i].count, vidStages[i-1].count);
+        if (vidStages[i-1].count >= 10 && stepConv < biggestDropPct) {
+          biggestDropPct = stepConv;
+          biggestDropIdx = i;
+        }
+      }
+      elVid.innerHTML = vidStages.map((s, i) => {
+        const fromV1 = pct(s.count, v1);
+        const stepConv = i === 0 ? 100 : pct(s.count, vidStages[i-1].count);
+        const isBottleneck = i === biggestDropIdx && stepConv < 70;
+        return `
+          <div class="variant-row ${isBottleneck ? '' : ''}" style="${isBottleneck ? 'border-color: var(--rose); background: rgba(244, 63, 94, 0.05);' : ''}">
+            <div class="vr-name">${isBottleneck ? '🚨 ' : ''}<span>${s.label}</span></div>
+            <div class="vr-math">
+              <span>צפו: <strong>${fmt(s.count)}</strong></span>
+              <span class="arrow">·</span>
+              <span>מהשלב הקודם: <span class="result">${stepConv.toFixed(0)}%</span></span>
+              <span class="arrow">·</span>
+              <span>מ-V1: ${fromV1.toFixed(0)}%</span>
+            </div>
+            <div class="vr-rate" style="${isBottleneck ? 'color: var(--rose);' : ''}">
+              ${stepConv.toFixed(0)}%
+            </div>
+            <div class="vr-bar-row">
+              <div class="vr-bar"><div class="vr-bar-fill" style="width: ${fromV1}%; ${isBottleneck ? 'background: var(--rose);' : ''}"></div></div>
+            </div>
+          </div>`;
+      }).join('') + (biggestDropIdx > 0 ? `
+        <div class="why-box">
+          <strong>הנשירה הגדולה ביותר:</strong> ${vidStages[biggestDropIdx-1].label} → ${vidStages[biggestDropIdx].label}, רק ${biggestDropPct.toFixed(0)}% המשיכו.
+          זה הצוואר בקבוק של המשפך וידאו. ייתכן שתוכן הוידאו עצמו, או ה-CTA שמופיע בסופו, הם הבעיה.
+        </div>` : `
+        <div class="why-box" style="border-color: var(--emerald-dim); background: rgba(16, 185, 129, 0.06);">
+          <strong style="color: var(--emerald);">משפך הוידאו בריא:</strong> אין נשירה משמעותית בין שלבים.
+        </div>`);
+    }
+  }
+
+  // ====================================================================
+  // SIDE PANEL
+  // ====================================================================
+  const sidePanel = document.getElementById('sidePanel');
+  const panelTitle = document.getElementById('panelTitle');
+  const panelBody = document.getElementById('panelBody');
+
+  const NODE_TITLES = {
+    entry_wa_group: 'קבוצת WhatsApp יומית',
+    entry_wa_personal: 'WhatsApp אישי · 10 גרסאות',
+    entry_email: 'אימייל אישי · 10 גרסאות',
+    landing_a: 'דף נחיתה A',
+    landing_b: 'דף נחיתה B',
+    sheet2: 'גיליון 2 · סה״כ לידים',
+    video_1: 'וידאו 1', video_2: 'וידאו 2', video_3: 'וידאו 3', video_4: 'וידאו 4',
+    drip_day0: 'יום 0 · ברוכים', drip_day2: 'יום 2 · חיזוק',
+    drip_day5: 'יום 5 · תזכורת', drip_5min: '5 דק׳ לפני וובינר',
+    webinar: 'רישום לוובינר'
+  };
+
+  function openPanel(nodeId) {
+    const title = NODE_TITLES[nodeId];
+    if (!title) return;
+    panelTitle.textContent = title;
+    const count = computed.counts?.[nodeId] ?? ENTRY_COUNTS[nodeId] ?? 0;
+    const total = computed.total || 0;
+    const conv = total > 0 ? pct(count, total) : 0;
+    let html = `
+      <div class="side-stat"><span class="lbl">כמות נוכחית</span><span class="val">${fmt(count)}</span></div>
+      <div class="side-stat"><span class="lbl">% מסך הלידים</span><span class="val">${conv.toFixed(1)}%</span></div>
+    `;
+    if (nodeId in ENTRY_COUNTS) {
+      html += `<div class="side-stat"><span class="lbl">מקור הנתון</span><span class="val">CONFIG ידני</span></div>`;
+      html += `<p style="font-size: 11px; color: var(--text-3); margin-top: 14px; line-height: 1.6;">כניסה זו אינה נרשמת בגיליון. לעדכן בקובץ HTML, חפש <code>ENTRY_COUNTS</code>.</p>`;
+    } else {
+      html += `<div class="side-stat"><span class="lbl">מקור הנתון</span><span class="val">גיליון לידים</span></div>`;
+    }
+    panelBody.innerHTML = html;
+    sidePanel.classList.add('open');
+  }
+  function closePanel() { sidePanel.classList.remove('open'); }
+  document.getElementById('closePanelBtn').addEventListener('click', closePanel);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closePanel(); });
+  document.querySelectorAll('.node').forEach(n => {
+    n.addEventListener('click', () => openPanel(n.dataset.node));
   });
-  const lpArr = Object.entries(lpMap).sort((a,b)=>b[1].total-a[1].total);
-  const maxLP = lpArr[0]?.[1].total||1;
-  document.getElementById('lpRow').innerHTML = lpArr.map(([name,d],i)=>`
-    <div class="lp-item">
-      <div class="lp-top"><span class="lp-name">${name}</span><span class="lp-cnt">${d.total} לידים</span></div>
-      <div class="lp-bar-bg"><div class="lp-bar" style="width:${Math.round(d.total/maxLP*100)}%;background:${COLORS[i%COLORS.length]}"></div></div>
-      <div class="lp-stats">צפו בסרטון 1: <b>${d.v1}</b> (${pct(d.v1,d.total)}) · סיימו פאנל: <b>${d.v4}</b> (${pct(d.v4,d.total)}) · וובינר: <b>${d.web}</b> (${pct(d.web,d.total)})</div>
-    </div>`).join('');
 
-  // PIPELINE
-  const pipe = [
-    {lbl:'נכנסו',num:total,p:'100%'},
-    {lbl:'יום 0',num:d0,p:pct(d0,total)},
-    {lbl:'יום 2',num:d2,p:pct(d2,total)},
-    {lbl:'יום 5',num:d5,p:pct(d5,total)},
-    {lbl:'5 דק׳ לפני',num:m5,p:pct(m5,total)},
-    {lbl:'וובינר',num:web,p:pct(web,total)},
-  ];
-  document.getElementById('pipeline').innerHTML = pipe.map((p,i)=>`
-    <div class="pipe-step">
-      <div class="pipe-num">${p.num}</div>
-      <div class="pipe-lbl">${p.lbl}</div>
-      <div class="pipe-pct">${p.p}</div>
-    </div>
-    ${i<pipe.length-1?'<div class="pipe-divider"></div>':''}`).join('');
-
-  // VIDEOS
-  const vids = [{lbl:'סרטון 1',n:v1},{lbl:'סרטון 2',n:v2},{lbl:'סרטון 3',n:v3},{lbl:'סרטון 4',n:v4}];
-  document.getElementById('videoRow').innerHTML = vids.map((v,i)=>`
-    <div class="vid-card">
-      <div class="vid-num">${v.n}</div>
-      <div class="vid-lbl">${v.lbl}</div>
-      <div class="vid-pct" style="color:${COLORS[i]}">${pct(v.n,total)}</div>
-      <div class="vid-bar"><div class="vid-bar-fill" style="width:${pn(v.n,total)}%;background:${COLORS[i]}"></div></div>
-    </div>`).join('');
-
-  // WA
-  document.getElementById('waRow').innerHTML = [
-    {lbl:'הודעה 1',n:wa1},{lbl:'הודעה 2',n:wa2},{lbl:'הודעה 3',n:wa3}
-  ].map(w=>`
-    <div class="wa-card">
-      <span class="wa-ico">💬</span>
-      <div><div class="wa-num">${w.n}</div><div class="wa-lbl">WA ${w.lbl}</div><div class="wa-p">${pct(w.n,total)} מהלידים</div></div>
-    </div>`).join('');
-
-  // FUNNEL VARIANTS TABLE
-  const fm = {};[1,2,3,4].forEach(n=>fm[n]={total:0,v1:0,v2:0,v3:0,v4:0,web:0});
-  rows.forEach(r=>{
-    const fn=parseInt(r[C.funnel]);
-    if(fn>=1&&fn<=4){fm[fn].total++;if(hasV(r[C.vid1]))fm[fn].v1++;if(hasV(r[C.vid2]))fm[fn].v2++;if(hasV(r[C.vid3]))fm[fn].v3++;if(hasV(r[C.vid4]))fm[fn].v4++;if(hasV(r[C.webSigned]))fm[fn].web++;}
+  // ====================================================================
+  // REFRESH
+  // ====================================================================
+  const refreshBtn = document.getElementById('refreshBtn');
+  const toast = document.getElementById('toast');
+  refreshBtn.addEventListener('click', async () => {
+    refreshBtn.classList.add('spinning');
+    await loadData();
+    refreshBtn.classList.remove('spinning');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2000);
   });
-  const fcl=['f1','f2','f3','f4'];
-  document.getElementById('funnelTbody').innerHTML=[1,2,3,4].map((fn,i)=>{
-    const d=fm[fn];
-    if(!d.total)return`<tr><td colspan="8" style="text-align:center;color:#9ca3af;font-size:12px;padding:10px">פאנל ${fn} — אין נתונים עדיין</td></tr>`;
-    return`<tr>
-      <td><span class="fbadge ${fcl[i]}">${fn}</span></td>
-      <td><b>${d.total}</b></td>
-      <td>${d.v1} <span style="color:#9ca3af;font-size:11px">(${pct(d.v1,d.total)})</span></td>
-      <td>${d.v2} <span style="color:#9ca3af;font-size:11px">(${pct(d.v2,d.total)})</span></td>
-      <td>${d.v3} <span style="color:#9ca3af;font-size:11px">(${pct(d.v3,d.total)})</span></td>
-      <td>${d.v4} <span style="color:#9ca3af;font-size:11px">(${pct(d.v4,d.total)})</span></td>
-      <td>${d.web}</td>
-      <td><b style="color:${d.web>0?'#16a34a':'#9ca3af'}">${pct(d.web,d.total)}</b></td>
-    </tr>`;}).join('');
+  setInterval(() => loadData(), 60 * 60 * 1000);
 
-  // UTM
-  const um={};
-  rows.forEach(r=>{const k=r[C.utmSrc]||r[C.utm]||'ישיר';um[k]=(um[k]||0)+1;});
-  const ua=Object.entries(um).sort((a,b)=>b[1]-a[1]);
-  const mx=ua[0]?.[1]||1;
-  document.getElementById('utmRow').innerHTML=ua.map(([src,cnt],i)=>`
-    <div class="lp-item">
-      <div class="lp-top"><span class="lp-name">${src||'לא מוגדר'}</span><span class="lp-cnt">${cnt} · ${pct(cnt,total)}</span></div>
-      <div class="lp-bar-bg"><div class="lp-bar" style="width:${Math.round(cnt/mx*100)}%;background:${COLORS[i%COLORS.length]}"></div></div>
-    </div>`).join('');
-}
-
-loadData();
-setInterval(loadData, 3*60*1000);
-
-// Task count badge
-try {
-  const t = JSON.parse(localStorage.getItem('do_t2')) || [];
-  const active = t.filter(x => x.s !== 'd').length;
-  const activeSubs = t.reduce((a,x) => a + x.subs.filter(s=>s.s!=='d').length, 0);
-  document.getElementById('taskCountBadge').textContent = (active + activeSubs) + ' פעילות';
-} catch(e) { document.getElementById('taskCountBadge').textContent = 'משימות'; }
-
+  loadData();
 </script>
+
 </body>
 </html>
