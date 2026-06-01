@@ -1918,6 +1918,7 @@ tick();
 /* Form */
 document.querySelectorAll('.leadForm, #leadForm').forEach(form => form.addEventListener('submit', (e) => {
   e.preventDefault();
+
   const consentCheck = e.target.querySelector('.consent-check');
   if (consentCheck && !consentCheck.checked) {
     const consentRow = consentCheck.closest('.consent-row');
@@ -1927,6 +1928,7 @@ document.querySelectorAll('.leadForm, #leadForm').forEach(form => form.addEventL
     }
     return;
   }
+
   /* ===== collect fields ===== */
   const nameEl  = e.target.querySelector('input[type=text]');
   const emailEl = e.target.querySelector('input[type=email]');
@@ -1934,41 +1936,11 @@ document.querySelectorAll('.leadForm, #leadForm').forEach(form => form.addEventL
   const name  = nameEl  ? nameEl.value.trim()  : '';
   const email = emailEl ? emailEl.value.trim() : '';
   const phone = phoneEl ? phoneEl.value.trim() : '';
+
   /* ===== URL params (UTM / supplier / variant / ref) ===== */
   const urlP = new URLSearchParams(location.search);
   const utm_source   = urlP.get('utm_source')   || '';
-  const utm_medium   = urlP.get('utm_medium')   || '';
-  const utm_campaign = urlP.get('utm_campaign') || '';
-  const supplier     = urlP.get('supplier')     || '';
-  const variant      = urlP.get('variant')      || '';
-  const ref          = urlP.get('ref') || variant || '';
-  const PAGE_ID = 'digital-online-landing';
-
-/* ===== 1) Make.com webhook (JSON) ===== */
-  const payload = {
-    event: 'lead_form',
-    page: PAGE_ID,
-    form_id: e.target.id || '',
-    fullName: name,
-    email,
-    phone,
-    supplier,
-    utm_source, utm_medium, utm_campaign,
-    variant, ref,
-    timestamp: new Date().toLocaleString('he-IL'),
-    timestamp_iso: new Date().toISOString(),
-    page_url: location.href,
-    referrer: document.referrer || '',
-    user_agent: navigator.userAgent
-  };
-
-  try {
-    await fetch('https://hook.eu1.make.com/jp6ukjt7tpk3y4yly9c691g01f47cq8q', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(payload)
-    });
-  } catch (e) {}
+  const utm_medium   = urlP.get('utm_medium')   ||
 
   /* ===== 2) Lead Manager API (GET, no-cors, fire-and-forget) ===== */
   try {
