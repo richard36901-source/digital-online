@@ -1944,28 +1944,31 @@ document.querySelectorAll('.leadForm, #leadForm').forEach(form => form.addEventL
   const ref          = urlP.get('ref') || variant || '';
   const PAGE_ID = 'digital-online-landing';
 
-/* ===== 1) Make.com webhook (JSON, fire-and-forget) ===== */
+/* ===== 1) Make.com webhook (JSON) ===== */
+  const payload = {
+    event: 'lead_form',
+    page: PAGE_ID,
+    form_id: e.target.id || '',
+    fullName: name,
+    email,
+    phone,
+    supplier,
+    utm_source, utm_medium, utm_campaign,
+    variant, ref,
+    timestamp: new Date().toLocaleString('he-IL'),
+    timestamp_iso: new Date().toISOString(),
+    page_url: location.href,
+    referrer: document.referrer || '',
+    user_agent: navigator.userAgent
+  };
+
   try {
-    fetch('https://hook.eu1.make.com/jp6ukjt7tpk3y4yly9c691g01f47cq8q', {
+    await fetch('https://hook.eu1.make.com/jp6ukjt7tpk3y4yly9c691g01f47cq8q', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        event: 'lead_form',
-        page: PAGE_ID,
-        form_id: e.target.id || '',
-        name, phone, email,
-        supplier,
-        utm_source, utm_medium, utm_campaign,
-        variant, ref,
-        timestamp: new Date().toLocaleString('he-IL'),
-        timestamp_iso: new Date().toISOString(),
-        page_url: location.href,
-        referrer: document.referrer || '',
-        user_agent: navigator.userAgent
-      }),
-      keepalive: true
-    }).catch(()=>{});
-  } catch (_) {}
+      body: JSON.stringify(payload)
+    });
+  } catch (e) {}
 
   /* ===== 2) Lead Manager API (GET, no-cors, fire-and-forget) ===== */
   try {
