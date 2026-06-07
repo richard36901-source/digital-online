@@ -1107,6 +1107,12 @@ footer .logo-text small{font-size:9px}
 .phone-play-btn:hover{transform:translate(-50%,-50%) scale(1.08)}
 .phone-video-wrap.playing .phone-play-btn,.phone-video-wrap.playing .phone-vid-overlay-top{opacity:0;pointer-events:none}
 .phone-vid-overlay-top,.phone-play-btn{transition:opacity .4s}
+.phone-sound-btn{position:absolute;top:10px;left:10px;z-index:4;width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,0.55);border:1px solid rgba(232,200,120,0.45);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;transition:transform .25s, background .25s, border-color .25s;pointer-events:auto}
+.phone-sound-btn:hover{background:rgba(0,0,0,0.75);border-color:var(--gold-light);transform:scale(1.08)}
+.phone-sound-btn svg{width:16px;height:16px;stroke:var(--gold-light);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;display:block}
+.phone-sound-btn .icon-on{display:none}
+.phone-sound-btn.is-on .icon-off{display:none}
+.phone-sound-btn.is-on .icon-on{display:block}
 
 /* ===== Consent checkbox ===== */
 .consent-row{display:flex;align-items:center;gap:8px;margin:6px auto;padding:7px 10px;background:rgba(0,0,0,0.4);border:1px solid rgba(232,200,120,0.18);border-radius:4px;cursor:pointer;transition:all .25s;max-width:780px}
@@ -1684,6 +1690,10 @@ footer .logo-text small{font-size:9px}
                 <source src="hero-video.mp4" type="video/mp4">
               </video>
               <button class="phone-play-btn" id="phonePlayBtn" aria-label="נגן וידאו"></button>
+              <button class="phone-sound-btn" id="phoneSoundBtn" type="button" aria-label="הפעל סאונד" aria-pressed="false">
+                <svg class="icon-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z"/><line x1="22" y1="9" x2="16" y2="15"/><line x1="16" y1="9" x2="22" y2="15"/></svg>
+                <svg class="icon-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M18.07 5.93a9 9 0 0 1 0 12.73"/></svg>
+              </button>
             </div>
           </div>
         </div>
@@ -1819,10 +1829,8 @@ footer .logo-text small{font-size:9px}
           </div>
         </div>
         <ul class="social-links">
-          <li><a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.6 3.2H4.4A2.4 2.4 0 0 0 2 5.6v12.8a2.4 2.4 0 0 0 2.4 2.4h15.2a2.4 2.4 0 0 0 2.4-2.4V5.6a2.4 2.4 0 0 0-2.4-2.4zM10 16V8l6 4-6 4z"/></svg></a></li>
-          <li><a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37zM17.5 6.5h.01"/></svg></a></li>
-          <li><a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a></li>
-          <li><a href="#" aria-label="Telegram"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.5 4.5L2.5 12l5 2 2 6 3-4 5 4 4-15.5z"/></svg></a></li>
+          <li><a href="https://chat.whatsapp.com/K7XPJIokm9sHvjk6d89JBI?mode=gi_t" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-1.6-.8-2.7-1.5-3.8-3.3-.3-.5.3-.5.8-1.5.1-.2.1-.4 0-.5-.1-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.1-.3-.2-.6-.3zM12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.7 1.5 5.3L2 22l4.8-1.4c1.6.9 3.4 1.4 5.2 1.4 5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18.2c-1.7 0-3.3-.5-4.7-1.3l-.3-.2-3.3.9.9-3.2-.2-.4c-.9-1.5-1.4-3.2-1.4-5 0-4.5 3.6-8.2 8.1-8.2 4.5 0 8.2 3.7 8.2 8.2 0 4.4-3.7 8.2-8.3 8.2z"/></svg></a></li>
+          <li><a href="https://www.instagram.com/ben_nahum_1" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37zM17.5 6.5h.01"/></svg></a></li>
         </ul>
       </div>
       <p class="copyright"><div class="footer-info">
@@ -1915,10 +1923,17 @@ function tick(){
 setInterval(tick, 1000);
 tick();
 
-/* Form */
-document.querySelectorAll('.leadForm, #leadForm').forEach(form => form.addEventListener('submit', async (e) => {
+/* Form (event delegation: works for ALL .leadForm elements no matter where they are in the DOM, including modals loaded later) */
+document.addEventListener('submit', async (e) => {
+  const form = e.target;
+  if (!(form instanceof HTMLFormElement)) return;
+  if (!form.matches('.leadForm, #leadForm')) return;
   e.preventDefault();
-  const consentCheck = e.target.querySelector('.consent-check');
+  /* ===== consent check (looks both inside form and via form= attribute) ===== */
+  let consentCheck = form.querySelector('.consent-check');
+  if (!consentCheck && form.id) {
+    consentCheck = document.querySelector('.consent-check[form="' + form.id + '"]');
+  }
   if (consentCheck && !consentCheck.checked) {
     const consentRow = consentCheck.closest('.consent-row');
     if (consentRow) {
@@ -1928,9 +1943,9 @@ document.querySelectorAll('.leadForm, #leadForm').forEach(form => form.addEventL
     return;
   }
   /* ===== collect fields ===== */
-  const nameEl  = e.target.querySelector('input[type=text]');
-  const emailEl = e.target.querySelector('input[type=email]');
-  const phoneEl = e.target.querySelector('input[type=tel]');
+  const nameEl  = form.querySelector('input[type=text]');
+  const emailEl = form.querySelector('input[type=email]');
+  const phoneEl = form.querySelector('input[type=tel]');
   const name  = nameEl  ? nameEl.value.trim()  : '';
   const email = emailEl ? emailEl.value.trim() : '';
   const phone = phoneEl ? phoneEl.value.trim() : '';
@@ -1939,7 +1954,8 @@ document.querySelectorAll('.leadForm, #leadForm').forEach(form => form.addEventL
   const utm_source   = urlP.get('utm_source')   || '';
   const utm_medium   = urlP.get('utm_medium')   || '';
   const utm_campaign = urlP.get('utm_campaign') || '';
-  const supplier     = urlP.get('supplier')     || '48740';  const variant      = urlP.get('variant')      || '';
+  const supplier     = urlP.get('supplier')     || '48740';
+  const variant      = urlP.get('variant')      || '';
   const ref          = urlP.get('ref') || variant || '';
   const PAGE_ID = 'digital-online-landing';
 
@@ -1951,7 +1967,7 @@ document.querySelectorAll('.leadForm, #leadForm').forEach(form => form.addEventL
       body: JSON.stringify({
         event: 'lead_form',
         page: PAGE_ID,
-        form_id: e.target.id || '',
+        form_id: form.id || '',
         name, phone, email,
         supplier,
         utm_source, utm_medium, utm_campaign,
@@ -1988,17 +2004,19 @@ document.querySelectorAll('.leadForm, #leadForm').forEach(form => form.addEventL
       mode: 'no-cors'
     });
   } catch (_) {}
-  
+
   /* ===== UI feedback + redirect to thank-you ===== */
-  const btn = e.target.querySelector('.cta-btn');
-  const originalText = btn.dataset.original || btn.textContent;
-  btn.dataset.original = originalText;
-  btn.textContent = '✓ נשלח בהצלחה!';
-  btn.style.background = 'linear-gradient(135deg, #1dffd4, #00c896)';
+  const btn = form.querySelector('button[type=submit], .cta-btn');
+  if (btn) {
+    const originalText = btn.dataset.original || btn.textContent;
+    btn.dataset.original = originalText;
+    btn.textContent = '✓ נשלח בהצלחה!';
+    btn.style.background = 'linear-gradient(135deg, #1dffd4, #00c896)';
+  }
   setTimeout(() => {
     window.location.href = 'https://funnel.digitalonline.co.il/thankyou';
   }, 1200);
-}));
+});
 
 /* Hero video play button */
 (function(){
@@ -2135,6 +2153,27 @@ function declineCookies(){
     tryPlay();
     vid.addEventListener('playing', ()=>wrap.classList.add('playing'));
   }
+})();
+
+
+/* ===== Phone video sound toggle ===== */
+(function(){
+  const vid = document.getElementById('phoneVideo');
+  const btn = document.getElementById('phoneSoundBtn');
+  if(!vid || !btn) return;
+  btn.addEventListener('click', function(e){
+    e.stopPropagation();
+    vid.muted = !vid.muted;
+    const on = !vid.muted;
+    btn.classList.toggle('is-on', on);
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    btn.setAttribute('aria-label', on ? 'השתק סאונד' : 'הפעל סאונד');
+    if(on){
+      vid.volume = 1;
+      const p = vid.play();
+      if(p && p.catch) p.catch(()=>{});
+    }
+  });
 })();
 
 
