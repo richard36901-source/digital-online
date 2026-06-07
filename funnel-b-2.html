@@ -9,13 +9,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;800;900&family=Assistant:wght@400;500;600&display=swap" rel="stylesheet"/>
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-WNJN9XQT');</script>
 <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','10211443525862398');fbq('track','PageView');</script>
-<script src="https://player.vimeo.com/api/player.js"></script>
+<script src="https://www.youtube.com/iframe_api"></script>
 <script>
 function playVideoB2(){
   var t=document.getElementById('vidThumb');
   if(t)t.classList.add('gone');
-  if(window._vpb2)window._vpb2.play();
-  else window._pendingB2=true;
+  if(window._ytPlayer && window._ytPlayer.playVideo){window._ytPlayer.playVideo();}
+  else{window._pendingPlay=true;}
 }
 </script>
 <style>
@@ -212,7 +212,6 @@ footer a:hover{color:#34d399;}
 footer .sep{margin:0 6px;color:rgba(255,255,255,.06);}
 
 </style>
-<script>document.addEventListener("DOMContentLoaded",function(){var t=document.getElementById("vidThumb");if(t)t.style.display="none";});</script>
 </head>
 <body>
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WNJN9XQT" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -229,21 +228,15 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.06);}
       
   </div>
 
-  <h1 class="headline">הדבר שרוב האנשים לא רואים — והוא זה שמשאיר אותם באותו מקום</h1>
-  <p class="subline">אם תבין את זה — אתה תתחיל לראות למה דברים לא זזים כמו שאתה רוצה</p>
+  <h1 class="headline">הדבר שרוב האנשים לא רואים, והוא זה שמשאיר אותם באותו מקום</h1>
+  <p class="subline">אם תבין את זה, אתה תתחיל לראות למה דברים לא זזים כמו שאתה רוצה</p>
 
-  <p class="watch-hint">תן לעצמך כמה דקות להיות כאן<br>בלי הסחות — זה בדיוק החלק שרוב האנשים מפספסים</p>
+  <p class="watch-hint">תן לעצמך כמה דקות להיות כאן<br>בלי הסחות, זה בדיוק החלק שרוב האנשים מפספסים</p>
 
   <div class="vid-outer">
     <div class="vid-box">
       <div class="vid-ratio">
-        <iframe id="vimeoPlayer" autoplay muted
-          src="https://player.vimeo.com/video/1182198174?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;title=0&amp;byline=0&amp;portrait=0&amp;autoplay=1&amp;muted=1"
-          frameborder="0"
-          allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
-          referrerpolicy="strict-origin-when-cross-origin"
-          title="סרטון 2">
-        </iframe>
+        <div id="ytPlayer"></div>
       </div>
       <div class="vid-thumb" id="vidThumb" onclick="playVideoB2()">
         <div class="play-btn">
@@ -252,13 +245,13 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.06);}
       </div>
     </div>
   </div>
-  <p class="watch-hint" style="margin-bottom:18px;">אם תמשיך לסרטון הבא — אתה תראה איך לחבר את זה נכון ולהתחיל לראות תוצאה בפועל, לא רק להבין</p>
+  <p class="watch-hint" style="margin-bottom:18px;">אם תמשיך לסרטון הבא, אתה תראה איך לחבר את זה נכון ולהתחיל לראות תוצאה בפועל, לא רק להבין</p>
   <div class="btn-box">
     <div class="preview-rows">
       <div class="preview-row"></div>
-      <div class="preview-row">זה תהליך קצר של 4 שלבים — כל שלב פותח משהו שלא היה ברור לפני</div>
+      <div class="preview-row">זה תהליך קצר של 4 שלבים, כל שלב פותח משהו שלא היה ברור לפני</div>
       <div class="preview-row">רוב האנשים עוצרים באמצע ומפספסים את החלק שבאמת עושה את ההבדל</div>
-      <div class="preview-row" style="color:rgba(100,180,255,.5);">אם הגעת עד לכאן — כנראה שזה כבר נוגע בך ברמה אחרת</div>
+      <div class="preview-row" style="color:rgba(100,180,255,.5);">אם הגעת עד לכאן, כנראה שזה כבר נוגע בך ברמה אחרת</div>
     </div>
     <a class="btn-next" id="btnNext" data-text="לעבור לשלב הבא" href="funnel-b-3.html">
       🔒&nbsp; לעבור לשלב הבא &nbsp;<span class="btn-arrow">←</span>
@@ -276,16 +269,6 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.06);}
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
 <script>
-setTimeout(function(){
-  var b=document.getElementById('btnNext');
-  if(!b||b.classList.contains('unlocked'))return;
-  b.classList.remove('watching');
-  b.classList.add('unlocked');
-  b.style.cursor='pointer';
-  b.style.pointerEvents='auto';
-  b.innerHTML='&#9658;&nbsp; לעבור לשלב הבא &nbsp;<span class="btn-arrow">&#8592;</span>';
-},30000);
-</script><script>
 (function(){
   const c=document.getElementById('particles'),ctx=c.getContext('2d');
   let W,H,pts=[];
@@ -312,6 +295,7 @@ setTimeout(function(){
 
 const PAGE='funnel_b_video_2';
 const WEBHOOK='https://hook.eu1.make.com/jp6ukjt7tpk3y4yly9c691g01f47cq8q';
+const YT_VIDEO_ID='3dK8A7DWA1A';
 window.dataLayer=window.dataLayer||[];
 const P=new URLSearchParams(location.search);
 const variant=P.get('variant')||'',sup=P.get('lm_supplier')||P.get('supplier')||'',src=P.get('utm_source')||'';
@@ -327,52 +311,119 @@ window.addEventListener('scroll',()=>{
 
 const t0=Date.now();
 const vm={};[25,50,75,100].forEach(m=>vm[m]=0);
+let lastPos=0;
+let maxTime=0;
+let isSeeking=false;
+let totalDur=0;
+let btnUnlocked=false;
 
-window.addEventListener('load',()=>{
-  const iframe=document.getElementById('vimeoPlayer');
-  const player=new Vimeo.Player(iframe);
-  window._vpb2=player;
-  if(window._pendingB2)player.play();
-  const thumb=document.getElementById('vidThumb');
-  const btnNext=document.getElementById('btnNext');
-  thumb.onclick=function(){thumb.classList.add('gone');player.play();};
+function unlockBtn(){
+  const b=document.getElementById('btnNext');
+  if(btnUnlocked||!b)return;
+  btnUnlocked=true;
+  b.classList.remove('watching');
+  b.classList.add('unlocked');
+  b.style.cursor='pointer';
+  b.style.pointerEvents='auto';
+  b.innerHTML='&#9658;&nbsp; לעבור לשלב הבא &nbsp;<span class="btn-arrow">&#8592;</span>';
+  setTimeout(()=>{b.scrollIntoView({behavior:'smooth',block:'center'});},300);
+}
 
-  player.on('play',(data)=>{
-    thumb.classList.add('gone');
-    btnNext.classList.add('watching');
-    dataLayer.push({event:'video_play',page:PAGE,time:Math.round(data.seconds)});
-  });
-  player.on('pause',(data)=>{
-    btnNext.classList.remove('watching');
-    const pos=Math.round(data.seconds),pct=Math.round(data.percent*100);
-    dataLayer.push({event:'video_pause',page:PAGE,time:pos,pct_watched:pct});
-    fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({event:'video_pause',page:PAGE,position_sec:pos,pct_watched:pct,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')})
-    }).catch(()=>{});
-  });
-  let maxTime=0,isSeeking=false;
-  player.on('timeupdate',(data)=>{
-    if(!isSeeking&&data.seconds>maxTime+1.5){
-      isSeeking=true;player.setCurrentTime(maxTime).then(()=>{isSeeking=false;});return;
+// 30-second fallback unlock
+setTimeout(unlockBtn,30000);
+
+function onYouTubeIframeAPIReady(){
+  window._ytPlayer=new YT.Player('ytPlayer',{
+    videoId:YT_VIDEO_ID,
+    playerVars:{
+      autoplay:1,
+      mute:1,
+      playsinline:1,
+      rel:0,
+      modestbranding:1,
+      controls:1,
+      fs:1,
+      iv_load_policy:3,
+      enablejsapi:1,
+      origin:window.location.origin
+    },
+    events:{
+      onReady:onPlayerReady,
+      onStateChange:onPlayerStateChange
     }
-    if(!isSeeking&&data.seconds>maxTime)maxTime=data.seconds;
-    const pct=data.percent*100;
-    [25,50,75,100].forEach(m=>{if(!vm[m]&&pct>=m){vm[m]=1;dataLayer.push({event:'video_progress',milestone:m+'%',time:Math.round(data.seconds),page:PAGE});}});
   });
-  player.on('ended',()=>{
-    btnNext.classList.remove('watching');
+}
+
+function onPlayerReady(e){
+  try{totalDur=Math.round(e.target.getDuration());}catch(err){}
+  if(window._pendingPlay){
+    try{e.target.playVideo();}catch(err){}
+    window._pendingPlay=false;
+  }
+  setInterval(()=>{
+    if(!window._ytPlayer||!window._ytPlayer.getCurrentTime)return;
+    try{
+      const t=window._ytPlayer.getCurrentTime();
+      if(!totalDur){totalDur=Math.round(window._ytPlayer.getDuration())||0;}
+      if(!totalDur)return;
+      lastPos=Math.round(t);
+      if(!isSeeking && t > maxTime+1.5){
+        isSeeking=true;
+        window._ytPlayer.seekTo(maxTime,true);
+        setTimeout(()=>{isSeeking=false;},400);
+        return;
+      }
+      if(!isSeeking && t > maxTime) maxTime=t;
+      const pct=(t/totalDur)*100;
+      [25,50,75,100].forEach(m=>{
+        if(!vm[m]&&pct>=m){
+          vm[m]=1;
+          dataLayer.push({event:'video_progress',milestone:m+'%',time:lastPos,page:PAGE});
+        }
+      });
+    }catch(err){}
+  },300);
+}
+
+function onPlayerStateChange(e){
+  const btnNext=document.getElementById('btnNext');
+  const thumb=document.getElementById('vidThumb');
+
+  if(e.data===YT.PlayerState.PLAYING){
+    if(thumb)thumb.classList.add('gone');
+    if(btnNext && !btnUnlocked)btnNext.classList.add('watching');
+    dataLayer.push({event:'video_play',page:PAGE,time:lastPos});
+  }
+
+  if(e.data===YT.PlayerState.PAUSED){
+    if(btnNext)btnNext.classList.remove('watching');
+    const pct=totalDur?Math.round((lastPos/totalDur)*100):0;
+    dataLayer.push({event:'video_pause',page:PAGE,time:lastPos,pct_watched:pct});
+    fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({event:'video_pause',page:PAGE,position_sec:lastPos,pct_watched:pct,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')})
+    }).catch(()=>{});
+  }
+
+  if(e.data===YT.PlayerState.ENDED){
+    unlockBtn();
     dataLayer.push({event:'video_ended',page:PAGE});
     if(typeof fbq!=='undefined')fbq('track','ViewContent',{content_name:PAGE});
     fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({event:'video_completed',page:PAGE,pct_watched:100,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')})
     }).catch(()=>{});
-    btnNext.classList.add('unlocked');
-    btnNext.innerHTML='&#9658;&nbsp; לעבור לשלב הבא &nbsp;<span class="btn-arrow">←</span>';
-    setTimeout(()=>{btnNext.scrollIntoView({behavior:'smooth',block:'center'});},300);
-  });
-  window.addEventListener('beforeunload',()=>{
-    player.getCurrentTime().then((pos)=>{player.getDuration().then((d)=>{
-      const pct=d?Math.round((pos/d)*100):0;
-      if(navigator.sendBeacon)navigator.sendBeacon(WEBHOOK,JSON.stringify({
-        event:'page_exit',page:PAGE,position_sec:Math.round(pos),pct_watched:pct,
-        seconds_on_page:Math.round((Dat
+  }
+}
+
+window.addEventListener('beforeunload',()=>{
+  const pct=totalDur?Math.round((lastPos/totalDur)*100):0;
+  if(navigator.sendBeacon){
+    navigator.sendBeacon(WEBHOOK,JSON.stringify({
+      event:'page_exit',page:PAGE,position_sec:lastPos,pct_watched:pct,
+      seconds_on_page:Math.round((Date.now()-t0)/1000),supplier:sup,utm_source:src,
+      timestamp:new Date().toLocaleString('he-IL')
+    }));
+  }
+});
+</script>
+</body>
+</html>
