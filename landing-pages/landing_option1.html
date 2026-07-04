@@ -215,18 +215,11 @@ async function handleSubmit(){
     });
   }catch(e){}
 
-  try{
-    await fetch('https://cp.responder.co.il/api/v1.0/subscribers',{
-      method: 'POST',
-      headers:{
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer b66d164ad1d065d550b843cbefd9094b09fe9356d216fd70cc224a1747f853b1'
-      },
-      body: JSON.stringify({
-        list_id: 107443,
-        email: data.email,
-        name: data.name
-      })
+try{
+    await fetch('https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email:data.email,name:data.name})
     });
   }catch(e){}
 
@@ -246,7 +239,7 @@ async function handleSubmit(){
   document.getElementById('successBox').classList.add('show');
 
   setTimeout(function(){
-    // window.location.href = FUNNELC1 + location.search;
+    window.location.href = FUNNELC1 + location.search;
   }, 1800);
 }
 
