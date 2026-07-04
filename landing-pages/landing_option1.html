@@ -177,23 +177,10 @@ async function handleSubmit(){
     landing_url: location.href
   };
 
-  const lmParams = new URLSearchParams();
-  lmParams.append('lm_form','89907');
-  lmParams.append('lm_key','28250230ddcd4b8a9f3929b7ab8744a1');
-  lmParams.append('subscribers_email',data.email);
-  lmParams.append('fld_144377','1');
-  lmParams.append('fld_105911',src);
-  lmParams.append('fld_107862',src);
-  lmParams.append('lm_supplier',resolvedSupplier);
-  lmParams.append('lm_bc',src);
-  lmParams.append('fields[REF]',p.ref || VARIANT);
-  lmParams.append('utm_medium',med);
-  lmParams.append('utm_campaign',camp);
-  lmParams.append('page',PAGE);
-
-  /* Fire all three integrations in parallel so a slow/failing call never
-     blocks or delays the others — in particular the "send email now" hook
-     must not wait on Lead Manager or the tracking webhook. */
+  /* Fire the confirmation-email hook and the tracking webhook in parallel
+     so a slow/failing call never blocks or delays the other — in particular
+     the "send email now" hook must not wait on the tracking webhook.
+     Lead Manager integration removed at the landing-page stage on purpose. */
   await Promise.allSettled([
     fetch('https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q',{
       method:'POST',
@@ -204,10 +191,6 @@ async function handleSubmit(){
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
-    }),
-    fetch('https://api.leadmanager.co.il/handlers/lm/submit.cms?' + lmParams.toString(), {
-      method: 'GET',
-      mode: 'no-cors'
     })
   ]);
 

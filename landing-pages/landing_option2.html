@@ -136,23 +136,10 @@ window.submitForm = async function submitForm() {
   try { dataLayer.push({event:'form_submitted', email:email, page:'landing_option2'}); } catch(e) {}
   try { if(typeof fbq==='function') fbq('track','Lead'); } catch(e) {}
 
-  var lmParams = new URLSearchParams();
-  lmParams.append('lm_form', '89937');
-  lmParams.append('lm_key', '5403c690523845fdadf0c18bfe002da0');
-  lmParams.append('subscribers_email', email);
-  lmParams.append('fld_144377', '1');
-  lmParams.append('fld_105911', p.src);
-  lmParams.append('fld_107862', p.src);
-  lmParams.append('lm_supplier', resolvedSupplier);
-  lmParams.append('lm_bc', p.src);
-  lmParams.append('fields[REF]', p.ref);
-  lmParams.append('utm_medium', p.medium);
-  lmParams.append('utm_campaign', p.campaign);
-  lmParams.append('page', 'landing_option2');
-
-  // Fire the confirmation-email webhook, the tracking webhook and Lead Manager
-  // in parallel so a slow/failing call never delays or blocks the others —
-  // in particular, the "send email now" hook must fire immediately.
+  // Fire the confirmation-email webhook and the tracking webhook in parallel
+  // so a slow/failing call never delays or blocks the other — in particular,
+  // the "send email now" hook must fire immediately.
+  // Lead Manager integration removed at the landing-page stage on purpose.
   await Promise.allSettled([
     fetch('https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q', {
       method: 'POST',
@@ -169,9 +156,6 @@ window.submitForm = async function submitForm() {
         supplier: resolvedSupplier,
         timestamp: new Date().toLocaleString('he-IL')
       })
-    }),
-    fetch('https://api.leadmanager.co.il/handlers/lm/submit.cms?' + lmParams.toString(), {
-      method: 'GET', mode: 'no-cors'
     })
   ]);
 

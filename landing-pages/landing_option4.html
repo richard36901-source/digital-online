@@ -2106,29 +2106,11 @@ document.addEventListener('submit',async (e) => {
 
   const resolvedSupplier = await resolveSupplier(p);
 
-  const lmP = new URLSearchParams();
-  lmP.append('lm_form', '90867');
-  lmP.append('lm_key',  '4688231a3dff48db88fcc1316dcaa944');
-
-  lmP.append('subscribers_email', email);
-
-  lmP.append('fld_144377', '1');
-  lmP.append('fld_105911', p.src);
-  lmP.append('fld_107862', p.src);
-
-  lmP.append('lm_supplier', resolvedSupplier);
-  lmP.append('lm_bc',       p.src);
-
-  lmP.append('fields[REF]', p.ref);
-  lmP.append('utm_medium',   p.medium);
-  lmP.append('utm_campaign', p.campaign);
-
-  lmP.append('page', PAGE_ID);
-
-  /* ===== Fire the confirmation-email hook, tracking webhook and Lead
-     Manager all in parallel (fire-and-forget, keepalive) so a slow/failing
-     call never delays or blocks the others — the "send email now" hook in
-     particular must go out immediately. ===== */
+  /* ===== Fire the confirmation-email hook and tracking webhook in parallel
+     (fire-and-forget, keepalive) so a slow/failing call never delays or
+     blocks the other — the "send email now" hook in particular must go out
+     immediately. Lead Manager integration removed at the landing-page
+     stage on purpose. ===== */
   Promise.allSettled([
     fetch('https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q', {
       method: 'POST',
@@ -2157,11 +2139,6 @@ document.addEventListener('submit',async (e) => {
         referrer:      document.referrer || '',
         user_agent:    navigator.userAgent
       }),
-      keepalive: true
-    }),
-    fetch('https://api.leadmanager.co.il/handlers/lm/submit.cms?' + lmP.toString(), {
-      method: 'GET',
-      mode: 'no-cors',
       keepalive: true
     })
   ]);
