@@ -132,23 +132,11 @@ window.submitForm = async function submitForm() {
   const p = getParams();
   const resolvedSupplier = await resolveSupplier(p);
 
-  var lmParams = new URLSearchParams();
-  lmParams.append('lm_form', '89938');
-  lmParams.append('lm_key', '2c1ce743c69d472f925de702931b7b83');
-  lmParams.append('subscribers_email', email);
-  lmParams.append('fld_144377', '1');
-  lmParams.append('fld_105911', p.src);
-  lmParams.append('fld_107862', p.src);
-  lmParams.append('lm_supplier', resolvedSupplier);
-  lmParams.append('lm_bc', p.src);
-  lmParams.append('fields[REF]', p.ref);
-  lmParams.append('utm_medium', p.medium);
-  lmParams.append('utm_campaign', p.campaign);
-
-  // Fire all integrations in parallel — previously these were chained with
-  // .then(), so a failure/slowness in the tracking webhook silently blocked
-  // Lead Manager and the redirect. The confirmation-email hook must fire
-  // immediately regardless of the others.
+  // Fire the confirmation-email hook and the tracking webhook in parallel —
+  // previously these were chained with .then(), so a failure/slowness in the
+  // tracking webhook silently blocked the redirect. The confirmation-email
+  // hook must fire immediately regardless of the other.
+  // Lead Manager integration removed at the landing-page stage on purpose.
   await Promise.allSettled([
     fetch('https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q', {
       method: 'POST', headers: {'Content-Type':'application/json'},
@@ -164,9 +152,6 @@ window.submitForm = async function submitForm() {
         variant: p.ref,
         timestamp: new Date().toLocaleString('he-IL')
       })
-    }),
-    fetch('https://api.leadmanager.co.il/handlers/lm/submit.cms?' + lmParams.toString(), {
-      method: 'GET', mode: 'no-cors'
     })
   ]);
 
