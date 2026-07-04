@@ -1873,20 +1873,14 @@ footer .logo-text small{font-size:9px}
 
       <form class="leadForm final-form-row" id="leadFormFinal">
         <div class="final-input-wrap">
-          <input class="final-input" type="text" placeholder="* שם מלא" required>
-        </div>
-        <div class="final-input-wrap">
           <input class="final-input" type="email" placeholder="* אימייל" required>
-        </div>
-        <div class="final-input-wrap">
-          <input class="final-input" type="tel" placeholder="* טלפון" required>
         </div>
         <button class="cta-btn final-cta-btn" type="submit">אני רוצה גישה עכשיו</button>
       </form>
 
       <label class="consent-row" id="consentFinal">
         <input type="checkbox" class="consent-check" form="leadFormFinal" required>
-        <span>* אני מאשר/ת קבלת תוכן, עדכונים והדרכות במייל / SMS / WhatsApp. ניתן להסיר בכל רגע.</span>
+        <span>* אני מאשר/ת קבלת תוכן, עדכונים והדרכות במייל. ניתן להסיר בכל רגע.</span>
       </label>
 
       <div class="final-cta-footer">
@@ -2096,12 +2090,8 @@ document.addEventListener('submit',async (e) => {
   }
 
   /* ===== collect fields ===== */
-  const nameEl  = form.querySelector('input[type=text]');
   const emailEl = form.querySelector('input[type=email]');
-  const phoneEl = form.querySelector('input[type=tel]');
-  const name  = nameEl  ? nameEl.value.trim()  : '';
   const email = emailEl ? emailEl.value.trim() : '';
-  const phone = phoneEl ? phoneEl.value.trim() : '';
   /* ===== URL params (UTM / supplier / variant / ref) ===== */
   const p = getParams();
   const marketer     = p.marketer;
@@ -2114,10 +2104,38 @@ document.addEventListener('submit',async (e) => {
 
   const PAGE_ID = 'digital-online-landing';
 
-/* ===== 1) Make.com webhook (fire-and-forget, keepalive) ===== */
-  try {
-    const p = getParams();
+  const resolvedSupplier = await resolveSupplier(p);
 
+  const lmP = new URLSearchParams();
+  lmP.append('lm_form', '90867');
+  lmP.append('lm_key',  '4688231a3dff48db88fcc1316dcaa944');
+
+  lmP.append('subscribers_email', email);
+
+  lmP.append('fld_144377', '1');
+  lmP.append('fld_105911', p.src);
+  lmP.append('fld_107862', p.src);
+
+  lmP.append('lm_supplier', resolvedSupplier);
+  lmP.append('lm_bc',       p.src);
+
+  lmP.append('fields[REF]', p.ref);
+  lmP.append('utm_medium',   p.medium);
+  lmP.append('utm_campaign', p.campaign);
+
+  lmP.append('page', PAGE_ID);
+
+  /* ===== Fire the confirmation-email hook, tracking webhook and Lead
+     Manager all in parallel (fire-and-forget, keepalive) so a slow/failing
+     call never delays or blocks the others — the "send email now" hook in
+     particular must go out immediately. ===== */
+  Promise.allSettled([
+    fetch('https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ email }),
+      keepalive: true
+    }),
     fetch('https://hook.eu1.make.com/jp6ukjt7tpk3y4yly9c691g01f47cq8q', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -2125,8 +2143,6 @@ document.addEventListener('submit',async (e) => {
         event: 'lead_form',
         page: PAGE_ID,
         form_id: form.id || '',
-        name,
-        phone,
         email,
 
         supplier:     p.supplier,
@@ -2142,50 +2158,20 @@ document.addEventListener('submit',async (e) => {
         user_agent:    navigator.userAgent
       }),
       keepalive: true
-    }).catch(()=>{});
-  } catch (_) {}
-
-
-/* ===== 2) Lead Manager API (fire-and-forget, keepalive - NO await) ===== */
-  try {
-    const p = getParams();
-    const lmP = new URLSearchParams();
-    const resolvedSupplier = await resolveSupplier(p);
-    lmP.append('lm_form', '90867');
-    lmP.append('lm_key',  '4688231a3dff48db88fcc1316dcaa944');
-
-    lmP.append('subscribers_name',  name);
-    lmP.append('subscribers_phone', phone);
-    lmP.append('subscribers_email', email);
-
-    lmP.append('fld_144377', '1');
-    lmP.append('fld_105911', p.src);
-    lmP.append('fld_107862', p.src);
-
-    lmP.append('lm_supplier', resolvedSupplier);
-    lmP.append('lm_bc',       p.src);
-
-    lmP.append('fields[REF]', p.ref);
-    lmP.append('utm_medium',   p.medium);
-    lmP.append('utm_campaign', p.campaign);
-
-    lmP.append('page', PAGE_ID);
-
-    await fetch('https://api.leadmanager.co.il/handlers/lm/submit.cms?' + lmP.toString(), {
+    }),
+    fetch('https://api.leadmanager.co.il/handlers/lm/submit.cms?' + lmP.toString(), {
       method: 'GET',
       mode: 'no-cors',
       keepalive: true
-    }).catch(()=>{});
-  } catch (_) {}
+    })
+  ]);
 
     /* ===== GTM: form_submitted + FB Lead ===== */
 dataLayer.push({
   event:        'form_submitted',
   variant:      VARIANT,
   page:         PAGE,
-  name:         name,
   email:        email,
-  phone:        phone,
   supplier:     p.supplier,
   utm_source:   p.src,
   utm_medium:   p.medium,
@@ -2498,12 +2484,10 @@ if(document.readyState === 'loading'){
     <div class="modal-body">
       <p class="lead-modal-intro">ולעשות כבר היום את הצעד שישנה לך את העתיד</p>
       <form id="leadFormHero" class="leadForm lead-modal-form">
-        <div class="form-group-sm"><input class="form-input" type="text"  placeholder="* שם מלא" required></div>
         <div class="form-group-sm"><input class="form-input" type="email" placeholder="* אימייל" required></div>
-        <div class="form-group-sm"><input class="form-input" type="tel"   placeholder="* טלפון" required></div>
         <label class="consent-row" id="consentHero">
           <input type="checkbox" class="consent-check" required>
-          <span>* אני מאשר/ת קבלת תוכן ועדכונים במייל / SMS / WhatsApp. ניתן להסיר בכל רגע.</span>
+          <span>* אני מאשר/ת קבלת תוכן ועדכונים במייל. ניתן להסיר בכל רגע.</span>
         </label>
         <button class="cta-btn" type="submit">אני רוצה גישה עכשיו</button>
       </form>

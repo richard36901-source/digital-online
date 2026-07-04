@@ -127,7 +127,7 @@ function openModal(){
   document.getElementById('modalOverlay').classList.add('open');
   document.body.style.overflow='hidden';
   if(window.dataLayer) dataLayer.push({event:'form_opened',page:PAGE});
-  setTimeout(function(){var el=document.getElementById('iName');if(el)el.focus();},400);
+  setTimeout(function(){var el=document.getElementById('iEmail');if(el)el.focus();},400);
 }
 function closeModal(){
   document.getElementById('modalOverlay').classList.remove('open');
@@ -137,22 +137,16 @@ function handleOverlayClick(e){
   if(e.target===document.getElementById('modalOverlay'))closeModal();
 }
 function se(id,m){document.getElementById(id).textContent=m;}
-function clr(){['errName','errEmail','errPhone'].forEach(function(id){se(id,'');});}
+function clr(){['errEmail'].forEach(function(id){se(id,'');});}
 function validate(){
   clr();
-  const n=document.getElementById('iName').value.trim();
   const e=document.getElementById('iEmail').value.trim();
-  const ph=document.getElementById('iPhone').value.replace(/[\s\-]/g,'');
   const c=document.getElementById('consent').checked;
   let ok=1;
-  if(!n){se('errName','נא להזין שם');document.getElementById('iName').classList.add('err');ok=0;}
-  else document.getElementById('iName').classList.remove('err');
   if(!e||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)){se('errEmail','אימייל לא תקין');document.getElementById('iEmail').classList.add('err');ok=0;}
   else document.getElementById('iEmail').classList.remove('err');
-  if(!ph||!/^0[0-9]{8,9}$/.test(ph)){se('errPhone','טלפון לא תקין');document.getElementById('iPhone').classList.add('err');ok=0;}
-  else document.getElementById('iPhone').classList.remove('err');
   if(!c){alert('יש לאשר קבלת הודעות');ok=0;}
-  return ok?{name:n,email:e,phone:ph}:null;
+  return ok?{email:e}:null;
 }
 async function handleSubmit(){
   dataLayer.push({event:'cta_clicked',variant:VARIANT,page:PAGE});
@@ -172,9 +166,7 @@ async function handleSubmit(){
   const resolvedSupplier = await resolveSupplier(p);
 
   const payload = {
-    fullName: data.name,
     email: data.email,
-    phone: data.phone,
     variant: VARIANT,
     page: PAGE,
     supplier: resolvedSupplier,
@@ -185,43 +177,39 @@ async function handleSubmit(){
     landing_url: location.href
   };
 
-  try{
-    await fetch(WEBHOOK, {
+  const lmParams = new URLSearchParams();
+  lmParams.append('lm_form','89907');
+  lmParams.append('lm_key','28250230ddcd4b8a9f3929b7ab8744a1');
+  lmParams.append('subscribers_email',data.email);
+  lmParams.append('fld_144377','1');
+  lmParams.append('fld_105911',src);
+  lmParams.append('fld_107862',src);
+  lmParams.append('lm_supplier',resolvedSupplier);
+  lmParams.append('lm_bc',src);
+  lmParams.append('fields[REF]',p.ref || VARIANT);
+  lmParams.append('utm_medium',med);
+  lmParams.append('utm_campaign',camp);
+  lmParams.append('page',PAGE);
+
+  /* Fire all three integrations in parallel so a slow/failing call never
+     blocks or delays the others — in particular the "send email now" hook
+     must not wait on Lead Manager or the tracking webhook. */
+  await Promise.allSettled([
+    fetch('https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email:data.email})
+    }),
+    fetch(WEBHOOK, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
-    });
-  }catch(e){}
-
-  try{
-    const lmParams = new URLSearchParams();
-    lmParams.append('lm_form','89907');
-    lmParams.append('lm_key','28250230ddcd4b8a9f3929b7ab8744a1');
-    lmParams.append('subscribers_name',data.name);
-    lmParams.append('subscribers_phone',data.phone);
-    lmParams.append('subscribers_email',data.email);
-    lmParams.append('fld_144377','1');
-    lmParams.append('fld_105911',src);
-    lmParams.append('fld_107862',src);
-    lmParams.append('lm_supplier',resolvedSupplier);
-    lmParams.append('lm_bc',src);
-    lmParams.append('fields[REF]',p.ref || VARIANT);
-    lmParams.append('utm_medium',med);
-    lmParams.append('utm_campaign',camp);
-    lmParams.append('page',PAGE);
-    await fetch('https://api.leadmanager.co.il/handlers/lm/submit.cms?' + lmParams.toString(), {
+    }),
+    fetch('https://api.leadmanager.co.il/handlers/lm/submit.cms?' + lmParams.toString(), {
       method: 'GET',
       mode: 'no-cors'
-    });
-  }catch(e){}
-
-try{
-    await fetch('https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({email:data.email,name:data.name})
-    });
-  }catch(e){}
+    })
+  ]);
 
   dn = 1;
 
@@ -229,9 +217,7 @@ try{
     event:'form_submitted',
     variant:VARIANT,
     page:PAGE,
-    name:data.name,
     email:data.email,
-    phone:data.phone,
     supplier:resolvedSupplier
   });
   if(typeof fbq !== 'undefined') fbq('track','Lead');
@@ -261,7 +247,7 @@ document.addEventListener('DOMContentLoaded',function(){
     dataLayer.push({event:'page_time',seconds:Math.round((Date.now()-t0)/1000),variant:VARIANT});
     if(formSt&&!dn)dataLayer.push({event:'form_abandoned',variant:VARIANT,page:PAGE});
   });
-  ['iName','iEmail','iPhone'].forEach(function(id){
+  ['iEmail'].forEach(function(id){
     const el=document.getElementById(id);
     if(!el)return;
     el.addEventListener('focus',function(){if(!formSt){formSt=1;dataLayer.push({event:'form_started',variant:VARIANT,page:PAGE});}});
@@ -302,18 +288,14 @@ document.addEventListener('DOMContentLoaded',function(){
 <div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
   <div class="modal" id="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">השאר פרטים ונשלח לך עכשיו</div>
+    <div class="modal-title">השאר את האימייל שלך ונשלח לך עכשיו</div>
     <div class="modal-sub">הסבר קצר של 5 דקות שיגרום לך לראות הכל אחרת</div>
     <div id="formWrap" class="form-wrap">
-      <input type="text"  id="iName"  placeholder="השם שלך"    autocomplete="name"  inputmode="text"/>
-      <p class="ferr" id="errName"></p>
       <input type="email" id="iEmail" placeholder="האימייל שלך" autocomplete="email" inputmode="email" dir="ltr"/>
       <p class="ferr" id="errEmail"></p>
-      <input type="tel"   id="iPhone" placeholder="הטלפון שלך"  autocomplete="tel"   inputmode="tel"   dir="ltr"/>
-      <p class="ferr" id="errPhone"></p>
       <div class="consent-wrap">
         <input type="checkbox" id="consent"/>
-        <label for="consent">אני מאשר קבלת דיוור, תוכן שיווקי והודעות במייל, SMS ו-WhatsApp. ניתן להסיר בכל עת.</label>
+        <label for="consent">אני מאשר קבלת דיוור ותוכן שיווקי במייל. ניתן להסיר בכל עת.</label>
       </div>
       <button class="submit-btn" id="submitBtn" onclick="handleSubmit()">
         <span id="bc">📩 שלח לי עכשיו</span>
@@ -326,4 +308,9 @@ document.addEventListener('DOMContentLoaded',function(){
     <div class="success" id="successBox">
       <div class="si">✅</div>
       <h2>הפרטים התקבלו!</h2>
-      <p>שולחים לך את הגישה עכשיו.
+      <p>שולחים לך את הגישה עכשיו במייל.</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

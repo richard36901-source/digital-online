@@ -118,18 +118,12 @@ window.openPopup = function openPopup() {
 }
 
 window.submitForm = async function submitForm() {
-  var name  = document.getElementById('fName').value.trim();
-  var phone = document.getElementById('fPhone').value.trim();
   var email = document.getElementById('fEmail').value.trim();
   var ok = true;
   const p = getParams();
   const resolvedSupplier = await resolveSupplier(p);
-  document.getElementById('eName').classList.remove('show');
-  document.getElementById('ePhone').classList.remove('show');
   document.getElementById('eEmail').classList.remove('show');
   document.getElementById('eLegal').classList.remove('show');
-  if(!name)  { document.getElementById('eName').classList.add('show');  ok=false; }
-  if(!phone) { document.getElementById('ePhone').classList.add('show'); ok=false; }
   if(!email || email.indexOf('@')<0) { document.getElementById('eEmail').classList.add('show'); ok=false; }
   if(!document.getElementById('legalBox').checked) { document.getElementById('eLegal').classList.add('show'); ok=false; }
   if(!ok) return;
@@ -139,47 +133,47 @@ window.submitForm = async function submitForm() {
   btn.textContent = 'שולח…';
   submitted2 = 1;
 
-  try { dataLayer.push({event:'form_submitted', name:name, phone:phone, email:email, page:'landing_option2'}); } catch(e) {}
+  try { dataLayer.push({event:'form_submitted', email:email, page:'landing_option2'}); } catch(e) {}
   try { if(typeof fbq==='function') fbq('track','Lead'); } catch(e) {}
 
-  // ← קודם כל resolve הספק
+  var lmParams = new URLSearchParams();
+  lmParams.append('lm_form', '89937');
+  lmParams.append('lm_key', '5403c690523845fdadf0c18bfe002da0');
+  lmParams.append('subscribers_email', email);
+  lmParams.append('fld_144377', '1');
+  lmParams.append('fld_105911', p.src);
+  lmParams.append('fld_107862', p.src);
+  lmParams.append('lm_supplier', resolvedSupplier);
+  lmParams.append('lm_bc', p.src);
+  lmParams.append('fields[REF]', p.ref);
+  lmParams.append('utm_medium', p.medium);
+  lmParams.append('utm_campaign', p.campaign);
+  lmParams.append('page', 'landing_option2');
 
-  try {
-    await fetch('https://hook.eu1.make.com/jp6ukjt7tpk3y4yly9c691g01f47cq8q', {
+  // Fire the confirmation-email webhook, the tracking webhook and Lead Manager
+  // in parallel so a slow/failing call never delays or blocks the others —
+  // in particular, the "send email now" hook must fire immediately.
+  await Promise.allSettled([
+    fetch('https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ email: email })
+    }),
+    fetch('https://hook.eu1.make.com/jp6ukjt7tpk3y4yly9c691g01f47cq8q', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({
         event: 'lead_form',
         page: 'landing_option2',
-        name: name,
-        phone: phone,
         email: email,
-        supplier: resolvedSupplier,  // ← עכשיו נכנס גם ל-webhook
+        supplier: resolvedSupplier,
         timestamp: new Date().toLocaleString('he-IL')
       })
-    });
-  } catch(e) {}
-
-  try {
-    var lmParams = new URLSearchParams();
-    lmParams.append('lm_form', '89937');
-    lmParams.append('lm_key', '5403c690523845fdadf0c18bfe002da0');
-    lmParams.append('subscribers_name', name);
-    lmParams.append('subscribers_phone', phone);
-    lmParams.append('subscribers_email', email);
-    lmParams.append('fld_144377', '1');
-    lmParams.append('fld_105911', p.src);
-    lmParams.append('fld_107862', p.src);
-    lmParams.append('lm_supplier', resolvedSupplier);
-    lmParams.append('lm_bc', p.src);
-    lmParams.append('fields[REF]', p.ref);
-    lmParams.append('utm_medium', p.medium);
-    lmParams.append('utm_campaign', p.campaign);
-    lmParams.append('page', 'landing_option2');
+    }),
     fetch('https://api.leadmanager.co.il/handlers/lm/submit.cms?' + lmParams.toString(), {
       method: 'GET', mode: 'no-cors'
-    }).catch(function(){});
-  } catch(e) {}
+    })
+  ]);
 
   window.location.href = '../funnels/funnel-c/funnel-c-1.html' + location.search;
 }
@@ -228,17 +222,13 @@ window.submitForm = async function submitForm() {
     <p class="popup-title">לאן לשלוח לך את זה?</p>
     <p class="popup-sub">זה כבר נשלח לאלפים</p>
     <div id="formFields">
-      <input class="field" id="fName" type="text" placeholder="שם מלא" autocomplete="name"/>
-      <div class="err" id="eName">נא להזין שם מלא</div>
-      <input class="field" id="fPhone" type="tel" placeholder="טלפון" autocomplete="tel" inputmode="numeric"/>
-      <div class="err" id="ePhone">נא להזין מספר טלפון</div>
       <input class="field" id="fEmail" type="email" placeholder="אימייל" autocomplete="email"/>
       <div class="err" id="eEmail">נא להזין אימייל תקין</div>
       <button class="btn-popup" id="popupBtn" onclick="submitForm()">שלח לי עכשיו</button>
       <div class="legal-check" id="legalWrap">
         <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;direction:rtl;">
           <input type="checkbox" id="legalBox" style="width:18px;height:18px;flex-shrink:0;margin-top:2px;accent-color:#f5c842;cursor:pointer;"/>
-          <span style="font-size:12px;color:rgba(255,255,255,.45);line-height:1.6;">אני מאשר/ת קבלת דיוור, תוכן שיווקי והודעות במייל, SMS ו-WhatsApp. ניתן להסיר בכל עת.</span>
+          <span style="font-size:12px;color:rgba(255,255,255,.45);line-height:1.6;">אני מאשר/ת קבלת דיוור ותוכן שיווקי במייל. ניתן להסיר בכל עת.</span>
         </label>
         <div class="err" id="eLegal" style="margin-top:4px;">יש לאשר את תנאי השימוש להמשך</div>
       </div>
@@ -306,14 +296,14 @@ var formStarted2 = 0, submitted2 = 0;
 var t0_2 = Date.now();
 
 document.addEventListener('focusin', function(e) {
-  if (!e.target.matches('#fName,#fPhone,#fEmail')) return;
+  if (!e.target.matches('#fEmail')) return;
   if (!formStarted2) {
     formStarted2 = 1;
     dataLayer.push({event:'form_started', page:'landing_option2'});
   }
 });
 document.addEventListener('focusout', function(e) {
-  if (!e.target.matches('#fName,#fPhone,#fEmail')) return;
+  if (!e.target.matches('#fEmail')) return;
   if (e.target.value.trim()) {
     dataLayer.push({event:'form_field_filled', field:e.target.id, page:'landing_option2'});
   }
