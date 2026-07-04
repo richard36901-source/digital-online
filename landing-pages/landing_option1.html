@@ -198,7 +198,7 @@ async function handleSubmit(){
     fetch('https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({email:data.email})
+      body:JSON.stringify({email:data.email, page:'landing_option1'})
     }),
     fetch(WEBHOOK, {
       method: 'POST',
