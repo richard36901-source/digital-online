@@ -95,11 +95,21 @@ header{position:sticky;top:0;z-index:50;backdrop-filter:blur(16px);background:rg
 .hero-sub-short{font-size:15px;color:var(--on-dark-dim);text-align:center;max-width:640px;margin:26px auto 0;line-height:1.6}
 .hero-sub-short strong{display:block;color:var(--gold-light);font-weight:800;font-size:18px;margin-top:8px}
 
-.urgency-strip{max-width:420px;margin:22px auto 0;background:linear-gradient(135deg, rgba(201,164,100,.16), rgba(201,164,100,.05));border:1px solid var(--border-dark);border-radius:8px;padding:12px 18px;display:flex;align-items:center;justify-content:center;gap:10px;text-align:center}
-.urgency-strip .dot{width:7px;height:7px;border-radius:50%;background:#ff5252;animation:blink 1.4s ease-in-out infinite;flex-shrink:0}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
-.urgency-strip .txt{font-size:13px;font-weight:700;color:var(--gold-light)}
-.urgency-strip .cd{font-variant-numeric:tabular-nums;color:#fff;letter-spacing:.5px}
+.countdown-clock{display:inline-flex;flex-direction:column;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(229,57,53,.14),rgba(0,0,0,.55));border:1.5px solid rgba(229,57,53,.55);border-radius:14px;padding:14px 22px;margin:22px auto 0;position:relative;animation:ccPulse 1.8s ease-in-out infinite;}
+@keyframes ccPulse{0%,100%{box-shadow:0 0 0 0 rgba(229,57,53,.35)}50%{box-shadow:0 0 24px 4px rgba(229,57,53,.5)}}
+.countdown-clock .cc-label{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:#ff7a7a;letter-spacing:.2px;}
+.countdown-clock .cc-alarm{display:inline-block;animation:ccRing 1s ease-in-out infinite;}
+@keyframes ccRing{0%,100%{transform:rotate(0)}20%{transform:rotate(-14deg)}40%{transform:rotate(11deg)}60%{transform:rotate(-9deg)}80%{transform:rotate(6deg)}}
+.countdown-clock .cc-digits{display:flex;align-items:center;gap:7px;}
+.countdown-clock .cc-box{background:#050505;border:1px solid rgba(229,57,53,.45);border-radius:9px;padding:7px 12px;min-width:56px;text-align:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.06);}
+.countdown-clock .cc-num{font-size:30px;font-weight:900;color:#fff;line-height:1;font-variant-numeric:tabular-nums;text-shadow:0 0 12px rgba(229,57,53,.65);display:block;}
+.countdown-clock .cc-unit{font-size:9.5px;color:rgba(255,255,255,.5);letter-spacing:.5px;margin-top:4px;display:block;}
+.countdown-clock .cc-sep{font-size:26px;font-weight:900;color:#ff5252;animation:ccBlink 1s steps(1) infinite;}
+@keyframes ccBlink{0%,49%{opacity:1}50%,100%{opacity:.25}}
+.countdown-clock.cc-critical{animation:ccPulseFast .5s ease-in-out infinite;}
+.countdown-clock.cc-critical .cc-box{border-color:#ff2b2b;}
+.countdown-clock.cc-critical .cc-num{color:#ff5252;}
+@keyframes ccPulseFast{0%,100%{box-shadow:0 0 0 0 rgba(255,0,0,.45);transform:scale(1)}50%{box-shadow:0 0 30px 6px rgba(255,0,0,.65);transform:scale(1.035)}}
 
 .hero-features-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0;padding-top:26px;margin-top:30px;border-top:1px solid var(--border-dark);max-width:900px;margin-left:auto;margin-right:auto}
 .hero-feature-item{text-align:center;padding:0 14px;position:relative}
@@ -297,9 +307,13 @@ footer{padding:24px 0 6px;display:flex;flex-direction:column;gap:16px}
       <strong>זה לא חלום. זה אפשרי.</strong>
     </p>
 
-    <div class="urgency-strip">
-      <span class="dot"></span>
-      <span class="txt">הגישה האישית שלך פתוחה עוד <span class="cd"><span class="cd-mins">25</span>:<span class="cd-secs">00</span></span> דקות</span>
+    <div class="countdown-clock">
+      <div class="cc-label"><span class="cc-alarm">⏰</span>הגישה האישית שלך נסגרת בעוד</div>
+      <div class="cc-digits">
+        <div class="cc-box"><span class="cc-num cd-mins">03</span><span class="cc-unit">דקות</span></div>
+        <div class="cc-sep">:</div>
+        <div class="cc-box"><span class="cc-num cd-secs">00</span><span class="cc-unit">שניות</span></div>
+      </div>
     </div>
 
     <div class="hero-features-row reveal-stagger">
@@ -466,9 +480,13 @@ footer{padding:24px 0 6px;display:flex;flex-direction:column;gap:16px}
     <div class="final-cta-bar reveal">
       <h2 class="final-cta-title">הצטרף עכשיו והתחיל להתקדם</h2>
 
-      <div class="urgency-strip" style="margin-bottom:18px">
-        <span class="dot"></span>
-        <span class="txt">הגישה נסגרת בעוד <span class="cd"><span class="cd-mins">25</span>:<span class="cd-secs">00</span></span> דקות</span>
+      <div class="countdown-clock" style="margin-bottom:18px">
+        <div class="cc-label"><span class="cc-alarm">⏰</span>הגישה נסגרת בעוד</div>
+        <div class="cc-digits">
+          <div class="cc-box"><span class="cc-num cd-mins">03</span><span class="cc-unit">דקות</span></div>
+          <div class="cc-sep">:</div>
+          <div class="cc-box"><span class="cc-num cd-secs">00</span><span class="cc-unit">שניות</span></div>
+        </div>
       </div>
 
       <form class="leadForm final-form-row" id="leadFormFinal">
