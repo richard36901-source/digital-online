@@ -13,7 +13,7 @@
   :root {
     --bg: #f6f7fb; --card: #ffffff; --card-soft: #fafafd;
     --border: #ececf3; --border-2: #e0e2eb;
-    --text: #1f2540; --text-2: #6b7280; --text-3: #9ca3af; --text-4: #c0c4cf;
+    --text: #1f2540; --text-2: #6b7280; --text-3: #6f7689; --text-4: #8890a0;
     --pa: #7c3aed; --pa-2: #6d28d9; --pa-soft: #f3effe; --pa-softer: #faf7ff; --pa-border: #e9defb;
     --pb: #3b82f6; --pb-2: #2563eb; --pb-soft: #eff5ff; --pb-softer: #f5f9ff; --pb-border: #dbe7fb;
     --f1: #7c3aed; --f1-bg: #f3effe; --f1-border: #e9defb;
@@ -36,6 +36,18 @@
     min-height: 100vh; -webkit-font-smoothing: antialiased;
   }
   .mono { font-family: 'JetBrains Mono', monospace; font-feature-settings: "tnum"; }
+
+  /* Visually hidden but still available to screen readers (WCAG 2.4.6 / 1.1.1 helper) */
+  .sr-only {
+    position: absolute; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+  }
+
+  /* Keyboard focus must always be visible (WCAG 2.4.7) */
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--pa); outline-offset: 2px; border-radius: 4px;
+  }
 
   header.top {
     position: sticky; top: 0; z-index: 40;
@@ -135,27 +147,34 @@
   .funnel-title-row h3 { font-size: 17px; font-weight: 700; }
   .funnel-title-row p { font-size: 11px; color: var(--text-3); margin-top: 6px; }
 
-  .funnel-grid { display: grid; grid-template-columns: 110px repeat(4, 1fr); gap: 8px; align-items: stretch; }
+  /* Funnel comparison is a real <table> now (screen readers can navigate it by
+     row/column instead of guessing at a grid of divs), styled to look the same. */
+  .funnel-table { width: 100%; border-collapse: separate; border-spacing: 8px 6px; table-layout: fixed; }
+  .funnel-table col.lbl-col { width: 110px; }
+  .funnel-table th, .funnel-table td { vertical-align: middle; }
+  .funnel-table tfoot th, .funnel-table tfoot td { padding-top: 10px; }
+  .funnel-table tfoot tr { border-top: 1px solid var(--border); }
+
   .fcol-head {
     text-align: center; padding: 11px 6px; border-radius: 9px;
-    font-weight: 700; font-size: 13px; margin-bottom: 6px;
-    display: flex; align-items: center; justify-content: center; gap: 6px;
+    font-weight: 700; font-size: 13px;
   }
+  .fcol-head .inner { display: flex; align-items: center; justify-content: center; gap: 6px; }
   .fcol-head.label { background: transparent; color: var(--text-3); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; }
   .fcol-head.f1 { background: var(--f1-bg); color: var(--f1); border: 1px solid var(--f1-border); }
   .fcol-head.f2 { background: var(--f2-bg); color: var(--f2); border: 1px solid var(--f2-border); }
   .fcol-head.f3 { background: var(--f3-bg); color: var(--f3); border: 1px solid var(--f3-border); }
   .fcol-head.f4 { background: var(--f4-bg); color: var(--f4); border: 1px solid var(--f4-border); }
-  .fcol-head .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .fcol-head .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
   .fcol-head.f1 .dot { background: var(--f1); }
   .fcol-head.f2 .dot { background: var(--f2); }
   .fcol-head.f3 .dot { background: var(--f3); }
   .fcol-head.f4 .dot { background: var(--f4); }
 
+  .fstep-th { text-align: center; padding: 6px 4px; font-weight: 500; }
   .fstep-lbl {
     display: flex; align-items: center; justify-content: center; flex-direction: column;
-    gap: 6px; padding: 12px 4px; font-size: 11px; color: var(--text-2);
-    text-align: center; font-weight: 500;
+    gap: 6px; font-size: 11px; color: var(--text-2); text-align: center;
   }
   .fstep-lbl .ic {
     width: 28px; height: 28px; border-radius: 50%;
@@ -177,16 +196,8 @@
   .fcell-pct { font-size: 10px; color: var(--text-3); margin-top: 3px; font-weight: 500; }
   .fcell-pct.dropoff { color: var(--bad); font-weight: 600; }
 
-  .farrow-row { display: grid; grid-template-columns: 110px repeat(4, 1fr); gap: 8px; margin: 3px 0; }
-  .farrow { text-align: center; color: var(--text-4); font-size: 14px; padding: 2px 0; }
-
-  .fwinner-row {
-    margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border);
-    display: grid; grid-template-columns: 110px repeat(4, 1fr); gap: 8px;
-  }
   .fwinner-lbl {
-    display: flex; align-items: center; justify-content: center;
-    font-size: 10px; color: var(--text-3); letter-spacing: 0.08em;
+    text-align: center; font-size: 10px; color: var(--text-3); letter-spacing: 0.08em;
     text-transform: uppercase; font-weight: 600;
   }
   .fwinner-cell {
@@ -335,12 +346,13 @@
     main { padding: 20px 16px 40px; }
   }
   @media (max-width: 700px) {
-    .funnel-grid, .farrow-row, .fwinner-row { grid-template-columns: 70px repeat(4, 1fr); gap: 4px; }
+    .funnel-table { border-spacing: 4px; }
+    .funnel-table col.lbl-col { width: 70px; }
     .fcell { padding: 8px 4px; }
     .fcell-count { font-size: 14px; }
     .fcell-pct { font-size: 9px; }
     .fcol-head { font-size: 10px; padding: 6px 3px; }
-    .fstep-lbl { font-size: 9px; padding: 8px 2px; }
+    .fstep-lbl { font-size: 9px; }
     .ab-body { grid-template-columns: 1fr; text-align: center; }
     .ab-ring { margin: 0 auto; }
     .funnel-wrap { padding: 14px; }
@@ -361,10 +373,10 @@
     </div>
   </div>
   <div class="header-right">
-    <span class="sync-pill" id="syncText"><span class="loading-dots">טוען</span></span>
-    <button class="btn-refresh" id="refreshBtn">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5"/></svg>
-      רענן
+    <span class="sync-pill" id="syncText" role="status" aria-live="polite"><span class="loading-dots">טוען</span></span>
+    <button class="btn-refresh" id="refreshBtn" type="button">
+      <svg aria-hidden="true" focusable="false" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5"/></svg>
+      רענן נתונים
     </button>
   </div>
 </header>
@@ -374,7 +386,7 @@
   <div class="page-title">
     <h1>
       <span class="page-title-icon">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><polyline points="20 6 9 17 4 12"/></svg>
       </span>
       אופטימיזציה · מבחני A/B
     </h1>
@@ -388,7 +400,7 @@
   <div class="kpi-strip">
     <div class="kpi">
       <div class="kpi-icon purple">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       </div>
       <div class="kpi-text">
         <div class="kpi-label">סה״כ נשלח ללידים</div>
@@ -399,7 +411,7 @@
 
     <div class="kpi">
       <div class="kpi-icon blue">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/></svg>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/></svg>
       </div>
       <div class="kpi-text">
         <div class="kpi-label">סה״כ נרשמו לוובינר</div>
@@ -410,7 +422,7 @@
 
     <div class="kpi">
       <div class="kpi-icon green">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
       </div>
       <div class="kpi-text">
         <div class="kpi-label">שיעור המרה ממוצע</div>
@@ -421,7 +433,7 @@
 
     <div class="kpi">
       <div class="kpi-icon gold">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 2v6h6V2"/><path d="M6 8h12l1 12H5l1-12z"/></svg>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M9 2v6h6V2"/><path d="M6 8h12l1 12H5l1-12z"/></svg>
       </div>
       <div class="kpi-text">
         <div class="kpi-label">מבחני A/B פעילים</div>
@@ -435,7 +447,7 @@
   <div class="section-head">
     <h2>
       <span class="sicn">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
       </span>
       השוואת משפכים · פאנל 1 · 2 · 3 · 4
     </h2>
@@ -444,50 +456,58 @@
 
   <div class="funnel-wrap">
     <div class="funnel-title-row">
-      <h3>בדיקת משפך המרות · 4 גרסאות</h3>
-      <p>המספר ליד החץ = אחוז שהמשיכו לשלב הבא · המנצח מוכתר לפי המרה סופית (מינ׳ 30 דגימות)</p>
+      <h3 id="funnelCaption">בדיקת משפך המרות · 4 גרסאות</h3>
+      <p>האחוז בכל שורה = כמה המשיכו מהשלב הקודם באותו פאנל · המנצח מוכתר לפי המרה סופית (מינ׳ 30 דגימות)</p>
     </div>
 
-    <div class="funnel-grid">
-      <div class="fcol-head label">שלב</div>
-      <div class="fcol-head f1"><span class="dot"></span> פאנל 1</div>
-      <div class="fcol-head f2"><span class="dot"></span> פאנל 2</div>
-      <div class="fcol-head f3"><span class="dot"></span> פאנל 3</div>
-      <div class="fcol-head f4"><span class="dot"></span> פאנל 4</div>
-    </div>
-
-    <div id="funnel_steps"></div>
-
-    <div class="fwinner-row" id="funnel_winners">
-      <div class="fwinner-lbl">המרה סופית</div>
-      <div class="fwinner-cell" id="fw_1">
-        <div class="fwinner-trophy"></div>
-        <div class="fwinner-rate mono">0.0%</div>
-        <div class="fwinner-name">פאנל 1</div>
-      </div>
-      <div class="fwinner-cell" id="fw_2">
-        <div class="fwinner-trophy"></div>
-        <div class="fwinner-rate mono">0.0%</div>
-        <div class="fwinner-name">פאנל 2</div>
-      </div>
-      <div class="fwinner-cell" id="fw_3">
-        <div class="fwinner-trophy"></div>
-        <div class="fwinner-rate mono">0.0%</div>
-        <div class="fwinner-name">פאנל 3</div>
-      </div>
-      <div class="fwinner-cell" id="fw_4">
-        <div class="fwinner-trophy"></div>
-        <div class="fwinner-rate mono">0.0%</div>
-        <div class="fwinner-name">פאנל 4</div>
-      </div>
-    </div>
+    <table class="funnel-table" aria-labelledby="funnelCaption">
+      <colgroup>
+        <col class="lbl-col"/>
+        <col/><col/><col/><col/>
+      </colgroup>
+      <thead>
+        <tr>
+          <th scope="col" class="fcol-head label">שלב</th>
+          <th scope="col" class="fcol-head f1"><span class="inner"><span class="dot" aria-hidden="true"></span> פאנל 1</span></th>
+          <th scope="col" class="fcol-head f2"><span class="inner"><span class="dot" aria-hidden="true"></span> פאנל 2</span></th>
+          <th scope="col" class="fcol-head f3"><span class="inner"><span class="dot" aria-hidden="true"></span> פאנל 3</span></th>
+          <th scope="col" class="fcol-head f4"><span class="inner"><span class="dot" aria-hidden="true"></span> פאנל 4</span></th>
+        </tr>
+      </thead>
+      <tbody id="funnel_steps"></tbody>
+      <tfoot id="funnel_winners">
+        <tr>
+          <th scope="row" class="fwinner-lbl">המרה סופית</th>
+          <td class="fwinner-cell" id="fw_1">
+            <div class="fwinner-trophy" aria-hidden="true"></div>
+            <div class="fwinner-rate mono">0.0%</div>
+            <div class="fwinner-name">פאנל 1<span class="sr-only fw-winner-tag"></span></div>
+          </td>
+          <td class="fwinner-cell" id="fw_2">
+            <div class="fwinner-trophy" aria-hidden="true"></div>
+            <div class="fwinner-rate mono">0.0%</div>
+            <div class="fwinner-name">פאנל 2<span class="sr-only fw-winner-tag"></span></div>
+          </td>
+          <td class="fwinner-cell" id="fw_3">
+            <div class="fwinner-trophy" aria-hidden="true"></div>
+            <div class="fwinner-rate mono">0.0%</div>
+            <div class="fwinner-name">פאנל 3<span class="sr-only fw-winner-tag"></span></div>
+          </td>
+          <td class="fwinner-cell" id="fw_4">
+            <div class="fwinner-trophy" aria-hidden="true"></div>
+            <div class="fwinner-rate mono">0.0%</div>
+            <div class="fwinner-name">פאנל 4<span class="sr-only fw-winner-tag"></span></div>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
   </div>
 
 
   <div class="section-head">
     <h2>
       <span class="sicn green">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
       </span>
       מבחני A/B פעילים
     </h2>
@@ -500,7 +520,7 @@
   <div class="section-head">
     <h2>
       <span class="sicn blue">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
       </span>
       מעקב מיילים
     </h2>
@@ -512,7 +532,7 @@
       <div class="em-head">
         <div class="em-title">נשלחו</div>
         <div class="em-icon purple">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         </div>
       </div>
       <div class="em-value mono" id="em_sent">0</div>
@@ -524,7 +544,7 @@
       <div class="em-head">
         <div class="em-title">נפתחו</div>
         <div class="em-icon">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
         </div>
       </div>
       <div class="em-value mono" id="em_opened">0</div>
@@ -536,7 +556,7 @@
       <div class="em-head">
         <div class="em-title">קליקים</div>
         <div class="em-icon green">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0-6 0z"/><path d="M21 12c-1.5 4-5 7-9 7s-7.5-3-9-7c1.5-4 5-7 9-7s7.5 3 9 7z"/></svg>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0-6 0z"/><path d="M21 12c-1.5 4-5 7-9 7s-7.5-3-9-7c1.5-4 5-7 9-7s7.5 3 9 7z"/></svg>
         </div>
       </div>
       <div class="em-value mono" id="em_clicked">0</div>
@@ -547,7 +567,7 @@
 
 </main>
 
-<div class="toast" id="toast">הנתונים עודכנו</div>
+<div class="toast" id="toast" role="status" aria-live="polite">הנתונים עודכנו</div>
 
 
 <script>
@@ -614,10 +634,10 @@ const FUNNEL_STEPS = [
 ];
 
 const ICONS = {
-  users: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>',
-  doc:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
-  play:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>',
-  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>'
+  users: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>',
+  doc:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
+  play:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><polygon points="5 3 19 12 5 21 5 3"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><polyline points="20 6 9 17 4 12"/></svg>'
 };
 
 /* ============================================================================
@@ -665,30 +685,41 @@ async function loadData() {
 
   try {
     const res = await fetch(url);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     const txt = await res.text();
     const match = txt.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);/);
     if (!match) throw new Error('Sheet not accessible');
     const json = JSON.parse(match[1]);
+    if (json.status === 'error') throw new Error((json.errors && json.errors[0] && json.errors[0].detailed_message) || 'Query error');
 
-    // Build the id → value map
-    metrics = {};
+    // Build the id → value map. A sheet that loads but is legitimately empty
+    // (no rows yet) is not an error — it just means every metric renders as 0,
+    // which is the correct, honest thing to show.
+    const freshMetrics = {};
     (json.table.rows || []).forEach(row => {
       const cells = row.c || [];
       const id = cells[0] && cells[0].v != null ? String(cells[0].v).trim() : '';
       const value = cells[2] && cells[2].v != null ? cells[2].v : '';
-      if (id) metrics[id] = value;
+      if (id) freshMetrics[id] = value;
     });
+    metrics = freshMetrics;
 
     setupBar.classList.remove('show');
     syncText.textContent = 'עודכן ' + new Date().toLocaleTimeString('he-IL', {hour: '2-digit', minute: '2-digit'});
     render();
   } catch (e) {
+    // Important: on a transient network/permission failure we deliberately do
+    // NOT wipe out the last good `metrics` we already rendered — clearing them
+    // to 0 would make the dashboard lie ("no leads today") when the real
+    // problem is just that this one refresh failed. We keep showing the last
+    // successful numbers and clearly flag that the refresh itself failed.
     setupBar.classList.add('show');
-    setupBar.innerHTML = '⚠️ <strong>נדרש שלב חיבור:</strong> פתח את הגיליון, לחץ <strong>Share → Anyone with link → Viewer</strong>, ולחץ רענן. <a href="' + sheetLink.href + '" target="_blank">פתח גיליון ↗</a>';
-    syncText.textContent = 'שגיאת חיבור';
+    setupBar.innerHTML = '⚠️ <strong>הרענון האחרון נכשל — מוצגים הנתונים מהסנכרון הקודם.</strong> ' +
+      'ודא שהגיליון משותף עם <strong>Share → Anyone with link → Viewer</strong>, ואז לחץ רענן. ' +
+      '<a href="' + sheetLink.href + '" target="_blank">פתח גיליון ↗</a>';
+    syncText.textContent = 'שגיאת חיבור — מציג נתונים ישנים';
     syncText.classList.add('err');
     console.error(e);
-    metrics = {};
     render();
   }
 }
@@ -722,32 +753,23 @@ function render() {
 }
 
 function renderFunnelComparison() {
-  const container = document.getElementById('funnel_steps');
+  const container = document.getElementById('funnel_steps'); // <tbody>
   if (!container) return; // section not present, skip safely
   let html = '';
-
-  let renderedAny = false; // tracks if a visible row already came out (controls arrows)
 
   FUNNEL_STEPS.forEach((step, idx) => {
     // hidden steps: data is still pulled and used by m(), the row just isn't drawn.
     if (step.hidden) return;
 
-    // connecting arrow goes BETWEEN visible rows, so only after the first visible one
-    if (renderedAny) {
-      html += `<div class="farrow-row"><div></div>`;
-      [1, 2, 3, 4].forEach(() => html += `<div class="farrow">↓</div>`);
-      html += `</div>`;
-    }
-
-    html += `<div class="funnel-grid">`;
-    html += `<div class="fstep-lbl">
+    html += `<tr>`;
+    html += `<th scope="row" class="fstep-th"><span class="fstep-lbl">
       <span class="ic">${ICONS[step.icon] || ''}</span>
       <span>${step.label}</span>
-    </div>`;
+    </span></th>`;
 
     [1, 2, 3, 4].forEach(fn => {
       const count = m(`f${fn}_${step.key}`);
-      let pctText = '', pctClass = '';
+      let pctText = '', pctClass = '', srPrefix = '';
 
       if (idx === 0) {
         const total = m('total_leads');
@@ -758,18 +780,17 @@ function renderFunnelComparison() {
         const prev = m(`f${fn}_${prevKey}`);
         const p = pct(count, prev);
         pctText = prev > 0 ? `${p.toFixed(0)}%` : '';
-        if (p < 30 && prev > 5) pctClass = 'dropoff';
+        if (p < 30 && prev > 5) { pctClass = 'dropoff'; srPrefix = 'ירידה חדה: '; }
       }
 
       const endClass = step.isEnd ? 'end' : '';
-      html += `<div class="fcell f${fn} ${endClass}">
+      html += `<td class="fcell f${fn} ${endClass}">
         <div class="fcell-count">${fmt(count)}</div>
-        ${pctText ? `<div class="fcell-pct ${pctClass}">${pctText}</div>` : ''}
-      </div>`;
+        ${pctText ? `<div class="fcell-pct ${pctClass}">${srPrefix ? `<span class="sr-only">${srPrefix}</span>` : ''}${pctText}</div>` : ''}
+      </td>`;
     });
 
-    html += `</div>`;
-    renderedAny = true;
+    html += `</tr>`;
   });
 
   container.innerHTML = html;
@@ -785,10 +806,12 @@ function renderFunnelComparison() {
   [1, 2, 3, 4].forEach(fn => {
     const el = document.getElementById('fw_' + fn);
     if (!el) return;
+    const isWinner = bestFn === fn;
     const rate = pct(m(`f${fn}_webinar`), m(`f${fn}_entry`));
     el.querySelector('.fwinner-rate').textContent = fmtPct(rate);
-    el.querySelector('.fwinner-trophy').textContent = bestFn === fn ? '🏆' : '';
-    el.classList.toggle('is-winner', bestFn === fn);
+    el.querySelector('.fwinner-trophy').textContent = isWinner ? '🏆' : '';
+    el.querySelector('.fw-winner-tag').textContent = isWinner ? ' — המנצח' : '';
+    el.classList.toggle('is-winner', isWinner);
   });
 }
 
@@ -859,7 +882,7 @@ function renderABCards() {
               </div>
               <div>
                 <div class="ab-ring">
-                  <svg width="86" height="86">
+                  <svg width="86" height="86" aria-hidden="true" focusable="false">
                     <circle class="ab-ring-track" cx="43" cy="43" r="${RING_R}"/>
                     <circle class="ab-ring-fill"  cx="43" cy="43" r="${RING_R}"
                       stroke-dasharray="${CIRC}" stroke-dashoffset="${offA}"/>
@@ -897,7 +920,7 @@ function renderABCards() {
               </div>
               <div>
                 <div class="ab-ring">
-                  <svg width="86" height="86">
+                  <svg width="86" height="86" aria-hidden="true" focusable="false">
                     <circle class="ab-ring-track" cx="43" cy="43" r="${RING_R}"/>
                     <circle class="ab-ring-fill"  cx="43" cy="43" r="${RING_R}"
                       stroke-dasharray="${CIRC}" stroke-dashoffset="${offB}"/>
