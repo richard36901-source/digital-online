@@ -95,11 +95,8 @@ header{position:sticky;top:0;z-index:50;backdrop-filter:blur(16px);background:rg
 .hero-sub-short{font-size:15px;color:var(--on-dark-dim);text-align:center;max-width:640px;margin:26px auto 0;line-height:1.6}
 .hero-sub-short strong{display:block;color:var(--gold-light);font-weight:800;font-size:18px;margin-top:8px}
 
-.countdown-clock{display:inline-flex;flex-direction:column;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(229,57,53,.14),rgba(0,0,0,.55));border:1.5px solid rgba(229,57,53,.55);border-radius:14px;padding:14px 22px;margin:22px auto 0;position:relative;animation:ccPulse 1.8s ease-in-out infinite;}
+.countdown-clock{display:flex;width:fit-content;flex-direction:column;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(229,57,53,.14),rgba(0,0,0,.55));border:1.5px solid rgba(229,57,53,.55);border-radius:14px;padding:14px 22px;margin:22px auto 0;position:relative;animation:ccPulse 1.8s ease-in-out infinite;}
 @keyframes ccPulse{0%,100%{box-shadow:0 0 0 0 rgba(229,57,53,.35)}50%{box-shadow:0 0 24px 4px rgba(229,57,53,.5)}}
-.countdown-clock .cc-label{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:#ff7a7a;letter-spacing:.2px;}
-.countdown-clock .cc-alarm{display:inline-block;animation:ccRing 1s ease-in-out infinite;}
-@keyframes ccRing{0%,100%{transform:rotate(0)}20%{transform:rotate(-14deg)}40%{transform:rotate(11deg)}60%{transform:rotate(-9deg)}80%{transform:rotate(6deg)}}
 .countdown-clock .cc-digits{display:flex;align-items:center;gap:7px;}
 .countdown-clock .cc-box{background:#050505;border:1px solid rgba(229,57,53,.45);border-radius:9px;padding:7px 12px;min-width:56px;text-align:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.06);}
 .countdown-clock .cc-num{font-size:30px;font-weight:900;color:#fff;line-height:1;font-variant-numeric:tabular-nums;text-shadow:0 0 12px rgba(229,57,53,.65);display:block;}
@@ -125,13 +122,15 @@ header{position:sticky;top:0;z-index:50;backdrop-filter:blur(16px);background:rg
 .inside-list li{display:flex;align-items:flex-start;gap:10px;font-size:13.5px;color:var(--on-dark);line-height:1.5}
 .preview-card{background:linear-gradient(160deg, var(--black-card), var(--black-2));border:1px solid var(--border-dark);border-radius:12px;padding:22px 18px;box-shadow:var(--shadow-luxe)}
 .preview-card .pc-badge{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:1px;color:var(--gold-light);background:rgba(201,164,100,.12);border:1px solid var(--border-dark);border-radius:999px;padding:4px 10px;margin-bottom:14px}
-.preview-card .pc-line{height:9px;border-radius:5px;background:rgba(232,200,120,.14);margin-bottom:9px}
-.preview-card .pc-line.w80{width:80%}
-.preview-card .pc-line.w60{width:60%}
-.preview-card .pc-line.w95{width:95%}
-.preview-card .pc-play{width:44px;height:44px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;margin:18px auto 6px}
-.preview-card .pc-play::after{content:'';border-left:14px solid #000;border-top:8px solid transparent;border-bottom:8px solid transparent;margin-right:-3px}
-.preview-card .pc-cap{text-align:center;font-size:11px;color:var(--on-dark-mute);margin-top:6px}
+.preview-card .pc-cap{text-align:center;font-size:11px;color:var(--on-dark-mute);margin-top:10px}
+.pc-video-box{width:100%;border:1px solid var(--border-dark);border-radius:10px;overflow:hidden;background:#000;position:relative;box-shadow:0 8px 30px rgba(0,0,0,.6)}
+.pc-video-ratio{position:relative;width:100%;padding-bottom:56.25%;height:0;overflow:hidden}
+.pc-video-ratio iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none;display:block}
+.pc-thumb{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;cursor:pointer;background:linear-gradient(160deg, var(--black-card), var(--black-2))}
+.pc-thumb.gone{display:none}
+.pc-play-btn{width:60px;height:60px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 24px rgba(201,164,100,.5);transition:transform .2s}
+.pc-thumb:hover .pc-play-btn{transform:scale(1.08)}
+.pc-play-btn::after{content:'';border-left:18px solid #000;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-right:-4px}
 
 /* Who section */
 .who-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:0;max-width:1000px;margin:0 auto}
@@ -308,11 +307,10 @@ footer{padding:24px 0 6px;display:flex;flex-direction:column;gap:16px}
     </p>
 
     <div class="countdown-clock">
-      <div class="cc-label"><span class="cc-alarm">⏰</span>הגישה האישית שלך נסגרת בעוד</div>
       <div class="cc-digits">
-        <div class="cc-box"><span class="cc-num cd-mins">03</span><span class="cc-unit">דקות</span></div>
-        <div class="cc-sep">:</div>
         <div class="cc-box"><span class="cc-num cd-secs">00</span><span class="cc-unit">שניות</span></div>
+        <div class="cc-sep">:</div>
+        <div class="cc-box"><span class="cc-num cd-mins">01</span><span class="cc-unit">דקות</span></div>
       </div>
     </div>
 
@@ -360,11 +358,12 @@ footer{padding:24px 0 6px;display:flex;flex-direction:column;gap:16px}
       </div>
       <div class="preview-card reveal">
         <span class="pc-badge">תצוגה מקדימה</span>
-        <div class="pc-line w80"></div>
-        <div class="pc-line w60"></div>
-        <div class="pc-play"></div>
-        <div class="pc-line w95"></div>
-        <div class="pc-line w60"></div>
+        <div class="pc-video-box">
+          <div class="pc-video-ratio" id="pcVideoRatio"></div>
+          <div class="pc-thumb" id="pcThumb" onclick="playPreviewVideo()">
+            <div class="pc-play-btn"></div>
+          </div>
+        </div>
         <p class="pc-cap">כך נראה תוכן יומי בקהילה</p>
       </div>
     </div>
@@ -481,11 +480,10 @@ footer{padding:24px 0 6px;display:flex;flex-direction:column;gap:16px}
       <h2 class="final-cta-title">הצטרף עכשיו והתחיל להתקדם</h2>
 
       <div class="countdown-clock" style="margin-bottom:18px">
-        <div class="cc-label"><span class="cc-alarm">⏰</span>הגישה נסגרת בעוד</div>
         <div class="cc-digits">
-          <div class="cc-box"><span class="cc-num cd-mins">03</span><span class="cc-unit">דקות</span></div>
-          <div class="cc-sep">:</div>
           <div class="cc-box"><span class="cc-num cd-secs">00</span><span class="cc-unit">שניות</span></div>
+          <div class="cc-sep">:</div>
+          <div class="cc-box"><span class="cc-num cd-mins">01</span><span class="cc-unit">דקות</span></div>
         </div>
       </div>
 
@@ -613,6 +611,21 @@ footer{padding:24px 0 6px;display:flex;flex-direction:column;gap:16px}
 </button>
 
 <script>
+/* Click-to-play preview video (real YouTube embed, injected only on click
+   so the page never loads a video iframe up front). */
+function playPreviewVideo(){
+  const ratio = document.getElementById('pcVideoRatio');
+  const thumb = document.getElementById('pcThumb');
+  if (!ratio || ratio.querySelector('iframe')) return;
+  const iframe = document.createElement('iframe');
+  iframe.src = 'https://www.youtube.com/embed/WpM_ZaomLHM?autoplay=1&rel=0';
+  iframe.allow = 'autoplay; encrypted-media; picture-in-picture';
+  iframe.allowFullscreen = true;
+  ratio.appendChild(iframe);
+  if (thumb) thumb.classList.add('gone');
+  try { dataLayer.push({event:'preview_video_play', variant:VARIANT, page:PAGE}); } catch(e) {}
+}
+
 /* Scroll to the single lead-capture form (used by both the hero CTA and the
    floating sticky button — one form, one path, instead of duplicating the
    capture UI in a separate modal). */
