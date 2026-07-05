@@ -14,15 +14,23 @@
      gets a "cc-critical" class added in the final 30 seconds, so the visual
      clock (see the .countdown-clock CSS on each page) can intensify -- faster
      pulse, redder glow -- to build urgency as time runs out.
-   - Call initCountdown() after the DOM is ready.
+   - Call initCountdown() after the DOM is ready. As a safety net, this file
+     also starts the clock on its own (see the bottom of this file) so the
+     countdown is guaranteed to start even if a page's own "call initCountdown
+     on DOMContentLoaded" wiring never fires (e.g. because that listener was
+     attached too late and the event had already passed).
    ============================================================================ */
 (function () {
   var DURATION_MS = 60 * 1000;     // 1 minute
   var CRITICAL_MS = 30 * 1000;     // last 30 seconds = "critical" styling
+  var started = false;             // guard against double-starting the clock
 
   function pad(n) { return String(n).padStart(2, '0'); }
 
   window.initCountdown = function initCountdown() {
+    if (started) return;           // already running -- don't stack intervals
+    started = true;
+
     var deadline = Date.now() + DURATION_MS;
 
     function tick() {
@@ -45,4 +53,15 @@
     tick();
     setInterval(tick, 1000);
   };
+
+  // Safety net: this script loads in <head>, well before the page body is
+  // parsed, so document.readyState here is reliably "loading" -- meaning we
+  // can register a DOMContentLoaded listener now and be certain it will
+  // fire. If for any reason this code runs after the DOM is already ready,
+  // start immediately instead of waiting for an event that already passed.
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', window.initCountdown);
+  } else {
+    window.initCountdown();
+  }
 })();
