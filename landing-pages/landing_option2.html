@@ -10,6 +10,7 @@
 
 <script src="/shared/params.js"></script>
 <script src="/shared/pixels.js"></script>
+<script src="/shared/countdown.js"></script>
 
 <script>
 (function(w,d,s,l,i){
@@ -66,6 +67,9 @@ canvas#particles{position:fixed;inset:0;z-index:0;pointer-events:none;}
 .trigger-line{font-size:13px;font-weight:700;color:rgba(255,180,50,.8);}
 .trigger-line:nth-child(1){animation:triggerBlink 2.2s 1s ease-in-out infinite;}
 .trigger-line:nth-child(2){animation:triggerBlink 2.2s 1.6s ease-in-out infinite;}
+.urgency-mini{display:inline-flex;align-items:center;gap:8px;background:rgba(212,168,67,.12);border:1px solid rgba(212,168,67,.35);border-radius:8px;padding:8px 16px;margin:2px auto 16px;font-size:13px;font-weight:700;color:#f0c060;}
+.urgency-mini .dot{width:6px;height:6px;border-radius:50%;background:#ff5252;animation:triggerBlink 1.4s ease-in-out infinite;flex-shrink:0;}
+.urgency-mini .cd{font-variant-numeric:tabular-nums;color:#fff;letter-spacing:.5px;}
 .sticky-cta{position:fixed;bottom:0;left:0;right:0;z-index:100;background:linear-gradient(transparent,rgba(0,0,0,.95) 30%);padding:16px 20px 24px;display:flex;flex-direction:column;align-items:center;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .4s,visibility .4s;}
 .sticky-cta.visible{opacity:1;pointer-events:auto;visibility:visible;}
 .sticky-cta .btn-main{max-width:420px;height:54px;font-size:18px;margin-bottom:6px;}
@@ -186,12 +190,9 @@ window.submitForm = async function submitForm() {
       <div class="icon-item"><span class="ico">▶️</span>הסבר ברור</div>
       <div class="icon-item"><span class="ico">🔒</span>גישה מאובטחת</div>
     </div>
+    <div class="urgency-mini"><span class="dot"></span>הגישה שלך פתוחה עוד <span class="cd"><span class="cd-mins">25</span>:<span class="cd-secs">00</span></span> דקות</div>
     <button class="btn-main" onclick="openPopup()">תן לי גישה עכשיו</button>
     <p class="micro-copy">נשלח אליך תוך כמה שניות</p>
-    <div class="trigger-lines">
-      <div class="trigger-line">⚡ לא כולם מקבלים גישה</div>
-      <div class="trigger-line">⚡ זה נסגר מהר</div>
-    </div>
   </div>
 </div>
 
@@ -265,6 +266,7 @@ window.addEventListener('scroll', function() {
 }, {passive:true});
 document.addEventListener('DOMContentLoaded', () => {
     loadFacebookPixel();
+    if(typeof initCountdown==='function') initCountdown();
 });
 
 setTimeout(function() {

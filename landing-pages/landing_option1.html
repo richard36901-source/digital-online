@@ -10,6 +10,7 @@
 
 <script src="/shared/params.js"></script>
 <script src="/shared/pixels.js"></script>
+<script src="/shared/countdown.js"></script>
 
 <script>
 (function(w,d,s,l,i){
@@ -45,8 +46,7 @@ input,button{font-family:inherit;outline:none;-webkit-tap-highlight-color:transp
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 h1{font-family:'Heebo',sans-serif;font-size:clamp(24px,6.5vw,40px);font-weight:900;color:#fff;line-height:1.2;margin-bottom:16px;letter-spacing:-.5px;}
 h1 .gold{background:linear-gradient(135deg,#d4a843,#f0c060,#d4a843);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.sub{font-family:'Assistant',sans-serif;font-size:clamp(15px,3.8vw,18px);color:rgba(255,255,255,.6);line-height:1.7;margin-bottom:10px;max-width:420px;margin-left:auto;margin-right:auto;}
-.sub-small{font-family:'Assistant',sans-serif;font-size:clamp(13px,3.2vw,15px);color:rgba(255,255,255,.38);line-height:1.6;margin-bottom:36px;max-width:380px;margin-left:auto;margin-right:auto;font-style:italic;}
+.sub{font-family:'Assistant',sans-serif;font-size:clamp(15px,3.8vw,18px);color:rgba(255,255,255,.6);line-height:1.7;margin-bottom:22px;max-width:420px;margin-left:auto;margin-right:auto;}
 .main-cta{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#d4a843,#f0c060);color:#000;font-family:'Heebo',sans-serif;font-size:18px;font-weight:900;border:none;border-radius:8px;cursor:pointer;padding:18px 40px;width:100%;max-width:360px;position:relative;overflow:hidden;letter-spacing:.3px;animation:ctaJump 2.8s cubic-bezier(.36,.07,.19,.97) infinite;transform-origin:center bottom;}
 .main-cta::before{content:'';position:absolute;inset:0;border-radius:8px;box-shadow:0 0 0 0 rgba(212,168,67,.6);animation:ctaPulse 2.8s ease-out infinite;}
 .main-cta::after{content:'';position:absolute;top:0;left:-120%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);animation:shine 2.8s ease-in-out infinite;}
@@ -58,6 +58,9 @@ h1 .gold{background:linear-gradient(135deg,#d4a843,#f0c060,#d4a843);-webkit-back
 .main-cta:hover{animation-play-state:paused;transform:translateY(-4px) scale(1.02);box-shadow:0 8px 32px rgba(212,168,67,.5);transition:transform .2s,box-shadow .2s}
 .main-cta:active{transform:scale(.97);transition:transform .1s}
 .cta-sub{margin-top:12px;font-family:'Assistant',sans-serif;font-size:12px;color:rgba(255,255,255,.35);}
+.urgency-mini{display:inline-flex;align-items:center;gap:8px;background:rgba(212,168,67,.1);border:1px solid rgba(212,168,67,.3);border-radius:8px;padding:8px 16px;margin-bottom:22px;font-family:'Heebo',sans-serif;font-size:12.5px;font-weight:700;color:#f0c060;}
+.urgency-mini .dot{width:6px;height:6px;border-radius:50%;background:#e53935;animation:blink 1.4s ease-in-out infinite;flex-shrink:0;}
+.urgency-mini .cd{font-variant-numeric:tabular-nums;color:#fff;letter-spacing:.5px;}
 .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:rgba(0,0,0,.8);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s ease;-webkit-overflow-scrolling:touch;}
 .modal-overlay.open{opacity:1;pointer-events:all}
 .modal-overlay.open .modal{transform:translateY(0)}
@@ -214,6 +217,7 @@ async function handleSubmit(){
 
 document.addEventListener('DOMContentLoaded', () => {
     loadFacebookPixel();
+    if(typeof initCountdown==='function') initCountdown();
 });
 document.addEventListener('DOMContentLoaded',function(){
   if(localStorage.getItem('ck'))document.getElementById('cookieBanner').style.display='none';
@@ -256,8 +260,8 @@ document.addEventListener('DOMContentLoaded',function(){
 <div class="hero">
   <div class="hero-inner">
     <h1>יש סיבה שאתה עדיין לא מגיע<br>ל<span class="gold">תוצאות שאתה רוצה</span></h1>
-    <p class="sub">וזה לא בגללך — זה משהו שרוב האנשים בכלל לא רואים</p>
-    <p class="sub-small">ברגע שתבין את זה — הכל מתחיל להתחבר אחרת</p>
+    <p class="sub">וזה לא בגללך — רוב האנשים פשוט לא רואים את זה. ברגע שתבין, הכל מתחבר אחרת.</p>
+    <div class="urgency-mini"><span class="dot"></span>הגישה האישית שלך פתוחה עוד <span class="cd"><span class="cd-mins">25</span>:<span class="cd-secs">00</span></span> דקות</div>
     <button class="main-cta" onclick="openModal()">👁️ תן לי לראות את זה</button>
     <div class="cta-shadow"></div>
     <p class="cta-sub">זה לוקח פחות מ-5 דקות</p>
