@@ -58,11 +58,8 @@ h1 .gold{background:linear-gradient(135deg,#d4a843,#f0c060,#d4a843);-webkit-back
 .main-cta:hover{animation-play-state:paused;transform:translateY(-4px) scale(1.02);box-shadow:0 8px 32px rgba(212,168,67,.5);transition:transform .2s,box-shadow .2s}
 .main-cta:active{transform:scale(.97);transition:transform .1s}
 .cta-sub{margin-top:12px;font-family:'Assistant',sans-serif;font-size:12px;color:rgba(255,255,255,.35);}
-.countdown-clock{display:inline-flex;flex-direction:column;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(229,57,53,.14),rgba(0,0,0,.55));border:1.5px solid rgba(229,57,53,.55);border-radius:14px;padding:14px 22px;margin:0 auto 22px;position:relative;animation:ccPulse 1.8s ease-in-out infinite;font-family:'Heebo',sans-serif;}
+.countdown-clock{display:flex;width:fit-content;flex-direction:column;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(229,57,53,.14),rgba(0,0,0,.55));border:1.5px solid rgba(229,57,53,.55);border-radius:14px;padding:14px 22px;margin:0 auto 22px;position:relative;animation:ccPulse 1.8s ease-in-out infinite;font-family:'Heebo',sans-serif;}
 @keyframes ccPulse{0%,100%{box-shadow:0 0 0 0 rgba(229,57,53,.35)}50%{box-shadow:0 0 24px 4px rgba(229,57,53,.5)}}
-.countdown-clock .cc-label{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:#ff7a7a;letter-spacing:.2px;}
-.countdown-clock .cc-alarm{display:inline-block;animation:ccRing 1s ease-in-out infinite;}
-@keyframes ccRing{0%,100%{transform:rotate(0)}20%{transform:rotate(-14deg)}40%{transform:rotate(11deg)}60%{transform:rotate(-9deg)}80%{transform:rotate(6deg)}}
 .countdown-clock .cc-digits{display:flex;align-items:center;gap:7px;}
 .countdown-clock .cc-box{background:#050505;border:1px solid rgba(229,57,53,.45);border-radius:9px;padding:7px 12px;min-width:56px;text-align:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.06);}
 .countdown-clock .cc-num{font-size:30px;font-weight:900;color:#fff;line-height:1;font-variant-numeric:tabular-nums;text-shadow:0 0 12px rgba(229,57,53,.65);display:block;}
@@ -274,16 +271,16 @@ document.addEventListener('DOMContentLoaded',function(){
     <h1>יש סיבה שאתה עדיין לא מגיע<br>ל<span class="gold">תוצאות שאתה רוצה</span></h1>
     <p class="sub">וזה לא בגללך -- רוב האנשים פשוט לא רואים את זה. ברגע שתבין, הכל מתחבר אחרת.</p>
     <div class="countdown-clock">
-      <div class="cc-label"><span class="cc-alarm">⏰</span>הגישה האישית שלך נסגרת בעוד</div>
       <div class="cc-digits">
-        <div class="cc-box"><span class="cc-num cd-mins">03</span><span class="cc-unit">דקות</span></div>
-        <div class="cc-sep">:</div>
         <div class="cc-box"><span class="cc-num cd-secs">00</span><span class="cc-unit">שניות</span></div>
+        <div class="cc-sep">:</div>
+        <div class="cc-box"><span class="cc-num cd-mins">01</span><span class="cc-unit">דקות</span></div>
       </div>
     </div>
+    <p class="cta-sub" style="margin-top:0;margin-bottom:14px;">אל תיתן לעוד יום לעבור לפני שתראה את התמונה המלאה.</p>
     <button class="main-cta" onclick="openModal()">👁️ תן לי לראות את זה</button>
     <div class="cta-shadow"></div>
-    <p class="cta-sub">זה לוקח פחות מ-5 דקות</p>
+    <p class="cta-sub">🔒 סרטונים קצרים, פרקטיים וללא התחייבות. מומלץ לראות עד הסוף.</p>
   </div>
 </div>
 <footer>
