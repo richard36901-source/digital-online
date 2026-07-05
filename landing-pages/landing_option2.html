@@ -67,11 +67,8 @@ canvas#particles{position:fixed;inset:0;z-index:0;pointer-events:none;}
 .trigger-line{font-size:13px;font-weight:700;color:rgba(255,180,50,.8);}
 .trigger-line:nth-child(1){animation:triggerBlink 2.2s 1s ease-in-out infinite;}
 .trigger-line:nth-child(2){animation:triggerBlink 2.2s 1.6s ease-in-out infinite;}
-.countdown-clock{display:inline-flex;flex-direction:column;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(229,57,53,.14),rgba(0,0,0,.55));border:1.5px solid rgba(229,57,53,.55);border-radius:14px;padding:14px 22px;margin:2px auto 16px;position:relative;animation:ccPulse 1.8s ease-in-out infinite;}
+.countdown-clock{display:flex;width:fit-content;flex-direction:column;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(229,57,53,.14),rgba(0,0,0,.55));border:1.5px solid rgba(229,57,53,.55);border-radius:14px;padding:14px 22px;margin:2px auto 16px;position:relative;animation:ccPulse 1.8s ease-in-out infinite;}
 @keyframes ccPulse{0%,100%{box-shadow:0 0 0 0 rgba(229,57,53,.35)}50%{box-shadow:0 0 24px 4px rgba(229,57,53,.5)}}
-.countdown-clock .cc-label{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:#ff7a7a;letter-spacing:.2px;}
-.countdown-clock .cc-alarm{display:inline-block;animation:ccRing 1s ease-in-out infinite;}
-@keyframes ccRing{0%,100%{transform:rotate(0)}20%{transform:rotate(-14deg)}40%{transform:rotate(11deg)}60%{transform:rotate(-9deg)}80%{transform:rotate(6deg)}}
 .countdown-clock .cc-digits{display:flex;align-items:center;gap:7px;}
 .countdown-clock .cc-box{background:#050505;border:1px solid rgba(229,57,53,.45);border-radius:9px;padding:7px 12px;min-width:56px;text-align:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.06);}
 .countdown-clock .cc-num{font-size:30px;font-weight:900;color:#fff;line-height:1;font-variant-numeric:tabular-nums;text-shadow:0 0 12px rgba(229,57,53,.65);display:block;}
@@ -189,10 +186,6 @@ window.submitForm = async function submitForm() {
 <script>if(localStorage.getItem('ck'))document.getElementById('cookieBanner').style.display='none';</script>
 
 <div class="page-wrap">
-  <div class="top-badge">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-    אלפי אנשים כבר נכנסו לזה
-  </div>
   <div class="card">
     <h1 class="card-headline">משהו קורה עכשיו —<br>ואנשים כבר מייצרים תוצאות.</h1>
     <div class="card-sub">זה לא כישרון<br>זה לא מזל<br>זה פשוט להבין איך זה עובד</div>
@@ -203,21 +196,21 @@ window.submitForm = async function submitForm() {
       <div class="icon-item"><span class="ico">🔒</span>גישה מאובטחת</div>
     </div>
     <div class="countdown-clock">
-      <div class="cc-label"><span class="cc-alarm">⏰</span>הגישה שלך נסגרת בעוד</div>
       <div class="cc-digits">
-        <div class="cc-box"><span class="cc-num cd-mins">03</span><span class="cc-unit">דקות</span></div>
-        <div class="cc-sep">:</div>
         <div class="cc-box"><span class="cc-num cd-secs">00</span><span class="cc-unit">שניות</span></div>
+        <div class="cc-sep">:</div>
+        <div class="cc-box"><span class="cc-num cd-mins">01</span><span class="cc-unit">דקות</span></div>
       </div>
     </div>
+    <p class="tension-line" style="margin-bottom:14px;">מה שאתה עומד לראות בנוי כמו פאזל. כל סרטון מוסיף חלק נוסף, בסוף הכול מתחבר ויפול לך אסימון ענק</p>
     <button class="btn-main" onclick="openPopup()">תן לי גישה עכשיו</button>
-    <p class="micro-copy">נשלח אליך תוך כמה שניות</p>
+    <p class="micro-copy">🔒 סרטונים קצרים, פרקטיים וללא התחייבות. מומלץ לראות עד הסוף.</p>
   </div>
 </div>
 
 <div class="sticky-cta" id="stickyCta">
   <button class="btn-main" onclick="openPopup()">תן לי גישה עכשיו</button>
-  <div class="sticky-sub">נשלח אליך תוך כמה שניות</div>
+  <div class="sticky-sub">🔒 סרטונים קצרים, פרקטיים וללא התחייבות. מומלץ לראות עד הסוף.</div>
 </div>
 
 <div class="popup-overlay" id="popup">
