@@ -2,12 +2,12 @@
    Shared personal countdown clock, used by all 4 landing pages.
 
    How it works:
-   - The first time a visitor lands on ANY of the 4 pages, we start a 3-minute
+   - The first time a visitor lands on ANY of the 4 pages, we start a 1-minute
      personal window and store its deadline in localStorage (key below). This
      is a real, honest "your access window" timer -- not a fake per-page reset --
      so if the same visitor moves between landing pages, or refreshes, they see
-     one consistent countdown instead of it jumping back to 03:00 every time.
-   - If the window expires, a fresh 3-minute window starts automatically. This
+     one consistent countdown instead of it jumping back to 01:00 every time.
+   - If the window expires, a fresh 1-minute window starts automatically. This
      keeps the timer always useful instead of getting stuck at 00:00.
    - Every element with class "cd-mins" / "cd-secs" on the page is kept in
      sync, once per second. Any ancestor/element with class "countdown-clock"
@@ -18,7 +18,7 @@
    ============================================================================ */
 (function () {
   var KEY = 'do_access_deadline';
-  var DURATION_MS = 3 * 60 * 1000; // 3 minutes
+  var DURATION_MS = 60 * 1000;     // 1 minute
   var CRITICAL_MS = 30 * 1000;     // last 30 seconds = "critical" styling
 
   function getDeadline() {
