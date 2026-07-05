@@ -67,11 +67,8 @@ canvas#particles{position:fixed;inset:0;z-index:0;pointer-events:none;}
 .trigger-line{font-size:13px;font-weight:700;color:rgba(140,190,255,.75);}
 .trigger-line:nth-child(1){animation:triggerBlink 2.2s 1s ease-in-out infinite;}
 .trigger-line:nth-child(2){animation:triggerBlink 2.2s 1.6s ease-in-out infinite;}
-.countdown-clock{display:inline-flex;flex-direction:column;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(229,57,53,.14),rgba(0,0,0,.55));border:1.5px solid rgba(229,57,53,.55);border-radius:14px;padding:14px 22px;margin:2px auto 12px;position:relative;animation:ccPulse 1.8s ease-in-out infinite;}
+.countdown-clock{display:flex;width:fit-content;flex-direction:column;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(229,57,53,.14),rgba(0,0,0,.55));border:1.5px solid rgba(229,57,53,.55);border-radius:14px;padding:14px 22px;margin:2px auto 12px;position:relative;animation:ccPulse 1.8s ease-in-out infinite;}
 @keyframes ccPulse{0%,100%{box-shadow:0 0 0 0 rgba(229,57,53,.35)}50%{box-shadow:0 0 24px 4px rgba(229,57,53,.5)}}
-.countdown-clock .cc-label{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:#ff7a7a;letter-spacing:.2px;}
-.countdown-clock .cc-alarm{display:inline-block;animation:ccRing 1s ease-in-out infinite;}
-@keyframes ccRing{0%,100%{transform:rotate(0)}20%{transform:rotate(-14deg)}40%{transform:rotate(11deg)}60%{transform:rotate(-9deg)}80%{transform:rotate(6deg)}}
 .countdown-clock .cc-digits{display:flex;align-items:center;gap:7px;}
 .countdown-clock .cc-box{background:#050505;border:1px solid rgba(229,57,53,.45);border-radius:9px;padding:7px 12px;min-width:56px;text-align:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.06);}
 .countdown-clock .cc-num{font-size:30px;font-weight:900;color:#fff;line-height:1;font-variant-numeric:tabular-nums;text-shadow:0 0 12px rgba(229,57,53,.65);display:block;}
@@ -189,9 +186,8 @@ window.submitForm = async function submitForm() {
     אלפי ישראלים כבר בפנים
   </div>
   <div class="card">
-    <h1 class="card-headline">תראה איך זה עובד.<br>ואז תחליט.</h1>
-    <div class="card-sub">אין פה הבטחות<br>רק תהליך ברור<br>שכבר עובד לאחרים</div>
-    <p class="tension-line">זה לא נשאר פתוח להרבה זמן</p>
+    <h1 class="card-headline">הצצה למאחורי הקלעים<br>של העולם החדש</h1>
+    <div class="card-sub">בלי תאוריות ובלי דיבורים באוויר. בסדרת הסרטונים הזאת אני פותח את כל מאחורי הקלעים, מראה לך בצורה ויזואלית איך הכול בנוי, איך המערכת עובדת בפועל, איך כל החלקים מתחברים למנגנון אחד – ואיך גם אתה יכול להבין כבר היום אם הדרך הזאת מתאימה לך.</div>
     <div class="steps">
       <div class="step-item" style="background:linear-gradient(135deg,rgba(20,40,100,.3),rgba(4,8,20,.8));border:1px solid rgba(60,120,255,.2);">
         <div class="step-num" style="background:linear-gradient(135deg,#1a4acc,#4a7fff);color:#fff;box-shadow:0 0 12px rgba(74,127,255,.5);">1</div>
@@ -207,15 +203,15 @@ window.submitForm = async function submitForm() {
       </div>
     </div>
     <div class="countdown-clock">
-      <div class="cc-label"><span class="cc-alarm">⏰</span>הגישה שלך נסגרת בעוד</div>
       <div class="cc-digits">
-        <div class="cc-box"><span class="cc-num cd-mins">03</span><span class="cc-unit">דקות</span></div>
-        <div class="cc-sep">:</div>
         <div class="cc-box"><span class="cc-num cd-secs">00</span><span class="cc-unit">שניות</span></div>
+        <div class="cc-sep">:</div>
+        <div class="cc-box"><span class="cc-num cd-mins">01</span><span class="cc-unit">דקות</span></div>
       </div>
     </div>
+    <p class="tension-line" style="margin-bottom:14px;">יש לי בקשה אחת: אל תעצור באמצע. בסוף מתחברת כל התמונה ושם יפול לך אסימון ענק על העידן החדש</p>
     <button class="btn-main" onclick="openPopup()">פתח לי עכשיו</button>
-    <p class="micro-copy">גישה מיידית לנייד</p>
+    <p class="micro-copy">🔒 סרטונים קצרים, פרקטיים וללא התחייבות. מומלץ לראות עד הסוף.</p>
     <div class="trigger-lines">
       <div class="trigger-line">ללא התחייבות | ניתן להסרה בכל רגע</div>
     </div>
@@ -223,7 +219,7 @@ window.submitForm = async function submitForm() {
 </div>
 <div class="sticky-cta" id="stickyCta">
   <button class="btn-main" onclick="openPopup()">פתח לי עכשיו</button>
-  <div class="sticky-sub">גישה מיידית לנייד</div>
+  <div class="sticky-sub">🔒 סרטונים קצרים, פרקטיים וללא התחייבות. מומלץ לראות עד הסוף.</div>
 </div>
 <div class="popup-overlay" id="popup">
   <div class="popup-card">
