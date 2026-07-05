@@ -1,14 +1,14 @@
 /* ============================================================================
-   Shared personal countdown clock, used by all 4 landing pages.
+   Shared countdown clock, used by all 4 landing pages.
 
    How it works:
-   - The first time a visitor lands on ANY of the 4 pages, we start a 1-minute
-     personal window and store its deadline in localStorage (key below). This
-     is a real, honest "your access window" timer -- not a fake per-page reset --
-     so if the same visitor moves between landing pages, or refreshes, they see
-     one consistent countdown instead of it jumping back to 01:00 every time.
-   - If the window expires, a fresh 1-minute window starts automatically. This
-     keeps the timer always useful instead of getting stuck at 00:00.
+   - Every time this page loads (first visit, refresh, or coming back later),
+     the clock always starts fresh at exactly 1 minute and counts down to 0.
+     There is no persistence across page loads -- so it's simple and always
+     predictable: land on the page, the clock says 01:00 / 00:00 and starts
+     ticking down.
+   - If it reaches 0, it simply restarts at 1 minute automatically, so it
+     never gets stuck.
    - Every element with class "cd-mins" / "cd-secs" on the page is kept in
      sync, once per second. Any ancestor/element with class "countdown-clock"
      gets a "cc-critical" class added in the final 30 seconds, so the visual
@@ -17,31 +17,18 @@
    - Call initCountdown() after the DOM is ready.
    ============================================================================ */
 (function () {
-  var KEY = 'do_access_deadline';
   var DURATION_MS = 60 * 1000;     // 1 minute
   var CRITICAL_MS = 30 * 1000;     // last 30 seconds = "critical" styling
-
-  function getDeadline() {
-    var d = 0;
-    try { d = parseInt(localStorage.getItem(KEY), 10); } catch (e) {}
-    if (!d || isNaN(d) || d <= Date.now()) {
-      d = Date.now() + DURATION_MS;
-      try { localStorage.setItem(KEY, String(d)); } catch (e) {}
-    }
-    return d;
-  }
 
   function pad(n) { return String(n).padStart(2, '0'); }
 
   window.initCountdown = function initCountdown() {
-    var deadline;
-    try { deadline = getDeadline(); } catch (e) { deadline = Date.now() + DURATION_MS; }
+    var deadline = Date.now() + DURATION_MS;
 
     function tick() {
       var diff = deadline - Date.now();
       if (diff <= 0) {
         deadline = Date.now() + DURATION_MS;
-        try { localStorage.setItem(KEY, String(deadline)); } catch (e) {}
         diff = DURATION_MS;
       }
       var m = Math.floor(diff / 60000);
