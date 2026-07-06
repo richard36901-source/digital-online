@@ -246,14 +246,37 @@ window.addEventListener('scroll',()=>{
 const t0=Date.now();
 const vm={};[25,50,75,100].forEach(m=>vm[m]=0);
 let lastPos=0,lastPct=0;
+document.getElementById('btnNext').addEventListener('click',function(){
+  var secs=Math.round((Date.now()-t0)/1000);
+  try{dataLayer.push({event:'next_step_click',page:PAGE,pct_watched:lastPct,seconds_on_page:secs});}catch(err){}
+  if(navigator.sendBeacon){
+    navigator.sendBeacon(WEBHOOK,JSON.stringify({event:'next_step_click',page:PAGE,phone:phone,email:email,pct_watched:lastPct,seconds_on_page:secs,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')}));
+  }
+});
 const thumb=document.getElementById('vidThumb');
 const btnNext=document.getElementById('btnNext');
 
 window.onYouTubeIframeAPIReady=function(){
+  var _pollInt=null;
   const player=new YT.Player('vimeoPlayer',{
     events:{
       onReady:function(e){
         thumb.onclick=function(){thumb.classList.add('gone');e.target.playVideo();};
+        // Poll playback position every second -- the YouTube iframe API has no
+        // native "timeupdate" event, so this is how we keep lastPos/lastPct
+        // (used by the page_exit beacon) accurate, and how we detect the
+        // 25/50/75/100% video_progress milestones (same signal the native
+        // <video>-based funnel pages already track via `timeupdate`).
+        _pollInt=setInterval(function(){
+          try{
+            var cur=e.target.getCurrentTime(),dur=e.target.getDuration();
+            if(dur>0){
+              lastPos=cur;lastPct=Math.round(cur/dur*100);
+              var pct=cur/dur*100;
+              [25,50,75,100].forEach(function(m){if(!vm[m]&&pct>=m){vm[m]=1;dataLayer.push({event:'video_progress',milestone:m+'%',time:Math.round(cur),page:PAGE});}});
+            }
+          }catch(err){}
+        },1000);
       },
       onStateChange:function(e){
         if(e.data===YT.PlayerState.PLAYING){
@@ -262,10 +285,16 @@ window.onYouTubeIframeAPIReady=function(){
         }
         if(e.data===YT.PlayerState.PAUSED){
           btnNext.classList.remove('watching');
-          dataLayer.push({event:'video_pause',page:PAGE});
+          var pos=Math.round(e.target.getCurrentTime()),pct=Math.round(e.target.getCurrentTime()/e.target.getDuration()*100);
+          dataLayer.push({event:'video_pause',page:PAGE,time:pos,pct_watched:pct});
+          fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({event:'video_pause',page:PAGE,position_sec:pos,pct_watched:pct,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')})
+          }).catch(()=>{});
         }
         if(e.data===YT.PlayerState.ENDED){
           btnNext.classList.remove('watching');
+          if(_pollInt){clearInterval(_pollInt);_pollInt=null;}
+          lastPos=e.target.getDuration();lastPct=100;
           dataLayer.push({event:'video_ended',page:PAGE});
           if(typeof fbq!=='undefined')fbq('track','ViewContent',{content_name:PAGE});
           fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},
