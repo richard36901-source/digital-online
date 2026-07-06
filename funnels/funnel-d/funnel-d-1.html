@@ -252,6 +252,13 @@ window.addEventListener('scroll',()=>{
 const t0=Date.now();
 const vm={};[25,50,75,100].forEach(m=>vm[m]=0);
 let lastPos=0,lastPct=0;
+document.getElementById('btnNext').addEventListener('click',function(){
+  var secs=Math.round((Date.now()-t0)/1000);
+  try{dataLayer.push({event:'next_step_click',page:PAGE,pct_watched:lastPct,seconds_on_page:secs});}catch(err){}
+  if(navigator.sendBeacon){
+    navigator.sendBeacon(WEBHOOK,JSON.stringify({event:'next_step_click',page:PAGE,phone:phone,email:email,pct_watched:lastPct,seconds_on_page:secs,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')}));
+  }
+});
 window.addEventListener('load',()=>{
   const video=document.getElementById('vimeoPlayer');
   const thumb=document.getElementById('vidThumb');
