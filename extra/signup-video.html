@@ -423,20 +423,6 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
     <p class="warn-sub">כל סרטון מוסיף עוד חלק בפאזל, אבל דווקא בדקות האחרונות הכול מתחבר לתמונה אחת ברורה.</p>
   </div>
 
-  <div class="btn-box">
-    <a class="btn-next" id="btnNext" href="#leadForm">
-      🔒&nbsp; אני רוצה לראות את התמונה המלאה
-    </a>
-    <p class="watch-hint" style="margin-top:10px;margin-bottom:0;">🔒 ללא עלות וללא התחייבות. מומלץ לראות עד הסוף — דווקא שם מגיע הרגע שבו הכול מתחבר.</p>
-  </div>
-
-  <p class="bridge-text">
-    אם הסרטון גרם לך לחשוב...<br>
-    יש רעיונות שאפשר להבין בשתי דקות.<br>
-    ויש רעיונות שצריך לעצור בשבילם לרגע.<br>
-    אם התחברת למה שראית, <b>נשמח להכיר גם אותך.</b>
-  </p>
-
   <div class="form-card" id="leadForm">
     <p class="section-title">בוא נבדוק אם הדרך הזאת מתאימה גם לך.</p>
     <p class="section-sub" style="margin-bottom:20px;">השאר פרטים ונחזור אליך לשיחת היכרות קצרה, כדי להבין איפה אתה נמצא היום והאם נוכל לעזור לך להתקדם.</p>
@@ -531,16 +517,6 @@ const vm={};[25,50,75,100].forEach(function(m){vm[m]=0;});
 let lastPos=0,lastPct=0;
 
 const thumb=document.getElementById('vidThumb');
-const btnNext=document.getElementById('btnNext');
-
-btnNext.addEventListener('click',function(e){
-  if(!btnNext.classList.contains('unlocked')){ e.preventDefault(); return; }
-  var secs=Math.round((Date.now()-t0)/1000);
-  try{dataLayer.push({event:'next_step_click',page:PAGE,pct_watched:lastPct,seconds_on_page:secs});}catch(err){}
-  if(navigator.sendBeacon){
-    navigator.sendBeacon(WEBHOOK,JSON.stringify({event:'next_step_click',page:PAGE,phone:phone,email:email,pct_watched:lastPct,seconds_on_page:secs,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')}));
-  }
-});
 
 window.onYouTubeIframeAPIReady=function(){
   var _pollInt=null;
@@ -563,11 +539,10 @@ window.onYouTubeIframeAPIReady=function(){
       },
       onStateChange:function(e){
         if(e.data===YT.PlayerState.PLAYING){
-          thumb.classList.add('gone');btnNext.classList.add('watching');
+          thumb.classList.add('gone');
           dataLayer.push({event:'video_play',page:PAGE});
         }
         if(e.data===YT.PlayerState.PAUSED){
-          btnNext.classList.remove('watching');
           var pos=Math.round(e.target.getCurrentTime()),pct=Math.round(e.target.getCurrentTime()/e.target.getDuration()*100);
           dataLayer.push({event:'video_pause',page:PAGE,time:pos,pct_watched:pct});
           fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},
@@ -575,7 +550,6 @@ window.onYouTubeIframeAPIReady=function(){
           }).catch(function(){});
         }
         if(e.data===YT.PlayerState.ENDED){
-          btnNext.classList.remove('watching');
           if(_pollInt){clearInterval(_pollInt);_pollInt=null;}
           lastPos=e.target.getDuration();lastPct=100;
           dataLayer.push({event:'video_ended',page:PAGE});
@@ -583,9 +557,6 @@ window.onYouTubeIframeAPIReady=function(){
           fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},
             body:JSON.stringify({event:'video_completed',page:PAGE,pct_watched:100,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')})
           }).catch(function(){});
-          btnNext.classList.add('unlocked');
-          btnNext.innerHTML='&#9658;&nbsp; אני רוצה לראות את התמונה המלאה';
-          setTimeout(function(){btnNext.scrollIntoView({behavior:'smooth',block:'center'});},300);
         }
       }
     }
@@ -608,13 +579,6 @@ window.addEventListener('beforeunload',function(){
   }
 });
 
-/* fail-safe: unlock the CTA after 60s even if video events don't fire */
-setTimeout(function(){
-  if(!btnNext||btnNext.classList.contains('unlocked'))return;
-  btnNext.classList.remove('watching');
-  btnNext.classList.add('unlocked');
-  btnNext.innerHTML='&#9658;&nbsp; אני רוצה לראות את התמונה המלאה';
-},60000);
 </script>
 </body>
 </html>
