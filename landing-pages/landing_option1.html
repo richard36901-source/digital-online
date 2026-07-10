@@ -139,7 +139,7 @@ function openModal(){
   document.getElementById('modalOverlay').classList.add('open');
   document.body.style.overflow='hidden';
   if(window.dataLayer) dataLayer.push({event:'form_opened',page:PAGE});
-  setTimeout(function(){var el=document.getElementById('iEmail');if(el)el.focus();},400);
+  setTimeout(function(){var el=document.getElementById('iName');if(el)el.focus();},400);
 }
 function closeModal(){
   document.getElementById('modalOverlay').classList.remove('open');
@@ -149,16 +149,22 @@ function handleOverlayClick(e){
   if(e.target===document.getElementById('modalOverlay'))closeModal();
 }
 function se(id,m){document.getElementById(id).textContent=m;}
-function clr(){['errEmail'].forEach(function(id){se(id,'');});}
+function clr(){['errName','errPhone','errEmail'].forEach(function(id){se(id,'');});}
 function validate(){
   clr();
+  const n=document.getElementById('iName').value.trim();
+  const ph=document.getElementById('iPhone').value.trim();
   const e=document.getElementById('iEmail').value.trim();
   const c=document.getElementById('consent').checked;
   let ok=1;
+  if(!n){se('errName','נא להזין שם מלא');document.getElementById('iName').classList.add('err');ok=0;}
+  else document.getElementById('iName').classList.remove('err');
+  if(!ph){se('errPhone','נא להזין מספר טלפון');document.getElementById('iPhone').classList.add('err');ok=0;}
+  else document.getElementById('iPhone').classList.remove('err');
   if(!e||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)){se('errEmail','אימייל לא תקין');document.getElementById('iEmail').classList.add('err');ok=0;}
   else document.getElementById('iEmail').classList.remove('err');
   if(!c){alert('יש לאשר קבלת הודעות');ok=0;}
-  return ok?{email:e}:null;
+  return ok?{name:n,phone:ph,email:e}:null;
 }
 async function handleSubmit(){
   dataLayer.push({event:'cta_clicked',variant:VARIANT,page:PAGE});
@@ -178,6 +184,8 @@ async function handleSubmit(){
   const resolvedSupplier = await resolveSupplier(p);
 
   const payload = {
+    name: data.name,
+    phone: data.phone,
     email: data.email,
     variant: VARIANT,
     page: PAGE,
@@ -191,13 +199,12 @@ async function handleSubmit(){
 
   /* Fire the confirmation-email hook and the tracking webhook in parallel
      so a slow/failing call never blocks or delays the other -- in particular
-     the "send email now" hook must not wait on the tracking webhook.
-     Lead Manager integration removed at the landing-page stage on purpose. */
+     the "send email now" hook must not wait on the tracking webhook. */
   await Promise.allSettled([
     fetch('https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({email:data.email, page:'landing_option1'})
+      body:JSON.stringify({name:data.name, phone:data.phone, email:data.email, page:'landing_option1'})
     }),
     fetch(WEBHOOK, {
       method: 'POST',
@@ -206,12 +213,36 @@ async function handleSubmit(){
     })
   ]);
 
+  /* LeadManager */
+  try {
+    var lmP = new URLSearchParams();
+    lmP.append('lm_form', '89907');
+    lmP.append('lm_key', '28250230ddcd4b8a9f3929b7ab8744a1');
+    lmP.append('subscribers_name', data.name);
+    lmP.append('subscribers_phone', data.phone);
+    lmP.append('subscribers_email', data.email);
+    lmP.append('fld_144377', '1');
+    lmP.append('fld_105911', src || '');
+    lmP.append('fld_107862', src || '');
+    lmP.append('lm_supplier', resolvedSupplier);
+    lmP.append('lm_bc', src || '');
+    lmP.append('fields[REF]', p.ref || '');
+    lmP.append('utm_medium', med || '');
+    lmP.append('utm_campaign', camp || '');
+    lmP.append('page', PAGE);
+    fetch('https://api.leadmanager.co.il/handlers/lm/submit.cms?' + lmP.toString(), {
+      method: 'GET', mode: 'no-cors'
+    }).catch(function(){});
+  } catch(e) {}
+
   dn = 1;
 
   dataLayer.push({
     event:'form_submitted',
     variant:VARIANT,
     page:PAGE,
+    name:data.name,
+    phone:data.phone,
     email:data.email,
     supplier:resolvedSupplier
   });
@@ -243,7 +274,7 @@ document.addEventListener('DOMContentLoaded',function(){
     dataLayer.push({event:'page_time',seconds:Math.round((Date.now()-t0)/1000),variant:VARIANT});
     if(formSt&&!dn)dataLayer.push({event:'form_abandoned',variant:VARIANT,page:PAGE});
   });
-  ['iEmail'].forEach(function(id){
+  ['iName','iPhone','iEmail'].forEach(function(id){
     const el=document.getElementById(id);
     if(!el)return;
     el.addEventListener('focus',function(){if(!formSt){formSt=1;dataLayer.push({event:'form_started',variant:VARIANT,page:PAGE});}});
@@ -291,9 +322,13 @@ document.addEventListener('DOMContentLoaded',function(){
 <div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
   <div class="modal" id="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">השאר את האימייל שלך ונשלח לך עכשיו</div>
+    <div class="modal-title">השאר את הפרטים שלך ונשלח לך עכשיו</div>
     <div class="modal-sub">הסבר קצר של 5 דקות שיגרום לך לראות הכל אחרת</div>
     <div id="formWrap" class="form-wrap">
+      <input type="text" id="iName" placeholder="שם מלא" autocomplete="name" dir="rtl"/>
+      <p class="ferr" id="errName"></p>
+      <input type="tel" id="iPhone" placeholder="טלפון" autocomplete="tel" inputmode="numeric" dir="rtl"/>
+      <p class="ferr" id="errPhone"></p>
       <input type="email" id="iEmail" placeholder="האימייל שלך" autocomplete="email" inputmode="email" dir="ltr"/>
       <p class="ferr" id="errEmail"></p>
       <div class="consent-wrap">
