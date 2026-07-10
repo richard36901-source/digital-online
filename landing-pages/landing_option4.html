@@ -488,6 +488,12 @@ footer{padding:24px 0 6px;display:flex;flex-direction:column;gap:16px}
       </div>
 
       <form class="leadForm final-form-row" id="leadFormFinal">
+        <div class="final-input-wrap" style="grid-column:1/-1;">
+          <input class="final-input" type="text" id="fName" placeholder="* שם מלא" required>
+        </div>
+        <div class="final-input-wrap" style="grid-column:1/-1;">
+          <input class="final-input" type="tel" id="fPhone" placeholder="* טלפון" required>
+        </div>
         <div class="final-input-wrap">
           <input class="final-input" type="email" placeholder="* אימייל" required>
         </div>
@@ -633,8 +639,8 @@ function scrollToForm(){
   const el = document.getElementById('leadFormFinal');
   if (!el) return;
   el.scrollIntoView({behavior:'smooth', block:'center'});
-  const emailInput = el.querySelector('input[type=email]');
-  if (emailInput) setTimeout(() => emailInput.focus({preventScroll:true}), 500);
+  const nameInput = el.querySelector('#fName');
+  if (nameInput) setTimeout(() => nameInput.focus({preventScroll:true}), 500);
   dataLayer.push({event:'cta_clicked', label:'scroll_to_form', variant:VARIANT, page:PAGE});
 }
 
@@ -708,7 +714,7 @@ dataLayer.push({
   let submitted   = false;
   document.addEventListener('focusin', function(e){
     const el = e.target;
-    if (!el.matches('input[type=email]')) return;
+    if (!el.matches('#fName, #fPhone, input[type=email]')) return;
     if (!formStarted){
       formStarted = true;
       dataLayer.push({event:'form_started', variant:VARIANT, page:PAGE});
@@ -716,7 +722,7 @@ dataLayer.push({
   });
   document.addEventListener('focusout', function(e){
     const el = e.target;
-    if (!el.matches('input[type=email]')) return;
+    if (!el.matches('#fName, #fPhone, input[type=email]')) return;
     if (el.value.trim()){
       dataLayer.push({event:'form_field_filled', field:el.type||el.id, variant:VARIANT, page:PAGE});
     }
@@ -741,8 +747,7 @@ document.addEventListener('click', function(e){
 /* ===== Lead form submit (single form: #leadFormFinal). Webhook URLs,
    payload shape, GTM/FB events and the funnel-d redirect are unchanged from
    the previous version of this page — only the duplicate modal form was
-   removed. Lead Manager integration removed at the landing-page stage on
-   purpose. ===== */
+   removed. ===== */
 document.addEventListener('submit', async (e) => {
   const form = e.target;
   if (!(form instanceof HTMLFormElement)) return;
@@ -762,6 +767,18 @@ document.addEventListener('submit', async (e) => {
     return;
   }
 
+  const nameEl = form.querySelector('#fName');
+  const phoneEl = form.querySelector('#fPhone');
+  const name = nameEl ? nameEl.value.trim() : '';
+  const phone = phoneEl ? phoneEl.value.trim() : '';
+  if (!name || !phone) {
+    if (nameEl && !name) nameEl.style.borderColor = '#e53935';
+    if (phoneEl && !phone) phoneEl.style.borderColor = '#e53935';
+    return;
+  }
+  if (nameEl) nameEl.style.borderColor = '';
+  if (phoneEl) phoneEl.style.borderColor = '';
+
   const btn = form.querySelector('button[type=submit], .cta-btn, .final-cta-btn');
   if (btn) {
     const originalText = btn.dataset.original || btn.textContent;
@@ -777,11 +794,11 @@ document.addEventListener('submit', async (e) => {
   const PAGE_ID = 'digital-online-landing';
   const resolvedSupplier = await resolveSupplier(pp);
 
-  Promise.allSettled([
+  await Promise.allSettled([
     fetch('https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ email, page: 'landing_option4' }),
+      body: JSON.stringify({ name, phone, email, page: 'landing_option4' }),
       keepalive: true
     }),
     fetch('https://hook.eu1.make.com/jp6ukjt7tpk3y4yly9c691g01f47cq8q', {
@@ -791,6 +808,8 @@ document.addEventListener('submit', async (e) => {
         event: 'lead_form',
         page: PAGE_ID,
         form_id: form.id || '',
+        name,
+        phone,
         email,
         supplier:     resolvedSupplier,
         utm_source:   pp.src,
@@ -808,10 +827,34 @@ document.addEventListener('submit', async (e) => {
     })
   ]);
 
+  /* LeadManager */
+  try {
+    var lmP = new URLSearchParams();
+    lmP.append('lm_form', '90867');
+    lmP.append('lm_key', '4688231a3dff48db88fcc1316dcaa944');
+    lmP.append('subscribers_name', name);
+    lmP.append('subscribers_phone', phone);
+    lmP.append('subscribers_email', email);
+    lmP.append('fld_144377', '1');
+    lmP.append('fld_105911', pp.src || '');
+    lmP.append('fld_107862', pp.src || '');
+    lmP.append('lm_supplier', resolvedSupplier);
+    lmP.append('lm_bc', pp.src || '');
+    lmP.append('fields[REF]', pp.ref || '');
+    lmP.append('utm_medium', pp.medium || '');
+    lmP.append('utm_campaign', pp.campaign || '');
+    lmP.append('page', PAGE_ID);
+    fetch('https://api.leadmanager.co.il/handlers/lm/submit.cms?' + lmP.toString(), {
+      method: 'GET', mode: 'no-cors'
+    }).catch(function(){});
+  } catch(err) {}
+
   dataLayer.push({
     event:        'form_submitted',
     variant:      VARIANT,
     page:         PAGE,
+    name:         name,
+    phone:        phone,
     email:        email,
     supplier:     resolvedSupplier,
     utm_source:   pp.src,
