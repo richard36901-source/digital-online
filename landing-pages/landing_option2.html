@@ -131,12 +131,18 @@ window.openPopup = function openPopup() {
 }
 
 window.submitForm = async function submitForm() {
+  var name = document.getElementById('fName').value.trim();
+  var phone = document.getElementById('fPhone').value.trim();
   var email = document.getElementById('fEmail').value.trim();
   var ok = true;
   const p = getParams();
   const resolvedSupplier = await resolveSupplier(p);
+  document.getElementById('eName').classList.remove('show');
+  document.getElementById('ePhone').classList.remove('show');
   document.getElementById('eEmail').classList.remove('show');
   document.getElementById('eLegal').classList.remove('show');
+  if(!name) { document.getElementById('eName').classList.add('show'); ok=false; }
+  if(!phone) { document.getElementById('ePhone').classList.add('show'); ok=false; }
   if(!email || email.indexOf('@')<0) { document.getElementById('eEmail').classList.add('show'); ok=false; }
   if(!document.getElementById('legalBox').checked) { document.getElementById('eLegal').classList.add('show'); ok=false; }
   if(!ok) return;
@@ -146,18 +152,17 @@ window.submitForm = async function submitForm() {
   btn.textContent = 'שולח…';
   submitted2 = 1;
 
-  try { dataLayer.push({event:'form_submitted', email:email, page:'landing_option2'}); } catch(e) {}
+  try { dataLayer.push({event:'form_submitted', name:name, phone:phone, email:email, page:'landing_option2'}); } catch(e) {}
   try { if(typeof fbq==='function') fbq('track','Lead'); } catch(e) {}
 
   // Fire the confirmation-email webhook and the tracking webhook in parallel
   // so a slow/failing call never delays or blocks the other — in particular,
   // the "send email now" hook must fire immediately.
-  // Lead Manager integration removed at the landing-page stage on purpose.
   await Promise.allSettled([
     fetch('https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ email: email, page: 'landing_option2' })
+      body: JSON.stringify({ name: name, phone: phone, email: email, page: 'landing_option2' })
     }),
     fetch('https://hook.eu1.make.com/jp6ukjt7tpk3y4yly9c691g01f47cq8q', {
       method: 'POST',
@@ -165,12 +170,36 @@ window.submitForm = async function submitForm() {
       body: JSON.stringify({
         event: 'lead_form',
         page: 'landing_option2',
+        name: name,
+        phone: phone,
         email: email,
         supplier: resolvedSupplier,
         timestamp: new Date().toLocaleString('he-IL')
       })
     })
   ]);
+
+  /* LeadManager */
+  try {
+    var lmP = new URLSearchParams();
+    lmP.append('lm_form', '89937');
+    lmP.append('lm_key', '5403c690523845fdadf0c18bfe002da0');
+    lmP.append('subscribers_name', name);
+    lmP.append('subscribers_phone', phone);
+    lmP.append('subscribers_email', email);
+    lmP.append('fld_144377', '1');
+    lmP.append('fld_105911', p.src || '');
+    lmP.append('fld_107862', p.src || '');
+    lmP.append('lm_supplier', resolvedSupplier);
+    lmP.append('lm_bc', p.src || '');
+    lmP.append('fields[REF]', p.ref || '');
+    lmP.append('utm_medium', p.medium || '');
+    lmP.append('utm_campaign', p.campaign || '');
+    lmP.append('page', 'landing_option2');
+    fetch('https://api.leadmanager.co.il/handlers/lm/submit.cms?' + lmP.toString(), {
+      method: 'GET', mode: 'no-cors'
+    }).catch(function(){});
+  } catch(e) {}
 
   window.location.href = '../funnels/funnel-c/funnel-c-1.html' + location.search;
 }
@@ -219,6 +248,10 @@ window.submitForm = async function submitForm() {
     <p class="popup-title">לאן לשלוח לך את זה?</p>
     <p class="popup-sub">זה כבר נשלח לאלפים</p>
     <div id="formFields">
+      <input class="field" id="fName" type="text" placeholder="שם מלא" autocomplete="name"/>
+      <div class="err" id="eName">נא להזין שם מלא</div>
+      <input class="field" id="fPhone" type="tel" placeholder="טלפון" autocomplete="tel" inputmode="numeric"/>
+      <div class="err" id="ePhone">נא להזין מספר טלפון</div>
       <input class="field" id="fEmail" type="email" placeholder="אימייל" autocomplete="email"/>
       <div class="err" id="eEmail">נא להזין אימייל תקין</div>
       <button class="btn-popup" id="popupBtn" onclick="submitForm()">שלח לי עכשיו</button>
@@ -294,14 +327,14 @@ var formStarted2 = 0, submitted2 = 0;
 var t0_2 = Date.now();
 
 document.addEventListener('focusin', function(e) {
-  if (!e.target.matches('#fEmail')) return;
+  if (!e.target.matches('#fName, #fPhone, #fEmail')) return;
   if (!formStarted2) {
     formStarted2 = 1;
     dataLayer.push({event:'form_started', page:'landing_option2'});
   }
 });
 document.addEventListener('focusout', function(e) {
-  if (!e.target.matches('#fEmail')) return;
+  if (!e.target.matches('#fName, #fPhone, #fEmail')) return;
   if (e.target.value.trim()) {
     dataLayer.push({event:'form_field_filled', field:e.target.id, page:'landing_option2'});
   }
@@ -326,3 +359,6 @@ window.addEventListener('scroll', function() {
     if(!sd[d] && pct>=d) { sd[d]=1; try{dataLayer.push({event:'scroll_depth',depth:d+'%',page:'landing_option2'});}catch(e){} }
   });
 }, {passive:true});
+</script>
+</body>
+</html>
