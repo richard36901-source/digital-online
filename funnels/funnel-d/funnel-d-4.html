@@ -237,12 +237,15 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.06);}
 
 const PAGE='funnel_d_video_4';
 const WEBHOOK='https://hook.eu1.make.com/ylf5uesfcqpyaxaxtvayjx08h9rrwqr2';
+const TRACK_HOOK='https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q';
 window.dataLayer=window.dataLayer||[];
 const P=new URLSearchParams(location.search);
 const variant=P.get('variant')||'',sup=P.get('lm_supplier')||P.get('supplier')||'',src=P.get('utm_source')||'';
 const phone=P.get('phone')||'',email=P.get('email')||'';
+const panel=P.get('panel')||'';
 (function(){var nb=document.getElementById('btnNext');if(nb&&location.search)nb.setAttribute('href',nb.getAttribute('href').split('?')[0]+location.search);})();
 dataLayer.push({event:'page_view',page:PAGE,source_variant:variant,supplier:sup,utm_source:src});
+if(panel)fetch(TRACK_HOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({metric:'video_4',panel:panel})}).catch(function(){});
 if(typeof fbq!=='undefined')fbq('track','PageView');
 const sd={};[25,50,75,100].forEach(d=>sd[d]=0);
 window.addEventListener('scroll',()=>{
@@ -310,7 +313,7 @@ setTimeout(function(){
   if(!b||b.classList.contains('unlocked'))return;
   b.classList.remove('watching');
   b.classList.add('unlocked');
-  b.style.cursor='pointer';
+  b.style.cursor='pointer'';
   b.style.pointerEvents='auto';
   b.innerHTML='&#9658;&nbsp; שריין מקום לוובינר &nbsp;<span class="btn-arrow">&#8592;</span>';
   setTimeout(function(){b.scrollIntoView({behavior:'smooth',block:'center'});},300);
@@ -318,3 +321,4 @@ setTimeout(function(){
 </script>
 </body>
 </html>
+html>
