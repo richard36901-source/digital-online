@@ -111,6 +111,8 @@ footer a:hover{color:#d4a843;}
 footer .sep{margin:0 6px;color:rgba(255,255,255,.08);}
 </style>
 <script>
+  var TRACK_HOOK = 'https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q';
+  var PANEL = '2';
   async function resolveSupplier(p) {
   if (p.supplier) return p.supplier;
   if (!p.marketer) return '';
@@ -162,7 +164,7 @@ window.submitForm = async function submitForm() {
     fetch('https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ name: name, phone: phone, email: email, page: 'landing_option2' })
+      body: JSON.stringify({ name: name, phone: phone, email: email, page: 'landing_option2', metric: 'landing', panel: PANEL })
     }),
     fetch('https://hook.eu1.make.com/jp6ukjt7tpk3y4yly9c691g01f47cq8q', {
       method: 'POST',
@@ -201,7 +203,8 @@ window.submitForm = async function submitForm() {
     }).catch(function(){});
   } catch(e) {}
 
-  window.location.href = '../funnels/funnel-c/funnel-c-1.html' + location.search;
+  var sep2 = location.search ? '&' : '?';
+  window.location.href = '../funnels/funnel-c/funnel-c-1.html' + location.search + sep2 + 'panel=' + PANEL;
 }
 </script>
 </head>
@@ -348,6 +351,9 @@ window.addEventListener('beforeunload', function() {
 try {
   var urlP = new URLSearchParams(location.search);
   dataLayer.push({event:'page_view',page:'landing_option2',utm_source:urlP.get('utm_source')||'',supplier:urlP.get('lm_supplier')||urlP.get('supplier')||''});
+} catch(e) {}
+try {
+  fetch(TRACK_HOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({metric:'entry',panel:PANEL})}).catch(function(){});
 } catch(e) {}
 
 var sd = {};

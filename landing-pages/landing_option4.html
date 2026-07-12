@@ -682,6 +682,8 @@ document.querySelectorAll('[data-target]').forEach(el => counterObserver.observe
 window.dataLayer = window.dataLayer || [];
 const VARIANT = 'v5_luxury_community';
 const PAGE    = 'landing_option4';
+const TRACK_HOOK = 'https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q';
+const PANEL = '4';
 
 const p = getParams();
 dataLayer.push({
@@ -691,6 +693,7 @@ dataLayer.push({
   utm_source: p.src,
   supplier:   p.supplier
 });
+fetch(TRACK_HOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({metric:'entry',panel:PANEL})}).catch(function(){});
 
 // scroll_depth
 (function(){
@@ -798,7 +801,7 @@ document.addEventListener('submit', async (e) => {
     fetch('https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ name, phone, email, page: 'landing_option4' }),
+      body: JSON.stringify({ name, phone, email, page: 'landing_option4', metric: 'landing', panel: PANEL }),
       keepalive: true
     }),
     fetch('https://hook.eu1.make.com/jp6ukjt7tpk3y4yly9c691g01f47cq8q', {
@@ -864,7 +867,8 @@ document.addEventListener('submit', async (e) => {
   if (typeof fbq !== 'undefined') fbq('track', 'Lead');
   document.dispatchEvent(new Event('gtm_form_submitted'));
 
-  window.location.href = '../funnels/funnel-d/funnel-d-1.html' + location.search;
+  var sep4 = location.search ? '&' : '?';
+  window.location.href = '../funnels/funnel-d/funnel-d-1.html' + location.search + sep4 + 'panel=' + PANEL;
 });
 
 /* Header scroll shadow */

@@ -110,6 +110,8 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.15)}
 </style>
 <script>
 const WEBHOOK='https://hook.eu1.make.com/jp6ukjt7tpk3y4yly9c691g01f47cq8q';
+const TRACK_HOOK='https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q';
+const PANEL='1';
 const FUNNELC1='../funnels/funnel-c/funnel-c-1.html'
 const VARIANT='v1_luxury';
 const PAGE='landing_option1';
@@ -204,7 +206,7 @@ async function handleSubmit(){
     fetch('https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({name:data.name, phone:data.phone, email:data.email, page:'landing_option1'})
+      body:JSON.stringify({name:data.name, phone:data.phone, email:data.email, page:'landing_option1', metric:'landing', panel:PANEL})
     }),
     fetch(WEBHOOK, {
       method: 'POST',
@@ -251,7 +253,8 @@ async function handleSubmit(){
   document.getElementById('successBox').classList.add('show');
 
   setTimeout(function(){
-    window.location.href = FUNNELC1 + location.search;
+    var sep = location.search ? '&' : '?';
+    window.location.href = FUNNELC1 + location.search + sep + 'panel=' + PANEL;
   }, 1800);
 }
 
@@ -262,6 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded',function(){
   if(localStorage.getItem('ck'))document.getElementById('cookieBanner').style.display='none';
   dataLayer.push({event:'page_view',variant:VARIANT,page:PAGE,utm_source:src,supplier:sup});
+  fetch(TRACK_HOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({metric:'entry',panel:PANEL})}).catch(function(){});
   const sd={};[25,50,75,100].forEach(function(d){sd[d]=0;});
   window.addEventListener('scroll',function(){
     const s=document.body.scrollHeight-window.innerHeight;
