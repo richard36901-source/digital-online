@@ -10,7 +10,59 @@
 
 <script src="/shared/params.js"></script>
 <script src="/shared/pixels.js"></script>
-<script src="/shared/countdown.js"></script>
+<script>
+/* Persistent countdown, unique to this variant (does not use the shared
+   countdown.js, which intentionally always resets to 1:00 on every page
+   load). This one sets a real deadline on first visit, stores it in
+   localStorage, and keeps counting down from the same deadline on every
+   subsequent load/refresh -- once it hits zero it freezes at 00:00 instead
+   of silently restarting, so the clock never lies to a returning visitor. */
+(function () {
+  var DURATION_MS = 20 * 60 * 1000; // 20-minute real access window
+  var CRITICAL_MS = 30 * 1000;
+  var KEY = 'v2_countdown_deadline';
+  var started = false;
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  window.initCountdown = function initCountdown() {
+    if (started) return;
+    started = true;
+
+    var deadline = parseInt(localStorage.getItem(KEY), 10);
+    if (!deadline || isNaN(deadline)) {
+      deadline = Date.now() + DURATION_MS;
+      try { localStorage.setItem(KEY, String(deadline)); } catch (e) {}
+    }
+
+    function tick() {
+      var diff = deadline - Date.now();
+      var expired = diff <= 0;
+      if (expired) diff = 0;
+      var m = Math.floor(diff / 60000);
+      var s = Math.floor((diff % 60000) / 1000);
+      var mins = document.querySelectorAll('.cd-mins');
+      var secs = document.querySelectorAll('.cd-secs');
+      for (var i = 0; i < mins.length; i++) mins[i].textContent = pad(m);
+      for (var j = 0; j < secs.length; j++) secs[j].textContent = pad(s);
+
+      var critical = diff <= CRITICAL_MS;
+      var clocks = document.querySelectorAll('.countdown-clock');
+      for (var k = 0; k < clocks.length; k++) clocks[k].classList.toggle('cc-critical', critical);
+
+      if (expired && intervalId) { clearInterval(intervalId); }
+    }
+    tick();
+    var intervalId = setInterval(tick, 1000);
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', window.initCountdown);
+  } else {
+    window.initCountdown();
+  }
+})();
+</script>
 
 <script>
 (function(w,d,s,l,i){
@@ -28,7 +80,7 @@
 html{-webkit-text-size-adjust:100%}
 body{font-family:'Heebo',sans-serif;direction:rtl;overflow-x:hidden;min-height:100svh;color:#fff;display:flex;flex-direction:column;align-items:center;position:relative;background-color:#080B18;background-image:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(56,189,248,.20) 0%,transparent 65%),radial-gradient(ellipse 50% 35% at 10% 90%,rgba(99,60,220,.28) 0%,transparent 55%);}
 canvas#particles{position:fixed;inset:0;z-index:0;pointer-events:none;}
-.page-wrap{position:relative;z-index:2;width:100%;max-width:480px;padding:0 16px 120px;display:flex;flex-direction:column;align-items:center;}
+.page-wrap{position:relative;z-index:2;width:100%;max-width:480px;padding:0 16px 100px;display:flex;flex-direction:column;align-items:center;}
 @keyframes fadeDown{from{opacity:0;transform:translateY(-12px);}to{opacity:1;transform:translateY(0);}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
 @keyframes btnPulse{0%,100%{box-shadow:0 6px 30px rgba(255,90,0,.55),0 0 0 0 rgba(255,90,0,0);}50%{box-shadow:0 8px 40px rgba(255,90,0,.8),0 0 0 8px rgba(255,90,0,.1);}}
@@ -41,17 +93,26 @@ canvas#particles{position:fixed;inset:0;z-index:0;pointer-events:none;}
 @keyframes slideInRight{from{opacity:0;transform:translateX(24px);}to{opacity:1;transform:translateX(0);}}
 @keyframes badgeGlow{0%,100%{box-shadow:0 0 8px rgba(56,189,248,.25);}50%{box-shadow:0 0 22px rgba(56,189,248,.6);}}
 @keyframes triggerBlink{0%,100%{opacity:1;}50%{opacity:.45;}}
-.top-badge{display:inline-flex;align-items:center;gap:8px;border-radius:99px;padding:7px 18px;margin:24px 0 18px;font-size:13px;font-weight:700;animation:fadeDown .5s ease both,badgeGlow 2.5s 1s ease-in-out infinite;background:rgba(255,255,255,.06);border:1px solid rgba(56,189,248,.45);color:#5fd4ff;}
-.card{width:100%;border-radius:16px;padding:28px 20px 24px;margin-bottom:20px;position:relative;overflow:hidden;animation:fadeUp .6s .1s ease both;background:linear-gradient(145deg,rgba(6,10,24,.95),rgba(10,16,36,.98));border:1.5px solid rgba(56,189,248,.4);box-shadow:0 0 40px rgba(56,189,248,.15),0 20px 60px rgba(0,0,0,.8);}
-.card-headline{font-family:'Heebo',sans-serif;font-size:clamp(28px,7.5vw,38px);font-weight:900;text-align:center;line-height:1.2;margin-bottom:10px;background:linear-gradient(160deg,#e0f7ff 0%,#5fd4ff 30%,#6366f1 60%,#c4e8ff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 2px 20px rgba(56,189,248,.65));}
-.card-sub{font-size:clamp(14px,3.8vw,16px);color:rgba(255,255,255,.65);text-align:center;line-height:1.75;margin-bottom:16px;}
-.tension-line{font-family:'Heebo',sans-serif;font-size:15px;font-weight:800;text-align:center;margin-bottom:18px;color:rgba(255,150,80,.9);animation:flicker 5s 2s ease-in-out infinite;}
-.icon-row{display:flex;justify-content:center;gap:16px;margin-bottom:20px;}
+.top-badge{display:inline-flex;align-items:center;gap:8px;border-radius:99px;padding:7px 18px;margin:20px 0 14px;font-size:13px;font-weight:700;animation:fadeDown .5s ease both,badgeGlow 2.5s 1s ease-in-out infinite;background:rgba(255,255,255,.06);border:1px solid rgba(56,189,248,.45);color:#5fd4ff;}
+.human-row{display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:16px;animation:fadeDown .5s .1s ease both;}
+.human-avatar{width:36px;height:36px;flex-shrink:0;border-radius:50%;background:linear-gradient(135deg,#5fd4ff,#6366f1);display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 0 12px rgba(56,189,248,.5);}
+.human-text{font-size:12px;color:rgba(255,255,255,.55);font-weight:700;line-height:1.4;}
+.card{width:100%;border-radius:16px;padding:22px 20px 20px;margin-bottom:20px;position:relative;overflow:hidden;animation:fadeUp .6s .1s ease both;background:linear-gradient(145deg,rgba(6,10,24,.95),rgba(10,16,36,.98));border:1.5px solid rgba(56,189,248,.4);box-shadow:0 0 40px rgba(56,189,248,.15),0 20px 60px rgba(0,0,0,.8);}
+.card-headline{font-family:'Heebo',sans-serif;font-size:clamp(26px,7vw,36px);font-weight:900;text-align:center;line-height:1.22;margin-bottom:8px;background:linear-gradient(160deg,#e0f7ff 0%,#5fd4ff 30%,#6366f1 60%,#c4e8ff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 2px 20px rgba(56,189,248,.65));animation:fadeUp .6s .15s ease both;}
+.headline-sub{font-size:clamp(14px,3.8vw,16px);font-weight:700;color:#9fd8ff;text-align:center;line-height:1.5;margin-bottom:14px;animation:fadeUp .6s .2s ease both;}
+.card-sub{font-size:clamp(14px,3.8vw,16px);color:rgba(255,255,255,.65);text-align:center;line-height:1.7;margin-bottom:14px;}
+.tension-line{font-family:'Heebo',sans-serif;font-size:15px;font-weight:800;text-align:center;margin-bottom:16px;color:rgba(147,197,253,.9);animation:flicker 5s 2s ease-in-out infinite;}
+.icon-row{display:flex;justify-content:center;gap:16px;margin-bottom:16px;}
 .icon-item{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;font-weight:700;color:rgba(255,255,255,.7);text-align:center;background:rgba(255,255,255,.05);border:1px solid rgba(56,189,248,.25);border-radius:10px;padding:10px 12px;min-width:76px;}
-.icon-item:nth-child(1){animation:float 3s .2s ease-in-out infinite;}
-.icon-item:nth-child(2){animation:float 3s .7s ease-in-out infinite;}
-.icon-item:nth-child(3){animation:float 3s 1.2s ease-in-out infinite;}
+.icon-item:nth-child(1){animation:fadeUp .5s .3s ease both,float 3s 1s ease-in-out infinite;}
+.icon-item:nth-child(2){animation:fadeUp .5s .4s ease both,float 3s 1.1s ease-in-out infinite;}
+.icon-item:nth-child(3){animation:fadeUp .5s .5s ease both,float 3s 1.2s ease-in-out infinite;}
 .icon-item .ico{font-size:22px;display:inline-block;animation:iconPop 2s ease-in-out infinite;}
+.benefits-title{font-size:13px;font-weight:700;color:rgba(255,255,255,.5);text-align:center;margin-bottom:8px;}
+.benefits-list{display:flex;flex-direction:column;gap:7px;margin-bottom:16px;}
+.benefits-list .b-item{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:rgba(255,255,255,.85);}
+.benefits-list .b-check{color:#4ade80;font-weight:900;flex-shrink:0;}
+.cc-label{font-size:12px;font-weight:700;color:rgba(255,255,255,.55);text-align:center;margin-bottom:6px;}
 .steps{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
 .step-item{display:flex;align-items:center;gap:12px;border-radius:10px;padding:12px 14px;background:linear-gradient(145deg,rgba(6,10,24,.95),rgba(10,16,36,.98))}
 .step-num{width:32px;height:32px;flex-shrink:0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;}
@@ -62,7 +123,8 @@ canvas#particles{position:fixed;inset:0;z-index:0;pointer-events:none;}
 .btn-main{display:flex;width:100%;height:60px;background:linear-gradient(135deg,#ff3d00,#ff8a00,#ff3d81);background-size:200% auto;color:#fff;font-family:'Heebo',sans-serif;font-size:21px;font-weight:900;border:none;border-radius:10px;cursor:pointer;pointer-events:auto;align-items:center;justify-content:center;letter-spacing:.3px;position:relative;overflow:hidden;margin-bottom:8px;box-shadow:0 6px 30px rgba(255,90,0,.55);animation:btnPulse 2.5s ease-in-out infinite,btnShimmer 3s linear infinite,btnWiggle 4s 2s ease-in-out infinite;transition:transform .2s,box-shadow .2s;}
 .btn-main:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 10px 50px rgba(255,90,0,.75);}
 .btn-main::after{content:'';position:absolute;top:0;left:-120%;width:45%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);animation:shine 2s ease-in-out infinite;}
-.micro-copy{font-size:12px;color:rgba(255,255,255,.4);text-align:center;margin-bottom:16px;}
+.trust-line{font-size:12.5px;font-weight:700;color:rgba(255,255,255,.55);text-align:center;margin-bottom:8px;}
+.micro-copy{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:6px 14px;font-size:11.5px;color:rgba(255,255,255,.45);text-align:center;margin-bottom:6px;}
 .trigger-lines{display:flex;flex-direction:column;gap:4px;text-align:center;}
 .trigger-line{font-size:13px;font-weight:700;color:rgba(95,212,255,.85);}
 .trigger-line:nth-child(1){animation:triggerBlink 2.2s 1s ease-in-out infinite;}
@@ -82,7 +144,7 @@ canvas#particles{position:fixed;inset:0;z-index:0;pointer-events:none;}
 .sticky-cta{position:fixed;bottom:0;left:0;right:0;z-index:100;background:linear-gradient(transparent,rgba(0,0,0,.95) 30%);padding:16px 20px 24px;display:flex;flex-direction:column;align-items:center;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .4s,visibility .4s;}
 .sticky-cta.visible{opacity:1;pointer-events:auto;visibility:visible;}
 .sticky-cta .btn-main{max-width:420px;height:54px;font-size:18px;margin-bottom:6px;}
-.sticky-sub{font-size:11px;color:rgba(255,255,255,.3);text-align:center;}
+.sticky-sub{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:4px 12px;font-size:11px;color:rgba(255,255,255,.35);text-align:center;}
 .popup-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px);}
 .popup-overlay.open{display:flex;}
 @keyframes popIn{from{opacity:0;transform:scale(.85);}to{opacity:1;transform:scale(1);}}
@@ -218,38 +280,51 @@ window.submitForm = async function submitForm() {
 <script>if(localStorage.getItem('ck'))document.getElementById('cookieBanner').style.display='none';</script>
 
 <div class="page-wrap">
+  <div class="human-row">
+    <div class="human-avatar">👤</div>
+    <div class="human-text">מבית דיגיטל אונליין — בלי ז'רגון, בלי הבטחות ריקות</div>
+  </div>
   <div class="card">
-    <h1 class="card-headline">משהו קורה עכשיו —<br>ואנשים כבר מייצרים תוצאות.</h1>
-    <div class="card-sub">זה לא כישרון<br>זה לא מזל<br>זה פשוט להבין איך זה עובד</div>
-    <p class="tension-line">ורוב האנשים… עדיין לא ראו את זה</p>
+    <h1 class="card-headline">יש שינוי שרוב האנשים<br>עדיין לא שמו לב אליו.</h1>
+    <p class="headline-sub">ומי שמבין אותו מוקדם – מקבל יתרון שקשה להדביק.</p>
+    <div class="card-sub">לא צריך להיות מומחה.<br>לא צריך ניסיון.<br>רק להבין משהו שרוב האנשים עדיין מפספסים.</div>
+    <p class="tension-line">רוב האנשים עדיין מסתכלים על העולם הישן.</p>
     <div class="icon-row">
-      <div class="icon-item"><span class="ico">⏱</span>5 דקות</div>
-      <div class="icon-item"><span class="ico">▶️</span>הסבר ברור</div>
-      <div class="icon-item"><span class="ico">🔒</span>גישה מאובטחת</div>
+      <div class="icon-item"><span class="ico">🔒</span>צפייה פרטית</div>
+      <div class="icon-item"><span class="ico">🎥</span>דוגמאות אמיתיות</div>
+      <div class="icon-item"><span class="ico">⏱</span>5 דקות בלבד</div>
     </div>
+    <p class="benefits-title">אחרי הסרטון תדע:</p>
+    <div class="benefits-list">
+      <div class="b-item"><span class="b-check">✓</span>למה העולם הדיגיטלי משתנה</div>
+      <div class="b-item"><span class="b-check">✓</span>איך AI משנה את כללי המשחק</div>
+      <div class="b-item"><span class="b-check">✓</span>ואיך אפשר לנצל את זה בצורה פרקטית</div>
+    </div>
+    <p class="cc-label">הגישה הפתוחה נסגרת בעוד:</p>
     <div class="countdown-clock">
       <div class="cc-digits">
         <div class="cc-box"><span class="cc-num cd-secs">00</span><span class="cc-unit">שניות</span></div>
         <div class="cc-sep">:</div>
-        <div class="cc-box"><span class="cc-num cd-mins">01</span><span class="cc-unit">דקות</span></div>
+        <div class="cc-box"><span class="cc-num cd-mins">20</span><span class="cc-unit">דקות</span></div>
       </div>
     </div>
-    <p class="tension-line" style="margin-bottom:14px;">מה שאתה עומד לראות בנוי כמו פאזל. כל סרטון מוסיף חלק נוסף, בסוף הכול מתחבר ויפול לך אסימון ענק</p>
-    <button class="btn-main" onclick="openPopup()">תן לי גישה עכשיו</button>
-    <p class="micro-copy">🔒 סרטונים קצרים, פרקטיים וללא התחייבות. מומלץ לראות עד הסוף.</p>
+    <p class="tension-line" style="margin-bottom:14px;">אל תקפוץ קדימה. כל דקה בסרטון נבנתה כדי שהחלק האחרון יהיה ברור. בסוף רוב הצופים אומרים אותו דבר בדיוק: "עכשיו הכול מתחבר."</p>
+    <button class="btn-main" onclick="openPopup()">אני רוצה לראות</button>
+    <p class="trust-line">✓ כבר עזר להרבה אנשים להבין איך זה עובד</p>
+    <p class="micro-copy"><span>🎁 ללא עלות</span><span>✓ ללא התחייבות</span><span>✓ אפשר לצאת בכל רגע</span></p>
   </div>
 </div>
 
 <div class="sticky-cta" id="stickyCta">
-  <button class="btn-main" onclick="openPopup()">תן לי גישה עכשיו</button>
-  <div class="sticky-sub">🔒 סרטונים קצרים, פרקטיים וללא התחייבות. מומלץ לראות עד הסוף.</div>
+  <button class="btn-main" onclick="openPopup()">אני רוצה לראות</button>
+  <div class="sticky-sub"><span>🎁 ללא עלות</span><span>✓ ללא התחייבות</span><span>✓ אפשר לצאת בכל רגע</span></div>
 </div>
 
 <div class="popup-overlay" id="popup">
   <div class="popup-card">
     <button class="popup-close" onclick="document.getElementById('popup').classList.remove('open')">✕</button>
     <p class="popup-title">לאן לשלוח לך את זה?</p>
-    <p class="popup-sub">זה כבר נשלח לאלפים</p>
+    <p class="popup-sub">כבר עזר להרבה אנשים. עכשיו תורך.</p>
     <div id="formFields">
       <input class="field" id="fName" type="text" placeholder="שם מלא" autocomplete="name"/>
       <div class="err" id="eName">נא להזין שם מלא</div>
