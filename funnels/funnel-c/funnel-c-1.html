@@ -230,12 +230,15 @@ if(localStorage.getItem('ck')){var _cb=document.getElementById('cookieBanner');i
 
 const PAGE='funnel_c_video_1';
 const WEBHOOK='https://hook.eu1.make.com/ylf5uesfcqpyaxaxtvayjx08h9rrwqr2';
+const TRACK_HOOK='https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q';
 window.dataLayer=window.dataLayer||[];
 const P=new URLSearchParams(location.search);
 const variant=P.get('variant')||'',sup=P.get('lm_supplier')||P.get('supplier')||'',src=P.get('utm_source')||'';
 const phone=P.get('phone')||'',email=P.get('email')||'';
+const panel=P.get('panel')||'';
 (function(){var nb=document.getElementById('btnNext');if(nb&&location.search)nb.setAttribute('href',nb.getAttribute('href').split('?')[0]+location.search);})();
 dataLayer.push({event:'page_view',page:PAGE,source_variant:variant,supplier:sup,utm_source:src});
+if(panel)fetch(TRACK_HOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({metric:'video_1',panel:panel})}).catch(function(){});
 if(typeof fbq!=='undefined')fbq('track','PageView');
 const sd={};[25,50,75,100].forEach(d=>sd[d]=0);
 window.addEventListener('scroll',()=>{
