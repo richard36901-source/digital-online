@@ -36,7 +36,8 @@ function submitWebinar() {
     src: urlP.get('utm_source') || '',
     medium: urlP.get('utm_medium') || '',
     campaign: urlP.get('utm_campaign') || '',
-    ref: urlP.get('ref') || urlP.get('variant') || ''
+    ref: urlP.get('ref') || urlP.get('variant') || '',
+    panel: urlP.get('panel') || ''
   };
   fetch('https://hook.eu1.make.com/j0dlss962fq8xih7x4ndw7ch7o3qvb8x', {
     method:'POST', headers:{'Content-Type':'application/json'},
@@ -51,6 +52,9 @@ function submitWebinar() {
       timestamp:new Date().toLocaleString('he-IL')
     })
   }).then(async function() {
+    if(p.panel){
+      fetch('https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({metric:'webinar',panel:p.panel})}).catch(function(){});
+    }
     /* ── LEADMANAGER ── */
     var lmP = new URLSearchParams();
     const resolvedSupplier = await resolveSupplier(p);
@@ -556,7 +560,7 @@ try{if(typeof fbq==='function')fbq('track','PageView');}catch(e){}
 
 var sd={};[25,50,75,100].forEach(function(d){sd[d]=0;});
 window.addEventListener('scroll',function(){
-  var s=document.body.scrollHeight-window.innerHeight;if(!s)return;
+  var s=document.body.scrollHeight-window.innerHeight;if(!sreturn;
   var pct=Math.round(window.scrollY/s*100);
   [25,50,75,100].forEach(function(d){
     if(!sd[d]&&pct>=d){sd[d]=1;try{dataLayer.push({event:'scroll_depth',depth:d+'%',page:'webinar-signup'});}catch(e){}}
@@ -564,4 +568,6 @@ window.addEventListener('scroll',function(){
 },{passive:true});
 </script>
 </body>
+</html>
+
 </html>
