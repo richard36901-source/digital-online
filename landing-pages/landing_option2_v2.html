@@ -11,16 +11,17 @@
 <script src="/shared/params.js"></script>
 <script src="/shared/pixels.js"></script>
 <script>
-/* Persistent countdown, unique to this variant (does not use the shared
-   countdown.js, which intentionally always resets to 1:00 on every page
-   load). This one sets a real deadline on first visit, stores it in
-   localStorage, and keeps counting down from the same deadline on every
-   subsequent load/refresh -- once it hits zero it freezes at 00:00 instead
-   of silently restarting, so the clock never lies to a returning visitor. */
+/* Fast urgency countdown, unique to this variant. Counts down from 1:00
+   and, in the final 30 seconds, flips the clock into "critical" mode
+   (faster pulse, red glow) to visibly signal pressure. It repeats every
+   60 seconds -- but unlike the old version, it's anchored to a fixed
+   per-visitor start time saved in localStorage, not to "now" on every
+   load. So a refresh doesn't cheat it back to a fresh 1:00 -- it just
+   shows wherever the same real, ongoing cycle currently is. */
 (function () {
-  var DURATION_MS = 20 * 60 * 1000; // 20-minute real access window
-  var CRITICAL_MS = 30 * 1000;
-  var KEY = 'v2_countdown_deadline';
+  var DURATION_MS = 60 * 1000;   // 1-minute cycle
+  var CRITICAL_MS = 30 * 1000;   // last 30 seconds = urgent/blinking
+  var KEY = 'v2_countdown_anchor';
   var started = false;
 
   function pad(n) { return String(n).padStart(2, '0'); }
@@ -29,16 +30,15 @@
     if (started) return;
     started = true;
 
-    var deadline = parseInt(localStorage.getItem(KEY), 10);
-    if (!deadline || isNaN(deadline)) {
-      deadline = Date.now() + DURATION_MS;
-      try { localStorage.setItem(KEY, String(deadline)); } catch (e) {}
+    var anchor = parseInt(localStorage.getItem(KEY), 10);
+    if (!anchor || isNaN(anchor)) {
+      anchor = Date.now();
+      try { localStorage.setItem(KEY, String(anchor)); } catch (e) {}
     }
 
     function tick() {
-      var diff = deadline - Date.now();
-      var expired = diff <= 0;
-      if (expired) diff = 0;
+      var elapsed = (Date.now() - anchor) % DURATION_MS;
+      var diff = DURATION_MS - elapsed;
       var m = Math.floor(diff / 60000);
       var s = Math.floor((diff % 60000) / 1000);
       var mins = document.querySelectorAll('.cd-mins');
@@ -49,11 +49,9 @@
       var critical = diff <= CRITICAL_MS;
       var clocks = document.querySelectorAll('.countdown-clock');
       for (var k = 0; k < clocks.length; k++) clocks[k].classList.toggle('cc-critical', critical);
-
-      if (expired && intervalId) { clearInterval(intervalId); }
     }
     tick();
-    var intervalId = setInterval(tick, 1000);
+    setInterval(tick, 1000);
   };
 
   if (document.readyState === 'loading') {
@@ -300,12 +298,12 @@ window.submitForm = async function submitForm() {
       <div class="b-item"><span class="b-check">✓</span>איך AI משנה את כללי המשחק</div>
       <div class="b-item"><span class="b-check">✓</span>ואיך אפשר לנצל את זה בצורה פרקטית</div>
     </div>
-    <p class="cc-label">הגישה הפתוחה נסגרת בעוד:</p>
+    <p class="cc-label">ההטבה נעולה בעוד:</p>
     <div class="countdown-clock">
       <div class="cc-digits">
         <div class="cc-box"><span class="cc-num cd-secs">00</span><span class="cc-unit">שניות</span></div>
         <div class="cc-sep">:</div>
-        <div class="cc-box"><span class="cc-num cd-mins">20</span><span class="cc-unit">דקות</span></div>
+        <div class="cc-box"><span class="cc-num cd-mins">01</span><span class="cc-unit">דקות</span></div>
       </div>
     </div>
     <p class="tension-line" style="margin-bottom:14px;">אל תקפוץ קדימה. כל דקה בסרטון נבנתה כדי שהחלק האחרון יהיה ברור. בסוף רוב הצופים אומרים אותו דבר בדיוק: "עכשיו הכול מתחבר."</p>
