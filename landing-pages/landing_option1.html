@@ -232,8 +232,11 @@ async function handleSubmit(){
     lmP.append('utm_medium', med || '');
     lmP.append('utm_campaign', camp || '');
     lmP.append('page', PAGE);
+    /* keepalive:true so this survives the redirect below even if the 1.8s
+       delay isn't long enough on a slow connection -- belt-and-suspenders
+       alongside the existing setTimeout. */
     fetch('https://api.leadmanager.co.il/handlers/lm/submit.cms?' + lmP.toString(), {
-      method: 'GET', mode: 'no-cors'
+      method: 'GET', mode: 'no-cors', keepalive: true
     }).catch(function(){});
   } catch(e) {}
 

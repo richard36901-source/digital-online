@@ -847,8 +847,13 @@ document.addEventListener('submit', async (e) => {
     lmP.append('utm_medium', pp.medium || '');
     lmP.append('utm_campaign', pp.campaign || '');
     lmP.append('page', PAGE_ID);
+    /* keepalive:true is essential here -- this fetch fires right before
+       window.location.href navigates away, and without keepalive the browser
+       is allowed to cancel an in-flight request mid-navigation, silently
+       dropping the lead from LeadManager while everything else (which is
+       awaited earlier) still succeeds. */
     fetch('https://api.leadmanager.co.il/handlers/lm/submit.cms?' + lmP.toString(), {
-      method: 'GET', mode: 'no-cors'
+      method: 'GET', mode: 'no-cors', keepalive: true
     }).catch(function(){});
   } catch(err) {}
 
