@@ -456,15 +456,15 @@
       <span class="sicn">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
       </span>
-      השוואת משפכים · OPTION2 מול OPTION2_V2
+      השוואת משפכים · מסע C מול מסע D
     </h2>
-    <span class="meta">המרה לאורך כל שלב במשפך, עמוד מול עמוד</span>
+    <span class="meta">המרה לאורך כל שלב במסע ה-4 סרטונים, מערכת מול מערכת</span>
   </div>
 
   <div class="funnel-wrap">
     <div class="funnel-title-row">
-      <h3 id="funnelCaption">בדיקת משפך המרות · דף נחיתה מקורי מול וריאציית CTR</h3>
-      <p>האחוז בכל שורה = כמה המשיכו מהשלב הקודם באותו עמוד · הפס הצבעוני בכל תא הוא גודל יחסי מתוך הכניסות לאותו עמוד</p>
+      <h3 id="funnelCaption">בדיקת משפך המרות · מסע הווידאו של Funnel C מול Funnel D</h3>
+      <p>funnel-c מרכז את כל התנועה מ-OPTION1 / OPTION2 / OPTION2_V2, ו-funnel-d מרכז את התנועה מ-OPTION3 / OPTION4 · האחוז בכל שורה = כמה המשיכו מהשלב הקודם באותה מערכת · הפס הצבעוני הוא גודל יחסי מתוך הכניסות לאותה מערכת</p>
     </div>
 
     <table class="funnel-table" aria-labelledby="funnelCaption">
@@ -475,23 +475,23 @@
       <thead>
         <tr>
           <th scope="col" class="fcol-head label">שלב</th>
-          <th scope="col" class="fcol-head f1"><span class="inner"><span class="dot" aria-hidden="true"></span> OPTION2 · מקורי</span></th>
-          <th scope="col" class="fcol-head f2"><span class="inner"><span class="dot" aria-hidden="true"></span> OPTION2_V2 · וריאציה</span></th>
+          <th scope="col" class="fcol-head f1"><span class="inner"><span class="dot" aria-hidden="true"></span> Funnel C · Option 1/2/2V2</span></th>
+          <th scope="col" class="fcol-head f2"><span class="inner"><span class="dot" aria-hidden="true"></span> Funnel D · Option 3/4</span></th>
         </tr>
       </thead>
       <tbody id="funnel_steps"></tbody>
       <tfoot id="funnel_winners">
         <tr>
           <th scope="row" class="fwinner-lbl">המרה סופית</th>
-          <td class="fwinner-cell" id="fw_2">
+          <td class="fwinner-cell" id="fw_c">
             <div class="fwinner-trophy" aria-hidden="true"></div>
             <div class="fwinner-rate mono">0.0%</div>
-            <div class="fwinner-name">OPTION2<span class="sr-only fw-winner-tag"></span></div>
+            <div class="fwinner-name">Funnel C<span class="sr-only fw-winner-tag"></span></div>
           </td>
-          <td class="fwinner-cell" id="fw_5">
+          <td class="fwinner-cell" id="fw_d">
             <div class="fwinner-trophy" aria-hidden="true"></div>
             <div class="fwinner-rate mono">0.0%</div>
-            <div class="fwinner-name">OPTION2_V2<span class="sr-only fw-winner-tag"></span></div>
+            <div class="fwinner-name">Funnel D<span class="sr-only fw-winner-tag"></span></div>
           </td>
         </tr>
       </tfoot>
@@ -638,9 +638,15 @@ const HEAD_TO_HEAD = {
   variantB: { name: 'OPTION2_V2', desc: 'וריאציית CTR (כחול/כתום)', panel: 5 }
 };
 
-const PANELS = [
-  { id: 2, key: '2', label: 'OPTION2 · מקורי', cls: 'f1' },
-  { id: 5, key: '5', label: 'OPTION2_V2 · וריאציה', cls: 'f2' }
+/* The funnel STEP TABLE (4-video journey) below is a different axis from the
+   landing-page copy test above: funnel-c and funnel-d are two distinct video
+   sequences/systems, each fed by more than one landing page (funnel-c gets
+   OPTION1, OPTION2 and OPTION2_V2; funnel-d gets OPTION3 and OPTION4). So
+   comparing "the two panels where the video journey happens" means summing
+   every panel that feeds each funnel, not comparing single landing pages. */
+const FUNNEL_GROUPS = [
+  { id: 'c', key: 'c', label: 'Funnel C · Option 1/2/2V2', cls: 'f1', panels: ['1', '2', '5'] },
+  { id: 'd', key: 'd', label: 'Funnel D · Option 3/4', cls: 'f2', panels: ['3', '4'] }
 ];
 
 const FUNNEL_STEPS = [
@@ -791,6 +797,12 @@ function render() {
   renderEmailTracking();
 }
 
+// Sums a metric ID across every panel that feeds a given funnel group,
+// e.g. groupSum(FUNNEL_GROUPS[0], 'video_2') = f1_video_2 + f2_video_2 + f5_video_2.
+function groupSum(group, metricKey) {
+  return group.panels.reduce((sum, p) => sum + m(`f${p}_${metricKey}`), 0);
+}
+
 function renderFunnelComparison() {
   const container = document.getElementById('funnel_steps'); // <tbody>
   if (!container) return; // section not present, skip safely
@@ -806,9 +818,9 @@ function renderFunnelComparison() {
       <span>${step.label}</span>
     </span></th>`;
 
-    PANELS.forEach(panel => {
-      const count = m(`f${panel.key}_${step.key}`);
-      const entryCount = m(`f${panel.key}_entry`);
+    FUNNEL_GROUPS.forEach(group => {
+      const count = groupSum(group, step.key);
+      const entryCount = groupSum(group, 'entry');
       let pctText = '', pctClass = '', srPrefix = '';
 
       if (idx === 0) {
@@ -817,7 +829,7 @@ function renderFunnelComparison() {
         pctText = ofTotal > 0 ? `${ofTotal.toFixed(1)}% מסה״כ` : '';
       } else {
         const prevKey = FUNNEL_STEPS[idx - 1].key;
-        const prev = m(`f${panel.key}_${prevKey}`);
+        const prev = groupSum(group, prevKey);
         const p = pct(count, prev);
         pctText = prev > 0 ? `${p.toFixed(0)}%` : '';
         if (p < 30 && prev > 5) { pctClass = 'dropoff'; srPrefix = 'ירידה חדה: '; }
@@ -825,7 +837,7 @@ function renderFunnelComparison() {
 
       const endClass = step.isEnd ? 'end' : '';
       const barHeight = entryCount > 0 ? Math.min(100, Math.round(pct(count, entryCount))) : 0;
-      html += `<td class="fcell ${panel.cls} ${endClass}">
+      html += `<td class="fcell ${group.cls} ${endClass}">
         <div class="fcell-bar-bg"><div class="fcell-bar-fill" style="height:${barHeight}%"></div></div>
         <div class="fcell-inner">
           <div class="fcell-count">${fmt(count)}</div>
@@ -839,19 +851,19 @@ function renderFunnelComparison() {
 
   container.innerHTML = html;
 
-  let bestRate = -1, bestPanel = null;
-  PANELS.forEach(panel => {
-    const entry = m(`f${panel.key}_entry`);
-    const web = m(`f${panel.key}_webinar`);
+  let bestRate = -1, bestGroup = null;
+  FUNNEL_GROUPS.forEach(group => {
+    const entry = groupSum(group, 'entry');
+    const web = groupSum(group, 'webinar');
     const r = pct(web, entry);
-    if (entry >= 10 && r > bestRate) { bestRate = r; bestPanel = panel.key; }
+    if (entry >= 10 && r > bestRate) { bestRate = r; bestGroup = group.key; }
   });
 
-  PANELS.forEach(panel => {
-    const el = document.getElementById('fw_' + panel.key);
+  FUNNEL_GROUPS.forEach(group => {
+    const el = document.getElementById('fw_' + group.key);
     if (!el) return;
-    const isWinner = bestPanel === panel.key;
-    const rate = pct(m(`f${panel.key}_webinar`), m(`f${panel.key}_entry`));
+    const isWinner = bestGroup === group.key;
+    const rate = pct(groupSum(group, 'webinar'), groupSum(group, 'entry'));
     el.querySelector('.fwinner-rate').textContent = fmtPct(rate);
     el.querySelector('.fwinner-trophy').textContent = isWinner ? '🏆' : '';
     el.querySelector('.fw-winner-tag').textContent = isWinner ? ' — המנצח' : '';
