@@ -203,7 +203,15 @@ window.submitForm = async function submitForm() {
   } catch(e) {}
 
   var sep3 = location.search ? '&' : '?';
-  window.location.href = '../funnels/funnel-d/funnel-d-1.html' + location.search + sep3 + 'panel=' + PANEL;
+  /* 50/50 split test: funnel-d (original) vs funnel-d-v2 (redesigned,
+     curiosity-loop copy) -- panels 6/7 are dedicated to this split so the
+     head-to-head comparison in the dashboard is clean and independent of
+     which landing page sent the visitor here. */
+  var arm = Math.random() < 0.5
+    ? { path: '../funnels/funnel-d/funnel-d-1.html', panel: '6' }
+    : { path: '../funnels/funnel-d-v2/funnel-d-v2-1.html', panel: '7' };
+  try { fetch(TRACK_HOOK, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ metric: 'entry', panel: arm.panel }) }).catch(function(){}); } catch(e) {}
+  window.location.href = arm.path + location.search + sep3 + 'panel=' + arm.panel;
 }
 </script>
 </head>
