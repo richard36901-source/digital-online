@@ -635,8 +635,12 @@ const SHEET_TAB = 'Dashboard';             // ← tab name (default 'Dashboard')
    "0". */
 const HEAD_TO_HEAD_TESTS = [
   {
+    /* This card measures the landing page's OWN conversion -- entries (page
+       views) vs. actually submitting the lead form -- not the downstream
+       webinar signup, which depends on the video funnel too and would mix
+       in noise unrelated to the landing page copy/design itself. */
     title: 'דף נחיתה · OPTION2 מול OPTION2_V2', tag: 'landing', tagLabel: 'דף נחיתה',
-    conversionLabel: 'נרשמו לוובינר',
+    conversionLabel: 'שלחו פרטים', conversionKey: 'landing',
     variantA: { name: 'OPTION2', desc: 'הגרסה המקורית (זהב)', panel: 2 },
     variantB: { name: 'OPTION2_V2', desc: 'וריאציית CTR (כחול/כתום)', panel: 5 }
   },
@@ -646,7 +650,7 @@ const HEAD_TO_HEAD_TESTS = [
        independent of which landing page sent the traffic -- see the
        redirect logic in landing-pages/*.html. */
     title: 'משפך D · מקורי מול V2 (עיצוב+קופי חדש)', tag: 'funnel', tagLabel: 'משפך וידאו',
-    conversionLabel: 'נרשמו לוובינר',
+    conversionLabel: 'נרשמו לוובינר', conversionKey: 'webinar',
     variantA: { name: 'Funnel D', desc: 'הגרסה המקורית (ענבר)', panel: 6 },
     variantB: { name: 'Funnel D V2', desc: 'עיצוב סקרנות (סגול/ציאן) + קופי חדש', panel: 7 }
   }
@@ -788,12 +792,15 @@ function render() {
   const rateToShow = explicitRate > 0 ? explicitRate : computedRate;
   document.getElementById('kpi_rate').textContent = fmtPct(rateToShow);
 
-  // "Leader" KPI: whichever panel currently has the higher entry→webinar
-  // conversion rate, once there's enough traffic to say anything meaningful.
+  // "Leader" KPI: whichever panel currently has the higher entry→conversion
+  // rate (using the same conversionKey as the card itself -- 'landing' i.e.
+  // submitted their details, for the OPTION2 vs OPTION2_V2 test), once
+  // there's enough traffic to say anything meaningful.
+  const leaderConvKey = HEAD_TO_HEAD.conversionKey || 'webinar';
   const entryA = m(`f${HEAD_TO_HEAD.variantA.panel}_entry`);
   const entryB = m(`f${HEAD_TO_HEAD.variantB.panel}_entry`);
-  const rateA0 = pct(m(`f${HEAD_TO_HEAD.variantA.panel}_webinar`), entryA);
-  const rateB0 = pct(m(`f${HEAD_TO_HEAD.variantB.panel}_webinar`), entryB);
+  const rateA0 = pct(m(`f${HEAD_TO_HEAD.variantA.panel}_${leaderConvKey}`), entryA);
+  const rateB0 = pct(m(`f${HEAD_TO_HEAD.variantB.panel}_${leaderConvKey}`), entryB);
   const kpiAbEl = document.getElementById('kpi_ab');
   const kpiAbSubEl = document.getElementById('kpi_ab_sub');
   if (entryA < 10 || entryB < 10) {
@@ -912,10 +919,11 @@ function renderHeadToHead() {
 // once (e.g. the landing-page copy test and the funnel-d redesign test)
 // without duplicating the markup.
 function renderHeadToHeadCard(test) {
+  const convKey = test.conversionKey || 'webinar';
   const aSent = m(`f${test.variantA.panel}_entry`);
-  const aConv = m(`f${test.variantA.panel}_webinar`);
+  const aConv = m(`f${test.variantA.panel}_${convKey}`);
   const bSent = m(`f${test.variantB.panel}_entry`);
-  const bConv = m(`f${test.variantB.panel}_webinar`);
+  const bConv = m(`f${test.variantB.panel}_${convKey}`);
 
   const rateA = pct(aConv, aSent);
   const rateB = pct(bConv, bSent);
