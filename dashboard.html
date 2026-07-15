@@ -652,12 +652,16 @@ const FUNNEL_GROUPS = [
 const FUNNEL_STEPS = [
   // hidden:true  =>  הנתון עדיין נטען ומחושב כרגיל, רק השורה לא מצוירת בדף.
   // כדי להחזיר שורה לתצוגה ברגע אחד: שנה hidden ל-false (או מחק את המאפיין).
+  // וידאו 1-4: כל דף וידאו שולח פינג ברגע שהוא נטען. מעכשיו הפינג עצמו מותנה
+  // בקוד של דפי הוידאו (funnels/funnel-c|d/*.html) בכך שהמבקר כבר סימן את
+  // השלב הקודם ברצף אצלו בדפדפן -- כך שהמונים כאן הם ספירה אמיתית של מי
+  // שהתקדם בסדר הנכון, ולא יכולים "לדלג" קדימה (למשל וידאו 4 גדול מוידאו 3).
   { key: 'entry',   label: '-',  icon: 'users', hidden: true },
   { key: 'landing', label: 'דף נחיתה - נשלחו',     icon: 'doc', hidden: true },
-  { key: 'video_1', label: 'וידאו 1 ננטש',      icon: 'play' },
-  { key: 'video_2', label: 'וידאו 2 ננטש',      icon: 'play' },
-  { key: 'video_3', label: 'וידאו 3 ננטש',      icon: 'play' },
-  { key: 'video_4', label: 'וידאו 4 ננטש',      icon: 'play' },
+  { key: 'video_1', label: 'הגיעו לוידאו 1',      icon: 'play' },
+  { key: 'video_2', label: 'הגיעו לוידאו 2',      icon: 'play' },
+  { key: 'video_3', label: 'הגיעו לוידאו 3',      icon: 'play' },
+  { key: 'video_4', label: 'הגיעו לוידאו 4',      icon: 'play' },
   { key: 'webinar', label: 'נרשמו לוובינר', icon: 'check', isEnd: true }
 ];
 
