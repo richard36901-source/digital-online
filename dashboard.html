@@ -236,6 +236,7 @@
   }
   .ab-tag.email { background: var(--pb-soft); color: var(--pb); border-color: var(--pb-border); }
   .ab-tag.landing { background: var(--pa-soft); color: var(--pa); border-color: var(--pa-border); }
+  .ab-tag.funnel { background: var(--pb-soft); color: var(--pb); border-color: var(--pb-border); }
   .ab-tag.wa { background: var(--good-bg); color: var(--good); border-color: var(--good-border); }
   .ab-tag.drip { background: var(--warn-bg); color: #92500a; border-color: var(--warn-border); }
   .ab-tag.back { background: var(--bad-bg); color: #b91c1c; border-color: var(--bad-border); }
@@ -626,17 +627,34 @@ const SHEET_TAB = 'Dashboard';             // ← tab name (default 'Dashboard')
    - If an ID isn't found, the dashboard shows 0 for that field.
    ============================================================================ */
 
-/* The site currently runs exactly one real, wired A/B test: the landing
-   page itself (OPTION2 vs OPTION2_V2), tracked via panel IDs 2 and 5.
-   Everything else that used to be listed here (WhatsApp, outbound emails,
-   drip sequences) has no automation actually writing data for it, so
-   showing it would just be a permanent, dishonest "0". */
-const HEAD_TO_HEAD = {
-  title: 'דף נחיתה · OPTION2 מול OPTION2_V2', tag: 'landing', tagLabel: 'דף נחיתה',
-  conversionLabel: 'נרשמו לוובינר',
-  variantA: { name: 'OPTION2', desc: 'הגרסה המקורית (זהב)', panel: 2 },
-  variantB: { name: 'OPTION2_V2', desc: 'וריאציית CTR (כחול/כתום)', panel: 5 }
-};
+/* Two real, wired A/B tests run on the site. Each is tracked via a pair of
+   dedicated panel IDs so the comparison is clean and doesn't mix traffic
+   from unrelated sources. Everything else that used to be listed here
+   (WhatsApp, outbound emails, drip sequences) has no automation actually
+   writing data for it, so showing it would just be a permanent, dishonest
+   "0". */
+const HEAD_TO_HEAD_TESTS = [
+  {
+    title: 'דף נחיתה · OPTION2 מול OPTION2_V2', tag: 'landing', tagLabel: 'דף נחיתה',
+    conversionLabel: 'נרשמו לוובינר',
+    variantA: { name: 'OPTION2', desc: 'הגרסה המקורית (זהב)', panel: 2 },
+    variantB: { name: 'OPTION2_V2', desc: 'וריאציית CTR (כחול/כתום)', panel: 5 }
+  },
+  {
+    /* Every landing page splits visitors 50/50 between these two panels
+       right before entering the video funnel, so this comparison is
+       independent of which landing page sent the traffic -- see the
+       redirect logic in landing-pages/*.html. */
+    title: 'משפך D · מקורי מול V2 (עיצוב+קופי חדש)', tag: 'funnel', tagLabel: 'משפך וידאו',
+    conversionLabel: 'נרשמו לוובינר',
+    variantA: { name: 'Funnel D', desc: 'הגרסה המקורית (ענבר)', panel: 6 },
+    variantB: { name: 'Funnel D V2', desc: 'עיצוב סקרנות (סגול/ציאן) + קופי חדש', panel: 7 }
+  }
+];
+// Kept as an alias to the first test: the top "leader" KPI card is
+// specifically about the OPTION2 vs OPTION2_V2 landing-page test and
+// references this directly.
+const HEAD_TO_HEAD = HEAD_TO_HEAD_TESTS[0];
 
 /* The funnel STEP TABLE (4-video journey) below is a different axis from the
    landing-page copy test above: funnel-c and funnel-d are two distinct video
@@ -886,8 +904,14 @@ function renderFunnelComparison() {
 function renderHeadToHead() {
   const container = document.getElementById('ab_grid');
   if (!container) return;
-  const test = HEAD_TO_HEAD;
+  container.innerHTML = HEAD_TO_HEAD_TESTS.map(renderHeadToHeadCard).join('');
+}
 
+// Builds one head-to-head "ab-card" for a single test definition. Pulled out
+// of renderHeadToHead() so the dashboard can show more than one A/B test at
+// once (e.g. the landing-page copy test and the funnel-d redesign test)
+// without duplicating the markup.
+function renderHeadToHeadCard(test) {
   const aSent = m(`f${test.variantA.panel}_entry`);
   const aConv = m(`f${test.variantA.panel}_webinar`);
   const bSent = m(`f${test.variantB.panel}_entry`);
@@ -915,7 +939,7 @@ function renderHeadToHead() {
   const offA = CIRC - (Math.min(rateA, 100) / 100) * CIRC;
   const offB = CIRC - (Math.min(rateB, 100) / 100) * CIRC;
 
-  container.innerHTML = `
+  return `
       <div class="ab-card">
         <div class="ab-head">
           <div class="ab-head-left">
