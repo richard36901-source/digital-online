@@ -233,7 +233,17 @@ const phone=P.get('phone')||'',email=P.get('email')||'';
 const panel=P.get('panel')||'';
 (function(){var nb=document.getElementById('btnNext');if(nb&&location.search)nb.setAttribute('href',nb.getAttribute('href').split('?')[0]+location.search);})();
 dataLayer.push({event:'page_view',page:PAGE,source_variant:variant,supplier:sup,utm_source:src});
-if(panel)fetch(TRACK_HOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({metric:'video_2',panel:panel})}).catch(function(){});
+/* Sequential funnel gate -- see funnel-d-1.html for the full explanation.
+   Only counts if this browser already has a marker showing it passed
+   video_1 in order first. */
+try {
+  var STEP_NUM = 2, FUNNEL_PREFIX = 'funnel_d';
+  var MAX_KEY = 'do_max_step_' + FUNNEL_PREFIX;
+  var prevMax = parseInt(localStorage.getItem(MAX_KEY), 10) || 0;
+  var inSequence = (STEP_NUM === 1) || (prevMax >= STEP_NUM - 1);
+  if (panel && inSequence) fetch(TRACK_HOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({metric:'video_2',panel:panel})}).catch(function(){});
+  if (inSequence && STEP_NUM > prevMax) localStorage.setItem(MAX_KEY, String(STEP_NUM));
+} catch(e) { if(panel)fetch(TRACK_HOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({metric:'video_2',panel:panel})}).catch(function(){}); }
 if(typeof fbq!=='undefined')fbq('track','PageView');
 const sd={};[25,50,75,100].forEach(d=>sd[d]=0);
 window.addEventListener('scroll',()=>{
