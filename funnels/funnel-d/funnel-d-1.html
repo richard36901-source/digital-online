@@ -241,7 +241,6 @@ window.dataLayer=window.dataLayer||[];
 const P=new URLSearchParams(location.search);
 const variant=P.get('variant')||'',sup=P.get('lm_supplier')||P.get('supplier')||'',src=P.get('utm_source')||'';
 const phone=P.get('phone')||'',email=P.get('email')||'';
-const lmf=P.get('lmf')||'',lmk=P.get('lmk')||'';
 const panel=P.get('panel')||'';
 (function(){var nb=document.getElementById('btnNext');if(nb&&location.search)nb.setAttribute('href',nb.getAttribute('href').split('?')[0]+location.search);})();
 dataLayer.push({event:'page_view',page:PAGE,source_variant:variant,supplier:sup,utm_source:src});
@@ -275,21 +274,11 @@ document.getElementById('btnNext').addEventListener('click',function(){
   if(navigator.sendBeacon){
     navigator.sendBeacon(WEBHOOK,JSON.stringify({event:'next_step_click',page:PAGE,phone:phone,email:email,pct_watched:lastPct,seconds_on_page:secs,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')}));
   }
-  /* Push funnel-progress to LeadManager (fld_181980) so the same lead
-     record reflects how far they got -- only fires if we have an
-     identified lead (phone/email carried from the landing page) and
-     know which LM form/key it was created under. */
-  if ((phone || email) && lmf && lmk) {
-    try {
-      var lmU = new URLSearchParams();
-      lmU.append('lm_form', lmf);
-      lmU.append('lm_key', lmk);
-      lmU.append('subscribers_phone', phone);
-      lmU.append('subscribers_email', email);
-      lmU.append('fld_181980', 'צפה בוידאו 1');
-      fetch('https://api.leadmanager.co.il/handlers/lm/submit.cms?' + lmU.toString(), { method: 'GET', mode: 'no-cors', keepalive: true }).catch(function(){});
-    } catch(e) {}
-  }
+  /* NOTE: a per-stage push to LeadManager's submit.cms was tried here and
+     reverted -- LM's API has no "update existing lead" call, only
+     create-new-lead, so every push created a separate duplicate lead
+     record instead of updating the original. Do not re-add without a
+     real LM update endpoint. */
 });
 window.addEventListener('load',()=>{
   const video=document.getElementById('vimeoPlayer');
@@ -350,3 +339,4 @@ setTimeout(function(){
 </body>
 </html>
 /html>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                         
