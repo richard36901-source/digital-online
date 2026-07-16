@@ -274,8 +274,7 @@ async function handleSubmit(){
        (fld_181980) -- lets the sales team prioritize leads who actually
        watched vs. those who only filled the form. Different landing pages
        submit to different LM forms, so lmf/lmk must travel with the lead. */
-    var leadQS = '&name=' + encodeURIComponent(data.name) + '&phone=' + encodeURIComponent(data.phone) + '&email=' + encodeURIComponent(data.email) + '&lmf=89907&lmk=28250230ddcd4b8a9f3929b7ab8744a1';
-    window.location.href = arm.path + location.search + sep + 'panel=' + arm.panel + leadQS;
+    window.location.href = arm.path + location.search + sep + 'panel=' + arm.panel;
   }, 1800);
 }
 
