@@ -857,6 +857,14 @@ document.addEventListener('submit', async (e) => {
     }).catch(function(){});
   } catch(err) {}
 
+  try {
+    fetch('https://hook.eu1.make.com/9nycxwodyby36g30ezp05idn0rqihnlh', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({phone: phone, name: name, email: email, stage: 1, stage_label: 'landing'}),
+      keepalive: true
+    }).catch(function(){});
+  } catch(err) {}
+
   dataLayer.push({
     event:        'form_submitted',
     variant:      VARIANT,

@@ -205,6 +205,14 @@ window.submitForm = async function submitForm() {
     }).catch(function(){});
   } catch(e) {}
 
+  try {
+    fetch('https://hook.eu1.make.com/9nycxwodyby36g30ezp05idn0rqihnlh', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({phone: phone, name: name, email: email, stage: 1, stage_label: 'landing'}),
+      keepalive: true
+    }).catch(function(){});
+  } catch(e) {}
+
   var sep3 = location.search ? '&' : '?';
   /* 50/50 split test: funnel-d (original) vs funnel-d-v2 (redesigned,
      curiosity-loop copy) -- panels 6/7 are dedicated to this split so the
