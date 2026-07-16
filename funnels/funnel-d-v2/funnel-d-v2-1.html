@@ -268,11 +268,13 @@ document.getElementById('btnNext').addEventListener('click',function(){
   if(navigator.sendBeacon){
     navigator.sendBeacon(WEBHOOK,JSON.stringify({event:'next_step_click',page:PAGE,phone:phone,email:email,pct_watched:lastPct,seconds_on_page:secs,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')}));
   }
-  /* NOTE: a per-stage push to LeadManager's submit.cms was tried here and
-     reverted -- LM's API has no "update existing lead" call, only
-     create-new-lead, so every push created a separate duplicate lead
-     record instead of updating the original. Do not re-add without a
-     real LM update endpoint. */
+  /* Lead-journey stage tracking -- logs to a Make.com Data Store
+     (append-only, keyed by phone+stage) instead of LeadManager, since
+     LM's API cannot update an existing lead. See lead-journey.html for
+     the viewer. */
+  if(navigator.sendBeacon){
+    navigator.sendBeacon('https://hook.eu1.make.com/9nycxwodyby36g30ezp05idn0rqihnlh',JSON.stringify({phone:phone,email:email,stage:2,stage_label:'video_1'}));
+  }
 });
 window.addEventListener('load',()=>{
   const video=document.getElementById('vimeoPlayer');
