@@ -76,11 +76,17 @@ function submitWebinar() {
     fetch('https://api.leadmanager.co.il/handlers/lm/submit.cms?' + lmP.toString(), {
       method: 'GET', mode: 'no-cors'
     }).catch(function(){});
-    /* NOTE: a "push final stage to the original lead" call was tried here
-       and reverted -- LM's API has no update-existing-lead call, only
-       create-new-lead, so it just created a disconnected duplicate lead
-       instead of marking the original as hot. Do not re-add without a
-       real LM update endpoint. */
+    /* Lead-journey stage tracking -- logs to a Make.com Data Store
+       (append-only, keyed by phone+stage) instead of LeadManager, since
+       LM's API cannot update an existing lead. See lead-journey.html for
+       the viewer. */
+    try {
+      fetch('https://hook.eu1.make.com/9nycxwodyby36g30ezp05idn0rqihnlh', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({phone: phone, name: name, email: email, stage: 6, stage_label: 'webinar_signup'}),
+        keepalive: true
+      }).catch(function(){});
+    } catch(e) {}
     document.getElementById('formWrap').style.display='none';
     document.getElementById('successMsg').style.display='block';
     try { if(typeof fbq==='function') fbq('track','CompleteRegistration'); } catch(e) {}
