@@ -76,6 +76,24 @@ function submitWebinar() {
     fetch('https://api.leadmanager.co.il/handlers/lm/submit.cms?' + lmP.toString(), {
       method: 'GET', mode: 'no-cors'
     }).catch(function(){});
+    /* Push the final funnel-progress stage (fld_181980) to the SAME lead
+       record that was created on the landing page -- using the original
+       lmf/lmk carried through the whole funnel, not the separate webinar
+       form (91392) above, so the sales team sees "reached the end" on the
+       one lead record they're already tracking, not a second disconnected
+       entry. Reaching this point is the hottest possible signal. */
+    var lmfOrig = urlP.get('lmf') || '', lmkOrig = urlP.get('lmk') || '';
+    if ((phone || email) && lmfOrig && lmkOrig) {
+      try {
+        var lmU = new URLSearchParams();
+        lmU.append('lm_form', lmfOrig);
+        lmU.append('lm_key', lmkOrig);
+        lmU.append('subscribers_phone', phone);
+        lmU.append('subscribers_email', email);
+        lmU.append('fld_181980', 'נרשם לוובינר');
+        fetch('https://api.leadmanager.co.il/handlers/lm/submit.cms?' + lmU.toString(), { method: 'GET', mode: 'no-cors' }).catch(function(){});
+      } catch(e) {}
+    }
     document.getElementById('formWrap').style.display='none';
     document.getElementById('successMsg').style.display='block';
     try { if(typeof fbq==='function') fbq('track','CompleteRegistration'); } catch(e) {}
