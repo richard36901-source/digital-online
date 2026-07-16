@@ -881,7 +881,14 @@ document.addEventListener('submit', async (e) => {
     ? { path: '../funnels/funnel-d/funnel-d-1.html', panel: '6' }
     : { path: '../funnels/funnel-d-v2/funnel-d-v2-1.html', panel: '7' };
   try { fetch(TRACK_HOOK, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ metric: 'entry', panel: arm.panel }) }).catch(function(){}); } catch(e) {}
-  window.location.href = arm.path + location.search + sep4 + 'panel=' + arm.panel;
+  /* Carry the lead's identity (and the LM form/key it was created under)
+     forward into the funnel so each video-step page can push a "how far
+     did they get" update to the SAME lead record in LeadManager
+     (fld_181980) -- lets the sales team prioritize leads who actually
+     watched vs. those who only filled the form. Different landing pages
+     submit to different LM forms, so lmf/lmk must travel with the lead. */
+  var leadQS = '&name=' + encodeURIComponent(name) + '&phone=' + encodeURIComponent(phone) + '&email=' + encodeURIComponent(email) + '&lmf=90867&lmk=4688231a3dff48db88fcc1316dcaa944';
+  window.location.href = arm.path + location.search + sep4 + 'panel=' + arm.panel + leadQS;
 });
 
 /* Header scroll shadow */
