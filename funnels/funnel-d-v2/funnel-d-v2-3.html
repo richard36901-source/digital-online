@@ -267,9 +267,7 @@ document.getElementById('btnNext').addEventListener('click',function(){
      (append-only, keyed by phone+stage) instead of LeadManager, since
      LM's API cannot update an existing lead. See lead-journey.html for
      the viewer. */
-  if(navigator.sendBeacon){
-    navigator.sendBeacon('https://hook.eu1.make.com/9nycxwodyby36g30ezp05idn0rqihnlh',JSON.stringify({phone:phone,email:email,stage:4,stage_label:'video_3'}));
-  }
+  fetch('https://hook.eu1.make.com/9nycxwodyby36g30ezp05idn0rqihnlh',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:phone,email:email,stage:4,stage_label:'video_3'}),keepalive:true}).catch(function(){});
 });
 window.addEventListener('load',()=>{
   const video=document.getElementById('vimeoPlayer');
