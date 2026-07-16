@@ -892,14 +892,17 @@ window.addEventListener('scroll', () => {
 
 async function resolveSupplier(p) {
   if (p.supplier) return p.supplier;
-  if (!p.marketer) return '';
+  // Default to the "yahav" marketer whenever the link carries no marketer
+  // param, or names one that isn't in marketers.json -- so a lead never
+  // ends up with an unassigned/unrecognized supplier in LeadManager.
   try {
     const res = await fetch('/marketers/marketers.json');
     const marketers = await res.json();
-    const entry = marketers[p.marketer];
-    return entry ? entry.lm_supplier : '';
+    const mk = (p.marketer && marketers[p.marketer]) ? p.marketer : 'yahav';
+    const entry = marketers[mk];
+    return entry ? entry.lm_supplier : 35213; // yahav's lm_supplier, last-resort fallback
   } catch (e) {
-    return '';
+    return 35213; // marketers.json unreachable -- still default to yahav
   }
 }
 
