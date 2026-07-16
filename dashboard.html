@@ -457,15 +457,15 @@
       <span class="sicn">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
       </span>
-      השוואת משפכים · מסע C מול מסע D
+      השוואת משפכים · Funnel D מול Funnel D V2
     </h2>
-    <span class="meta">המרה לאורך כל שלב במסע ה-4 סרטונים, מערכת מול מערכת</span>
+    <span class="meta">המרה לאורך כל שלב במסע ה-4 סרטונים, מבחן הפיצול הפעיל כרגע</span>
   </div>
 
   <div class="funnel-wrap">
     <div class="funnel-title-row">
-      <h3 id="funnelCaption">בדיקת משפך המרות · מסע הווידאו של Funnel C מול Funnel D (נתונים היסטוריים)</h3>
-      <p>הטבלה הזו משקפת את הניתוב הישן, מלפני שכל דפי הנחיתה חוברו למבחן הפיצול של פאנל D · הנתונים כאן קפואים מאז השינוי ונשמרים לצורך היסטוריה בלבד · ההשוואה החיה כרגע היא הכרטיס "משפך D · מקורי מול V2" למטה, שאליו מגיעה כל התנועה מ-5 דפי הנחיתה מפוצלת 50/50</p>
+      <h3 id="funnelCaption">בדיקת משפך המרות · מסע הווידאו של Funnel D מול Funnel D V2</h3>
+      <p>כל 5 דפי הנחיתה מפצלים את התנועה 50/50 בין שתי הגרסאות של Funnel D לפני כניסה לסרטון הראשון · פאנל 6 = הגרסה המקורית, פאנל 7 = העיצוב והקופי החדשים · האחוז בכל שורה = כמה מהכניסות לאותה גרסה הגיעו לשלב הזה</p>
     </div>
 
     <table class="funnel-table" aria-labelledby="funnelCaption">
@@ -476,23 +476,23 @@
       <thead>
         <tr>
           <th scope="col" class="fcol-head label">שלב</th>
-          <th scope="col" class="fcol-head f1"><span class="inner"><span class="dot" aria-hidden="true"></span> Funnel C · Option 1/2/2V2</span></th>
-          <th scope="col" class="fcol-head f2"><span class="inner"><span class="dot" aria-hidden="true"></span> Funnel D · Option 3/4</span></th>
+          <th scope="col" class="fcol-head f1"><span class="inner"><span class="dot" aria-hidden="true"></span> Funnel D · מקורי (פאנל 6)</span></th>
+          <th scope="col" class="fcol-head f2"><span class="inner"><span class="dot" aria-hidden="true"></span> Funnel D V2 · עיצוב חדש (פאנל 7)</span></th>
         </tr>
       </thead>
       <tbody id="funnel_steps"></tbody>
       <tfoot id="funnel_winners">
         <tr>
           <th scope="row" class="fwinner-lbl">המרה סופית</th>
-          <td class="fwinner-cell" id="fw_c">
-            <div class="fwinner-trophy" aria-hidden="true"></div>
-            <div class="fwinner-rate mono">0.0%</div>
-            <div class="fwinner-name">Funnel C<span class="sr-only fw-winner-tag"></span></div>
-          </td>
           <td class="fwinner-cell" id="fw_d">
             <div class="fwinner-trophy" aria-hidden="true"></div>
             <div class="fwinner-rate mono">0.0%</div>
             <div class="fwinner-name">Funnel D<span class="sr-only fw-winner-tag"></span></div>
+          </td>
+          <td class="fwinner-cell" id="fw_dv2">
+            <div class="fwinner-trophy" aria-hidden="true"></div>
+            <div class="fwinner-rate mono">0.0%</div>
+            <div class="fwinner-name">Funnel D V2<span class="sr-only fw-winner-tag"></span></div>
           </td>
         </tr>
       </tfoot>
@@ -660,15 +660,15 @@ const HEAD_TO_HEAD_TESTS = [
 // references this directly.
 const HEAD_TO_HEAD = HEAD_TO_HEAD_TESTS[0];
 
-/* The funnel STEP TABLE (4-video journey) below is a different axis from the
-   landing-page copy test above: funnel-c and funnel-d are two distinct video
-   sequences/systems, each fed by more than one landing page (funnel-c gets
-   OPTION1, OPTION2 and OPTION2_V2; funnel-d gets OPTION3 and OPTION4). So
-   comparing "the two panels where the video journey happens" means summing
-   every panel that feeds each funnel, not comparing single landing pages. */
+/* The funnel STEP TABLE (4-video journey) below tracks the split test that's
+   actually live right now: every landing page sends 50/50 traffic into
+   panel 6 (Funnel D original) or panel 7 (Funnel D V2), independent of which
+   landing page sent the visitor -- see the redirect logic in
+   landing-pages/*.html. This replaced the old funnel-c/funnel-d comparison,
+   which stopped receiving traffic once all landing pages were routed here. */
 const FUNNEL_GROUPS = [
-  { id: 'c', key: 'c', label: 'Funnel C · Option 1/2/2V2', cls: 'f1', panels: ['1', '2', '5'] },
-  { id: 'd', key: 'd', label: 'Funnel D · Option 3/4', cls: 'f2', panels: ['3', '4'] }
+  { id: 'd', key: 'd', label: 'Funnel D · מקורי (פאנל 6)', cls: 'f1', panels: ['6'] },
+  { id: 'dv2', key: 'dv2', label: 'Funnel D V2 · עיצוב חדש (פאנל 7)', cls: 'f2', panels: ['7'] }
 ];
 
 const FUNNEL_STEPS = [
