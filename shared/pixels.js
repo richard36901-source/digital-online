@@ -1,12 +1,14 @@
 async function loadFacebookPixel() {
   const p = new URLSearchParams(location.search);
   const marketer = p.get('marketer') || '';
-  if (!marketer) return;
 
   try {
     const res = await fetch('/marketers/marketers.json');
     const marketers = await res.json();
-    const m = marketers[marketer];
+    // Default to the "yahav" marketer whenever the link carries no marketer
+    // param, or names one that isn't in marketers.json.
+    const mk = (marketer && marketers[marketer]) ? marketer : 'yahav';
+    const m = marketers[mk];
     if (!m || !m.fb_pixel) return;
 
     const s = document.createElement('script');
