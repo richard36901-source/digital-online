@@ -48,15 +48,36 @@ h1{font-size:23px;font-weight:800;margin-bottom:4px;display:flex;align-items:cen
 .funnel-drop.good{color:#3ecf6a;}
 
 /* ---------- controls ---------- */
-.controls{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
-input[type=text],select{background:#151821;border:1px solid #262b36;color:#e8e8e8;padding:9px 12px;border-radius:9px;font-size:13.5px;}
+.controls{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;align-items:center;}
+input[type=text],input[type=date],select{background:#151821;border:1px solid #262b36;color:#e8e8e8;padding:9px 12px;border-radius:9px;font-size:13.5px;}
 input[type=text]{min-width:220px;flex:1;max-width:280px;}
+input[type=date]{color-scheme:dark;}
 select{cursor:pointer;}
 button{background:#3b6bf5;color:#fff;border:none;padding:9px 16px;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:600;transition:background .15s;}
 button:hover{background:#2f57cc;}
 button.ghost{background:#1b1e26;border:1px solid #262b36;color:#c7cbd4;}
 button.ghost:hover{background:#22262f;}
 .spacer{flex:1;}
+.custom-range{display:none;align-items:center;gap:6px;}
+.custom-range.show{display:flex;}
+.custom-range span{font-size:12px;color:#8a8f98;}
+.results-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px;font-size:12.5px;color:#8a8f98;}
+.results-bar .page-size{display:flex;align-items:center;gap:7px;}
+.results-bar select{padding:6px 10px;font-size:12.5px;}
+
+/* ---------- pagination ---------- */
+.pagination{display:flex;align-items:center;justify-content:center;gap:14px;padding:16px;}
+.pagination button{background:#1b1e26;border:1px solid #262b36;color:#c7cbd4;padding:7px 14px;font-size:13px;}
+.pagination button:hover:not(:disabled){background:#22262f;}
+.pagination button:disabled{opacity:.35;cursor:default;}
+.pagination .page-info{font-size:12.5px;color:#8a8f98;white-space:nowrap;}
+
+/* ---------- quick actions ---------- */
+.phone-cell{display:flex;align-items:center;gap:8px;justify-content:flex-end;}
+.qa{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;background:#1b1e26;border:1px solid #262b36;text-decoration:none;font-size:12px;flex-shrink:0;transition:background .12s;}
+.qa:hover{background:#262b36;}
+.qa.wa:hover{background:#1f3a2a;border-color:#2a5238;}
+.qa.call:hover{background:#1a2a3a;border-color:#22415e;}
 
 /* ---------- table ---------- */
 .table-wrap{background:#12141a;border:1px solid #22262f;border-radius:14px;overflow:hidden;}
@@ -132,6 +153,19 @@ tbody tr.hot{border-inline-start:3px solid #ff6ba0;}
     <option value="5">סרטון 4</option>
     <option value="6">🏆 נרשם לוובינר</option>
   </select>
+  <select id="dateRange">
+    <option value="">כל התאריכים</option>
+    <option value="today">היום</option>
+    <option value="7d">7 הימים האחרונים</option>
+    <option value="30d">30 הימים האחרונים</option>
+    <option value="month">החודש הזה</option>
+    <option value="year">השנה הזו</option>
+    <option value="custom">טווח מותאם אישית...</option>
+  </select>
+  <div class="custom-range" id="customRange">
+    <span>מ-</span><input type="date" id="dateFrom"/>
+    <span>עד</span><input type="date" id="dateTo"/>
+  </div>
   <select id="sortBy">
     <option value="updated_desc">החדשים ביותר</option>
     <option value="updated_asc">הישנים ביותר</option>
@@ -144,8 +178,26 @@ tbody tr.hot{border-inline-start:3px solid #ff6ba0;}
   <button onclick="loadData()">🔄 רענן</button>
 </div>
 
+<div class="results-bar">
+  <div id="resultsCount">-</div>
+  <div class="page-size">
+    <span>הצג בטבלה:</span>
+    <select id="pageSize">
+      <option value="20">20</option>
+      <option value="50">50</option>
+      <option value="100">100</option>
+      <option value="all">הכל</option>
+    </select>
+  </div>
+</div>
+
 <div class="table-wrap">
   <div id="content" class="loading">טוען...</div>
+  <div class="pagination" id="pagination" style="display:none;">
+    <button id="prevPage">← הקודם</button>
+    <span class="page-info" id="pageInfo"></span>
+    <button id="nextPage">הבא →</button>
+  </div>
 </div>
 
 <script>
@@ -162,11 +214,18 @@ const STAGE_LABELS = {
 const STAGE_COLORS = {1:'#e0b357',2:'#a8d666',3:'#5fd6b0',4:'#5fb3d6',5:'#a066d6',6:'#ff6ba0'};
 let allRows = [];
 let autoRefreshTimer = null;
+let currentPage = 1;
 
 function fmtDate(s){
   if(!s) return null;
   const d = new Date(String(s).replace(' ','T'));
   return isNaN(d.getTime()) ? null : d;
+}
+function normalizePhone(p){
+  let d = String(p||'').replace(/[^\d+]/g,'');
+  if(d.startsWith('+972')) d = d.slice(1);
+  else if(d.startsWith('0')) d = '972' + d.slice(1);
+  return d;
 }
 function relTime(s){
   const d = fmtDate(s);
@@ -281,12 +340,44 @@ function renderFunnel(rows){
   document.getElementById('funnel').innerHTML = html;
 }
 
-function applyFiltersAndRender(){
+function inDateRange(r){
+  const rangeVal = document.getElementById('dateRange').value;
+  if(!rangeVal) return true;
+  const d = fmtDate(r.updated_at);
+  if(!d) return false;
+  const now = new Date();
+  if(rangeVal === 'today'){
+    return d.toDateString() === now.toDateString();
+  }
+  if(rangeVal === '7d'){
+    return (now - d) <= 7*24*60*60*1000;
+  }
+  if(rangeVal === '30d'){
+    return (now - d) <= 30*24*60*60*1000;
+  }
+  if(rangeVal === 'month'){
+    return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+  }
+  if(rangeVal === 'year'){
+    return d.getFullYear() === now.getFullYear();
+  }
+  if(rangeVal === 'custom'){
+    const fromVal = document.getElementById('dateFrom').value;
+    const toVal = document.getElementById('dateTo').value;
+    if(fromVal && d < new Date(fromVal + 'T00:00:00')) return false;
+    if(toVal && d > new Date(toVal + 'T23:59:59')) return false;
+    return true;
+  }
+  return true;
+}
+
+function getFilteredSortedRows(){
   const q = document.getElementById('searchBox').value.trim().toLowerCase();
   const stageF = document.getElementById('stageFilter').value;
   let rows = allRows.filter(r =>
     (!q || (r.phone||'').toLowerCase().includes(q) || (r.name||'').toLowerCase().includes(q) || (r.email||'').toLowerCase().includes(q))
     && (!stageF || String(r.stage) === stageF)
+    && inDateRange(r)
   );
   const sortVal = document.getElementById('sortBy').value;
   rows = rows.slice().sort((a,b) => {
@@ -298,7 +389,36 @@ function applyFiltersAndRender(){
       default: return (b.updated_at||'').localeCompare(a.updated_at||'');
     }
   });
-  render(rows);
+  return rows;
+}
+
+function applyFiltersAndRender(resetPage){
+  if(resetPage) currentPage = 1;
+  const rows = getFilteredSortedRows();
+  document.getElementById('resultsCount').textContent = rows.length + ' לידים תואמים';
+
+  const pageSizeVal = document.getElementById('pageSize').value;
+  let pageRows = rows;
+  const pagination = document.getElementById('pagination');
+  if(pageSizeVal !== 'all'){
+    const size = Number(pageSizeVal);
+    const totalPages = Math.max(1, Math.ceil(rows.length / size));
+    if(currentPage > totalPages) currentPage = totalPages;
+    if(currentPage < 1) currentPage = 1;
+    const start = (currentPage - 1) * size;
+    pageRows = rows.slice(start, start + size);
+    if(rows.length > size){
+      pagination.style.display = 'flex';
+      document.getElementById('pageInfo').textContent = 'עמוד ' + currentPage + ' מתוך ' + totalPages + ' (מציג ' + (start+1) + '-' + Math.min(start+size, rows.length) + ' מתוך ' + rows.length + ')';
+      document.getElementById('prevPage').disabled = currentPage <= 1;
+      document.getElementById('nextPage').disabled = currentPage >= totalPages;
+    } else {
+      pagination.style.display = 'none';
+    }
+  } else {
+    pagination.style.display = 'none';
+  }
+  render(pageRows);
 }
 
 function render(rows){
@@ -321,9 +441,14 @@ function render(rows){
     const dots = [1,2,3,4,5,6].map(s =>
       '<span class="pdot" style="' + (r.stage >= s ? 'background:'+STAGE_COLORS[s] : '') + '" title="' + STAGE_LABELS[s] + '"></span>'
     ).join('');
+    const norm = normalizePhone(r.phone);
+    const quickActions = norm ? (
+      '<a class="qa call" href="tel:+' + norm + '" title="התקשר">📞</a>'
+      + '<a class="qa wa" href="https://wa.me/' + norm + '" target="_blank" rel="noopener" title="וואטסאפ">💬</a>'
+    ) : '';
     html += '<tr class="' + (r.stage >= 6 ? 'hot' : '') + '">'
       + '<td class="name-cell">' + esc(r.name || '-') + '</td>'
-      + '<td dir="ltr" style="text-align:right">' + esc(r.phone || '-') + '</td>'
+      + '<td dir="ltr"><div class="phone-cell"><span>' + esc(r.phone || '-') + '</span>' + quickActions + '</div></td>'
       + '<td dir="ltr" style="text-align:right" class="muted">' + esc(r.email || '-') + '</td>'
       + '<td><span class="stage-pill s' + r.stage + '">' + (STAGE_LABELS[r.stage] || r.stage_label || '-') + '</span><div class="progress-dots">' + dots + '</div></td>'
       + '<td class="time-cell"><div class="rel">' + esc(relTime(r.updated_at) || '-') + '</div><div class="abs">' + esc(r.updated_at || '-') + '</div></td>'
@@ -335,12 +460,7 @@ function render(rows){
 }
 
 function exportCsv(){
-  const q = document.getElementById('searchBox').value.trim().toLowerCase();
-  const stageF = document.getElementById('stageFilter').value;
-  const rows = allRows.filter(r =>
-    (!q || (r.phone||'').toLowerCase().includes(q) || (r.name||'').toLowerCase().includes(q) || (r.email||'').toLowerCase().includes(q))
-    && (!stageF || String(r.stage) === stageF)
-  );
+  const rows = getFilteredSortedRows();
   if(!rows.length){ showToast('אין נתונים לייצוא'); return; }
   const header = ['שם','טלפון','אימייל','שלב','עודכן'];
   const lines = [header.join(',')];
@@ -416,9 +536,43 @@ function esc(s){
   return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
-document.getElementById('searchBox').addEventListener('input', applyFiltersAndRender);
-document.getElementById('stageFilter').addEventListener('change', applyFiltersAndRender);
-document.getElementById('sortBy').addEventListener('change', applyFiltersAndRender);
+const PREF_KEY = 'lj_prefs';
+function savePrefs(){
+  localStorage.setItem(PREF_KEY, JSON.stringify({
+    stageFilter: document.getElementById('stageFilter').value,
+    dateRange: document.getElementById('dateRange').value,
+    dateFrom: document.getElementById('dateFrom').value,
+    dateTo: document.getElementById('dateTo').value,
+    sortBy: document.getElementById('sortBy').value,
+    pageSize: document.getElementById('pageSize').value
+  }));
+}
+function loadPrefs(){
+  try {
+    const p = JSON.parse(localStorage.getItem(PREF_KEY) || '{}');
+    if(p.stageFilter) document.getElementById('stageFilter').value = p.stageFilter;
+    if(p.dateRange) document.getElementById('dateRange').value = p.dateRange;
+    if(p.dateFrom) document.getElementById('dateFrom').value = p.dateFrom;
+    if(p.dateTo) document.getElementById('dateTo').value = p.dateTo;
+    if(p.sortBy) document.getElementById('sortBy').value = p.sortBy;
+    if(p.pageSize) document.getElementById('pageSize').value = p.pageSize;
+    document.getElementById('customRange').classList.toggle('show', p.dateRange === 'custom');
+  } catch(e) {}
+}
+
+document.getElementById('searchBox').addEventListener('input', function(){ applyFiltersAndRender(true); });
+document.getElementById('stageFilter').addEventListener('change', function(){ savePrefs(); applyFiltersAndRender(true); });
+document.getElementById('sortBy').addEventListener('change', function(){ savePrefs(); applyFiltersAndRender(true); });
+document.getElementById('pageSize').addEventListener('change', function(){ savePrefs(); applyFiltersAndRender(true); });
+document.getElementById('dateRange').addEventListener('change', function(){
+  document.getElementById('customRange').classList.toggle('show', this.value === 'custom');
+  savePrefs();
+  applyFiltersAndRender(true);
+});
+document.getElementById('dateFrom').addEventListener('change', function(){ savePrefs(); applyFiltersAndRender(true); });
+document.getElementById('dateTo').addEventListener('change', function(){ savePrefs(); applyFiltersAndRender(true); });
+document.getElementById('prevPage').addEventListener('click', function(){ currentPage--; applyFiltersAndRender(); });
+document.getElementById('nextPage').addEventListener('click', function(){ currentPage++; applyFiltersAndRender(); });
 document.getElementById('autoRefresh').addEventListener('change', function(){
   if(this.checked){
     localStorage.setItem('lj_autorefresh','1');
@@ -433,6 +587,7 @@ if(localStorage.getItem('lj_autorefresh')){
   autoRefreshTimer = setInterval(loadData, 30000);
 }
 
+loadPrefs();
 loadData();
 </script>
 </body>
