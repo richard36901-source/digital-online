@@ -196,14 +196,31 @@ async function loadData(){
   try {
     const res = await fetch(LOOKUP_HOOK, { cache: 'no-store' });
     const raw = await res.json();
-    // Collapse to one row per phone = the highest stage reached
+    // Collapse to one row per phone = the highest stage reached. Name/email
+    // are tracked separately from stage/updated_at: the video-stage tracking
+    // calls (stage 2-5, fired from the funnel pages) only ever send
+    // {phone, email, stage} -- they never carry the lead's name. Only the
+    // stage-1 "landing" call (and stage-6 "webinar_signup") include it. If we
+    // just took name/email from whichever record has the highest stage (the
+    // old behavior), any lead whose highest stage happens to be a video step
+    // shows up with a blank name, even though we know it perfectly well from
+    // their stage-1 record. So: keep the first non-empty name/email seen for
+    // each phone across ALL of that phone's records, independent of which
+    // record ends up "winning" for stage/updated_at.
     const byPhone = {};
     (raw || []).forEach(r => {
       if(!r || !r.phone) return;
       const stage = Number(r.stage) || 0;
-      const existing = byPhone[r.phone];
-      if(!existing || stage > existing.stage || (stage === existing.stage && r.updated_at > existing.updated_at)){
-        byPhone[r.phone] = { phone: r.phone, name: r.name, email: r.email, stage: stage, stage_label: r.stage_label, updated_at: r.updated_at };
+      let existing = byPhone[r.phone];
+      if(!existing){
+        existing = byPhone[r.phone] = { phone: r.phone, name: '', email: '', stage: -1, stage_label: '', updated_at: '' };
+      }
+      if(r.name && !existing.name) existing.name = r.name;
+      if(r.email && !existing.email) existing.email = r.email;
+      if(stage > existing.stage || (stage === existing.stage && r.updated_at > existing.updated_at)){
+        existing.stage = stage;
+        existing.stage_label = r.stage_label;
+        existing.updated_at = r.updated_at;
       }
     });
     allRows = Object.values(byPhone);
