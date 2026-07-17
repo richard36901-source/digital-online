@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;800;900&family=Assistant:wght@400;500;600&display=swap" rel="stylesheet"/>
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-WNJN9XQT');</script>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-WHCW874B');</script>
 <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','10211443525862398');fbq('track','PageView');</script>
 <script src="/shared/pixels.js"></script>
 <script>
@@ -198,10 +198,16 @@ async function submitForm(){
     try{fetch(webhook,{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({event:'lead_form',page:pageId,video_id:vimeoId,name:name,phone:phone,email:email,supplier:supVal,utm_source:srcVal,variant:varVal,timestamp:new Date().toLocaleString('he-IL')})
     }).catch(function(){});}catch(e){}
-    /* LeadManager */
+    /* LeadManager -- routed through the same server-side Make.com relay
+       used by every other landing page (instead of a direct no-cors GET,
+       which the browser can never confirm succeeded, so failed LM
+       submissions used to vanish silently). The relay performs the actual
+       LM call server-side and logs status+response to the LMSubmitLog
+       data store for auditability. */
+    var resolvedSupplier='';
     try{
       var marketerVal=(typeof marketer!=='undefined')?marketer:'';
-      var resolvedSupplier=await resolveSupplier({supplier:supVal,marketer:marketerVal});
+      resolvedSupplier=await resolveSupplier({supplier:supVal,marketer:marketerVal});
       var lmP=new URLSearchParams();
       lmP.append('lm_form','91591');
       lmP.append('lm_key','12fadffcc1f648a1b83d5e0715cd95e4');
@@ -218,7 +224,26 @@ async function submitForm(){
       lmP.append('utm_campaign',typeof P!=='undefined'?P.get('utm_campaign')||'':'');
       lmP.append('page',pageId);
       lmP.append('video_id',vimeoId);
-      fetch('https://api.leadmanager.co.il/handlers/lm/submit.cms?'+lmP.toString(),{method:'GET',mode:'no-cors'}).catch(function(){});
+      fetch('https://hook.eu1.make.com/j4ktylebkczp1tgvlj0h4tfbxb77q9b1',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({qs:lmP.toString(),page:pageId,phone:phone,name:name,email:email}),
+        keepalive:true
+      }).catch(function(){});
+    }catch(e){}
+    /* Lead-journey stage tracking -- logs to a Make.com Data Store
+       (append-only, keyed by phone+stage) instead of LeadManager, since
+       LM's API cannot update an existing lead. See lead-journey.html for
+       the viewer. This page has no video-1-4 funnel of its own -- the
+       lead-form submission itself is the only step, so it is logged as
+       stage 1 ("landing"), matching how every other landing page logs its
+       initial submission. */
+    try{
+      fetch('https://hook.eu1.make.com/9nycxwodyby36g30ezp05idn0rqihnlh',{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({phone:phone,name:name,email:email,stage:1,stage_label:'landing'}),
+        keepalive:true
+      }).catch(function(){});
     }catch(e){}
     /* Always show success */
     var ff=document.getElementById('formFields');
@@ -312,7 +337,7 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.1);}
 </style>
 </head>
 <body>
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WNJN9XQT" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WHCW874B" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <div class="wrap">
   <h1 class="hl-top" id="hlTop">צפה עכשיו:</h1>
   <h2 class="hl-main" id="hlMain"></h2>
