@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-<title>דיגיטל אונליין | ייעוץ עסקי ושיווקי לעסקים קטנים ופרילנסרים</title>
+<title>דיגיטל אונליין | סדרת הדרכות דיגיטלית ללא עלות</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;800;900&family=Assistant:wght@400;500;600&display=swap" rel="stylesheet"/>
@@ -35,11 +35,13 @@ input,button{font-family:inherit;outline:none;-webkit-tap-highlight-color:transp
 h1{font-family:'Heebo',sans-serif;font-size:clamp(23px,6vw,36px);font-weight:900;color:#fff;line-height:1.28;margin-bottom:16px;letter-spacing:-.5px;}
 h1 .gold{background:linear-gradient(135deg,#d4a843,#f0c060,#d4a843);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 .sub{font-family:'Assistant',sans-serif;font-size:clamp(15px,3.8vw,18px);color:rgba(255,255,255,.62);line-height:1.7;margin-bottom:26px;max-width:420px;margin-left:auto;margin-right:auto;}
-.what-box{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px 18px;margin-bottom:26px;text-align:right;}
+.what-box{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px 18px;margin-bottom:18px;text-align:right;}
 .what-box h2{font-family:'Heebo',sans-serif;font-size:13px;font-weight:800;color:#d4a843;margin-bottom:8px;letter-spacing:.2px;}
 .what-list{list-style:none;display:flex;flex-direction:column;gap:7px;}
 .what-list li{font-family:'Assistant',sans-serif;font-size:13.5px;color:rgba(255,255,255,.65);line-height:1.6;padding-right:18px;position:relative;}
-.what-list li::before{content:'•';position:absolute;right:0;color:#d4a843;}
+.what-list li::before{content:'✔';position:absolute;right:0;color:#d4a843;font-size:11px;}
+.no-need{font-family:'Assistant',sans-serif;font-size:12.5px;color:rgba(255,255,255,.4);line-height:1.7;margin-bottom:26px;}
+.no-need b{color:rgba(255,255,255,.6);font-weight:600;}
 .main-cta{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#d4a843,#f0c060);color:#000;font-family:'Heebo',sans-serif;font-size:17px;font-weight:900;border:none;border-radius:8px;cursor:pointer;padding:18px 40px;width:100%;max-width:360px;position:relative;overflow:hidden;letter-spacing:.2px;}
 .main-cta::after{content:'';position:absolute;top:0;left:-120%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);animation:shine 2.8s ease-in-out infinite;}
 @keyframes shine{0%{left:-120%}60%{left:160%}100%{left:160%}}
@@ -88,8 +90,9 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.15)}
 const WEBHOOK='https://hook.eu1.make.com/jp6ukjt7tpk3y4yly9c691g01f47cq8q';
 const TRACK_HOOK='https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q';
 const PANEL='8';
-const VARIANT='tiktok_consulting_v1';
+const VARIANT='tiktok_video_series_v1';
 const PAGE='landing_tiktok';
+const FUNNEL_PATH='../funnels/funnel-d-v2/funnel-d-v2-1.html';
 window.dataLayer=window.dataLayer||[];
 const p = getParams();
 const marketer = p.marketer;
@@ -222,8 +225,10 @@ async function handleSubmit(){
   /* Lead-journey stage tracking -- logs to a Make.com Data Store
      (append-only, keyed by phone+stage) instead of LeadManager, since
      LM's API cannot update an existing lead. See lead-journey.html for
-     the viewer. This page has no video funnel -- the consultation-call
-     request itself is the only step, so it is logged as stage 1. */
+     the viewer. This page promises the video training series, and the
+     redirect below into funnel-d-v2 is what actually delivers it -- so
+     this is stage 1 ("landing"), with stage 2 ("video_1") logged by the
+     funnel page itself the moment the visitor lands there. */
   try {
     fetch('https://hook.eu1.make.com/9nycxwodyby36g30ezp05idn0rqihnlh', {
       method: 'POST', headers: {'Content-Type':'application/json'},
@@ -246,11 +251,18 @@ async function handleSubmit(){
   if(typeof fbq !== 'undefined') fbq('track','Lead');
   document.getElementById('formWrap').style.display = 'none';
   document.getElementById('successBox').classList.add('show');
-  /* No redirect into the video funnel here -- this page promises a
-     consultation call, so the on-page thank-you message IS the fulfillment
-     of that promise. Sending TikTok traffic into a different downstream
-     flow than what the page describes would recreate the exact
-     "misleading" problem the ad was disapproved for. */
+
+  /* This page promises "immediate access to the video series" -- the
+     redirect here into funnel-d-v2 is what actually fulfills that promise
+     right away, instead of just showing an on-page thank-you message.
+     Matches the same delivery mechanism already used by the other
+     (non-TikTok) landing pages, so the promise made on THIS page and the
+     content the visitor actually receives are identical -- no gap between
+     the two, which is what matters for platform ad-review compliance. */
+  setTimeout(function(){
+    var sep = location.search ? '&' : '?';
+    window.location.href = FUNNEL_PATH + location.search + sep + 'panel=' + PANEL + '&phone=' + encodeURIComponent(data.phone) + '&email=' + encodeURIComponent(data.email);
+  }, 1800);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -289,20 +301,22 @@ document.addEventListener('DOMContentLoaded',function(){
 </div>
 <div class="hero">
   <div class="hero-inner">
-    <span class="tag">📋 ייעוץ עסקי חינם</span>
-    <h1>ייעוץ עסקי ו<span class="gold">שיווקי אישי</span><br>לעסקים קטנים ופרילנסרים</h1>
-    <p class="sub">שיחת ייעוץ קצרה וללא עלות, שבה נבין יחד את המצב העסקי שלכם ונציע כיוונים מעשיים להתקדמות.</p>
+    <span class="tag">🎥 סדרת הדרכות דיגיטלית · ללא עלות</span>
+    <h1>לפני שמחליטים ללמוד תחום חדש...<br>כדאי קודם <span class="gold">להבין איך הוא באמת עובד</span></h1>
+    <p class="sub">בכל יום אנחנו משתמשים באינטרנט וברשתות החברתיות, אבל רוב האנשים לא באמת יודעים איך העולם הדיגיטלי פועל מאחורי הקלעים. בדיוק בשביל זה הכנו סדרת הדרכות קצרה שתעשה לכם סדר, ותעזור לכם להבין האם התחום הזה בכלל מתאים לכם.</p>
     <div class="what-box">
-      <h2>מה כולל הייעוץ:</h2>
+      <h2>מה מחכה לכם בסדרה:</h2>
       <ul class="what-list">
-        <li>שיחה אישית של כ-20 דקות עם איש מקצוע מהצוות שלנו</li>
-        <li>בדיקה של המצב העסקי והשיווקי הנוכחי שלכם</li>
-        <li>המלצות מעשיות שאפשר ליישם באופן מיידי</li>
-        <li>ללא עלות וללא התחייבות מצדכם</li>
+        <li>איך עולם השיווק הדיגיטלי עובד היום</li>
+        <li>אילו כלים ופלטפורמות מרכזיות קיימות</li>
+        <li>איפה AI נכנס לתמונה</li>
+        <li>איך נראה תהליך עבודה אמיתי בתחום</li>
+        <li>האם התחום הזה בכלל מתאים לכם</li>
       </ul>
     </div>
-    <button class="main-cta" onclick="openModal()">📞 קבעו שיחת ייעוץ חינם</button>
-    <p class="cta-sub">נחזור אליכם בטלפון או במייל לתיאום מועד</p>
+    <p class="no-need"><b>לא צריך</b> ניסיון קודם, עסק קיים או ידע טכנולוגי - רק סקרנות ללמוד ולהכיר תחום חדש.</p>
+    <button class="main-cta" onclick="openModal()">🎬 קבלו גישה לסדרת ההדרכות</button>
+    <p class="cta-sub">🔒 ללא עלות · ללא התחייבות · אפשר להפסיק בכל שלב</p>
   </div>
 </div>
 <footer>
@@ -313,8 +327,8 @@ document.addEventListener('DOMContentLoaded',function(){
 <div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
   <div class="modal" id="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">השאירו פרטים ונחזור אליכם לתיאום השיחה</div>
-    <div class="modal-sub">ייעוץ עסקי ושיווקי אישי · ללא עלות</div>
+    <div class="modal-title">קבלו גישה לסדרת ההדרכות</div>
+    <div class="modal-sub">סדרת הדרכות דיגיטלית קצרה · ללא עלות</div>
     <div id="formWrap" class="form-wrap">
       <input type="text" id="iName" placeholder="שם מלא" autocomplete="name" dir="rtl"/>
       <p class="ferr" id="errName"></p>
@@ -324,20 +338,20 @@ document.addEventListener('DOMContentLoaded',function(){
       <p class="ferr" id="errEmail"></p>
       <div class="consent-wrap">
         <input type="checkbox" id="consent"/>
-        <label for="consent">אני מאשר/ת יצירת קשר לתיאום שיחת הייעוץ ותוכן שיווקי במייל, בטלפון ובוואטסאפ. אפשר להסיר בכל שלב שתרצה.</label>
+        <label for="consent">אני מאשר/ת קבלת גישה לסדרת ההדרכות ותוכן שיווקי במייל, בטלפון ובוואטסאפ. אפשר להסיר בכל שלב שתרצה.</label>
       </div>
       <button class="submit-btn" id="submitBtn" onclick="handleSubmit()">
-        <span id="bc">📞 קבעו לי שיחת ייעוץ</span>
+        <span id="bc">🎬 אני רוצה להתחיל לצפות</span>
       </button>
       <p class="form-notes">
         🔒 לא שולחים ספאם. ניתן להסיר בכל עת.<br>
-        נציג מהצוות יחזור אליכם לתיאום מועד.
+        מיד לאחר ההרשמה תועברו ישירות לצפייה.
       </p>
     </div>
     <div class="success" id="successBox">
       <div class="si">✅</div>
-      <h2>הפרטים התקבלו!</h2>
-      <p>תודה! נציג מהצוות שלנו יחזור אליכם בקרוב לתיאום מועד לשיחת הייעוץ.</p>
+      <h2>מעולה, פותחים לכם את הסדרה!</h2>
+      <p>מיד תועברו אוטומטית לצפייה בסרטון הראשון. אם תרצו, תמיד אפשר להמשיך משם לשיחת התאמה אישית.</p>
     </div>
   </div>
 </div>
