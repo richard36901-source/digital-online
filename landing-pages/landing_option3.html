@@ -200,8 +200,11 @@ window.submitForm = async function submitForm() {
        is allowed to cancel an in-flight request mid-navigation, silently
        dropping the lead from LeadManager while everything else (which is
        awaited earlier) still succeeds. */
-    fetch('https://api.leadmanager.co.il/handlers/lm/submit.cms?' + lmP.toString(), {
-      method: 'GET', mode: 'no-cors', keepalive: true
+    fetch('https://hook.eu1.make.com/j4ktylebkczp1tgvlj0h4tfbxb77q9b1', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ qs: lmP.toString(), page: 'landing_option3', phone: phone, name: name, email: email }),
+      keepalive: true
     }).catch(function(){});
   } catch(e) {}
 

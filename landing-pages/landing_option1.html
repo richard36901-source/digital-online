@@ -238,8 +238,11 @@ async function handleSubmit(){
     /* keepalive:true so this survives the redirect below even if the 1.8s
        delay isn't long enough on a slow connection -- belt-and-suspenders
        alongside the existing setTimeout. */
-    fetch('https://api.leadmanager.co.il/handlers/lm/submit.cms?' + lmP.toString(), {
-      method: 'GET', mode: 'no-cors', keepalive: true
+    fetch('https://hook.eu1.make.com/j4ktylebkczp1tgvlj0h4tfbxb77q9b1', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ qs: lmP.toString(), page: PAGE, phone: data.phone, name: data.name, email: data.email }),
+      keepalive: true
     }).catch(function(){});
   } catch(e) {}
 

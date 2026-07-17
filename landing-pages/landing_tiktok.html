@@ -211,8 +211,11 @@ async function handleSubmit(){
     lmP.append('utm_campaign', camp || '');
     lmP.append('page', PAGE);
     /* keepalive:true so this survives even on a slow connection. */
-    fetch('https://api.leadmanager.co.il/handlers/lm/submit.cms?' + lmP.toString(), {
-      method: 'GET', mode: 'no-cors', keepalive: true
+    fetch('https://hook.eu1.make.com/j4ktylebkczp1tgvlj0h4tfbxb77q9b1', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ qs: lmP.toString(), page: PAGE, phone: data.phone, name: data.name, email: data.email }),
+      keepalive: true
     }).catch(function(){});
   } catch(e) {}
 
