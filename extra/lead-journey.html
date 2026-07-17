@@ -29,6 +29,15 @@ tr:hover td{background:#1b1e26;}
 .del-btn{background:#3a1a1a;color:#ff6b6b;border:1px solid #522;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;white-space:nowrap;}
 .del-btn:hover{background:#522;}
 .del-btn:disabled{opacity:.5;cursor:default;}
+.confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:1000;}
+.confirm-box{background:#1b1e26;border:1px solid #2c313d;border-radius:12px;padding:22px 24px;max-width:360px;width:90%;text-align:center;}
+.confirm-box p{color:#e8e8e8;font-size:14px;line-height:1.6;margin-bottom:18px;}
+.confirm-actions{display:flex;gap:10px;justify-content:center;}
+.confirm-yes{background:#7a1f1f;color:#fff;}
+.confirm-yes:hover{background:#932525;}
+.confirm-no{background:#2c313d;color:#c7cbd4;}
+.confirm-no:hover{background:#3a4152;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#3a1a1a;color:#ff9a9a;border:1px solid #522;border-radius:8px;padding:10px 18px;font-size:13px;z-index:1000;}
 .empty{color:#8a8f98;text-align:center;padding:40px;}
 .loading{color:#8a8f98;text-align:center;padding:40px;}
 </style>
@@ -110,11 +119,15 @@ function render(rows){
   content.innerHTML = html;
 }
 
-async function deleteLead(btn){
+function deleteLead(btn){
   const phone = btn.getAttribute('data-phone');
   if(!phone) return;
-  if(!confirm('למחוק את הליד עם הטלפון ' + phone + ' מהטבלה? הפעולה אינה הפיכה.')) return;
+  showConfirm('למחוק את הליד עם הטלפון ' + phone + ' מהטבלה? הפעולה אינה הפיכה.', function(){
+    doDelete(phone, btn);
+  });
+}
 
+async function doDelete(phone, btn){
   btn.disabled = true;
   btn.textContent = 'מוחק...';
   try {
@@ -132,10 +145,33 @@ async function deleteLead(btn){
       (r.email||'').toLowerCase().includes(q)
     ));
   } catch(e) {
-    alert('מחיקה נכשלה: ' + e.message);
+    showToast('מחיקה נכשלה: ' + e.message);
     btn.disabled = false;
     btn.textContent = '🗑️ מחק';
   }
+}
+
+function showConfirm(message, onConfirm){
+  const overlay = document.createElement('div');
+  overlay.className = 'confirm-overlay';
+  overlay.innerHTML = '<div class="confirm-box">'
+    + '<p>' + esc(message) + '</p>'
+    + '<div class="confirm-actions">'
+    + '<button class="confirm-yes">מחק</button>'
+    + '<button class="confirm-no">ביטול</button>'
+    + '</div></div>';
+  document.body.appendChild(overlay);
+  overlay.querySelector('.confirm-no').onclick = function(){ overlay.remove(); };
+  overlay.addEventListener('click', function(e){ if(e.target === overlay) overlay.remove(); });
+  overlay.querySelector('.confirm-yes').onclick = function(){ overlay.remove(); onConfirm(); };
+}
+
+function showToast(message){
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = message;
+  document.body.appendChild(t);
+  setTimeout(function(){ t.remove(); }, 3500);
 }
 
 function esc(s){
