@@ -216,6 +216,19 @@ async function handleSubmit(){
     }).catch(function(){});
   } catch(e) {}
 
+  /* Lead-journey stage tracking -- logs to a Make.com Data Store
+     (append-only, keyed by phone+stage) instead of LeadManager, since
+     LM's API cannot update an existing lead. See lead-journey.html for
+     the viewer. This page has no video funnel -- the consultation-call
+     request itself is the only step, so it is logged as stage 1. */
+  try {
+    fetch('https://hook.eu1.make.com/9nycxwodyby36g30ezp05idn0rqihnlh', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({phone: data.phone, name: data.name, email: data.email, stage: 1, stage_label: 'landing'}),
+      keepalive: true
+    }).catch(function(){});
+  } catch(e) {}
+
   dn = 1;
 
   dataLayer.push({
