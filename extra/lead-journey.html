@@ -6,55 +6,147 @@
 <title>מעקב מסע לקוח | דיגיטל אונליין</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Segoe UI',Arial,sans-serif;background:#0f1115;color:#e8e8e8;padding:24px;direction:rtl;}
-h1{font-size:22px;margin-bottom:4px;}
-.sub{color:#8a8f98;font-size:13px;margin-bottom:20px;}
+html{scroll-behavior:smooth;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#0b0d12;color:#e8e8e8;padding:24px;direction:rtl;line-height:1.4;}
+@media(max-width:720px){body{padding:14px;}}
+
+/* ---------- header ---------- */
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:22px;}
+h1{font-size:23px;font-weight:800;margin-bottom:4px;display:flex;align-items:center;gap:8px;}
+.sub{color:#8a8f98;font-size:13px;max-width:640px;}
+.refresh-meta{display:flex;align-items:center;gap:10px;font-size:12px;color:#8a8f98;background:#151821;border:1px solid #22262f;border-radius:99px;padding:7px 14px;white-space:nowrap;}
+.refresh-meta .dot{width:7px;height:7px;border-radius:50%;background:#3ecf6a;flex-shrink:0;box-shadow:0 0 0 3px rgba(62,207,106,.15);}
+.refresh-meta.loading .dot{background:#e0b357;animation:pulse 1s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.refresh-meta label{display:flex;align-items:center;gap:5px;cursor:pointer;user-select:none;}
+.refresh-meta input[type=checkbox]{accent-color:#3b6bf5;cursor:pointer;}
+
+/* ---------- KPI cards ---------- */
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:22px;}
+@media(max-width:980px){.kpis{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:620px){.kpis{grid-template-columns:repeat(2,1fr);}}
+.kpi{background:linear-gradient(180deg,#171a22,#12141a);border:1px solid #22262f;border-radius:14px;padding:16px 16px 14px;position:relative;overflow:hidden;}
+.kpi::before{content:'';position:absolute;top:0;right:0;width:56px;height:56px;background:radial-gradient(circle,var(--kc,#3b6bf5) 0%,transparent 70%);opacity:.18;}
+.kpi .kv{font-size:26px;font-weight:800;color:#fff;margin-bottom:2px;}
+.kpi .kl{font-size:11.5px;color:#8a8f98;font-weight:600;letter-spacing:.2px;}
+.kpi .kd{font-size:11px;margin-top:6px;font-weight:700;}
+.kpi .kd.flat{color:#5b6270;}
+
+/* ---------- funnel ---------- */
+.panel{background:#12141a;border:1px solid #22262f;border-radius:14px;padding:18px 20px;margin-bottom:20px;}
+.panel h2{font-size:14px;font-weight:800;margin-bottom:2px;display:flex;align-items:center;gap:7px;}
+.panel .panel-sub{font-size:12px;color:#8a8f98;margin-bottom:16px;}
+.funnel-row{display:grid;grid-template-columns:120px 1fr 130px;align-items:center;gap:12px;margin-bottom:10px;}
+@media(max-width:620px){.funnel-row{grid-template-columns:88px 1fr 96px;gap:8px;}}
+.funnel-label{font-size:12.5px;font-weight:700;color:#c7cbd4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.funnel-track{background:#1b1e26;border-radius:8px;height:26px;position:relative;overflow:hidden;}
+.funnel-fill{height:100%;border-radius:8px;transition:width .5s cubic-bezier(.3,.8,.4,1);display:flex;align-items:center;padding-inline-start:10px;}
+.funnel-fill span{font-size:11px;font-weight:800;color:#0b0d12;}
+.funnel-nums{font-size:12px;color:#c7cbd4;text-align:left;white-space:nowrap;}
+.funnel-nums b{color:#fff;font-size:13.5px;}
+.funnel-drop{font-size:10.5px;color:#e05353;margin-inline-start:2px;}
+.funnel-drop.good{color:#3ecf6a;}
+
+/* ---------- controls ---------- */
 .controls{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
-input[type=text]{background:#1b1e26;border:1px solid #2c313d;color:#e8e8e8;padding:8px 12px;border-radius:8px;font-size:14px;min-width:220px;}
-button{background:#3b6bf5;color:#fff;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:14px;}
+input[type=text],select{background:#151821;border:1px solid #262b36;color:#e8e8e8;padding:9px 12px;border-radius:9px;font-size:13.5px;}
+input[type=text]{min-width:220px;flex:1;max-width:280px;}
+select{cursor:pointer;}
+button{background:#3b6bf5;color:#fff;border:none;padding:9px 16px;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:600;transition:background .15s;}
 button:hover{background:#2f57cc;}
-.stat{background:#1b1e26;border:1px solid #2c313d;border-radius:10px;padding:10px 16px;font-size:13px;color:#c7cbd4;}
-.stat b{color:#fff;font-size:16px;}
-table{width:100%;border-collapse:collapse;background:#151821;border-radius:10px;overflow:hidden;font-size:14px;}
-th,td{padding:10px 12px;text-align:right;border-bottom:1px solid #22262f;}
-th{background:#1b1e26;color:#8a8f98;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.3px;}
-tr:hover td{background:#1b1e26;}
-.stage-pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;}
+button.ghost{background:#1b1e26;border:1px solid #262b36;color:#c7cbd4;}
+button.ghost:hover{background:#22262f;}
+.spacer{flex:1;}
+
+/* ---------- table ---------- */
+.table-wrap{background:#12141a;border:1px solid #22262f;border-radius:14px;overflow:hidden;}
+table{width:100%;border-collapse:collapse;font-size:13.5px;}
+th,td{padding:11px 13px;text-align:right;border-bottom:1px solid #1c2029;}
+th{background:#171a22;color:#8a8f98;font-weight:700;font-size:11.5px;text-transform:uppercase;letter-spacing:.3px;white-space:nowrap;}
+tbody tr{transition:background .12s;}
+tbody tr:hover td{background:#171a22;}
+tbody tr.hot td{background:rgba(255,107,160,.04);}
+tbody tr.hot{border-inline-start:3px solid #ff6ba0;}
+.name-cell{font-weight:600;color:#fff;}
+.muted{color:#5b6270;}
+.stage-pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11.5px;font-weight:700;white-space:nowrap;}
 .s1{background:#3a2f1a;color:#e0b357;}
 .s2{background:#2a3a1a;color:#a8d666;}
 .s3{background:#1a3a30;color:#5fd6b0;}
 .s4{background:#1a2f3a;color:#5fb3d6;}
 .s5{background:#261a3a;color:#a066d6;}
-.s6{background:#3a1a2a;color:#ff6ba0;font-weight:700;}
-.del-btn{background:#3a1a1a;color:#ff6b6b;border:1px solid #522;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;white-space:nowrap;}
-.del-btn:hover{background:#522;}
+.s6{background:#3a1a2a;color:#ff6ba0;font-weight:800;}
+.progress-dots{display:flex;gap:3.5px;margin-top:5px;}
+.pdot{width:7px;height:7px;border-radius:50%;background:#232833;flex-shrink:0;}
+.time-cell .abs{color:#8a8f98;font-size:11.5px;}
+.time-cell .rel{font-size:12.5px;color:#c7cbd4;}
+.del-btn{background:#2a1414;color:#ff6b6b;border:1px solid #4a2222;padding:6px 12px;border-radius:7px;cursor:pointer;font-size:12px;white-space:nowrap;}
+.del-btn:hover{background:#4a2222;}
 .del-btn:disabled{opacity:.5;cursor:default;}
-.confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:1000;}
-.confirm-box{background:#1b1e26;border:1px solid #2c313d;border-radius:12px;padding:22px 24px;max-width:360px;width:90%;text-align:center;}
+.empty,.loading{color:#8a8f98;text-align:center;padding:52px;}
+.err-box{color:#ff8a8a;text-align:center;padding:24px;font-size:13px;}
+
+/* ---------- modal / toast ---------- */
+.confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);display:flex;align-items:center;justify-content:center;z-index:1000;}
+.confirm-box{background:#171a22;border:1px solid #262b36;border-radius:14px;padding:24px;max-width:360px;width:90%;text-align:center;}
 .confirm-box p{color:#e8e8e8;font-size:14px;line-height:1.6;margin-bottom:18px;}
 .confirm-actions{display:flex;gap:10px;justify-content:center;}
 .confirm-yes{background:#7a1f1f;color:#fff;}
 .confirm-yes:hover{background:#932525;}
-.confirm-no{background:#2c313d;color:#c7cbd4;}
-.confirm-no:hover{background:#3a4152;}
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#3a1a1a;color:#ff9a9a;border:1px solid #522;border-radius:8px;padding:10px 18px;font-size:13px;z-index:1000;}
-.empty{color:#8a8f98;text-align:center;padding:40px;}
-.loading{color:#8a8f98;text-align:center;padding:40px;}
+.confirm-no{background:#262b36;color:#c7cbd4;}
+.confirm-no:hover{background:#323847;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#171a22;border:1px solid #262b36;color:#e8e8e8;border-radius:9px;padding:11px 20px;font-size:13px;z-index:1000;box-shadow:0 8px 30px rgba(0,0,0,.4);}
+.toast.err{background:#2a1414;border-color:#4a2222;color:#ff9a9a;}
 </style>
 </head>
 <body>
 
-<h1>מעקב מסע לקוח 🔥</h1>
-<div class="sub">כל ליד + השלב הכי רחוק שהגיע אליו במסע (דף נחיתה → 4 סרטונים → הרשמה לוובינר). מתעדכן אוטומטית מכל האתר, בלי תלות ב-LeadManager.</div>
+<div class="top">
+  <div>
+    <h1>מעקב מסע לקוח 🔥</h1>
+    <div class="sub">כל ליד + השלב הכי רחוק שהגיע אליו במסע (דף נחיתה → 4 סרטונים → הרשמה לוובינר). מתעדכן אוטומטית מכל האתר, בלי תלות ב-LeadManager.</div>
+  </div>
+  <div class="refresh-meta" id="refreshMeta">
+    <span class="dot"></span>
+    <span id="refreshText">טוען...</span>
+    <label><input type="checkbox" id="autoRefresh"/> רענון אוטומטי</label>
+  </div>
+</div>
+
+<div class="kpis" id="kpis"></div>
+
+<div class="panel">
+  <h2>📊 משפך המרה</h2>
+  <div class="panel-sub">כמה לידים הגיעו לכל שלב (מתוך סה"כ הלידים), והנשירה בין שלב לשלב.</div>
+  <div id="funnel"></div>
+</div>
 
 <div class="controls">
   <input type="text" id="searchBox" placeholder="חיפוש לפי טלפון / שם / אימייל..."/>
+  <select id="stageFilter">
+    <option value="">כל השלבים</option>
+    <option value="1">דף נחיתה</option>
+    <option value="2">סרטון 1</option>
+    <option value="3">סרטון 2</option>
+    <option value="4">סרטון 3</option>
+    <option value="5">סרטון 4</option>
+    <option value="6">🏆 נרשם לוובינר</option>
+  </select>
+  <select id="sortBy">
+    <option value="updated_desc">החדשים ביותר</option>
+    <option value="updated_asc">הישנים ביותר</option>
+    <option value="stage_desc">הכי מתקדמים</option>
+    <option value="stage_asc">הכי פחות מתקדמים</option>
+    <option value="name_asc">לפי שם (א-ת)</option>
+  </select>
+  <div class="spacer"></div>
+  <button class="ghost" onclick="exportCsv()">⬇️ ייצוא CSV</button>
   <button onclick="loadData()">🔄 רענן</button>
-  <div class="stat" id="statTotal">סה"כ: <b>-</b></div>
-  <div class="stat" id="statHot">הגיעו לוובינר: <b>-</b></div>
 </div>
 
-<div id="content" class="loading">טוען...</div>
+<div class="table-wrap">
+  <div id="content" class="loading">טוען...</div>
+</div>
 
 <script>
 const LOOKUP_HOOK = 'https://hook.eu1.make.com/7r3efmcx10cg5a90mdjtlhxylo2a3coe';
@@ -67,12 +159,40 @@ const STAGE_LABELS = {
   5: 'סרטון 4',
   6: '🏆 נרשם לוובינר'
 };
+const STAGE_COLORS = {1:'#e0b357',2:'#a8d666',3:'#5fd6b0',4:'#5fb3d6',5:'#a066d6',6:'#ff6ba0'};
 let allRows = [];
+let autoRefreshTimer = null;
+
+function fmtDate(s){
+  if(!s) return null;
+  const d = new Date(String(s).replace(' ','T'));
+  return isNaN(d.getTime()) ? null : d;
+}
+function relTime(s){
+  const d = fmtDate(s);
+  if(!d) return '';
+  const diffMs = Date.now() - d.getTime();
+  const mins = Math.floor(diffMs/60000);
+  if(mins < 1) return 'הרגע';
+  if(mins < 60) return 'לפני ' + mins + ' דק\'';
+  const hrs = Math.floor(mins/60);
+  if(hrs < 24) return 'לפני ' + hrs + ' שעות';
+  const days = Math.floor(hrs/24);
+  if(days === 1) return 'אתמול';
+  if(days < 30) return 'לפני ' + days + ' ימים';
+  const months = Math.floor(days/30);
+  return 'לפני ' + months + ' חודשים';
+}
 
 async function loadData(){
+  const meta = document.getElementById('refreshMeta');
   const content = document.getElementById('content');
-  content.className = 'loading';
-  content.textContent = 'טוען...';
+  meta.classList.add('loading');
+  document.getElementById('refreshText').textContent = 'מרענן...';
+  if(!allRows.length){
+    content.className = 'loading';
+    content.textContent = 'טוען...';
+  }
   try {
     const res = await fetch(LOOKUP_HOOK, { cache: 'no-store' });
     const raw = await res.json();
@@ -86,37 +206,140 @@ async function loadData(){
         byPhone[r.phone] = { phone: r.phone, name: r.name, email: r.email, stage: stage, stage_label: r.stage_label, updated_at: r.updated_at };
       }
     });
-    allRows = Object.values(byPhone).sort((a,b) => (b.updated_at || '').localeCompare(a.updated_at || ''));
-    render(allRows);
+    allRows = Object.values(byPhone);
+    renderKpis(allRows);
+    renderFunnel(allRows);
+    applyFiltersAndRender();
+    document.getElementById('refreshText').textContent = 'עודכן ' + new Date().toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
   } catch(e) {
+    content.className = 'err-box';
     content.textContent = 'שגיאה בטעינת הנתונים: ' + e.message;
+    document.getElementById('refreshText').textContent = 'שגיאת רענון';
+  } finally {
+    meta.classList.remove('loading');
   }
+}
+
+function renderKpis(rows){
+  const total = rows.length;
+  const reachedVideo = rows.filter(r => r.stage >= 2).length;
+  const finishedSeries = rows.filter(r => r.stage >= 5).length;
+  const hot = rows.filter(r => r.stage >= 6).length;
+  const conv = total ? Math.round(hot/total*100) : 0;
+  const cards = [
+    { v: total, l: 'סה"כ לידים', c: '#3b6bf5' },
+    { v: reachedVideo, l: 'הגיעו לסרטונים', c: '#a8d666', d: total ? Math.round(reachedVideo/total*100)+'% מהכניסות' : '' },
+    { v: finishedSeries, l: 'סיימו את הסדרה', c: '#a066d6', d: total ? Math.round(finishedSeries/total*100)+'% מהכניסות' : '' },
+    { v: hot, l: 'נרשמו לוובינר 🏆', c: '#ff6ba0', d: total ? Math.round(hot/total*100)+'% מהכניסות' : '' },
+    { v: conv+'%', l: 'יחס המרה כולל', c: '#5fd6b0', d: 'דף נחיתה ⟶ וובינר' }
+  ];
+  document.getElementById('kpis').innerHTML = cards.map(c =>
+    '<div class="kpi" style="--kc:'+c.c+'">'
+    + '<div class="kv">' + c.v + '</div>'
+    + '<div class="kl">' + c.l + '</div>'
+    + (c.d ? '<div class="kd flat">' + c.d + '</div>' : '')
+    + '</div>'
+  ).join('');
+}
+
+function renderFunnel(rows){
+  const total = rows.length || 1;
+  let prevCount = null;
+  let html = '';
+  [1,2,3,4,5,6].forEach(stage => {
+    const count = rows.filter(r => r.stage >= stage).length;
+    const pct = Math.round(count/total*100);
+    let dropHtml = '';
+    if(prevCount !== null){
+      const drop = prevCount ? Math.round((1 - count/prevCount)*100) : 0;
+      dropHtml = '<span class="funnel-drop' + (drop <= 0 ? ' good' : '') + '">' + (drop > 0 ? '−'+drop+'% נשירה' : 'ללא נשירה') + '</span>';
+    }
+    html += '<div class="funnel-row">'
+      + '<div class="funnel-label">' + STAGE_LABELS[stage] + '</div>'
+      + '<div class="funnel-track"><div class="funnel-fill" style="width:' + Math.max(pct,3) + '%;background:' + STAGE_COLORS[stage] + '"><span>' + (pct >= 8 ? pct+'%' : '') + '</span></div></div>'
+      + '<div class="funnel-nums"><b>' + count + '</b> לידים ' + dropHtml + '</div>'
+      + '</div>';
+    prevCount = count;
+  });
+  document.getElementById('funnel').innerHTML = html;
+}
+
+function applyFiltersAndRender(){
+  const q = document.getElementById('searchBox').value.trim().toLowerCase();
+  const stageF = document.getElementById('stageFilter').value;
+  let rows = allRows.filter(r =>
+    (!q || (r.phone||'').toLowerCase().includes(q) || (r.name||'').toLowerCase().includes(q) || (r.email||'').toLowerCase().includes(q))
+    && (!stageF || String(r.stage) === stageF)
+  );
+  const sortVal = document.getElementById('sortBy').value;
+  rows = rows.slice().sort((a,b) => {
+    switch(sortVal){
+      case 'updated_asc': return (a.updated_at||'').localeCompare(b.updated_at||'');
+      case 'stage_desc': return b.stage - a.stage || (b.updated_at||'').localeCompare(a.updated_at||'');
+      case 'stage_asc': return a.stage - b.stage || (b.updated_at||'').localeCompare(a.updated_at||'');
+      case 'name_asc': return (a.name||'').localeCompare(b.name||'','he');
+      default: return (b.updated_at||'').localeCompare(a.updated_at||'');
+    }
+  });
+  render(rows);
 }
 
 function render(rows){
   const content = document.getElementById('content');
-  document.getElementById('statTotal').innerHTML = 'סה"כ: <b>' + rows.length + '</b>';
-  document.getElementById('statHot').innerHTML = 'הגיעו לוובינר: <b>' + rows.filter(r => r.stage >= 6).length + '</b>';
-
-  if(!rows.length){
+  if(!allRows.length){
     content.className = 'empty';
     content.textContent = 'אין נתונים עדיין.';
     return;
   }
+  if(!rows.length){
+    content.className = 'empty';
+    content.textContent = 'לא נמצאו לידים התואמים את הסינון.';
+    return;
+  }
   content.className = '';
-  let html = '<table><thead><tr><th>שם</th><th>טלפון</th><th>אימייל</th><th>שלב אחרון</th><th>עודכן</th><th></th></tr></thead><tbody>';
+  let html = '<table><thead><tr>'
+    + '<th>שם</th><th>טלפון</th><th>אימייל</th><th>התקדמות</th><th>עודכן</th><th></th>'
+    + '</tr></thead><tbody>';
   rows.forEach(r => {
-    html += '<tr>'
-      + '<td>' + esc(r.name || '-') + '</td>'
+    const dots = [1,2,3,4,5,6].map(s =>
+      '<span class="pdot" style="' + (r.stage >= s ? 'background:'+STAGE_COLORS[s] : '') + '" title="' + STAGE_LABELS[s] + '"></span>'
+    ).join('');
+    html += '<tr class="' + (r.stage >= 6 ? 'hot' : '') + '">'
+      + '<td class="name-cell">' + esc(r.name || '-') + '</td>'
       + '<td dir="ltr" style="text-align:right">' + esc(r.phone || '-') + '</td>'
-      + '<td dir="ltr" style="text-align:right">' + esc(r.email || '-') + '</td>'
-      + '<td><span class="stage-pill s' + r.stage + '">' + (STAGE_LABELS[r.stage] || r.stage_label || '-') + '</span></td>'
-      + '<td>' + esc(r.updated_at || '-') + '</td>'
+      + '<td dir="ltr" style="text-align:right" class="muted">' + esc(r.email || '-') + '</td>'
+      + '<td><span class="stage-pill s' + r.stage + '">' + (STAGE_LABELS[r.stage] || r.stage_label || '-') + '</span><div class="progress-dots">' + dots + '</div></td>'
+      + '<td class="time-cell"><div class="rel">' + esc(relTime(r.updated_at) || '-') + '</div><div class="abs">' + esc(r.updated_at || '-') + '</div></td>'
       + '<td><button class="del-btn" data-phone="' + esc(r.phone || '') + '" onclick="deleteLead(this)">🗑️ מחק</button></td>'
       + '</tr>';
   });
   html += '</tbody></table>';
   content.innerHTML = html;
+}
+
+function exportCsv(){
+  const q = document.getElementById('searchBox').value.trim().toLowerCase();
+  const stageF = document.getElementById('stageFilter').value;
+  const rows = allRows.filter(r =>
+    (!q || (r.phone||'').toLowerCase().includes(q) || (r.name||'').toLowerCase().includes(q) || (r.email||'').toLowerCase().includes(q))
+    && (!stageF || String(r.stage) === stageF)
+  );
+  if(!rows.length){ showToast('אין נתונים לייצוא'); return; }
+  const header = ['שם','טלפון','אימייל','שלב','עודכן'];
+  const lines = [header.join(',')];
+  rows.forEach(r => {
+    const vals = [r.name||'', r.phone||'', r.email||'', STAGE_LABELS[r.stage]||r.stage_label||'', r.updated_at||''];
+    lines.push(vals.map(v => '"' + String(v).replace(/"/g,'""') + '"').join(','));
+  });
+  const blob = new Blob(['﻿' + lines.join('\n')], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'leads_' + new Date().toISOString().slice(0,10) + '.csv';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
 }
 
 function deleteLead(btn){
@@ -138,14 +361,12 @@ async function doDelete(phone, btn){
     });
     if(!res.ok) throw new Error('שגיאת שרת');
     allRows = allRows.filter(r => r.phone !== phone);
-    const q = document.getElementById('searchBox').value.trim().toLowerCase();
-    render(!q ? allRows : allRows.filter(r =>
-      (r.phone||'').toLowerCase().includes(q) ||
-      (r.name||'').toLowerCase().includes(q) ||
-      (r.email||'').toLowerCase().includes(q)
-    ));
+    renderKpis(allRows);
+    renderFunnel(allRows);
+    applyFiltersAndRender();
+    showToast('הליד נמחק בהצלחה');
   } catch(e) {
-    showToast('מחיקה נכשלה: ' + e.message);
+    showToast('מחיקה נכשלה: ' + e.message, true);
     btn.disabled = false;
     btn.textContent = '🗑️ מחק';
   }
@@ -166,9 +387,9 @@ function showConfirm(message, onConfirm){
   overlay.querySelector('.confirm-yes').onclick = function(){ overlay.remove(); onConfirm(); };
 }
 
-function showToast(message){
+function showToast(message, isErr){
   const t = document.createElement('div');
-  t.className = 'toast';
+  t.className = 'toast' + (isErr ? ' err' : '');
   t.textContent = message;
   document.body.appendChild(t);
   setTimeout(function(){ t.remove(); }, 3500);
@@ -178,15 +399,22 @@ function esc(s){
   return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
-document.getElementById('searchBox').addEventListener('input', function(){
-  const q = this.value.trim().toLowerCase();
-  if(!q){ render(allRows); return; }
-  render(allRows.filter(r =>
-    (r.phone||'').toLowerCase().includes(q) ||
-    (r.name||'').toLowerCase().includes(q) ||
-    (r.email||'').toLowerCase().includes(q)
-  ));
+document.getElementById('searchBox').addEventListener('input', applyFiltersAndRender);
+document.getElementById('stageFilter').addEventListener('change', applyFiltersAndRender);
+document.getElementById('sortBy').addEventListener('change', applyFiltersAndRender);
+document.getElementById('autoRefresh').addEventListener('change', function(){
+  if(this.checked){
+    localStorage.setItem('lj_autorefresh','1');
+    autoRefreshTimer = setInterval(loadData, 30000);
+  } else {
+    localStorage.removeItem('lj_autorefresh');
+    clearInterval(autoRefreshTimer);
+  }
 });
+if(localStorage.getItem('lj_autorefresh')){
+  document.getElementById('autoRefresh').checked = true;
+  autoRefreshTimer = setInterval(loadData, 30000);
+}
 
 loadData();
 </script>
