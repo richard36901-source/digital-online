@@ -26,6 +26,9 @@ tr:hover td{background:#1b1e26;}
 .s4{background:#1a2f3a;color:#5fb3d6;}
 .s5{background:#261a3a;color:#a066d6;}
 .s6{background:#3a1a2a;color:#ff6ba0;font-weight:700;}
+.del-btn{background:#3a1a1a;color:#ff6b6b;border:1px solid #522;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;white-space:nowrap;}
+.del-btn:hover{background:#522;}
+.del-btn:disabled{opacity:.5;cursor:default;}
 .empty{color:#8a8f98;text-align:center;padding:40px;}
 .loading{color:#8a8f98;text-align:center;padding:40px;}
 </style>
@@ -46,6 +49,7 @@ tr:hover td{background:#1b1e26;}
 
 <script>
 const LOOKUP_HOOK = 'https://hook.eu1.make.com/7r3efmcx10cg5a90mdjtlhxylo2a3coe';
+const DELETE_HOOK = 'https://hook.eu1.make.com/roprlw5d1k90tai1bqptq9jih6w964uy';
 const STAGE_LABELS = {
   1: 'דף נחיתה',
   2: 'סרטון 1',
@@ -91,7 +95,7 @@ function render(rows){
     return;
   }
   content.className = '';
-  let html = '<table><thead><tr><th>שם</th><th>טלפון</th><th>אימייל</th><th>שלב אחרון</th><th>עודכן</th></tr></thead><tbody>';
+  let html = '<table><thead><tr><th>שם</th><th>טלפון</th><th>אימייל</th><th>שלב אחרון</th><th>עודכן</th><th></th></tr></thead><tbody>';
   rows.forEach(r => {
     html += '<tr>'
       + '<td>' + esc(r.name || '-') + '</td>'
@@ -99,10 +103,39 @@ function render(rows){
       + '<td dir="ltr" style="text-align:right">' + esc(r.email || '-') + '</td>'
       + '<td><span class="stage-pill s' + r.stage + '">' + (STAGE_LABELS[r.stage] || r.stage_label || '-') + '</span></td>'
       + '<td>' + esc(r.updated_at || '-') + '</td>'
+      + '<td><button class="del-btn" data-phone="' + esc(r.phone || '') + '" onclick="deleteLead(this)">🗑️ מחק</button></td>'
       + '</tr>';
   });
   html += '</tbody></table>';
   content.innerHTML = html;
+}
+
+async function deleteLead(btn){
+  const phone = btn.getAttribute('data-phone');
+  if(!phone) return;
+  if(!confirm('למחוק את הליד עם הטלפון ' + phone + ' מהטבלה? הפעולה אינה הפיכה.')) return;
+
+  btn.disabled = true;
+  btn.textContent = 'מוחק...';
+  try {
+    const res = await fetch(DELETE_HOOK, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: phone })
+    });
+    if(!res.ok) throw new Error('שגיאת שרת');
+    allRows = allRows.filter(r => r.phone !== phone);
+    const q = document.getElementById('searchBox').value.trim().toLowerCase();
+    render(!q ? allRows : allRows.filter(r =>
+      (r.phone||'').toLowerCase().includes(q) ||
+      (r.name||'').toLowerCase().includes(q) ||
+      (r.email||'').toLowerCase().includes(q)
+    ));
+  } catch(e) {
+    alert('מחיקה נכשלה: ' + e.message);
+    btn.disabled = false;
+    btn.textContent = '🗑️ מחק';
+  }
 }
 
 function esc(s){
