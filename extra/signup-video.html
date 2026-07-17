@@ -73,9 +73,31 @@ function submitLead() {
     lmP.append('utm_medium', p.medium);
     lmP.append('utm_campaign', p.campaign);
     lmP.append('page', PAGE);
-    fetch('https://api.leadmanager.co.il/handlers/lm/submit.cms?' + lmP.toString(), {
-      method: 'GET', mode: 'no-cors'
+    /* LeadManager -- routed through the same server-side Make.com relay
+       used by every other landing page (instead of a direct no-cors GET,
+       which the browser can never confirm succeeded, so failed LM
+       submissions used to vanish silently). The relay performs the actual
+       LM call server-side and logs status+response to the LMSubmitLog
+       data store for auditability. */
+    fetch('https://hook.eu1.make.com/j4ktylebkczp1tgvlj0h4tfbxb77q9b1', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ qs: lmP.toString(), page: PAGE, phone: phone, name: name, email: email }),
+      keepalive: true
     }).catch(function(){});
+    /* Lead-journey stage tracking -- logs to a Make.com Data Store
+       (append-only, keyed by phone+stage) instead of LeadManager, since
+       LM's API cannot update an existing lead. See lead-journey.html for
+       the viewer. This page's own lead-form submission is the identity-
+       creating moment, so it is logged as stage 1 ("landing"), matching
+       how every other landing page logs its initial submission. */
+    try {
+      fetch('https://hook.eu1.make.com/9nycxwodyby36g30ezp05idn0rqihnlh', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({phone: phone, name: name, email: email, stage: 1, stage_label: 'landing'}),
+        keepalive: true
+      }).catch(function(){});
+    } catch(e) {}
     document.getElementById('formWrap').style.display='none';
     document.getElementById('successMsg').style.display='block';
     try { if(typeof fbq==='function') fbq('track','CompleteRegistration'); } catch(e) {}
