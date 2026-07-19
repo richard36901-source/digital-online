@@ -217,12 +217,13 @@ window.submitForm = async function submitForm() {
   } catch(e) {}
 
   var sep3 = location.search ? '&' : '?';
-  /* 50/50 split test: funnel-d (original) vs funnel-d-v2 (redesigned,
-     curiosity-loop copy) -- panels 6/7 are dedicated to this split so the
-     head-to-head comparison in the dashboard is clean and independent of
-     which landing page sent the visitor here. */
+  /* 50/50 split test: Two-Page Funnel (short 2-video funnel) vs
+     funnel-d-v2 (curiosity-loop copy, 4-video funnel) -- panels 6/7 are
+     dedicated to this split so the head-to-head comparison in the
+     dashboard is clean and independent of which landing page sent the
+     visitor here. */
   var arm = Math.random() < 0.5
-    ? { path: '../funnels/funnel-d/funnel-d-1.html', panel: '6' }
+    ? { path: '../funnels/two-page-funnel/two-page-funnel-1.html', panel: '6' }
     : { path: '../funnels/funnel-d-v2/funnel-d-v2-1.html', panel: '7' };
   try { fetch(TRACK_HOOK, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ metric: 'entry', panel: arm.panel }) }).catch(function(){}); } catch(e) {}
   /* Carry the lead's identity (and the LM form/key it was created under)
