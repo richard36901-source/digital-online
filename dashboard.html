@@ -192,6 +192,8 @@
   .fcell.f3 { background: var(--f3-bg); border-color: var(--f3-border); }
   .fcell.f4 { background: var(--f4-bg); border-color: var(--f4-border); }
   .fcell.end { box-shadow: 0 0 0 2px var(--good-bg) inset; }
+  .fcell.na { opacity: .4; }
+  .fcell.na .fcell-count { color: var(--text-3); font-weight: 500; }
   .fcell-inner { position: relative; z-index: 1; }
   .fcell-bar-bg { position: absolute; left: 0; right: 0; bottom: 0; height: 100%; z-index: 0; }
   .fcell-bar-fill { position: absolute; left: 0; right: 0; bottom: 0; transition: height .6s ease; opacity: .35; }
@@ -457,15 +459,15 @@
       <span class="sicn">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
       </span>
-      השוואת משפכים · Funnel D מול Funnel D V2
+      השוואת משפכים · Two-Page Funnel מול Funnel D V2
     </h2>
-    <span class="meta">המרה לאורך כל שלב במסע ה-4 סרטונים, מבחן הפיצול הפעיל כרגע</span>
+    <span class="meta">המרה לאורך מסע הווידאו, מבחן הפיצול הפעיל כרגע</span>
   </div>
 
   <div class="funnel-wrap">
     <div class="funnel-title-row">
-      <h3 id="funnelCaption">בדיקת משפך המרות · מסע הווידאו של Funnel D מול Funnel D V2</h3>
-      <p>כל 5 דפי הנחיתה מפצלים את התנועה 50/50 בין שתי הגרסאות של Funnel D לפני כניסה לסרטון הראשון · פאנל 6 = הגרסה המקורית, פאנל 7 = העיצוב והקופי החדשים · האחוז בכל שורה = כמה מהכניסות לאותה גרסה הגיעו לשלב הזה</p>
+      <h3 id="funnelCaption">בדיקת משפך המרות · מסע הווידאו של Two-Page Funnel מול Funnel D V2</h3>
+      <p>כל 5 דפי הנחיתה מפצלים את התנועה 50/50 בין Two-Page Funnel ל-Funnel D V2 לפני כניסה לסרטון הראשון · פאנל 6 = Two-Page Funnel (משפך דו-שלבי), פאנל 7 = Funnel D V2 · האחוז בכל שורה = כמה מהכניסות לאותה גרסה הגיעו לשלב הזה · Two-Page Funnel מסתיים אחרי וידאו 2, ולכן אין לו נתונים לשלבים 3-4</p>
     </div>
 
     <table class="funnel-table" aria-labelledby="funnelCaption">
@@ -476,7 +478,7 @@
       <thead>
         <tr>
           <th scope="col" class="fcol-head label">שלב</th>
-          <th scope="col" class="fcol-head f1"><span class="inner"><span class="dot" aria-hidden="true"></span> Funnel D · מקורי (פאנל 6)</span></th>
+          <th scope="col" class="fcol-head f1"><span class="inner"><span class="dot" aria-hidden="true"></span> Two-Page Funnel (פאנל 6)</span></th>
           <th scope="col" class="fcol-head f2"><span class="inner"><span class="dot" aria-hidden="true"></span> Funnel D V2 · עיצוב חדש (פאנל 7)</span></th>
         </tr>
       </thead>
@@ -484,10 +486,10 @@
       <tfoot id="funnel_winners">
         <tr>
           <th scope="row" class="fwinner-lbl">המרה סופית</th>
-          <td class="fwinner-cell" id="fw_d">
+          <td class="fwinner-cell" id="fw_twopage">
             <div class="fwinner-trophy" aria-hidden="true"></div>
             <div class="fwinner-rate mono">0.0%</div>
-            <div class="fwinner-name">Funnel D<span class="sr-only fw-winner-tag"></span></div>
+            <div class="fwinner-name">Two-Page Funnel<span class="sr-only fw-winner-tag"></span></div>
           </td>
           <td class="fwinner-cell" id="fw_dv2">
             <div class="fwinner-trophy" aria-hidden="true"></div>
@@ -649,9 +651,9 @@ const HEAD_TO_HEAD_TESTS = [
        right before entering the video funnel, so this comparison is
        independent of which landing page sent the traffic -- see the
        redirect logic in landing-pages/*.html. */
-    title: 'משפך D · מקורי מול V2 (עיצוב+קופי חדש)', tag: 'funnel', tagLabel: 'משפך וידאו',
+    title: 'Two-Page Funnel מול Funnel D V2', tag: 'funnel', tagLabel: 'משפך וידאו',
     conversionLabel: 'נרשמו לוובינר', conversionKey: 'webinar',
-    variantA: { name: 'Funnel D', desc: 'הגרסה המקורית (ענבר)', panel: 6 },
+    variantA: { name: 'Two-Page Funnel', desc: 'משפך דו-שלבי מקוצר', panel: 6 },
     variantB: { name: 'Funnel D V2', desc: 'עיצוב סקרנות (סגול/ציאן) + קופי חדש', panel: 7 }
   }
 ];
@@ -660,14 +662,18 @@ const HEAD_TO_HEAD_TESTS = [
 // references this directly.
 const HEAD_TO_HEAD = HEAD_TO_HEAD_TESTS[0];
 
-/* The funnel STEP TABLE (4-video journey) below tracks the split test that's
-   actually live right now: every landing page sends 50/50 traffic into
-   panel 6 (Funnel D original) or panel 7 (Funnel D V2), independent of which
-   landing page sent the visitor -- see the redirect logic in
-   landing-pages/*.html. This replaced the old funnel-c/funnel-d comparison,
-   which stopped receiving traffic once all landing pages were routed here. */
+/* The funnel STEP TABLE below tracks the split test that's actually live
+   right now: every landing page sends 50/50 traffic into panel 6
+   (Two-Page Funnel) or panel 7 (Funnel D V2), independent of which landing
+   page sent the visitor -- see the redirect logic in landing-pages/*.html.
+   This replaced the old Funnel D vs Funnel D V2 comparison (panel 6 used to
+   be Funnel D original), which stopped receiving traffic once panel 6 was
+   repointed at the new Two-Page Funnel. Two-Page Funnel only has 2 video
+   steps, so its `steps` whitelist below tells renderFunnelComparison() to
+   render a "—" placeholder instead of a misleading 0%/dropoff for the
+   video_3/video_4 rows that funnel just doesn't have. */
 const FUNNEL_GROUPS = [
-  { id: 'd', key: 'd', label: 'Funnel D · מקורי (פאנל 6)', cls: 'f1', panels: ['6'] },
+  { id: 'twopage', key: 'twopage', label: 'Two-Page Funnel (פאנל 6)', cls: 'f1', panels: ['6'], steps: ['entry', 'landing', 'video_1', 'video_2', 'webinar'] },
   { id: 'dv2', key: 'dv2', label: 'Funnel D V2 · עיצוב חדש (פאנל 7)', cls: 'f2', panels: ['7'] }
 ];
 
@@ -675,9 +681,10 @@ const FUNNEL_STEPS = [
   // hidden:true  =>  הנתון עדיין נטען ומחושב כרגיל, רק השורה לא מצוירת בדף.
   // כדי להחזיר שורה לתצוגה ברגע אחד: שנה hidden ל-false (או מחק את המאפיין).
   // וידאו 1-4: כל דף וידאו שולח פינג ברגע שהוא נטען. מעכשיו הפינג עצמו מותנה
-  // בקוד של דפי הוידאו (funnels/funnel-c|d/*.html) בכך שהמבקר כבר סימן את
-  // השלב הקודם ברצף אצלו בדפדפן -- כך שהמונים כאן הם ספירה אמיתית של מי
-  // שהתקדם בסדר הנכון, ולא יכולים "לדלג" קדימה (למשל וידאו 4 גדול מוידאו 3).
+  // בקוד של דפי הוידאו (funnels/funnel-d|funnel-d-v2|two-page-funnel/*.html)
+  // בכך שהמבקר כבר סימן את השלב הקודם ברצף אצלו בדפדפן -- כך שהמונים כאן הם
+  // ספירה אמיתית של מי שהתקדם בסדר הנכון, ולא יכולים "לדלג" קדימה (למשל
+  // וידאו 4 גדול מוידאו 3).
   { key: 'entry',   label: '-',  icon: 'users', hidden: true },
   { key: 'landing', label: 'דף נחיתה - נשלחו',     icon: 'doc', hidden: true },
   { key: 'video_1', label: 'הגיעו לוידאו 1',      icon: 'play' },
@@ -860,6 +867,21 @@ function renderFunnelComparison() {
     </span></th>`;
 
     FUNNEL_GROUPS.forEach(group => {
+      // A group can whitelist which steps actually apply to it (e.g.
+      // Two-Page Funnel has no video_3/video_4) -- for any step outside
+      // that whitelist, render a plain "—" instead of a real 0%, which
+      // would otherwise look like a data problem or a fake dropoff.
+      if (group.steps && !group.steps.includes(step.key)) {
+        const endClass = step.isEnd ? 'end' : '';
+        html += `<td class="fcell ${group.cls} ${endClass} na">
+          <div class="fcell-inner">
+            <div class="fcell-count" aria-hidden="true">—</div>
+            <span class="sr-only">שלב לא קיים במשפך הזה</span>
+          </div>
+        </td>`;
+        return;
+      }
+
       const count = groupSum(group, step.key);
       const entryCount = groupSum(group, 'entry');
       const pOfEntry = entryCount > 0 ? Math.min(100, pct(count, entryCount)) : 0;
