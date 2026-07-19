@@ -125,7 +125,7 @@ tbody tr.hot{border-inline-start:3px solid #ff6ba0;}
 <div class="top">
   <div>
     <h1>מעקב מסע לקוח 🔥</h1>
-    <div class="sub">כל ליד + השלב הכי רחוק שהגיע אליו במסע (דף נחיתה → 4 סרטונים → הרשמה לוובינר). מתעדכן אוטומטית מכל האתר, בלי תלות ב-LeadManager.</div>
+    <div class="sub">כל ליד + השלב הכי רחוק שהגיע אליו במסע (דף נחיתה → סרטוני ההדרכה → המרה סופית: הרשמה לוובינר או הצטרפות לקבוצה). לא כל המשפכים זהים באורכם — יש משפכים עם 2 סרטונים ויש עם 4, כך שלא כל ליד יעבור דרך כל השלבים. מתעדכן אוטומטית מכל האתר, בלי תלות ב-LeadManager.</div>
   </div>
   <div class="refresh-meta" id="refreshMeta">
     <span class="dot"></span>
@@ -151,7 +151,7 @@ tbody tr.hot{border-inline-start:3px solid #ff6ba0;}
     <option value="3">סרטון 2</option>
     <option value="4">סרטון 3</option>
     <option value="5">סרטון 4</option>
-    <option value="6">🏆 נרשם לוובינר</option>
+    <option value="6">🏆 המרה סופית (וובינר / קבוצה)</option>
   </select>
   <select id="dateRange">
     <option value="">כל התאריכים</option>
@@ -203,14 +203,33 @@ tbody tr.hot{border-inline-start:3px solid #ff6ba0;}
 <script>
 const LOOKUP_HOOK = 'https://hook.eu1.make.com/7r3efmcx10cg5a90mdjtlhxylo2a3coe';
 const DELETE_HOOK = 'https://hook.eu1.make.com/roprlw5d1k90tai1bqptq9jih6w964uy';
+// Generic, funnel-agnostic labels -- used for the aggregate funnel chart,
+// the stage filter, progress dots, and as a fallback everywhere else.
+// Not every funnel has all 6 stages: two-page-funnel (2 videos) only ever
+// reaches stage 3, then jumps straight to stage 6 if the lead converts.
 const STAGE_LABELS = {
   1: 'דף נחיתה',
   2: 'סרטון 1',
   3: 'סרטון 2',
   4: 'סרטון 3',
   5: 'סרטון 4',
-  6: '🏆 נרשם לוובינר'
+  6: '🏆 המרה סופית'
 };
+// Precise per-lead label, keyed by the raw stage_label string each funnel
+// page actually sends. Falls back to STAGE_LABELS[stage] when a record's
+// stage_label isn't one of these (e.g. legacy records without one).
+const STAGE_LABEL_DETAIL = {
+  landing: 'דף נחיתה',
+  video_1: 'סרטון 1',
+  video_2: 'סרטון 2',
+  video_3: 'סרטון 3',
+  video_4: 'סרטון 4',
+  webinar_signup: '🏆 נרשם לוובינר',
+  whatsapp_join: '🏆 הצטרף לקבוצת הוואטסאפ'
+};
+function stageDisplay(r){
+  return STAGE_LABEL_DETAIL[r.stage_label] || STAGE_LABELS[r.stage] || r.stage_label || '-';
+}
 const STAGE_COLORS = {1:'#e0b357',2:'#a8d666',3:'#5fd6b0',4:'#5fb3d6',5:'#a066d6',6:'#ff6ba0'};
 let allRows = [];
 let autoRefreshTimer = null;
@@ -306,8 +325,8 @@ function renderKpis(rows){
     { v: total, l: 'סה"כ לידים', c: '#3b6bf5' },
     { v: reachedVideo, l: 'הגיעו לסרטונים', c: '#a8d666', d: total ? Math.round(reachedVideo/total*100)+'% מהכניסות' : '' },
     { v: finishedSeries, l: 'סיימו את הסדרה', c: '#a066d6', d: total ? Math.round(finishedSeries/total*100)+'% מהכניסות' : '' },
-    { v: hot, l: 'נרשמו לוובינר 🏆', c: '#ff6ba0', d: total ? Math.round(hot/total*100)+'% מהכניסות' : '' },
-    { v: conv+'%', l: 'יחס המרה כולל', c: '#5fd6b0', d: 'דף נחיתה ⟶ וובינר' }
+    { v: hot, l: 'המרה סופית 🏆', c: '#ff6ba0', d: total ? Math.round(hot/total*100)+'% מהכניסות' : '' },
+    { v: conv+'%', l: 'יחס המרה כולל', c: '#5fd6b0', d: 'דף נחיתה ⟶ המרה סופית' }
   ];
   document.getElementById('kpis').innerHTML = cards.map(c =>
     '<div class="kpi" style="--kc:'+c.c+'">'
@@ -450,7 +469,7 @@ function render(rows){
       + '<td class="name-cell">' + esc(r.name || '-') + '</td>'
       + '<td dir="ltr"><div class="phone-cell"><span>' + esc(r.phone || '-') + '</span>' + quickActions + '</div></td>'
       + '<td dir="ltr" style="text-align:right" class="muted">' + esc(r.email || '-') + '</td>'
-      + '<td><span class="stage-pill s' + r.stage + '">' + (STAGE_LABELS[r.stage] || r.stage_label || '-') + '</span><div class="progress-dots">' + dots + '</div></td>'
+      + '<td><span class="stage-pill s' + r.stage + '">' + stageDisplay(r) + '</span><div class="progress-dots">' + dots + '</div></td>'
       + '<td class="time-cell"><div class="rel">' + esc(relTime(r.updated_at) || '-') + '</div><div class="abs">' + esc(r.updated_at || '-') + '</div></td>'
       + '<td><button class="del-btn" data-phone="' + esc(r.phone || '') + '" onclick="deleteLead(this)">🗑️ מחק</button></td>'
       + '</tr>';
@@ -465,7 +484,7 @@ function exportCsv(){
   const header = ['שם','טלפון','אימייל','שלב','עודכן'];
   const lines = [header.join(',')];
   rows.forEach(r => {
-    const vals = [r.name||'', r.phone||'', r.email||'', STAGE_LABELS[r.stage]||r.stage_label||'', r.updated_at||''];
+    const vals = [r.name||'', r.phone||'', r.email||'', stageDisplay(r), r.updated_at||''];
     lines.push(vals.map(v => '"' + String(v).replace(/"/g,'""') + '"').join(','));
   });
   const blob = new Blob(['﻿' + lines.join('\n')], {type:'text/csv;charset=utf-8;'});
