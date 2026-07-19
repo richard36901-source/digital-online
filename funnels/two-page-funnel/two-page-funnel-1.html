@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>דיגיטל אונליין | 1 מתוך 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;700;800;900&family=Assistant:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-WHCW874B');</script>
+<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','10211443525862398');fbq('track','PageView');</script>
+<script>
+function playVideoTpf1(){
+  var t=document.getElementById('vidThumb');
+  if(t)t.classList.add('gone');
+  if(window._vpTpf1)window._vpTpf1.play();
+  else window._pending_vpTpf1=true;
+}
+</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:'Assistant',sans-serif;
+  background:#0a0714;color:#fff;
+  direction:rtl;overflow-x:hidden;min-height:100svh;
+  display:flex;flex-direction:column;align-items:center;position:relative;
+}
+.bg-bloom{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 65% 35% at 50% 0%,rgba(139,92,246,.55) 0%,rgba(88,28,135,.22) 45%,transparent 70%),
+    radial-gradient(ellipse 35% 25% at 5% 90%,rgba(217,70,239,.25) 0%,transparent 60%),
+    radial-gradient(ellipse 35% 25% at 95% 75%,rgba(34,211,238,.18) 0%,transparent 55%);}
+#particles{position:fixed;inset:0;z-index:1;pointer-events:none;}
+.wrap{position:relative;z-index:2;width:100%;max-width:460px;padding:22px 18px 52px;display:flex;flex-direction:column;align-items:center;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.headline{animation:fadeUp .4s .1s ease both;}
+.subline{animation:fadeUp .4s .15s ease both;}
+.vid-outer{animation:fadeUp .5s .2s ease both;}
+.btn-box{animation:fadeUp .5s .3s ease both;}
+
+.circle-badge{
+  display:flex;flex-direction:column;align-items:center;margin-bottom:22px;animation:fadeUp .4s ease both;
+  gap:4px;
+}
+.circle-num{
+  width:52px;height:52px;border-radius:50%;
+  background:rgba(45,10,75,.85);
+  border:2px solid #a855f7;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Rubik',sans-serif;font-size:22px;font-weight:900;color:#67e8f9;
+  box-shadow:0 0 20px rgba(168,85,247,.45);
+}
+.circle-label{font-family:'Assistant',sans-serif;font-size:12px;color:rgba(255,255,255,.3);letter-spacing:.3px;}
+.headline{
+  font-family:'Rubik',sans-serif;
+  font-size:clamp(24px,6.5vw,32px);font-weight:900;
+  text-align:center;line-height:1.25;margin-bottom:8px;
+  background:linear-gradient(160deg,#ecfeff 0%,#67e8f9 30%,#a78bfa 60%,#f0abfc 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 2px 16px rgba(168,85,247,.45));
+}
+.subline{
+  font-family:'Assistant',sans-serif;
+  font-size:clamp(13px,3.8vw,15px);color:#c4b5fd;
+  text-align:center;line-height:1.7;margin-bottom:20px;max-width:340px;
+}
+.next-box{
+  width:100%;background:linear-gradient(145deg,rgba(30,12,55,.75),rgba(20,8,40,.85));
+  border:1.5px solid rgba(217,70,239,.35);border-radius:16px;padding:16px 16px 14px;
+  margin-bottom:14px;animation:fadeUp .5s .18s ease both;
+}
+.next-title{
+  font-family:'Rubik',sans-serif;font-size:15px;font-weight:800;text-align:center;margin-bottom:10px;
+  background:linear-gradient(90deg,#67e8f9,#d946ef);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.teaser-list{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.teaser-list li{font-family:'Assistant',sans-serif;font-size:13.5px;color:rgba(255,255,255,.75);line-height:1.6;text-align:right;}
+.vid-outer{width:100%;margin-bottom:14px;border-radius:14px;animation:vidGlow 3.5s ease-in-out infinite;}
+@keyframes vidGlow{
+  0%,100%{filter:drop-shadow(0 0 14px rgba(124,58,237,.5));}
+  50%{filter:drop-shadow(0 0 28px rgba(34,211,238,.35));}
+}
+.vid-box{width:100%;border:1.5px solid #7c3aed;border-radius:14px;overflow:hidden;background:#000;position:relative;}
+.vid-ratio{position:relative;width:100%;padding-bottom:56.25%;height:0;overflow:hidden;}.vid-ratio iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none;display:block;}
+.vid-thumb{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:5;cursor:pointer;background:rgba(0,0,0,.12);transition:background .2s;}
+.vid-thumb:hover{background:rgba(0,0,0,.04);}
+.vid-thumb.gone{display:none;}
+.play-btn{
+  width:68px;height:48px;background:rgba(124,58,237,.92);
+  border-radius:12px;display:flex;align-items:center;justify-content:center;
+  animation:playPulse 2.8s ease-in-out infinite;
+}
+@keyframes playPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(168,85,247,.4),0 4px 20px rgba(168,85,247,.4);transform:scale(1);}
+  50%{box-shadow:0 0 0 8px rgba(217,70,239,.25),0 4px 30px rgba(34,211,238,.4);transform:scale(1.05);}
+}
+.vid-thumb:hover .play-btn{transform:scale(1.1)!important;animation:none;}
+.closing-hint{font-family:'Assistant',sans-serif;font-size:13.5px;font-weight:700;color:#f0abfc;text-align:center;margin-bottom:14px;line-height:1.6;text-shadow:0 0 16px rgba(217,70,239,.3);animation:fadeUp .5s .22s ease both;}
+
+.lock-hint{font-family:'Assistant',sans-serif;font-size:13px;color:rgba(217,70,239,.65);text-align:center;margin-bottom:10px;font-weight:700;letter-spacing:.3px;}
+.btn-box{
+  width:100%;background:rgba(14,8,24,.93);border:1.5px solid rgba(124,58,237,.25);
+  border-radius:16px;padding:16px 14px 18px;margin-bottom:14px;
+  box-shadow:0 0 40px rgba(217,70,239,.18),inset 0 1px 0 rgba(255,255,255,.03);
+  position:relative;overflow:hidden;
+}
+.btn-next{
+  display:flex;width:100%;height:56px;
+  background:rgba(22,10,34,.92);color:rgba(255,255,255,.3);
+  font-family:'Rubik',sans-serif;font-size:19px;font-weight:900;
+  border:1.5px solid rgba(124,58,237,.18);border-radius:10px;
+  align-items:center;justify-content:center;gap:8px;
+  text-decoration:none;letter-spacing:.3px;
+  cursor:not-allowed;pointer-events:none;
+  transition:all .4s;position:relative;overflow:hidden;
+}
+.btn-next.watching{animation:lockedPulse 3s ease-in-out infinite;}
+@keyframes lockedPulse{0%,100%{box-shadow:0 0 0 0 transparent;}50%{box-shadow:0 0 0 5px rgba(217,70,239,.25);}}
+.btn-next.unlocked{
+  color:#fff;background:linear-gradient(135deg,#7c3aed,#d946ef,#22d3ee);background-size:200% auto;
+  border-color:rgba(217,70,239,.3);cursor:pointer;pointer-events:auto;
+  animation:unlockShake .6s ease,btnShimmer 2s .6s linear infinite,btnGlow 2s .6s ease-in-out infinite;
+}
+@keyframes unlockShake{
+  0%{transform:translateX(0);}10%{transform:translateX(-7px);}20%{transform:translateX(7px);}
+  30%{transform:translateX(-5px);}40%{transform:translateX(5px);}60%{transform:translateX(3px);}
+  80%{transform:translateX(1px);}100%{transform:translateX(0);}
+}
+@keyframes btnShimmer{0%{background-position:200% center;}100%{background-position:0% center;}}
+@keyframes btnGlow{
+  0%,100%{box-shadow:0 4px 20px rgba(124,58,237,.5);}
+  50%{box-shadow:0 6px 36px rgba(34,211,238,.6),0 0 0 3px rgba(217,70,239,.25);}
+}
+.btn-next.unlocked::after{content:'';position:absolute;top:0;left:-120%;width:40%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent);animation:shine 1.8s ease-in-out infinite;}
+@keyframes shine{0%{left:-120%}100%{left:160%}}
+.btn-next.unlocked:hover{transform:translateY(-2px) scale(1.01);}
+.btn-arrow{display:inline-block;}
+.btn-next.unlocked .btn-arrow{animation:arrowBounce 1s ease-in-out infinite;}
+@keyframes arrowBounce{0%,100%{transform:translateX(0);}50%{transform:translateX(-5px);}}
+
+.series-block{padding-top:12px;display:flex;flex-direction:column;gap:8px;border-top:1px solid rgba(124,58,237,.2);margin-top:10px;}
+.series-line{font-family:'Assistant',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,.55);text-align:center;line-height:1.6;}
+.importance-line{font-family:'Assistant',sans-serif;font-size:12.5px;color:rgba(255,255,255,.4);text-align:center;line-height:1.6;}
+
+footer{position:relative;z-index:2;width:100%;border-top:1px solid rgba(255,255,255,.04);padding:14px 20px;text-align:center;font-family:'Assistant',sans-serif;font-size:11px;color:rgba(255,255,255,.12);line-height:2;margin-top:auto;}
+footer a{color:rgba(255,255,255,.18);text-decoration:none;}
+footer a:hover{color:#d946ef;}
+footer .sep{margin:0 6px;color:rgba(255,255,255,.06);}
+
+</style>
+</head>
+<body>
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WHCW874B" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+<div class="bg-bloom"></div>
+<canvas id="particles"></canvas>
+<div class="wrap">
+    <div class="circle-badge">
+    <div class="circle-num">1</div>
+    <div class="circle-label">מתוך 2 שלבים</div>
+  </div>
+  <h1 class="headline">העולם השתנה. עכשיו הגיע הזמן להבין למה.</h1>
+  <p class="subline">ב-15 הדקות הקרובות תגלה למה יותר ויותר אנשים מבינים שהחוקים הישנים כבר לא מספיקים, ואילו עקרונות חדשים מתחילים לעצב את הדרך שבה יוצרים ערך בעידן החדש.</p>
+
+  <div class="next-box">
+    <p class="next-title">בסרטון הבא תגלה:</p>
+    <ul class="teaser-list">
+      <li>✓ למה מערכות לומדות הופכות ליתרון הגדול ביותר של העולם החדש.</li>
+      <li>✓ למה אנשים שמתחילים מנקודת פתיחה חכמה לא חייבים להתחיל כל פעם מחדש.</li>
+      <li>✓ איך מידע, בינה מלאכותית ולמידה מצטברת יוצרים יתרון שקשה להשיג לבד.</li>
+      <li>✓ ולמה העתיד שייך לאנשים שיודעים לעבוד עם מערכות – ולא רק לעבוד קשה יותר.</li>
+    </ul>
+  </div>
+
+  <div class="vid-outer">
+    <div class="vid-box">
+      <div class="vid-ratio">
+      <video id="vimeoPlayer" autoplay muted playsinline controls preload="auto"
+        src="../../extra/two-page-funnel-video1.mp4"
+        style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">
+      </video>
+      </div>
+      <div class="vid-thumb" id="vidThumb" onclick="playVideoTpf1()">
+        <div class="play-btn">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="white"><polygon points="6,3 20,12 6,21"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="closing-hint">הסרטון הבא יחבר את כל החלקים לתמונה אחת.</p>
+  <div class="btn-box">
+    <a class="btn-next" id="btnNext" data-text="לעבור לשלב הבא" href="two-page-funnel-2.html">
+      🔒&nbsp; לעבור לשלב הבא &nbsp;<span class="btn-arrow">←</span>
+    </a>
+    <p class="lock-hint" style="margin-top:10px;margin-bottom:0;">🔒 הכפתור ייפתח בסיום הסרטון</p>
+    <div class="series-block">
+      <p class="series-line">✅ סרטון 1 – למה העולם השתנה<br>⬜ סרטון 2 – איך זה נראה בפועל</p>
+      <p class="importance-line">בסרטון הבא נראה איך כל מה שלמדת כאן הופך לתהליך אחד שעובד בפועל, מהחשיפה הראשונה ועד לתוצאה.</p>
+    </div>
+  </div>
+
+</div>
+<footer>
+  דיגיטל אונליין מבית או די מסחר אונליין בע"מ<br>
+  <a href="/cdn-cgi/l/email-protection#c4b7b1b4b4abb6b084a0ada3adb0a5a8abaaa8adaaa1eaa7abeaada8">&#115;upport&#64;digitalonline.co.il</a><br>
+  <a href="../../extra/privacy.html">מדיניות פרטיות</a><span class="sep">|</span><a href="../../extra/terms.html">תנאי שימוש</a>
+</footer>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+<script>
+(function(){
+  const c=document.getElementById('particles'),ctx=c.getContext('2d');
+  let W,H,pts=[];
+  function rsz(){W=c.width=window.innerWidth;H=c.height=window.innerHeight;}
+  rsz();window.addEventListener('resize',rsz);
+  function rnd(a,b){return Math.random()*(b-a)+a;}
+  function mk(){return{x:rnd(0,W),y:rnd(H*.1,H),r:rnd(.2,1.6),dx:rnd(-.25,.25),dy:rnd(-.8,-.05),o:rnd(.3,.8),fade:rnd(.002,.005),main:Math.random()>.3,phase:rnd(0,6.28)};}
+  for(let i=0;i<100;i++)pts.push(mk());
+  let fr=0;
+  function draw(){
+    ctx.clearRect(0,0,W,H);fr++;
+    pts.forEach((p,i)=>{
+      let a=p.o*(.6+.4*Math.sin(fr*.035+p.phase));
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=p.main?`rgba(168,85,247,${a})`:`rgba(34,211,238,${a*.5})`;
+      ctx.fill();
+      p.x+=p.dx;p.y+=p.dy;p.o-=p.fade;
+      if(p.o<=0||p.y<-10)pts[i]=mk();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+const PAGE='two_page_funnel_video_1';
+const WEBHOOK='https://hook.eu1.make.com/ylf5uesfcqpyaxaxtvayjx08h9rrwqr2';
+const TRACK_HOOK='https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q';
+window.dataLayer=window.dataLayer||[];
+const P=new URLSearchParams(location.search);
+const variant=P.get('variant')||'',sup=P.get('lm_supplier')||P.get('supplier')||'',src=P.get('utm_source')||'';
+const phone=P.get('phone')||'',email=P.get('email')||'';
+const panel=P.get('panel')||'';
+(function(){var nb=document.getElementById('btnNext');if(nb&&location.search)nb.setAttribute('href',nb.getAttribute('href').split('?')[0]+location.search);})();
+dataLayer.push({event:'page_view',page:PAGE,source_variant:variant,supplier:sup,utm_source:src});
+/* Sequential funnel gate: this metric only counts if the browser already
+   progressed through the previous step in order (video_1 has no previous
+   step, so it always counts as the funnel's entry video). Uses its own
+   'two_page_funnel' namespace, separate from funnel-d/funnel-d-v2, so the
+   arms of the 50/50 split test never interfere with each other. */
+try {
+  var STEP_NUM = 1, FUNNEL_PREFIX = 'two_page_funnel';
+  var MAX_KEY = 'do_max_step_' + FUNNEL_PREFIX;
+  var prevMax = parseInt(localStorage.getItem(MAX_KEY), 10) || 0;
+  var inSequence = (STEP_NUM === 1) || (prevMax >= STEP_NUM - 1);
+  if (panel && inSequence) fetch(TRACK_HOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({metric:'video_1',panel:panel})}).catch(function(){});
+  if (inSequence && STEP_NUM > prevMax) localStorage.setItem(MAX_KEY, String(STEP_NUM));
+} catch(e) { if(panel)fetch(TRACK_HOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({metric:'video_1',panel:panel})}).catch(function(){}); }
+if(typeof fbq!=='undefined')fbq('track','PageView');
+const sd={};[25,50,75,100].forEach(d=>sd[d]=0);
+window.addEventListener('scroll',()=>{
+  const s=document.body.scrollHeight-window.innerHeight;if(!s)return;
+  const p=Math.round(window.scrollY/s*100);
+  [25,50,75,100].forEach(d=>{if(!sd[d]&&p>=d){sd[d]=1;dataLayer.push({event:'scroll_depth',depth:d+'%',page:PAGE});}});
+},{passive:true});
+const t0=Date.now();
+const vm={};[25,50,75,100].forEach(m=>vm[m]=0);
+let lastPos=0,lastPct=0;
+document.getElementById('btnNext').addEventListener('click',function(){
+  var secs=Math.round((Date.now()-t0)/1000);
+  try{dataLayer.push({event:'next_step_click',page:PAGE,pct_watched:lastPct,seconds_on_page:secs});}catch(err){}
+  if(navigator.sendBeacon){
+    navigator.sendBeacon(WEBHOOK,JSON.stringify({event:'next_step_click',page:PAGE,phone:phone,email:email,pct_watched:lastPct,seconds_on_page:secs,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')}));
+  }
+  /* Lead-journey stage tracking -- logs to a Make.com Data Store
+     (append-only, keyed by phone+stage) instead of LeadManager, since
+     LM's API cannot update an existing lead. See lead-journey.html for
+     the viewer. */
+  fetch('https://hook.eu1.make.com/9nycxwodyby36g30ezp05idn0rqihnlh',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:phone,email:email,stage:2,stage_label:'video_1'}),keepalive:true}).catch(function(){});
+});
+window.addEventListener('load',()=>{
+  const video=document.getElementById('vimeoPlayer');
+  const thumb=document.getElementById('vidThumb');
+  const btnNext=document.getElementById('btnNext');
+  thumb.onclick=function(){thumb.classList.add('gone');video.play();};
+  video.addEventListener('play',()=>{
+    thumb.classList.add('gone');btnNext.classList.add('watching');
+    dataLayer.push({event:'video_play',page:PAGE});
+  });
+  video.addEventListener('pause',()=>{
+    btnNext.classList.remove('watching');
+    const pos=Math.round(video.currentTime),pct=Math.round(video.currentTime/video.duration*100);
+    dataLayer.push({event:'video_pause',page:PAGE,time:pos,pct_watched:pct});
+    fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({event:'video_pause',page:PAGE,position_sec:pos,pct_watched:pct,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')})
+    }).catch(()=>{});
+  });
+  video.addEventListener('timeupdate',()=>{
+    lastPos=video.currentTime;lastPct=Math.round(video.currentTime/video.duration*100);
+    const pct=video.currentTime/video.duration*100;
+    [25,50,75,100].forEach(m=>{if(!vm[m]&&pct>=m){vm[m]=1;dataLayer.push({event:'video_progress',milestone:m+'%',time:Math.round(video.currentTime),page:PAGE});}});
+  });
+  video.addEventListener('ended',()=>{
+    btnNext.classList.remove('watching');
+    dataLayer.push({event:'video_ended',page:PAGE});
+    if(typeof fbq!=='undefined')fbq('track','ViewContent',{content_name:PAGE});
+    fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({event:'video_completed',page:PAGE,pct_watched:100,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')})
+    }).catch(()=>{});
+    btnNext.classList.add('unlocked');
+    btnNext.innerHTML='&#9658;&nbsp; לעבור לשלב הבא &nbsp;<span class="btn-arrow">←</span>';
+    setTimeout(()=>{btnNext.scrollIntoView({behavior:'smooth',block:'center'});},300);
+  });
+});
+window.addEventListener('beforeunload',()=>{
+  if(navigator.sendBeacon){
+    navigator.sendBeacon(WEBHOOK,JSON.stringify({
+      event:'page_exit',page:PAGE,phone:phone,email:email,position_sec:Math.round(lastPos),pct_watched:lastPct,
+      seconds_on_page:Math.round((Date.now()-t0)/1000),supplier:sup,utm_source:src,
+      timestamp:new Date().toLocaleString('he-IL')
+    }));
+  }
+});
+</script>
+<script>
+setTimeout(function(){
+  var b=document.getElementById('btnNext');
+  if(!b||b.classList.contains('unlocked'))return;
+  b.classList.remove('watching');
+  b.classList.add('unlocked');
+  b.style.cursor='pointer';
+  b.style.pointerEvents='auto';
+  b.innerHTML='&#9658;&nbsp; לעבור לשלב הבא &nbsp;<span class="btn-arrow">&#8592;</span>';
+  setTimeout(function(){b.scrollIntoView({behavior:'smooth',block:'center'});},300);
+},60000);
+</script>
+</body>
+</html>
