@@ -143,6 +143,12 @@ body{
 .bck{color:#f59e0b;flex-shrink:0;}
 .reinforce-line{font-size:13px;font-weight:700;color:rgba(252,211,77,.6);text-align:center;}
 .consent-wrap{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;}
+.wfield{width:100%;height:52px;background:rgba(255,255,255,.06);border:1px solid rgba(180,83,9,.3);border-radius:8px;color:#fff;font-family:'Assistant',sans-serif;font-size:15px;padding:0 14px;margin-bottom:10px;outline:none;direction:rtl;-webkit-appearance:none;transition:border .2s,background .2s;}
+.wfield::placeholder{color:rgba(255,255,255,.3);}
+.wfield:focus{border-color:rgba(245,158,11,.6);background:rgba(255,255,255,.09);}
+.werr{font-size:12px;color:#ff7070;margin:-6px 0 8px 2px;display:none;}
+.werr.show{display:block;}
+.btn-next:disabled{opacity:.6;cursor:not-allowed;animation:none;pointer-events:none;}
 footer{position:relative;z-index:2;width:100%;border-top:1px solid rgba(255,255,255,.04);padding:14px 20px;text-align:center;font-family:'Assistant',sans-serif;font-size:11px;color:rgba(255,255,255,.12);line-height:2;margin-top:auto;}
 footer a{color:rgba(255,255,255,.18);text-decoration:none;}
 footer a:hover{color:#f59e0b;}
@@ -180,27 +186,21 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.06);}
   </div>
   
   <div class="proposal-box">
-    <h2 class="proposal-title">השלב הבא — להבין איך זה עובד בפועל</h2>
-    <p class="proposal-sub">איך לקחת את כל מה שראית כאן ולהפוך את זה למשהו שעובד בחיים שלך</p>
-    <div class="benefit-list">
-      <div class="bi"><span class="bck">✔️</span><span>להבין איך הדברים באמת עובדים בעולם של היום</span></div>
-      <div class="bi"><span class="bck">✔️</span><span>לראות איך בונים תהליך שמייצר תנועה אמיתית</span></div>
-      <div class="bi"><span class="bck">✔️</span><span>להבין איך להשתמש בחשיפה ובטכנולוגיה בצורה נכונה</span></div>
-      <div class="bi"><span class="bck">✔️</span><span>לקבל תמונה ברורה — בלי ניחושים ובלי בלבול</span></div>
-    </div>
-    <p class="reinforce-line">זה לא עוד תוכן — זה השלב שבו הדברים מתחילים לזוז באמת</p>
+    <p class="reinforce-line" style="margin-bottom:10px;">עד עכשיו דיברנו על הרעיון.<br>עכשיו הגיע הזמן לראות אותו קורה מול העיניים.</p>
+    <p class="proposal-sub" style="margin-bottom:10px;">בהדרכה המלאה תיכנסו אל מאחורי הקלעים ותראו איך התהליך נראה באמת – איך נראית המערכת מבפנים, איך היא בנויה, איך היא מקבלת מידע, איך היא פועלת לאורך הזמן ואיך כל החלקים מתחברים לתהליך אחד שעובד בצורה מסודרת.</p>
+    <p class="reinforce-line" style="margin-bottom:10px;">זו לא עוד הרצאה. זו הזדמנות לראות את הדברים כפי שהם נראים בפועל.</p>
+    <p class="proposal-sub" style="margin-bottom:0;">אם גם אתם סקרנים לראות איך כל זה נראה מבפנים, השאירו את הפרטים שלכם ותקבלו את ההדרכה המלאה ישירות למייל.</p>
   </div>
   <div class="btn-box">
-    <div class="preview-rows">
-      <div class="preview-row">הגישה לא נשארת פתוחה לאורך זמן</div>
-      <div class="preview-row">זה לא עוד תוכן — זה השלב שבו הדברים מתחילים לזוז באמת</div>
-      <div class="preview-row">ההבדל בין מי שמתקדם לבין מי שנשאר — זה הרגע שהוא מחליט להיכנס לעומק</div>
-      <div class="preview-row" style="color:rgba(252,211,77,.4);">אם הגעת עד לכאן — אתה כבר בצד הנכון</div>
-    </div>
-    <a class="btn-next" id="btnNext" data-text="שריין מקום לוובינר" href="../../extra/signup-d.html">
-      🔒&nbsp; שריין מקום לוובינר &nbsp;<span class="btn-arrow">←</span>
-    </a>
-    <p class="lock-hint" style="margin-top:10px;margin-bottom:0;">🔒 הכפתור ייפתח בסיום הסרטון</p>
+    <input class="wfield" id="wName" type="text" placeholder="שם מלא" autocomplete="name"/>
+    <div class="werr" id="eName">נא להזין שם מלא</div>
+    <input class="wfield" id="wPhone" type="tel" placeholder="טלפון" autocomplete="tel" inputmode="numeric"/>
+    <div class="werr" id="ePhone">נא להזין מספר טלפון</div>
+    <input class="wfield" id="wEmail" type="email" placeholder="מייל" autocomplete="email"/>
+    <div class="werr" id="eEmail">נא להזין אימייל תקין</div>
+    <button class="btn-next unlocked" id="submitBtn" onclick="submitFullTraining()" style="width:100%;">
+      📩&nbsp; שלחו לי את ההדרכה המלאה
+    </button>
   </div>
 
 </div>
@@ -243,7 +243,6 @@ const P=new URLSearchParams(location.search);
 const variant=P.get('variant')||'',sup=P.get('lm_supplier')||P.get('supplier')||'',src=P.get('utm_source')||'';
 const phone=P.get('phone')||'',email=P.get('email')||'';
 const panel=P.get('panel')||'';
-(function(){var nb=document.getElementById('btnNext');if(nb&&location.search)nb.setAttribute('href',nb.getAttribute('href').split('?')[0]+location.search);})();
 dataLayer.push({event:'page_view',page:PAGE,source_variant:variant,supplier:sup,utm_source:src});
 /* Sequential funnel gate -- see funnel-d-1.html for the full explanation.
    Only counts if this browser already has a marker showing it passed
@@ -266,29 +265,91 @@ window.addEventListener('scroll',()=>{
 const t0=Date.now();
 const vm={};[25,50,75,100].forEach(m=>vm[m]=0);
 let lastPos=0,lastPct=0;
-document.getElementById('btnNext').addEventListener('click',function(){
+
+async function resolveSupplier(pms) {
+  if (pms.supplier) return pms.supplier;
+  try {
+    const res = await fetch('/marketers/marketers.json');
+    const marketers = await res.json();
+    const mk = (pms.marketer && marketers[pms.marketer]) ? pms.marketer : 'yahav';
+    const entry = marketers[mk];
+    return entry ? entry.lm_supplier : 35213;
+  } catch (e) {
+    return 35213;
+  }
+}
+function submitFullTraining(){
+  var name=document.getElementById('wName').value.trim();
+  var wphone=document.getElementById('wPhone').value.trim();
+  var wemail=document.getElementById('wEmail').value.trim();
+  var ok=true;
+  ['eName','ePhone','eEmail'].forEach(function(id){document.getElementById(id).classList.remove('show');});
+  if(!name){document.getElementById('eName').classList.add('show');ok=false;}
+  if(!wphone){document.getElementById('ePhone').classList.add('show');ok=false;}
+  if(!wemail||wemail.indexOf('@')<0){document.getElementById('eEmail').classList.add('show');ok=false;}
+  if(!ok)return;
+  var btn=document.getElementById('submitBtn');
+  btn.disabled=true;btn.innerHTML='שולח…';
   var secs=Math.round((Date.now()-t0)/1000);
   try{dataLayer.push({event:'next_step_click',page:PAGE,pct_watched:lastPct,seconds_on_page:secs});}catch(err){}
   if(navigator.sendBeacon){
-    navigator.sendBeacon(WEBHOOK,JSON.stringify({event:'next_step_click',page:PAGE,phone:phone,email:email,pct_watched:lastPct,seconds_on_page:secs,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')}));
+    navigator.sendBeacon(WEBHOOK,JSON.stringify({event:'next_step_click',page:PAGE,phone:wphone,email:wemail,pct_watched:lastPct,seconds_on_page:secs,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')}));
   }
   /* Lead-journey stage tracking -- logs to a Make.com Data Store
      (append-only, keyed by phone+stage) instead of LeadManager, since
      LM's API cannot update an existing lead. See lead-journey.html for
      the viewer. */
-  fetch('https://hook.eu1.make.com/9nycxwodyby36g30ezp05idn0rqihnlh',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:phone,email:email,stage:5,stage_label:'video_4'}),keepalive:true}).catch(function(){});
-});
+  fetch('https://hook.eu1.make.com/9nycxwodyby36g30ezp05idn0rqihnlh',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:wphone,name:name,email:wemail,stage:5,stage_label:'video_4'}),keepalive:true}).catch(function(){});
+
+  resolveSupplier({supplier:sup,marketer:P.get('marketer')||''}).then(function(resolvedSupplier){
+    /* LeadManager -- same form as signup-video.html, since this is the
+       identical "send me the full training" offer, one step earlier. */
+    var lmP=new URLSearchParams();
+    lmP.append('lm_form','91391');
+    lmP.append('lm_key','49660f23b0274b899031f9a10580db9d');
+    lmP.append('subscribers_name',name);
+    lmP.append('subscribers_phone',wphone);
+    lmP.append('subscribers_email',wemail);
+    lmP.append('fld_144377','1');
+    lmP.append('fld_105911',src||'');
+    lmP.append('fld_107862',src||'');
+    lmP.append('lm_supplier',resolvedSupplier);
+    lmP.append('lm_bc',src||'');
+    lmP.append('fields[REF]',P.get('ref')||variant||'');
+    lmP.append('utm_medium',P.get('utm_medium')||'');
+    lmP.append('utm_campaign',P.get('utm_campaign')||'');
+    lmP.append('page',PAGE);
+    fetch('https://hook.eu1.make.com/j4ktylebkczp1tgvlj0h4tfbxb77q9b1',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({qs:lmP.toString(),page:PAGE,phone:wphone,name:name,email:wemail}),
+      keepalive:true
+    }).catch(function(){});
+
+    /* RavMessage (ResponderLive) confirmation email -- same hook used by the
+       landing pages / signup-video.html. */
+    fetch('https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name:name,phone:wphone,email:wemail,page:PAGE}),
+      keepalive:true
+    }).catch(function(){});
+  });
+
+  setTimeout(function(){
+    var q=new URLSearchParams(location.search);
+    q.set('name',name);q.set('phone',wphone);q.set('email',wemail);
+    window.location.href='../../extra/signup-video.html?'+q.toString();
+  },400);
+}
+
 window.addEventListener('load',()=>{
   const video=document.getElementById('vimeoPlayer');
   const thumb=document.getElementById('vidThumb');
-  const btnNext=document.getElementById('btnNext');
   thumb.onclick=function(){thumb.classList.add('gone');video.play();};
   video.addEventListener('play',()=>{
-    thumb.classList.add('gone');btnNext.classList.add('watching');
+    thumb.classList.add('gone');
     dataLayer.push({event:'video_play',page:PAGE});
   });
   video.addEventListener('pause',()=>{
-    btnNext.classList.remove('watching');
     const pos=Math.round(video.currentTime),pct=Math.round(video.currentTime/video.duration*100);
     dataLayer.push({event:'video_pause',page:PAGE,time:pos,pct_watched:pct});
     fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},
@@ -301,15 +362,11 @@ window.addEventListener('load',()=>{
     [25,50,75,100].forEach(m=>{if(!vm[m]&&pct>=m){vm[m]=1;dataLayer.push({event:'video_progress',milestone:m+'%',time:Math.round(video.currentTime),page:PAGE});}});
   });
   video.addEventListener('ended',()=>{
-    btnNext.classList.remove('watching');
     dataLayer.push({event:'video_ended',page:PAGE});
     if(typeof fbq!=='undefined')fbq('track','ViewContent',{content_name:PAGE});
     fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({event:'video_completed',page:PAGE,pct_watched:100,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')})
     }).catch(()=>{});
-    btnNext.classList.add('unlocked');
-    btnNext.innerHTML='&#9658;&nbsp; שריין מקום לוובינר &nbsp;<span class="btn-arrow">←</span>';
-    setTimeout(()=>{btnNext.scrollIntoView({behavior:'smooth',block:'center'});},300);
   });
 });
 window.addEventListener('beforeunload',()=>{
@@ -321,18 +378,6 @@ window.addEventListener('beforeunload',()=>{
     }));
   }
 });
-</script>
-<script>
-setTimeout(function(){
-  var b=document.getElementById('btnNext');
-  if(!b||b.classList.contains('unlocked'))return;
-  b.classList.remove('watching');
-  b.classList.add('unlocked');
-  b.style.cursor='pointer';
-  b.style.pointerEvents='auto';
-  b.innerHTML='&#9658;&nbsp; שריין מקום לוובינר &nbsp;<span class="btn-arrow">&#8592;</span>';
-  setTimeout(function(){b.scrollIntoView({behavior:'smooth',block:'center'});},300);
-},60000);
 </script>
 </body>
 </html>
