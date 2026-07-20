@@ -97,8 +97,13 @@ tbody tr.hot{border-inline-start:3px solid #ff6ba0;}
 .s4{background:#1a2f3a;color:#5fb3d6;}
 .s5{background:#261a3a;color:#a066d6;}
 .s6{background:#3a1a2a;color:#ff6ba0;font-weight:800;}
+.s7{background:#3a2e0f;color:#ffd166;font-weight:800;}
 .progress-dots{display:flex;gap:3.5px;margin-top:5px;}
 .pdot{width:7px;height:7px;border-radius:50%;background:#232833;flex-shrink:0;}
+.funnel-badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap;}
+.funnel-badge.tpf{background:#1a2f3a;color:#5fb3d6;}
+.funnel-badge.dv2{background:#2a1a3a;color:#b98af0;}
+.funnel-badge.other{background:#232833;color:#5b6270;}
 .time-cell .abs{color:#8a8f98;font-size:11.5px;}
 .time-cell .rel{font-size:12.5px;color:#c7cbd4;}
 .del-btn{background:#2a1414;color:#ff6b6b;border:1px solid #4a2222;padding:6px 12px;border-radius:7px;cursor:pointer;font-size:12px;white-space:nowrap;}
@@ -125,7 +130,7 @@ tbody tr.hot{border-inline-start:3px solid #ff6ba0;}
 <div class="top">
   <div>
     <h1>מעקב מסע לקוח 🔥</h1>
-    <div class="sub">כל ליד + השלב הכי רחוק שהגיע אליו במסע (דף נחיתה → סרטוני ההדרכה → המרה סופית: הרשמה לוובינר או הצטרפות לקבוצה). לא כל המשפכים זהים באורכם — יש משפכים עם 2 סרטונים ויש עם 4, כך שלא כל ליד יעבור דרך כל השלבים. מתעדכן אוטומטית מכל האתר, בלי תלות ב-LeadManager.</div>
+    <div class="sub">כל ליד + השלב הכי רחוק שהגיע אליו במסע (דף נחיתה → סרטוני ההדרכה → המרה סופית: השארת פרטים בסוף המשפך). לא כל המשפכים זהים באורכם — יש משפכים עם 2 סרטונים ויש עם 4, כך שלא כל ליד יעבור דרך כל השלבים. מתעדכן אוטומטית מכל האתר, בלי תלות ב-LeadManager.</div>
   </div>
   <div class="refresh-meta" id="refreshMeta">
     <span class="dot"></span>
@@ -151,7 +156,13 @@ tbody tr.hot{border-inline-start:3px solid #ff6ba0;}
     <option value="3">סרטון 2</option>
     <option value="4">סרטון 3</option>
     <option value="5">סרטון 4</option>
-    <option value="6">🏆 המרה סופית (וובינר / קבוצה)</option>
+    <option value="6">🏆 המרה סופית (השארת פרטים)</option>
+    <option value="7">⭐ הצטרפו לוואטסאפ (בונוס)</option>
+  </select>
+  <select id="funnelFilter">
+    <option value="">כל המשפכים</option>
+    <option value="6">Two-Page Funnel (פאנל 6)</option>
+    <option value="7">Funnel D V2 (פאנל 7)</option>
   </select>
   <select id="dateRange">
     <option value="">כל התאריכים</option>
@@ -213,11 +224,18 @@ const STAGE_LABELS = {
   3: 'סרטון 2',
   4: 'סרטון 3',
   5: 'סרטון 4',
-  6: '🏆 המרה סופית'
+  6: '🏆 המרה סופית',
+  7: '⭐ הצטרפו לוואטסאפ'
 };
 // Precise per-lead label, keyed by the raw stage_label string each funnel
 // page actually sends. Falls back to STAGE_LABELS[stage] when a record's
 // stage_label isn't one of these (e.g. legacy records without one).
+// webinar_signup is still real -- funnel-c/funnel-d's classic signup pages
+// (signup-c.html / signup-d.html) run an actual webinar. Two-Page Funnel
+// and Funnel D V2 don't -- their last video page just captures the lead's
+// details directly, so that's tracked as details_submitted instead, and
+// their optional WhatsApp-group click (a bonus step, not the main
+// conversion) is a separate stage 7.
 const STAGE_LABEL_DETAIL = {
   landing: 'דף נחיתה',
   video_1: 'סרטון 1',
@@ -225,12 +243,26 @@ const STAGE_LABEL_DETAIL = {
   video_3: 'סרטון 3',
   video_4: 'סרטון 4',
   webinar_signup: '🏆 נרשם לוובינר',
-  whatsapp_join: '🏆 הצטרף לקבוצת הוואטסאפ'
+  details_submitted: '🏆 השאיר/ה פרטים',
+  whatsapp_join: '⭐ הצטרף/ה לקבוצת הוואטסאפ'
 };
 function stageDisplay(r){
   return STAGE_LABEL_DETAIL[r.stage_label] || STAGE_LABELS[r.stage] || r.stage_label || '-';
 }
-const STAGE_COLORS = {1:'#e0b357',2:'#a8d666',3:'#5fd6b0',4:'#5fb3d6',5:'#a066d6',6:'#ff6ba0'};
+const STAGE_COLORS = {1:'#e0b357',2:'#a8d666',3:'#5fd6b0',4:'#5fb3d6',5:'#a066d6',6:'#ff6ba0',7:'#ffd166'};
+// Distinguishes which of the two active split-test funnels a lead went
+// through. Only panels 6/7 are tagged today (Two-Page Funnel vs Funnel D
+// V2); every other page's stage-tracking calls don't send a panel yet, so
+// those leads show no funnel badge.
+const PANEL_LABELS = {
+  '6': { name: 'Two-Page Funnel', cls: 'tpf' },
+  '7': { name: 'Funnel D V2', cls: 'dv2' }
+};
+function funnelBadge(r){
+  const p = PANEL_LABELS[r.panel];
+  if(!p) return '<span class="funnel-badge other">—</span>';
+  return '<span class="funnel-badge ' + p.cls + '">' + p.name + '</span>';
+}
 let allRows = [];
 let autoRefreshTimer = null;
 let currentPage = 1;
@@ -278,7 +310,8 @@ async function loadData(){
     // are tracked separately from stage/updated_at: the video-stage tracking
     // calls (stage 2-5, fired from the funnel pages) only ever send
     // {phone, email, stage} -- they never carry the lead's name. Only the
-    // stage-1 "landing" call (and stage-6 "webinar_signup") include it. If we
+    // stage-1 "landing" call (and stage-6 "webinar_signup"/"details_submitted")
+    // include it. If we
     // just took name/email from whichever record has the highest stage (the
     // old behavior), any lead whose highest stage happens to be a video step
     // shows up with a blank name, even though we know it perfectly well from
@@ -291,14 +324,21 @@ async function loadData(){
       const stage = Number(r.stage) || 0;
       let existing = byPhone[r.phone];
       if(!existing){
-        existing = byPhone[r.phone] = { phone: r.phone, name: '', email: '', stage: -1, stage_label: '', updated_at: '' };
+        existing = byPhone[r.phone] = { phone: r.phone, name: '', email: '', stage: -1, stage_label: '', panel: '', updated_at: '' };
       }
       if(r.name && !existing.name) existing.name = r.name;
       if(r.email && !existing.email) existing.email = r.email;
+      // Keep the first panel value seen for this phone too (independent of
+      // which record "wins" for stage) -- landing (stage 1) never carries a
+      // panel since the split hasn't happened yet, so without this a lead
+      // whose winning record happens to lack a panel would lose the badge
+      // even though an earlier video-stage record for the same phone has it.
+      if(r.panel && !existing.panel) existing.panel = r.panel;
       if(stage > existing.stage || (stage === existing.stage && r.updated_at > existing.updated_at)){
         existing.stage = stage;
         existing.stage_label = r.stage_label;
         existing.updated_at = r.updated_at;
+        if(r.panel) existing.panel = r.panel;
       }
     });
     allRows = Object.values(byPhone);
@@ -393,9 +433,11 @@ function inDateRange(r){
 function getFilteredSortedRows(){
   const q = document.getElementById('searchBox').value.trim().toLowerCase();
   const stageF = document.getElementById('stageFilter').value;
+  const funnelF = document.getElementById('funnelFilter').value;
   let rows = allRows.filter(r =>
     (!q || (r.phone||'').toLowerCase().includes(q) || (r.name||'').toLowerCase().includes(q) || (r.email||'').toLowerCase().includes(q))
     && (!stageF || String(r.stage) === stageF)
+    && (!funnelF || r.panel === funnelF)
     && inDateRange(r)
   );
   const sortVal = document.getElementById('sortBy').value;
@@ -454,7 +496,7 @@ function render(rows){
   }
   content.className = '';
   let html = '<table><thead><tr>'
-    + '<th>שם</th><th>טלפון</th><th>אימייל</th><th>התקדמות</th><th>עודכן</th><th></th>'
+    + '<th>שם</th><th>טלפון</th><th>אימייל</th><th>משפך</th><th>התקדמות</th><th>עודכן</th><th></th>'
     + '</tr></thead><tbody>';
   rows.forEach(r => {
     const dots = [1,2,3,4,5,6].map(s =>
@@ -469,6 +511,7 @@ function render(rows){
       + '<td class="name-cell">' + esc(r.name || '-') + '</td>'
       + '<td dir="ltr"><div class="phone-cell"><span>' + esc(r.phone || '-') + '</span>' + quickActions + '</div></td>'
       + '<td dir="ltr" style="text-align:right" class="muted">' + esc(r.email || '-') + '</td>'
+      + '<td>' + funnelBadge(r) + '</td>'
       + '<td><span class="stage-pill s' + r.stage + '">' + stageDisplay(r) + '</span><div class="progress-dots">' + dots + '</div></td>'
       + '<td class="time-cell"><div class="rel">' + esc(relTime(r.updated_at) || '-') + '</div><div class="abs">' + esc(r.updated_at || '-') + '</div></td>'
       + '<td><button class="del-btn" data-phone="' + esc(r.phone || '') + '" onclick="deleteLead(this)">🗑️ מחק</button></td>'
@@ -481,10 +524,11 @@ function render(rows){
 function exportCsv(){
   const rows = getFilteredSortedRows();
   if(!rows.length){ showToast('אין נתונים לייצוא'); return; }
-  const header = ['שם','טלפון','אימייל','שלב','עודכן'];
+  const header = ['שם','טלפון','אימייל','משפך','שלב','עודכן'];
   const lines = [header.join(',')];
   rows.forEach(r => {
-    const vals = [r.name||'', r.phone||'', r.email||'', stageDisplay(r), r.updated_at||''];
+    const funnelName = (PANEL_LABELS[r.panel] && PANEL_LABELS[r.panel].name) || '';
+    const vals = [r.name||'', r.phone||'', r.email||'', funnelName, stageDisplay(r), r.updated_at||''];
     lines.push(vals.map(v => '"' + String(v).replace(/"/g,'""') + '"').join(','));
   });
   const blob = new Blob(['﻿' + lines.join('\n')], {type:'text/csv;charset=utf-8;'});
@@ -559,6 +603,7 @@ const PREF_KEY = 'lj_prefs';
 function savePrefs(){
   localStorage.setItem(PREF_KEY, JSON.stringify({
     stageFilter: document.getElementById('stageFilter').value,
+    funnelFilter: document.getElementById('funnelFilter').value,
     dateRange: document.getElementById('dateRange').value,
     dateFrom: document.getElementById('dateFrom').value,
     dateTo: document.getElementById('dateTo').value,
@@ -570,6 +615,7 @@ function loadPrefs(){
   try {
     const p = JSON.parse(localStorage.getItem(PREF_KEY) || '{}');
     if(p.stageFilter) document.getElementById('stageFilter').value = p.stageFilter;
+    if(p.funnelFilter) document.getElementById('funnelFilter').value = p.funnelFilter;
     if(p.dateRange) document.getElementById('dateRange').value = p.dateRange;
     if(p.dateFrom) document.getElementById('dateFrom').value = p.dateFrom;
     if(p.dateTo) document.getElementById('dateTo').value = p.dateTo;
@@ -581,6 +627,7 @@ function loadPrefs(){
 
 document.getElementById('searchBox').addEventListener('input', function(){ applyFiltersAndRender(true); });
 document.getElementById('stageFilter').addEventListener('change', function(){ savePrefs(); applyFiltersAndRender(true); });
+document.getElementById('funnelFilter').addEventListener('change', function(){ savePrefs(); applyFiltersAndRender(true); });
 document.getElementById('sortBy').addEventListener('change', function(){ savePrefs(); applyFiltersAndRender(true); });
 document.getElementById('pageSize').addEventListener('change', function(){ savePrefs(); applyFiltersAndRender(true); });
 document.getElementById('dateRange').addEventListener('change', function(){

@@ -26,17 +26,18 @@ function playVideoMain(){
 function trackWaJoin() {
   try { dataLayer.push({event:'whatsapp_join_click', page:PAGE}); } catch(e) {}
   try { if(typeof fbq==='function') fbq('track','CompleteRegistration'); } catch(e) {}
-  /* Lead-journey stage tracking -- this WhatsApp click is the final/best
-     action across every funnel that routes here (funnel-d, funnel-d-v2,
-     two-page-funnel), so it's logged as stage 6 -- the same "reached the
-     top" stage used by the classic webinar-signup pages -- just with a
-     distinct stage_label so lead-journey.html can show accurate per-lead
-     text while still counting it toward the same conversion bucket. */
+  /* Lead-journey stage tracking -- funnel-d-v2 and two-page-funnel already
+     log their real final conversion (leaving name/phone/email) as stage 6
+     one step earlier, on the last video page. This WhatsApp click is an
+     optional bonus action on top of that, so it's logged as its own
+     stage 7 -- if it reused stage 6 it would silently overwrite/collide
+     with the "details submitted" record for the same phone (records are
+     keyed by phone+stage). */
   try {
     if(phone){
       fetch('https://hook.eu1.make.com/9nycxwodyby36g30ezp05idn0rqihnlh', {
         method: 'POST', headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({phone: phone, name: name, email: email, stage: 6, stage_label: 'whatsapp_join'}),
+        body: JSON.stringify({phone: phone, name: name, email: email, stage: 7, stage_label: 'whatsapp_join', panel: panel}),
         keepalive: true
       }).catch(function(){});
     }
@@ -439,7 +440,7 @@ const WEBHOOK='https://hook.eu1.make.com/ylf5uesfcqpyaxaxtvayjx08h9rrwqr2';
 window.dataLayer=window.dataLayer||[];
 const P=new URLSearchParams(location.search);
 const variant=P.get('variant')||'',sup=P.get('lm_supplier')||P.get('supplier')||'',src=P.get('utm_source')||'';
-const phone=P.get('phone')||'',email=P.get('email')||'',name=P.get('name')||'';
+const phone=P.get('phone')||'',email=P.get('email')||'',name=P.get('name')||'',panel=P.get('panel')||'';
 dataLayer.push({event:'page_view',page:PAGE,source_variant:variant,supplier:sup,utm_source:src});
 if(typeof fbq!=='undefined')fbq('track','PageView');
 
