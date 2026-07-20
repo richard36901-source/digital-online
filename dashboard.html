@@ -424,7 +424,7 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/></svg>
       </div>
       <div class="kpi-text">
-        <div class="kpi-label">סה״כ נרשמו לוובינר</div>
+        <div class="kpi-label">סה״כ השלימו הרשמה</div>
         <div class="kpi-value mono" id="kpi_webinar">0</div>
         <div class="kpi-sub">המרה סופית</div>
       </div>
@@ -437,7 +437,7 @@
       <div class="kpi-text">
         <div class="kpi-label">שיעור המרה ממוצע</div>
         <div class="kpi-value mono" id="kpi_rate" style="color: var(--good);">0.0%</div>
-        <div class="kpi-sub">לידים → וובינר</div>
+        <div class="kpi-sub">לידים → המרה סופית</div>
       </div>
     </div>
 
@@ -509,7 +509,7 @@
       </span>
       מבחן A/B · דף הנחיתה
     </h2>
-    <span class="meta">המרה לוובינר היא המדד הסופי</span>
+    <span class="meta">שליחת הפרטים היא המדד הסופי</span>
   </div>
 
   <div class="ab-grid" id="ab_grid"></div>
@@ -639,8 +639,8 @@ const HEAD_TO_HEAD_TESTS = [
   {
     /* This card measures the landing page's OWN conversion -- entries (page
        views) vs. actually submitting the lead form -- not the downstream
-       webinar signup, which depends on the video funnel too and would mix
-       in noise unrelated to the landing page copy/design itself. */
+       end-of-funnel conversion, which depends on the video funnel too and
+       would mix in noise unrelated to the landing page copy/design itself. */
     title: 'דף נחיתה · OPTION2 מול OPTION2_V2', tag: 'landing', tagLabel: 'דף נחיתה',
     conversionLabel: 'שלחו פרטים', conversionKey: 'landing',
     variantA: { name: 'OPTION2', desc: 'הגרסה המקורית (זהב)', panel: 2 },
@@ -652,7 +652,7 @@ const HEAD_TO_HEAD_TESTS = [
        independent of which landing page sent the traffic -- see the
        redirect logic in landing-pages/*.html. */
     title: 'Two-Page Funnel מול Funnel D V2', tag: 'funnel', tagLabel: 'משפך וידאו',
-    conversionLabel: 'נרשמו לוובינר', conversionKey: 'webinar',
+    conversionLabel: 'השאירו פרטים', conversionKey: 'webinar',
     variantA: { name: 'Two-Page Funnel', desc: 'משפך דו-שלבי מקוצר', panel: 6 },
     variantB: { name: 'Funnel D V2', desc: 'עיצוב סקרנות (סגול/ציאן) + קופי חדש', panel: 7 }
   }
@@ -691,7 +691,7 @@ const FUNNEL_STEPS = [
   { key: 'video_2', label: 'הגיעו לוידאו 2',      icon: 'play' },
   { key: 'video_3', label: 'הגיעו לוידאו 3',      icon: 'play' },
   { key: 'video_4', label: 'הגיעו לוידאו 4',      icon: 'play' },
-  { key: 'webinar', label: 'נרשמו לוובינר', icon: 'check', isEnd: true }
+  { key: 'webinar', label: 'השאירו פרטים בסוף המשפך', icon: 'check', isEnd: true }
 ];
 
 const ICONS = {
