@@ -303,8 +303,17 @@ function submitFullTraining(){
   /* Lead-journey stage tracking -- logs to a Make.com Data Store
      (append-only, keyed by phone+stage) instead of LeadManager, since
      LM's API cannot update an existing lead. See lead-journey.html for
-     the viewer. */
-  fetch('https://hook.eu1.make.com/9nycxwodyby36g30ezp05idn0rqihnlh',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:wphone,name:name,email:wemail,stage:5,stage_label:'video_4'}),keepalive:true}).catch(function(){});
+     the viewer. This is the LAST step of the four-video funnel and the
+     only place it captures name/phone/email, so this submit IS the
+     funnel's real final conversion -- stage 6, not a mid-funnel video
+     milestone. (There's no webinar signup anymore; leaving your details
+     here is the end goal.) */
+  fetch('https://hook.eu1.make.com/9nycxwodyby36g30ezp05idn0rqihnlh',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:wphone,name:name,email:wemail,stage:6,stage_label:'details_submitted',panel:panel}),keepalive:true}).catch(function(){});
+  /* Dashboard metric -- feeds the f6_webinar / f7_webinar sheet cells used
+     by the Two-Page Funnel vs Funnel D V2 head-to-head comparison. The
+     metric id is still literally "webinar" in the sheet/Make wiring, but
+     it now represents this end-of-funnel details submission. */
+  try { fetch(TRACK_HOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({metric:'webinar',panel:panel})}).catch(function(){}); } catch(e) {}
 
   resolveSupplier({supplier:sup,marketer:P.get('marketer')||''}).then(function(resolvedSupplier){
     /* LeadManager -- same form as signup-video.html, since this is the
