@@ -123,6 +123,57 @@ tbody tr.hot{border-inline-start:3px solid #ff6ba0;}
 .confirm-no:hover{background:#323847;}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#171a22;border:1px solid #262b36;color:#e8e8e8;border-radius:9px;padding:11px 20px;font-size:13px;z-index:1000;box-shadow:0 8px 30px rgba(0,0,0,.4);}
 .toast.err{background:#2a1414;border-color:#4a2222;color:#ff9a9a;}
+
+/* ---------- mobile (phones, e.g. iPhone) ---------- */
+@media(max-width:680px){
+  body{padding:12px;padding-bottom:calc(12px + env(safe-area-inset-bottom));}
+  .top{flex-direction:column;align-items:flex-start;gap:10px;margin-bottom:16px;}
+  h1{font-size:19px;}
+  .sub{font-size:12px;max-width:none;}
+  .refresh-meta{align-self:stretch;justify-content:space-between;}
+
+  .panel{padding:14px;}
+  .funnel-row{grid-template-columns:62px 1fr 72px;gap:6px;margin-bottom:8px;}
+  .funnel-label{font-size:10.5px;}
+  .funnel-track{height:22px;}
+  .funnel-nums{font-size:10px;}
+  .funnel-nums b{font-size:12px;}
+  .funnel-drop{display:block;font-size:9.5px;margin-inline-start:0;}
+
+  .kpis{gap:8px;}
+  .kpi{padding:12px 12px 10px;}
+  .kpi .kv{font-size:21px;}
+  .kpi .kl{font-size:10.5px;}
+
+  .controls{flex-direction:column;align-items:stretch;gap:8px;}
+  .controls input[type=text],
+  .controls select,
+  .controls button{width:100%;max-width:none;padding:11px 12px;}
+  .spacer{display:none;}
+  .custom-range{width:100%;}
+  .custom-range input[type=date]{flex:1;min-width:0;}
+
+  .results-bar{flex-direction:column;align-items:flex-start;gap:6px;}
+
+  .pagination{gap:10px;padding:14px 8px;flex-wrap:wrap;}
+  .pagination button{padding:9px 14px;}
+
+  /* table -> stacked cards, one per lead */
+  .table-wrap{background:transparent;border:none;overflow:visible;border-radius:0;}
+  table, thead, tbody, tr, td{display:block;width:100%;}
+  thead{display:none;}
+  tbody tr{background:#12141a;border:1px solid #22262f;border-radius:14px;padding:2px 14px;margin-bottom:12px;}
+  tbody tr.hot{border-color:rgba(255,107,160,.45);}
+  tbody tr:hover td{background:transparent;}
+  td{border-bottom:1px solid #1c2029;padding:10px 0;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:start;}
+  td:last-child{border-bottom:none;justify-content:center;padding:12px 0;}
+  td::before{content:attr(data-label);font-size:11px;font-weight:700;color:#8a8f98;flex-shrink:0;}
+  td.name-cell{font-size:16px;font-weight:700;color:#fff;}
+  td.name-cell::before{content:none;}
+  .del-btn{width:100%;padding:11px 16px;}
+  .cell-inner{display:flex;flex-direction:column;align-items:flex-end;gap:5px;}
+  .progress-dots{margin-top:0;}
+}
 </style>
 </head>
 <body>
@@ -509,11 +560,11 @@ function render(rows){
     ) : '';
     html += '<tr class="' + (r.stage >= 6 ? 'hot' : '') + '">'
       + '<td class="name-cell">' + esc(r.name || '-') + '</td>'
-      + '<td dir="ltr"><div class="phone-cell"><span>' + esc(r.phone || '-') + '</span>' + quickActions + '</div></td>'
-      + '<td dir="ltr" style="text-align:right" class="muted">' + esc(r.email || '-') + '</td>'
-      + '<td>' + funnelBadge(r) + '</td>'
-      + '<td><span class="stage-pill s' + r.stage + '">' + stageDisplay(r) + '</span><div class="progress-dots">' + dots + '</div></td>'
-      + '<td class="time-cell"><div class="rel">' + esc(relTime(r.updated_at) || '-') + '</div><div class="abs">' + esc(r.updated_at || '-') + '</div></td>'
+      + '<td data-label="טלפון"><div class="phone-cell" dir="ltr"><span>' + esc(r.phone || '-') + '</span>' + quickActions + '</div></td>'
+      + '<td class="muted" data-label="אימייל"><span dir="ltr">' + esc(r.email || '-') + '</span></td>'
+      + '<td data-label="משפך">' + funnelBadge(r) + '</td>'
+      + '<td data-label="התקדמות"><div class="cell-inner"><span class="stage-pill s' + r.stage + '">' + stageDisplay(r) + '</span><div class="progress-dots">' + dots + '</div></div></td>'
+      + '<td class="time-cell" data-label="עודכן"><div class="cell-inner"><div class="rel">' + esc(relTime(r.updated_at) || '-') + '</div><div class="abs">' + esc(r.updated_at || '-') + '</div></div></td>'
       + '<td><button class="del-btn" data-phone="' + esc(r.phone || '') + '" onclick="deleteLead(this)">🗑️ מחק</button></td>'
       + '</tr>';
   });
