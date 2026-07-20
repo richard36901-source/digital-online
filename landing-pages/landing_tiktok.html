@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-<title>דיגיטל אונליין | ייעוץ עסקי ושיווקי אישי חינם</title>
+<title>דיגיטל אונליין | הדרכה קצרה: פעילות דיגיטלית לצד העבודה</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;800;900&family=Assistant:wght@400;500;600&display=swap" rel="stylesheet"/>
@@ -40,9 +40,11 @@ h1 .gold{background:linear-gradient(135deg,#d4a843,#f0c060,#d4a843);-webkit-back
 .what-list{list-style:none;display:flex;flex-direction:column;gap:7px;}
 .what-list li{font-family:'Assistant',sans-serif;font-size:13.5px;color:rgba(255,255,255,.65);line-height:1.6;padding-right:18px;position:relative;}
 .what-list li::before{content:'✔';position:absolute;right:0;color:#d4a843;font-size:11px;}
-.who-box{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px 18px;margin-bottom:26px;text-align:right;}
-.who-box h2{font-family:'Heebo',sans-serif;font-size:13px;font-weight:800;color:#d4a843;margin-bottom:8px;letter-spacing:.2px;}
-.who-box p{font-family:'Assistant',sans-serif;font-size:13.5px;color:rgba(255,255,255,.65);line-height:1.6;}
+.why-box{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px 18px;margin-bottom:22px;text-align:right;}
+.why-box h2{font-family:'Heebo',sans-serif;font-size:13px;font-weight:800;color:#d4a843;margin-bottom:8px;letter-spacing:.2px;}
+.why-box p{font-family:'Assistant',sans-serif;font-size:13.5px;color:rgba(255,255,255,.65);line-height:1.6;}
+.meta-row{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin-bottom:26px;}
+.meta-item{display:inline-flex;align-items:center;gap:6px;background:rgba(212,168,67,.08);border:1px solid rgba(212,168,67,.2);border-radius:99px;padding:6px 13px;font-family:'Assistant',sans-serif;font-size:12.5px;font-weight:600;color:rgba(255,255,255,.75);white-space:nowrap;}
 .main-cta{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#d4a843,#f0c060);color:#000;font-family:'Heebo',sans-serif;font-size:17px;font-weight:900;border:none;border-radius:8px;cursor:pointer;padding:18px 40px;width:100%;max-width:360px;position:relative;overflow:hidden;letter-spacing:.2px;}
 .main-cta::after{content:'';position:absolute;top:0;left:-120%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);animation:shine 2.8s ease-in-out infinite;}
 @keyframes shine{0%{left:-120%}60%{left:160%}100%{left:160%}}
@@ -91,7 +93,7 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.15)}
 const WEBHOOK='https://hook.eu1.make.com/jp6ukjt7tpk3y4yly9c691g01f47cq8q';
 const TRACK_HOOK='https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q';
 const PANEL='8';
-const VARIANT='tiktok_consulting_v1';
+const VARIANT='tiktok_training_v1';
 const PAGE='landing_tiktok';
 window.dataLayer=window.dataLayer||[];
 const p = getParams();
@@ -292,25 +294,28 @@ document.addEventListener('DOMContentLoaded',function(){
 </div>
 <div class="hero">
   <div class="hero-inner">
-    <span class="tag">📈 ייעוץ עסקי חינם</span>
-    <h1>ייעוץ עסקי ושיווקי אישי <span class="gold">לעסקים קטנים ופרילנסרים</span></h1>
-    <p class="sub">עוזר לך להבין בדיוק מה צריך לקרות כדי שהעסק יגדל, יכניס יותר כסף ויעבוד בצורה מסודרת וברורה.</p>
+    <span class="tag">📚 הדרכה חינמית</span>
+    <h1>הדרכה קצרה: איך אנשים בונים <span class="gold">פעילות דיגיטלית</span> לצד העבודה שלהם</h1>
+    <p class="sub">ב-5 דקות תקבלו הסבר פשוט וברור על איך התחום עובד, אילו עקרונות חשוב להכיר, ומה כדאי להבין לפני שמחליטים אם זה בכלל מתאים לכם.</p>
     <div class="what-box">
-      <h2>מה כולל הייעוץ:</h2>
+      <h2>מה תראו בהדרכה?</h2>
       <ul class="what-list">
-        <li>ליווי אישי אחד-על-אחד</li>
-        <li>ניתוח מעמיק של העסק - מה עובד, מה לא, ואיפה הכסף נתקע</li>
-        <li>בניית אסטרטגיה שיווקית מותאמת אישית לעסק שלך</li>
-        <li>הנחיות פרקטיות וברורות, צעד אחר צעד</li>
-        <li>כלים לשיפור תהליכים, חיסכון בזמן ומניעת טעויות</li>
+        <li>איך נראה התהליך בפועל</li>
+        <li>מה ההבדל בין מי שמתקדם לבין מי שנתקע</li>
+        <li>אילו טעויות נפוצות כדאי להימנע מהן</li>
       </ul>
     </div>
-    <div class="who-box">
-      <h2>למי זה מתאים:</h2>
-      <p>בעלי עסקים קטנים, פרילנסרים ונותני שירות שעובדים קשה אך לא רואים תוצאות, ורוצים לשווק את עצמם נכון.</p>
+    <div class="why-box">
+      <h2>למה כדאי לצפות עד הסוף?</h2>
+      <p>הסרטון בנוי שלב אחר שלב. כל חלק מוסיף מידע חדש, ובסיום התמונה מתחברת ותוכלו להבין האם התחום רלוונטי עבורכם.</p>
     </div>
-    <button class="main-cta" onclick="openModal()">📞 קבעו שיחת ייעוץ חינם</button>
-    <p class="cta-sub">🔒 ללא עלות · ללא התחייבות</p>
+    <div class="meta-row">
+      <span class="meta-item">🎥 סרטון קצר</span>
+      <span class="meta-item">⏱️ כ-5 דקות</span>
+      <span class="meta-item">📚 הסבר פשוט וברור</span>
+    </div>
+    <button class="main-cta" onclick="openModal()">▶️︎ לצפייה בהדרכה</button>
+    <p class="cta-sub">ללא עלות • ללא התחייבות • לצפייה מכל מכשיר</p>
   </div>
 </div>
 <footer>
@@ -321,8 +326,8 @@ document.addEventListener('DOMContentLoaded',function(){
 <div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
   <div class="modal" id="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">קבעו שיחת ייעוץ חינם</div>
-    <div class="modal-sub">ייעוץ עסקי ושיווקי אישי · ללא עלות</div>
+    <div class="modal-title">לאן לשלוח לך את ההדרכה?</div>
+    <div class="modal-sub">הדרכה קצרה של כ-5 דקות · ללא עלות</div>
     <div id="formWrap" class="form-wrap">
       <input type="text" id="iName" placeholder="שם מלא" autocomplete="name" dir="rtl"/>
       <p class="ferr" id="errName"></p>
@@ -332,10 +337,10 @@ document.addEventListener('DOMContentLoaded',function(){
       <p class="ferr" id="errEmail"></p>
       <div class="consent-wrap">
         <input type="checkbox" id="consent"/>
-        <label for="consent">אני מאשר/ת יצירת קשר לתיאום שיחת הייעוץ ותוכן שיווקי במייל, בטלפון ובוואטסאפ. אפשר להסיר בכל שלב שתרצה.</label>
+        <label for="consent">אני מאשר/ת יצירת קשר ותוכן שיווקי במייל, בטלפון ובוואטסאפ. אפשר להסיר בכל שלב שתרצה.</label>
       </div>
       <button class="submit-btn" id="submitBtn" onclick="handleSubmit()">
-        <span id="bc">📞 קבעו לי שיחת ייעוץ</span>
+        <span id="bc">▶️︎ שלחו לי את ההדרכה</span>
       </button>
       <p class="form-notes">
         🔒 הפרטים שלך מאובטחים ולא יועברו לגורם שלישי.
@@ -344,7 +349,7 @@ document.addEventListener('DOMContentLoaded',function(){
     <div class="success" id="successBox">
       <div class="si">✅</div>
       <h2>הפרטים התקבלו!</h2>
-      <p>נציג מהצוות שלנו יחזור אליכם בקרוב לתיאום מועד לשיחת הייעוץ.</p>
+      <p>שולחים לך את ההדרכה עכשיו במייל.</p>
     </div>
   </div>
 </div>
