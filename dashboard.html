@@ -204,8 +204,6 @@
   .fcell-count { font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; color: var(--text); }
   .fcell-pct { font-size: 10px; color: var(--text-3); margin-top: 3px; font-weight: 500; }
   .fcell-pct.dropoff { color: var(--bad); font-weight: 600; }
-  .em-group-title { font-size: 12px; font-weight: 700; color: var(--text-2); margin: 18px 0 10px; }
-  .em-grid + .em-group-title { margin-top: 22px; }
 
   .fwinner-lbl {
     text-align: center; font-size: 10px; color: var(--text-3); letter-spacing: 0.08em;
@@ -257,10 +255,18 @@
   .ab-status.pending { background: var(--warn-bg); color: #92500a; border-color: var(--warn-border); }
   .ab-status.pending::before { background: var(--warn); }
 
-  .ab-versus { display: grid; grid-template-columns: 1fr 56px 1fr; gap: 14px; align-items: stretch; }
+  /* Generic N-variant grid: renders 2 variants (landing test) or 4 (funnel
+     split test) with the same markup -- no "VS" divider needed since that
+     only makes sense for exactly two. Each variant cycles through the
+     4-color palette shared with the funnel-steps table above (v1=--f1 ...
+     v4=--f4) so the same panel always reads as the same color everywhere
+     on the dashboard. */
+  .ab-variants-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; align-items: stretch; }
   .ab-variant { border-radius: 12px; padding: 16px 18px; position: relative; }
-  .ab-variant.a { background: var(--pa-softer); border: 1px solid var(--pa-border); }
-  .ab-variant.b { background: var(--pb-softer); border: 1px solid var(--pb-border); }
+  .ab-variant.v1 { background: var(--f1-bg); border: 1px solid var(--f1-border); }
+  .ab-variant.v2 { background: var(--f2-bg); border: 1px solid var(--f2-border); }
+  .ab-variant.v3 { background: var(--f3-bg); border: 1px solid var(--f3-border); }
+  .ab-variant.v4 { background: var(--f4-bg); border: 1px solid var(--f4-border); }
 
   .ab-var-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
   .ab-var-badge {
@@ -268,8 +274,10 @@
     display: flex; align-items: center; justify-content: center;
     color: white; font-weight: 700; font-size: 13px; flex-shrink: 0;
   }
-  .ab-variant.a .ab-var-badge { background: var(--pa); }
-  .ab-variant.b .ab-var-badge { background: var(--pb); }
+  .ab-variant.v1 .ab-var-badge { background: var(--f1); }
+  .ab-variant.v2 .ab-var-badge { background: var(--f2); }
+  .ab-variant.v3 .ab-var-badge { background: var(--f3); }
+  .ab-variant.v4 .ab-var-badge { background: var(--f4); }
   .ab-var-name { font-size: 14px; font-weight: 700; }
   .ab-var-desc { font-size: 11px; color: var(--text-2); margin-bottom: 14px; min-height: 32px; line-height: 1.5; }
 
@@ -277,27 +285,26 @@
   .ab-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
   .ab-stat-lbl { font-size: 10px; color: var(--text-2); font-weight: 500; margin-bottom: 2px; }
   .ab-stat-val { font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 700; color: var(--text); }
-  .ab-stat-val.rate-a { color: var(--pa); }
-  .ab-stat-val.rate-b { color: var(--pb); }
+  .ab-stat-val.rate-v1 { color: var(--f1); }
+  .ab-stat-val.rate-v2 { color: var(--f2); }
+  .ab-stat-val.rate-v3 { color: var(--f3); }
+  .ab-stat-val.rate-v4 { color: var(--f4); }
 
   .ab-ring { position: relative; width: 86px; height: 86px; flex-shrink: 0; }
   .ab-ring svg { transform: rotate(-90deg); }
   .ab-ring-track { fill: none; stroke-width: 8; stroke: white; }
   .ab-ring-fill { fill: none; stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 0.6s ease; }
-  .ab-variant.a .ab-ring-fill { stroke: var(--pa); }
-  .ab-variant.b .ab-ring-fill { stroke: var(--pb); }
+  .ab-variant.v1 .ab-ring-fill { stroke: var(--f1); }
+  .ab-variant.v2 .ab-ring-fill { stroke: var(--f2); }
+  .ab-variant.v3 .ab-ring-fill { stroke: var(--f3); }
+  .ab-variant.v4 .ab-ring-fill { stroke: var(--f4); }
   .ab-ring-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
   .ab-ring-center .num { font-family: 'JetBrains Mono', monospace; font-size: 17px; font-weight: 700; }
-  .ab-variant.a .ab-ring-center .num { color: var(--pa); }
-  .ab-variant.b .ab-ring-center .num { color: var(--pb); }
+  .ab-variant.v1 .ab-ring-center .num { color: var(--f1); }
+  .ab-variant.v2 .ab-ring-center .num { color: var(--f2); }
+  .ab-variant.v3 .ab-ring-center .num { color: var(--f3); }
+  .ab-variant.v4 .ab-ring-center .num { color: var(--f4); }
   .ab-ring-sub { text-align: center; font-size: 9px; color: var(--text-3); margin-top: 4px; font-weight: 500; }
-
-  .ab-vs {
-    display: flex; align-items: center; justify-content: center; align-self: center;
-    width: 50px; height: 50px; border-radius: 50%; background: white;
-    border: 1px solid var(--border); color: var(--text-3);
-    font-weight: 700; font-size: 12px; letter-spacing: 0.05em; box-shadow: var(--shadow-sm);
-  }
 
   .ab-winner-pill {
     position: absolute; top: -10px; left: 14px;
@@ -306,33 +313,6 @@
     padding: 3px 9px; border-radius: 5px; letter-spacing: 0.03em;
     box-shadow: var(--shadow-md);
     display: inline-flex; align-items: center; gap: 4px;
-  }
-
-  .em-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-  .em-card {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 12px; padding: 18px 20px; box-shadow: var(--shadow-sm);
-  }
-  .em-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-  .em-title { font-size: 13px; font-weight: 600; color: var(--text-2); display: inline-flex; align-items: center; gap: 8px; }
-  .em-icon {
-    width: 30px; height: 30px; border-radius: 7px;
-    background: var(--pb-soft); color: var(--pb);
-    display: flex; align-items: center; justify-content: center;
-  }
-  .em-icon.purple { background: var(--pa-soft); color: var(--pa); }
-  .em-icon.green { background: var(--good-bg); color: var(--good); }
-  .em-value { font-family: 'JetBrains Mono', monospace; font-size: 32px; font-weight: 700; line-height: 1; }
-  .em-sub { font-size: 11px; color: var(--text-2); margin-top: 6px; }
-  .em-sub strong { color: var(--pb); font-weight: 700; }
-  .em-card:nth-child(3) .em-sub strong { color: var(--good); }
-  .em-bar { margin-top: 14px; height: 6px; background: var(--bg); border-radius: 3px; overflow: hidden; }
-  .em-bar-fill {
-    height: 100%; transition: width 0.6s ease; border-radius: 3px;
-    background: linear-gradient(90deg, var(--pb-2) 0%, var(--pb) 100%);
-  }
-  .em-card:nth-child(3) .em-bar-fill {
-    background: linear-gradient(90deg, var(--good) 0%, #34d399 100%);
   }
 
   .toast {
@@ -352,9 +332,6 @@
 
   @media (max-width: 960px) {
     .kpi-strip { grid-template-columns: repeat(2, 1fr); }
-    .em-grid { grid-template-columns: 1fr; }
-    .ab-versus { grid-template-columns: 1fr; gap: 12px; }
-    .ab-vs { display: none; }
     main { padding: 20px 16px 40px; }
   }
   @media (max-width: 700px) {
@@ -534,94 +511,6 @@
   </p>
 
 
-  <div class="section-head">
-    <h2>
-      <span class="sicn blue">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-      </span>
-      מעקב מיילים · יום 0 ויום למחרת
-    </h2>
-    <span class="meta">מקור: ResponderLive · עדכון ידני עד שתחובר אוטומציה</span>
-  </div>
-
-  <p class="em-group-title">מייל יום 0 · ברוכים הבאים</p>
-  <div class="em-grid">
-    <div class="em-card">
-      <div class="em-head">
-        <div class="em-title">נשלחו</div>
-        <div class="em-icon purple">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-        </div>
-      </div>
-      <div class="em-value mono" id="em_d0_sent">0</div>
-      <div class="em-sub">סה״כ מיילים שיצאו</div>
-      <div class="em-bar"><div class="em-bar-fill" id="em_d0_sent_bar" style="width: 100%; background: var(--pa);"></div></div>
-    </div>
-
-    <div class="em-card">
-      <div class="em-head">
-        <div class="em-title">נפתחו</div>
-        <div class="em-icon">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-        </div>
-      </div>
-      <div class="em-value mono" id="em_d0_opened">0</div>
-      <div class="em-sub"><strong id="em_d0_open_rate">0.0%</strong> שיעור פתיחה</div>
-      <div class="em-bar"><div class="em-bar-fill" id="em_d0_open_bar" style="width: 0%"></div></div>
-    </div>
-
-    <div class="em-card">
-      <div class="em-head">
-        <div class="em-title">קליקים</div>
-        <div class="em-icon green">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0-6 0z"/><path d="M21 12c-1.5 4-5 7-9 7s-7.5-3-9-7c1.5-4 5-7 9-7s7.5 3 9 7z"/></svg>
-        </div>
-      </div>
-      <div class="em-value mono" id="em_d0_clicked">0</div>
-      <div class="em-sub"><strong id="em_d0_click_rate">0.0%</strong> שיעור קליק (CTR)</div>
-      <div class="em-bar"><div class="em-bar-fill" id="em_d0_click_bar" style="width: 0%"></div></div>
-    </div>
-  </div>
-
-  <p class="em-group-title">מייל יום למחרת · תזכורת</p>
-  <div class="em-grid">
-    <div class="em-card">
-      <div class="em-head">
-        <div class="em-title">נשלחו</div>
-        <div class="em-icon purple">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-        </div>
-      </div>
-      <div class="em-value mono" id="em_nd_sent">0</div>
-      <div class="em-sub">סה״כ מיילים שיצאו</div>
-      <div class="em-bar"><div class="em-bar-fill" id="em_nd_sent_bar" style="width: 100%; background: var(--pa);"></div></div>
-    </div>
-
-    <div class="em-card">
-      <div class="em-head">
-        <div class="em-title">נפתחו</div>
-        <div class="em-icon">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-        </div>
-      </div>
-      <div class="em-value mono" id="em_nd_opened">0</div>
-      <div class="em-sub"><strong id="em_nd_open_rate">0.0%</strong> שיעור פתיחה</div>
-      <div class="em-bar"><div class="em-bar-fill" id="em_nd_open_bar" style="width: 0%"></div></div>
-    </div>
-
-    <div class="em-card">
-      <div class="em-head">
-        <div class="em-title">קליקים</div>
-        <div class="em-icon green">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0-6 0z"/><path d="M21 12c-1.5 4-5 7-9 7s-7.5-3-9-7c1.5-4 5-7 9-7s7.5 3 9 7z"/></svg>
-        </div>
-      </div>
-      <div class="em-value mono" id="em_nd_clicked">0</div>
-      <div class="em-sub"><strong id="em_nd_click_rate">0.0%</strong> שיעור קליק (CTR)</div>
-      <div class="em-bar"><div class="em-bar-fill" id="em_nd_click_bar" style="width: 0%"></div></div>
-    </div>
-  </div>
-
 </main>
 
 <div class="toast" id="toast" role="status" aria-live="polite">הנתונים עודכנו</div>
@@ -657,25 +546,31 @@ const HEAD_TO_HEAD_TESTS = [
        would mix in noise unrelated to the landing page copy/design itself. */
     title: 'דף נחיתה · OPTION2 מול OPTION2_V2', tag: 'landing', tagLabel: 'דף נחיתה',
     conversionLabel: 'שלחו פרטים', conversionKey: 'landing',
-    variantA: { name: 'OPTION2', desc: 'הגרסה המקורית (זהב)', panel: 2 },
-    variantB: { name: 'OPTION2_V2', desc: 'וריאציית CTR (כחול/כתום)', panel: 5 }
+    variants: [
+      { name: 'OPTION2', desc: 'הגרסה המקורית (זהב)', panel: 2 },
+      { name: 'OPTION2_V2', desc: 'וריאציית CTR (כחול/כתום)', panel: 5 }
+    ]
   },
   {
-    /* Every landing page now splits visitors 25/25/25/25 between FOUR panels
-       (6, 7, 9, 10) right before entering the video funnel -- see the
-       redirect logic in landing-pages/*.html. This card only compares the
-       original two arms (6 vs 7); the full 4-way breakdown lives in the
-       funnel-steps table below (FUNNEL_GROUPS), which isn't limited to a
-       head-to-head pair. */
-    title: 'Two-Page Funnel מול Funnel D V2 (2 מתוך 4 זרועות)', tag: 'funnel', tagLabel: 'משפך וידאו',
+    /* Every landing page now splits visitors 25/25/25/25 between all FOUR
+       panels (6, 7, 9, 10) right before entering the video funnel -- see the
+       redirect logic in landing-pages/*.html. This card shows all four arms
+       side by side (renderHeadToHeadCard() loops generically over
+       test.variants, no longer limited to a hardcoded "VS" pair), matching
+       the full 4-way breakdown in the funnel-steps table below. */
+    title: 'השוואת 4 הזרועות · Two-Page Funnel · Funnel D V2 · New 1 · New 2', tag: 'funnel', tagLabel: 'משפך וידאו',
     conversionLabel: 'השאירו פרטים', conversionKey: 'webinar',
-    variantA: { name: 'Two-Page Funnel', desc: 'משפך דו-שלבי מקוצר', panel: 6 },
-    variantB: { name: 'Funnel D V2', desc: 'עיצוב סקרנות (סגול/ציאן) + קופי חדש', panel: 7 }
+    variants: [
+      { name: 'Two-Page Funnel', desc: 'משפך דו-שלבי מקוצר (פאנל 6)', panel: 6 },
+      { name: 'Funnel D V2', desc: 'עיצוב סקרנות (סגול/ציאן) + קופי חדש (פאנל 7)', panel: 7 },
+      { name: 'New 1', desc: 'משפך דו-שלבי · קופי חדש (פאנל 9)', panel: 9 },
+      { name: 'New 2', desc: 'משפך דו-שלבי · קופי חדש (פאנל 10)', panel: 10 }
+    ]
   }
 ];
 // Kept as an alias to the first test: the top "leader" KPI card is
 // specifically about the OPTION2 vs OPTION2_V2 landing-page test and
-// references this directly.
+// references this directly (via HEAD_TO_HEAD.variants[0]/[1]).
 const HEAD_TO_HEAD = HEAD_TO_HEAD_TESTS[0];
 
 /* The funnel STEP TABLE below tracks the split test that's actually live
@@ -822,10 +717,12 @@ function render() {
   // submitted their details, for the OPTION2 vs OPTION2_V2 test), once
   // there's enough traffic to say anything meaningful.
   const leaderConvKey = HEAD_TO_HEAD.conversionKey || 'webinar';
-  const entryA = m(`f${HEAD_TO_HEAD.variantA.panel}_entry`);
-  const entryB = m(`f${HEAD_TO_HEAD.variantB.panel}_entry`);
-  const rateA0 = pct(m(`f${HEAD_TO_HEAD.variantA.panel}_${leaderConvKey}`), entryA);
-  const rateB0 = pct(m(`f${HEAD_TO_HEAD.variantB.panel}_${leaderConvKey}`), entryB);
+  const leaderA = HEAD_TO_HEAD.variants[0];
+  const leaderB = HEAD_TO_HEAD.variants[1];
+  const entryA = m(`f${leaderA.panel}_entry`);
+  const entryB = m(`f${leaderB.panel}_entry`);
+  const rateA0 = pct(m(`f${leaderA.panel}_${leaderConvKey}`), entryA);
+  const rateB0 = pct(m(`f${leaderB.panel}_${leaderConvKey}`), entryB);
   const kpiAbEl = document.getElementById('kpi_ab');
   const kpiAbSubEl = document.getElementById('kpi_ab_sub');
   if (entryA < 10 || entryB < 10) {
@@ -848,7 +745,6 @@ function render() {
 
   renderFunnelComparison();
   renderHeadToHead();
-  renderEmailTracking();
 }
 
 // Sums a metric ID across every panel that feeds a given funnel group,
@@ -956,27 +852,34 @@ function renderHeadToHead() {
 
 // Builds one head-to-head "ab-card" for a single test definition. Pulled out
 // of renderHeadToHead() so the dashboard can show more than one A/B test at
-// once (e.g. the landing-page copy test and the funnel-d redesign test)
-// without duplicating the markup.
+// once (e.g. the landing-page copy test and the 4-arm funnel-split test)
+// without duplicating the markup. Loops generically over test.variants (2
+// for the landing test, 4 for the funnel test) instead of a hardcoded
+// A-vs-B "VS" pair, so this same function renders any number of arms.
 function renderHeadToHeadCard(test) {
   const convKey = test.conversionKey || 'webinar';
-  const aSent = m(`f${test.variantA.panel}_entry`);
-  const aConv = m(`f${test.variantA.panel}_${convKey}`);
-  const bSent = m(`f${test.variantB.panel}_entry`);
-  const bConv = m(`f${test.variantB.panel}_${convKey}`);
 
-  const rateA = pct(aConv, aSent);
-  const rateB = pct(bConv, bSent);
+  const variants = test.variants.map((v, i) => {
+    const sent = m(`f${v.panel}_entry`);
+    const conv = m(`f${v.panel}_${convKey}`);
+    return Object.assign({}, v, { sent, conv, rate: pct(conv, sent), vClass: 'v' + (i + 1) });
+  });
 
-  let winnerSide = null;
-  if (aSent >= 10 && bSent >= 10 && Math.abs(rateA - rateB) >= 0.5) {
-    winnerSide = rateA > rateB ? 'a' : 'b';
+  // A variant only counts toward "winner" once it has enough traffic (>=10
+  // entries) to say anything meaningful; the winner is whichever eligible
+  // variant has the highest rate, by at least half a percentage point over
+  // the next-best eligible variant (avoids crowning a "winner" on noise).
+  const eligible = variants.filter(v => v.sent >= 10);
+  let winnerPanel = null;
+  if (eligible.length >= 2) {
+    const sorted = eligible.slice().sort((a, b) => b.rate - a.rate);
+    if (sorted[0].rate - sorted[1].rate >= 0.5) winnerPanel = sorted[0].panel;
   }
 
   let statusText, statusClass;
-  if (aSent === 0 && bSent === 0) {
+  if (!variants.some(v => v.sent > 0)) {
     statusText = 'מחכה לנתונים'; statusClass = 'waiting';
-  } else if (aSent < 10 || bSent < 10) {
+  } else if (eligible.length < variants.length) {
     statusText = 'אוסף דגימות'; statusClass = 'pending';
   } else {
     statusText = 'פעיל'; statusClass = '';
@@ -984,8 +887,48 @@ function renderHeadToHeadCard(test) {
 
   const RING_R = 34;
   const CIRC = 2 * Math.PI * RING_R;
-  const offA = CIRC - (Math.min(rateA, 100) / 100) * CIRC;
-  const offB = CIRC - (Math.min(rateB, 100) / 100) * CIRC;
+
+  const cardsHtml = variants.map(v => {
+    const off = CIRC - (Math.min(v.rate, 100) / 100) * CIRC;
+    const isWinner = winnerPanel === v.panel;
+    return `
+          <div class="ab-variant ${v.vClass}">
+            ${isWinner ? '<div class="ab-winner-pill">🏆 מנצח</div>' : ''}
+            <div class="ab-var-head">
+              <div class="ab-var-badge">${v.panel}</div>
+              <div class="ab-var-name">${v.name}</div>
+            </div>
+            <div class="ab-var-desc">${v.desc || '&nbsp;'}</div>
+            <div class="ab-body">
+              <div class="ab-stats">
+                <div>
+                  <div class="ab-stat-lbl">כניסות</div>
+                  <div class="ab-stat-val mono">${fmt(v.sent)}</div>
+                </div>
+                <div>
+                <div class="ab-stat-lbl">${test.conversionLabel}</div>
+                <div class="ab-stat-val mono">${fmt(v.conv)}</div>
+                </div>
+                <div>
+                <div class="ab-stat-lbl">שיעור המרה</div>
+                <div class="ab-stat-val mono rate-${v.vClass}">${fmtPct(v.rate)}</div>
+                </div>
+              </div>
+              <div>
+                <div class="ab-ring">
+                  <svg width="86" height="86" aria-hidden="true" focusable="false">
+                    <circle class="ab-ring-track" cx="43" cy="43" r="${RING_R}"/>
+                    <circle class="ab-ring-fill"  cx="43" cy="43" r="${RING_R}"
+                      stroke-dasharray="${CIRC}" stroke-dashoffset="${off}"/>
+                  </svg>
+                  <div class="ab-ring-center"><div class="num">${fmtPct(v.rate)}</div></div>
+                </div>
+                <div class="ab-ring-sub">(${fmt(v.conv)} ${test.conversionLabel})</div>
+              </div>
+            </div>
+          </div>
+    `;
+  }).join('');
 
   return `
       <div class="ab-card">
@@ -997,107 +940,9 @@ function renderHeadToHeadCard(test) {
           <div class="ab-status ${statusClass}">${statusText}</div>
         </div>
 
-        <div class="ab-versus">
-          <div class="ab-variant a">
-            ${winnerSide === 'a' ? '<div class="ab-winner-pill">🏆 מנצח</div>' : ''}
-            <div class="ab-var-head">
-              <div class="ab-var-badge">A</div>
-              <div class="ab-var-name">${test.variantA.name}</div>
-            </div>
-            <div class="ab-var-desc">${test.variantA.desc || '&nbsp;'}</div>
-            <div class="ab-body">
-              <div class="ab-stats">
-                <div>
-                  <div class="ab-stat-lbl">כניסות</div>
-                  <div class="ab-stat-val mono">${fmt(aSent)}</div>
-                </div>
-                <div>
-                <div class="ab-stat-lbl">${test.conversionLabel}</div>
-                <div class="ab-stat-val mono">${fmt(aConv)}</div>
-                </div>
-                <div>
-                <div class="ab-stat-lbl">שיעור המרה</div>
-                <div class="ab-stat-val mono rate-a">${fmtPct(rateA)}</div>
-                </div>
-              </div>
-              <div>
-                <div class="ab-ring">
-                  <svg width="86" height="86" aria-hidden="true" focusable="false">
-                    <circle class="ab-ring-track" cx="43" cy="43" r="${RING_R}"/>
-                    <circle class="ab-ring-fill"  cx="43" cy="43" r="${RING_R}"
-                      stroke-dasharray="${CIRC}" stroke-dashoffset="${offA}"/>
-                  </svg>
-                  <div class="ab-ring-center"><div class="num">${fmtPct(rateA)}</div></div>
-                </div>
-                <div class="ab-ring-sub">(${fmt(aConv)} ${test.conversionLabel})</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="ab-vs">VS</div>
-
-          <div class="ab-variant b">
-            ${winnerSide === 'b' ? '<div class="ab-winner-pill">🏆 מנצח</div>' : ''}
-            <div class="ab-var-head">
-              <div class="ab-var-badge">B</div>
-              <div class="ab-var-name">${test.variantB.name}</div>
-            </div>
-            <div class="ab-var-desc">${test.variantB.desc || '&nbsp;'}</div>
-            <div class="ab-body">
-              <div class="ab-stats">
-                <div>
-                  <div class="ab-stat-lbl">כניסות</div>
-                  <div class="ab-stat-val mono">${fmt(bSent)}</div>
-                </div>
-                <div>
-                <div class="ab-stat-lbl">${test.conversionLabel}</div>
-                <div class="ab-stat-val mono">${fmt(bConv)}</div>
-                </div>
-                <div>
-                <div class="ab-stat-lbl">שיעור המרה</div>
-                <div class="ab-stat-val mono rate-b">${fmtPct(rateB)}</div>
-                </div>
-              </div>
-              <div>
-                <div class="ab-ring">
-                  <svg width="86" height="86" aria-hidden="true" focusable="false">
-                    <circle class="ab-ring-track" cx="43" cy="43" r="${RING_R}"/>
-                    <circle class="ab-ring-fill"  cx="43" cy="43" r="${RING_R}"
-                      stroke-dasharray="${CIRC}" stroke-dashoffset="${offB}"/>
-                  </svg>
-                  <div class="ab-ring-center"><div class="num">${fmtPct(rateB)}</div></div>
-                </div>
-                <div class="ab-ring-sub">(${fmt(bConv)} ${test.conversionLabel})</div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <div class="ab-variants-grid">${cardsHtml}</div>
       </div>
     `;
-}
-
-function renderEmailTracking() {
-  const groups = [
-    { prefix: 'd0', metricPrefix: 'email_day0' },
-    { prefix: 'nd', metricPrefix: 'email_nextday' }
-  ];
-  groups.forEach(g => {
-    const sent = m(`${g.metricPrefix}_sent`);
-    const opened = m(`${g.metricPrefix}_opened`);
-    const clicked = m(`${g.metricPrefix}_clicked`);
-
-    document.getElementById(`em_${g.prefix}_sent`).textContent = fmt(sent);
-    document.getElementById(`em_${g.prefix}_opened`).textContent = fmt(opened);
-    document.getElementById(`em_${g.prefix}_clicked`).textContent = fmt(clicked);
-
-    const openRate = pct(opened, sent);
-    document.getElementById(`em_${g.prefix}_open_rate`).textContent = fmtPct(openRate);
-    document.getElementById(`em_${g.prefix}_open_bar`).style.width = Math.min(openRate, 100) + '%';
-
-    const clickRate = pct(clicked, sent);
-    document.getElementById(`em_${g.prefix}_click_rate`).textContent = fmtPct(clickRate);
-    document.getElementById(`em_${g.prefix}_click_bar`).style.width = Math.min(clickRate, 100) + '%';
-  });
 }
 
 const refreshBtn = document.getElementById('refreshBtn');
