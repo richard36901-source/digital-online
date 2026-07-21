@@ -318,6 +318,22 @@ function funnelBadge(r){
   if(!p) return '<span class="funnel-badge other">—</span>';
   return '<span class="funnel-badge ' + p.cls + '">' + p.name + '</span>';
 }
+// Which landing page a lead first arrived through. Only sent by the
+// stage-1 "landing" tracking call (see each landing page's submit handler),
+// so leads created before this field existed -- or that skip landing-page
+// tracking entirely -- show no source.
+const PAGE_LABELS = {
+  landing_option1: 'עמוד נחיתה 1',
+  landing_option2: 'עמוד נחיתה 2',
+  landing_option2_v2: 'עמוד נחיתה 2 (V2)',
+  landing_option3: 'עמוד נחיתה 3',
+  landing_option4: 'עמוד נחיתה 4',
+  landing_tiktok: 'עמוד TikTok',
+  lp: 'עמוד LP'
+};
+function pageLabel(r){
+  return PAGE_LABELS[r.page] || r.page || '—';
+}
 let allRows = [];
 let autoRefreshTimer = null;
 let currentPage = 1;
@@ -379,7 +395,7 @@ async function loadData(){
       const stage = Number(r.stage) || 0;
       let existing = byPhone[r.phone];
       if(!existing){
-        existing = byPhone[r.phone] = { phone: r.phone, name: '', email: '', stage: -1, stage_label: '', panel: '', updated_at: '' };
+        existing = byPhone[r.phone] = { phone: r.phone, name: '', email: '', stage: -1, stage_label: '', panel: '', page: '', updated_at: '' };
       }
       if(r.name && !existing.name) existing.name = r.name;
       if(r.email && !existing.email) existing.email = r.email;
@@ -389,6 +405,10 @@ async function loadData(){
       // whose winning record happens to lack a panel would lose the badge
       // even though an earlier video-stage record for the same phone has it.
       if(r.panel && !existing.panel) existing.panel = r.panel;
+      // Same idea for the landing-page source: only the stage-1 record
+      // carries it, and stage-1 is rarely a lead's "winning" (highest)
+      // record, so this has to be captured independently too.
+      if(r.page && !existing.page) existing.page = r.page;
       if(stage > existing.stage || (stage === existing.stage && r.updated_at > existing.updated_at)){
         existing.stage = stage;
         existing.stage_label = r.stage_label;
@@ -551,7 +571,7 @@ function render(rows){
   }
   content.className = '';
   let html = '<table><thead><tr>'
-    + '<th>שם</th><th>טלפון</th><th>אימייל</th><th>משפך</th><th>התקדמות</th><th>עודכן</th><th></th>'
+    + '<th>שם</th><th>טלפון</th><th>אימייל</th><th>דף נחיתה</th><th>משפך</th><th>התקדמות</th><th>עודכן</th><th></th>'
     + '</tr></thead><tbody>';
   rows.forEach(r => {
     const dots = [1,2,3,4,5,6].map(s =>
@@ -566,6 +586,7 @@ function render(rows){
       + '<td class="name-cell">' + esc(r.name || '-') + '</td>'
       + '<td data-label="טלפון"><div class="phone-cell" dir="ltr"><span>' + esc(r.phone || '-') + '</span>' + quickActions + '</div></td>'
       + '<td class="muted" data-label="אימייל"><span dir="ltr">' + esc(r.email || '-') + '</span></td>'
+      + '<td class="muted" data-label="דף נחיתה">' + esc(pageLabel(r)) + '</td>'
       + '<td data-label="משפך">' + funnelBadge(r) + '</td>'
       + '<td data-label="התקדמות"><div class="cell-inner"><span class="stage-pill s' + r.stage + '">' + stageDisplay(r) + '</span><div class="progress-dots">' + dots + '</div></div></td>'
       + '<td class="time-cell" data-label="עודכן"><div class="cell-inner"><div class="rel">' + esc(relTime(r.updated_at) || '-') + '</div><div class="abs">' + esc(r.updated_at || '-') + '</div></div></td>'
@@ -579,11 +600,11 @@ function render(rows){
 function exportCsv(){
   const rows = getFilteredSortedRows();
   if(!rows.length){ showToast('אין נתונים לייצוא'); return; }
-  const header = ['שם','טלפון','אימייל','משפך','שלב','עודכן'];
+  const header = ['שם','טלפון','אימייל','דף נחיתה','משפך','שלב','עודכן'];
   const lines = [header.join(',')];
   rows.forEach(r => {
     const funnelName = (PANEL_LABELS[r.panel] && PANEL_LABELS[r.panel].name) || '';
-    const vals = [r.name||'', r.phone||'', r.email||'', funnelName, stageDisplay(r), r.updated_at||''];
+    const vals = [r.name||'', r.phone||'', r.email||'', pageLabel(r), funnelName, stageDisplay(r), r.updated_at||''];
     lines.push(vals.map(v => '"' + String(v).replace(/"/g,'""') + '"').join(','));
   });
   const blob = new Blob(['﻿' + lines.join('\n')], {type:'text/csv;charset=utf-8;'});
