@@ -269,7 +269,7 @@ window.submitForm = async function submitForm() {
   try {
     fetch('https://hook.eu1.make.com/9nycxwodyby36g30ezp05idn0rqihnlh', {
       method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({phone: phone, name: name, email: email, stage: 1, stage_label: 'landing'}),
+      body: JSON.stringify({phone: phone, name: name, email: email, stage: 1, stage_label: 'landing', page: 'landing_option2_v2'}),
       keepalive: true
     }).catch(function(){});
   } catch(e) {}

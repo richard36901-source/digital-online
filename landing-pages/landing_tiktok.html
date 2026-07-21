@@ -233,7 +233,7 @@ async function handleSubmit(){
   try {
     fetch('https://hook.eu1.make.com/9nycxwodyby36g30ezp05idn0rqihnlh', {
       method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({phone: data.phone, name: data.name, email: data.email, stage: 1, stage_label: 'landing'}),
+      body: JSON.stringify({phone: data.phone, name: data.name, email: data.email, stage: 1, stage_label: 'landing', page: 'landing_tiktok'}),
       keepalive: true
     }).catch(function(){});
   } catch(e) {}
