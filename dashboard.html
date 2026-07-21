@@ -199,6 +199,8 @@
   .fcell-bar-fill { position: absolute; left: 0; right: 0; bottom: 0; transition: height .6s ease; opacity: .35; }
   .fcell.f1 .fcell-bar-fill { background: var(--f1); }
   .fcell.f2 .fcell-bar-fill { background: var(--f2); }
+  .fcell.f3 .fcell-bar-fill { background: var(--f3); }
+  .fcell.f4 .fcell-bar-fill { background: var(--f4); }
   .fcell-count { font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; color: var(--text); }
   .fcell-pct { font-size: 10px; color: var(--text-3); margin-top: 3px; font-weight: 500; }
   .fcell-pct.dropoff { color: var(--bad); font-weight: 600; }
@@ -459,27 +461,29 @@
       <span class="sicn">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
       </span>
-      השוואת משפכים · Two-Page Funnel מול Funnel D V2
+      השוואת משפכים · פיצול 4 זרועות
     </h2>
     <span class="meta">המרה לאורך מסע הווידאו, מבחן הפיצול הפעיל כרגע</span>
   </div>
 
   <div class="funnel-wrap">
     <div class="funnel-title-row">
-      <h3 id="funnelCaption">בדיקת משפך המרות · מסע הווידאו של Two-Page Funnel מול Funnel D V2</h3>
-      <p>כל 5 דפי הנחיתה מפצלים את התנועה 50/50 בין Two-Page Funnel ל-Funnel D V2 לפני כניסה לסרטון הראשון · פאנל 6 = Two-Page Funnel (משפך דו-שלבי), פאנל 7 = Funnel D V2 · האחוז בכל שורה = כמה מהכניסות לאותה גרסה הגיעו לשלב הזה · Two-Page Funnel מסתיים אחרי וידאו 2, ולכן אין לו נתונים לשלבים 3-4</p>
+      <h3 id="funnelCaption">בדיקת משפך המרות · Two-Page Funnel מול Funnel D V2 מול שני משפכי הקופי החדשים</h3>
+      <p>כל 5 דפי הנחיתה מפצלים את התנועה 25/25/25/25 בין 4 הזרועות לפני כניסה לסרטון הראשון · פאנל 6 = Two-Page Funnel (משפך דו-שלבי), פאנל 7 = Funnel D V2, פאנל 9 = Two-Page Funnel New 1 (קופי חדש), פאנל 10 = Two-Page Funnel New 2 (קופי חדש) · האחוז בכל שורה = כמה מהכניסות לאותה גרסה הגיעו לשלב הזה · המשפכים הדו-שלביים (6, 9, 10) מסתיימים אחרי וידאו 2, ולכן אין להם נתונים לשלבים 3-4</p>
     </div>
 
     <table class="funnel-table" aria-labelledby="funnelCaption">
       <colgroup>
         <col class="lbl-col"/>
-        <col/><col/>
+        <col/><col/><col/><col/>
       </colgroup>
       <thead>
         <tr>
           <th scope="col" class="fcol-head label">שלב</th>
           <th scope="col" class="fcol-head f1"><span class="inner"><span class="dot" aria-hidden="true"></span> Two-Page Funnel (פאנל 6)</span></th>
           <th scope="col" class="fcol-head f2"><span class="inner"><span class="dot" aria-hidden="true"></span> Funnel D V2 · עיצוב חדש (פאנל 7)</span></th>
+          <th scope="col" class="fcol-head f3"><span class="inner"><span class="dot" aria-hidden="true"></span> New 1 · קופי חדש (פאנל 9)</span></th>
+          <th scope="col" class="fcol-head f4"><span class="inner"><span class="dot" aria-hidden="true"></span> New 2 · קופי חדש (פאנל 10)</span></th>
         </tr>
       </thead>
       <tbody id="funnel_steps"></tbody>
@@ -495,6 +499,16 @@
             <div class="fwinner-trophy" aria-hidden="true"></div>
             <div class="fwinner-rate mono">0.0%</div>
             <div class="fwinner-name">Funnel D V2<span class="sr-only fw-winner-tag"></span></div>
+          </td>
+          <td class="fwinner-cell" id="fw_tpfn1">
+            <div class="fwinner-trophy" aria-hidden="true"></div>
+            <div class="fwinner-rate mono">0.0%</div>
+            <div class="fwinner-name">New 1<span class="sr-only fw-winner-tag"></span></div>
+          </td>
+          <td class="fwinner-cell" id="fw_tpfn2">
+            <div class="fwinner-trophy" aria-hidden="true"></div>
+            <div class="fwinner-rate mono">0.0%</div>
+            <div class="fwinner-name">New 2<span class="sr-only fw-winner-tag"></span></div>
           </td>
         </tr>
       </tfoot>
@@ -647,11 +661,13 @@ const HEAD_TO_HEAD_TESTS = [
     variantB: { name: 'OPTION2_V2', desc: 'וריאציית CTR (כחול/כתום)', panel: 5 }
   },
   {
-    /* Every landing page splits visitors 50/50 between these two panels
-       right before entering the video funnel, so this comparison is
-       independent of which landing page sent the traffic -- see the
-       redirect logic in landing-pages/*.html. */
-    title: 'Two-Page Funnel מול Funnel D V2', tag: 'funnel', tagLabel: 'משפך וידאו',
+    /* Every landing page now splits visitors 25/25/25/25 between FOUR panels
+       (6, 7, 9, 10) right before entering the video funnel -- see the
+       redirect logic in landing-pages/*.html. This card only compares the
+       original two arms (6 vs 7); the full 4-way breakdown lives in the
+       funnel-steps table below (FUNNEL_GROUPS), which isn't limited to a
+       head-to-head pair. */
+    title: 'Two-Page Funnel מול Funnel D V2 (2 מתוך 4 זרועות)', tag: 'funnel', tagLabel: 'משפך וידאו',
     conversionLabel: 'השאירו פרטים', conversionKey: 'webinar',
     variantA: { name: 'Two-Page Funnel', desc: 'משפך דו-שלבי מקוצר', panel: 6 },
     variantB: { name: 'Funnel D V2', desc: 'עיצוב סקרנות (סגול/ציאן) + קופי חדש', panel: 7 }
@@ -674,7 +690,9 @@ const HEAD_TO_HEAD = HEAD_TO_HEAD_TESTS[0];
    video_3/video_4 rows that funnel just doesn't have. */
 const FUNNEL_GROUPS = [
   { id: 'twopage', key: 'twopage', label: 'Two-Page Funnel (פאנל 6)', cls: 'f1', panels: ['6'], steps: ['entry', 'landing', 'video_1', 'video_2', 'webinar'] },
-  { id: 'dv2', key: 'dv2', label: 'Funnel D V2 · עיצוב חדש (פאנל 7)', cls: 'f2', panels: ['7'] }
+  { id: 'dv2', key: 'dv2', label: 'Funnel D V2 · עיצוב חדש (פאנל 7)', cls: 'f2', panels: ['7'] },
+  { id: 'tpfn1', key: 'tpfn1', label: 'Two-Page Funnel New 1 (פאנל 9)', cls: 'f3', panels: ['9'], steps: ['entry', 'landing', 'video_1', 'video_2', 'webinar'] },
+  { id: 'tpfn2', key: 'tpfn2', label: 'Two-Page Funnel New 2 (פאנל 10)', cls: 'f4', panels: ['10'], steps: ['entry', 'landing', 'video_1', 'video_2', 'webinar'] }
 ];
 
 const FUNNEL_STEPS = [
