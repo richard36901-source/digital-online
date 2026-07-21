@@ -103,6 +103,8 @@ tbody tr.hot{border-inline-start:3px solid #ff6ba0;}
 .funnel-badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap;}
 .funnel-badge.tpf{background:#1a2f3a;color:#5fb3d6;}
 .funnel-badge.dv2{background:#2a1a3a;color:#b98af0;}
+.funnel-badge.tpfn1{background:#1a3a2f;color:#5fd6a3;}
+.funnel-badge.tpfn2{background:#3a2a1a;color:#e0a458;}
 .funnel-badge.other{background:#232833;color:#5b6270;}
 .time-cell .abs{color:#8a8f98;font-size:11.5px;}
 .time-cell .rel{font-size:12.5px;color:#c7cbd4;}
@@ -307,7 +309,9 @@ const STAGE_COLORS = {1:'#e0b357',2:'#a8d666',3:'#5fd6b0',4:'#5fb3d6',5:'#a066d6
 // those leads show no funnel badge.
 const PANEL_LABELS = {
   '6': { name: 'Two-Page Funnel', cls: 'tpf' },
-  '7': { name: 'Funnel D V2', cls: 'dv2' }
+  '7': { name: 'Funnel D V2', cls: 'dv2' },
+  '9': { name: 'Two-Page Funnel New 1', cls: 'tpfn1' },
+  '10': { name: 'Two-Page Funnel New 2', cls: 'tpfn2' }
 };
 function funnelBadge(r){
   const p = PANEL_LABELS[r.panel];
