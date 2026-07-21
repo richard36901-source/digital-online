@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-<title>דיגיטל אונליין | משהו קורה עכשיו</title>
+<title>דיגיטל אונליין | יש דבר אחד שרוב האנשים עדיין מפספסים</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;700;800;900&family=Assistant:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&family=Assistant:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 
 <script src="/shared/params.js"></script>
 <script src="/shared/pixels.js"></script>
@@ -14,13 +14,12 @@
 /* Fast urgency countdown, unique to this variant. Counts down from 1:00
    and, in the final 30 seconds, flips the clock into "critical" mode
    (faster pulse, red glow) to visibly signal pressure. It repeats every
-   60 seconds -- but unlike the old version, it's anchored to a fixed
-   per-visitor start time saved in localStorage, not to "now" on every
-   load. So a refresh doesn't cheat it back to a fresh 1:00 -- it just
-   shows wherever the same real, ongoing cycle currently is. */
+   60 seconds -- anchored to a fixed per-visitor start time saved in
+   localStorage, not to "now" on every load, so a refresh doesn't cheat
+   it back to a fresh 1:00. */
 (function () {
-  var DURATION_MS = 60 * 1000;   // 1-minute cycle
-  var CRITICAL_MS = 30 * 1000;   // last 30 seconds = urgent/blinking
+  var DURATION_MS = 60 * 1000;
+  var CRITICAL_MS = 30 * 1000;
   var KEY = 'v2_countdown_anchor';
   var started = false;
 
@@ -76,84 +75,79 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-text-size-adjust:100%}
-body{font-family:'Assistant',sans-serif;direction:rtl;overflow-x:hidden;min-height:100svh;color:#fff;display:flex;flex-direction:column;align-items:center;position:relative;background-color:#050B09;background-image:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(16,185,129,.22) 0%,transparent 65%),radial-gradient(ellipse 50% 35% at 10% 90%,rgba(245,158,11,.20) 0%,transparent 55%);}
-canvas#particles{position:fixed;inset:0;z-index:0;pointer-events:none;}
-.page-wrap{position:relative;z-index:2;width:100%;max-width:480px;padding:0 16px 100px;display:flex;flex-direction:column;align-items:center;}
+body{font-family:'Assistant',sans-serif;direction:rtl;overflow-x:hidden;min-height:100svh;color:#fff;display:flex;flex-direction:column;align-items:center;position:relative;background-color:#0A0518;background-image:radial-gradient(circle at 15% 8%,rgba(236,72,153,.22) 0%,transparent 45%),radial-gradient(circle at 85% 18%,rgba(34,211,238,.20) 0%,transparent 42%),radial-gradient(circle at 50% 95%,rgba(124,58,237,.28) 0%,transparent 55%);}
+.bg-orbs{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+.orb{position:absolute;border-radius:50%;filter:blur(60px);opacity:.35;animation:orbFloat 12s ease-in-out infinite;}
+.orb1{width:220px;height:220px;background:#ec4899;top:-40px;right:-60px;animation-duration:14s;}
+.orb2{width:260px;height:260px;background:#22d3ee;bottom:10%;left:-80px;animation-duration:17s;animation-delay:-4s;}
+.orb3{width:180px;height:180px;background:#7c3aed;top:45%;right:10%;animation-duration:11s;animation-delay:-7s;}
+@keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(-16px,20px) scale(1.12);}}
+.scan-line{position:fixed;left:0;right:0;height:120px;z-index:0;pointer-events:none;background:linear-gradient(180deg,transparent,rgba(34,211,238,.06),transparent);animation:scanMove 6s linear infinite;}
+@keyframes scanMove{0%{top:-120px;}100%{top:100vh;}}
+.page-wrap{position:relative;z-index:2;width:100%;max-width:480px;padding:0 16px 110px;display:flex;flex-direction:column;align-items:center;}
 @keyframes fadeDown{from{opacity:0;transform:translateY(-12px);}to{opacity:1;transform:translateY(0);}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
-@keyframes btnPulse{0%,100%{box-shadow:0 6px 30px rgba(245,158,11,.55),0 0 0 0 rgba(245,158,11,0);}50%{box-shadow:0 8px 40px rgba(245,158,11,.8),0 0 0 8px rgba(245,158,11,.12);}}
+@keyframes btnPulse{0%,100%{box-shadow:0 6px 30px rgba(34,211,238,.5),0 0 0 0 rgba(236,72,153,0);}50%{box-shadow:0 8px 44px rgba(236,72,153,.65),0 0 0 8px rgba(236,72,153,.1);}}
 @keyframes btnShimmer{0%{background-position:200% center;}100%{background-position:0% center;}}
 @keyframes shine{0%{left:-120%}100%{left:160%}}
-@keyframes btnWiggle{0%,100%{transform:translateY(0);}20%{transform:translateY(-5px);}40%{transform:translateY(0);}60%{transform:translateY(-3px);}80%{transform:translateY(0);}}
 @keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
-@keyframes iconPop{0%,100%{transform:scale(1);}50%{transform:scale(1.18);}}
-@keyframes flicker{0%,100%{opacity:1;}45%{opacity:.65;}50%{opacity:1;}55%{opacity:.55;}60%{opacity:1;}}
-@keyframes slideInRight{from{opacity:0;transform:translateX(24px);}to{opacity:1;transform:translateX(0);}}
-@keyframes badgeGlow{0%,100%{box-shadow:0 0 8px rgba(16,185,129,.25);}50%{box-shadow:0 0 22px rgba(16,185,129,.6);}}
-@keyframes triggerBlink{0%,100%{opacity:1;}50%{opacity:.45;}}
-.top-badge{display:inline-flex;align-items:center;gap:8px;border-radius:99px;padding:7px 18px;margin:20px 0 14px;font-size:13px;font-weight:700;animation:fadeDown .5s ease both,badgeGlow 2.5s 1s ease-in-out infinite;background:rgba(255,255,255,.06);border:1px solid rgba(16,185,129,.5);color:#34d399;}
-.human-row{display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:16px;animation:fadeDown .5s .1s ease both;}
-.human-avatar{width:36px;height:36px;flex-shrink:0;border-radius:50%;background:linear-gradient(135deg,#34d399,#fbbf24);display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 0 12px rgba(52,211,153,.5);}
-.human-text{font-size:12px;color:rgba(255,255,255,.55);font-weight:700;line-height:1.4;}
-.card{width:100%;border-radius:16px;padding:22px 20px 20px;margin-bottom:20px;position:relative;overflow:hidden;animation:fadeUp .6s .1s ease both;background:linear-gradient(145deg,rgba(5,14,11,.95),rgba(8,18,15,.98));border:1.5px solid rgba(16,185,129,.42);box-shadow:0 0 40px rgba(16,185,129,.16),0 20px 60px rgba(0,0,0,.8);}
-.card-headline{font-family:'Rubik',sans-serif;font-size:clamp(26px,7vw,36px);font-weight:900;text-align:center;line-height:1.22;margin-bottom:8px;background:linear-gradient(160deg,#f5fff9 0%,#6ee7b7 30%,#22d3ee 60%,#fbbf24 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 2px 20px rgba(52,211,153,.55));animation:fadeUp .6s .15s ease both;}
-.headline-sub{font-size:clamp(14px,3.8vw,16px);font-weight:700;color:#a7f3d0;text-align:center;line-height:1.5;margin-bottom:14px;animation:fadeUp .6s .2s ease both;}
-.card-sub{font-size:clamp(14px,3.8vw,16px);color:rgba(255,255,255,.65);text-align:center;line-height:1.7;margin-bottom:14px;}
-.tension-line{font-family:'Rubik',sans-serif;font-size:15px;font-weight:800;text-align:center;margin-bottom:16px;color:rgba(167,243,208,.9);animation:flicker 5s 2s ease-in-out infinite;}
-.icon-row{display:flex;justify-content:center;gap:16px;margin-bottom:16px;}
-.icon-item{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;font-weight:700;color:rgba(255,255,255,.7);text-align:center;background:rgba(255,255,255,.05);border:1px solid rgba(16,185,129,.28);border-radius:10px;padding:10px 12px;min-width:76px;}
-.icon-item:nth-child(1){animation:fadeUp .5s .3s ease both,float 3s 1s ease-in-out infinite;}
-.icon-item:nth-child(2){animation:fadeUp .5s .4s ease both,float 3s 1.1s ease-in-out infinite;}
-.icon-item:nth-child(3){animation:fadeUp .5s .5s ease both,float 3s 1.2s ease-in-out infinite;}
-.icon-item .ico{font-size:22px;display:inline-block;animation:iconPop 2s ease-in-out infinite;}
-.benefits-title{font-size:13px;font-weight:700;color:rgba(255,255,255,.5);text-align:center;margin-bottom:8px;}
-.benefits-list{display:flex;flex-direction:column;gap:7px;margin-bottom:16px;}
-.benefits-list .b-item{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:rgba(255,255,255,.85);}
-.benefits-list .b-check{color:#4ade80;font-weight:900;flex-shrink:0;}
-.cc-label{font-size:12px;font-weight:700;color:rgba(255,255,255,.55);text-align:center;margin-bottom:6px;}
-.steps{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
-.step-item{display:flex;align-items:center;gap:12px;border-radius:10px;padding:12px 14px;background:linear-gradient(145deg,rgba(5,14,11,.95),rgba(8,18,15,.98))}
-.step-num{width:32px;height:32px;flex-shrink:0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;}
-.step-text{font-size:15px;font-weight:700;color:rgba(255,255,255,.85);}
-.step-item:nth-child(1){animation:slideInRight .5s .3s ease both;}
-.step-item:nth-child(2){animation:slideInRight .5s .5s ease both;}
-.step-item:nth-child(3){animation:slideInRight .5s .7s ease both;}
-.btn-main{display:flex;width:100%;height:60px;background:linear-gradient(135deg,#fde047,#fbbf24,#f97316);background-size:200% auto;color:#111827;font-family:'Rubik',sans-serif;font-size:21px;font-weight:900;border:none;border-radius:12px;cursor:pointer;pointer-events:auto;align-items:center;justify-content:center;letter-spacing:.3px;position:relative;overflow:hidden;margin-bottom:8px;box-shadow:0 6px 30px rgba(245,158,11,.55);animation:btnPulse 2.5s ease-in-out infinite,btnShimmer 3s linear infinite,btnWiggle 4s 2s ease-in-out infinite;transition:transform .2s,box-shadow .2s;}
-.btn-main:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 10px 50px rgba(245,158,11,.78);}
-.btn-main::after{content:'';position:absolute;top:0;left:-120%;width:45%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent);animation:shine 2s ease-in-out infinite;}
-.trust-line{font-size:12.5px;font-weight:700;color:rgba(255,255,255,.55);text-align:center;margin-bottom:8px;}
-.micro-copy{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:6px 14px;font-size:11.5px;color:rgba(255,255,255,.45);text-align:center;margin-bottom:6px;}
-.trigger-lines{display:flex;flex-direction:column;gap:4px;text-align:center;}
-.trigger-line{font-size:13px;font-weight:700;color:rgba(251,191,36,.9);}
-.trigger-line:nth-child(1){animation:triggerBlink 2.2s 1s ease-in-out infinite;}
-.trigger-line:nth-child(2){animation:triggerBlink 2.2s 1.6s ease-in-out infinite;}
-.countdown-clock{display:flex;width:fit-content;flex-direction:column;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(239,68,68,.16),rgba(0,0,0,.55));border:1.5px solid rgba(239,68,68,.5);border-radius:14px;padding:14px 22px;margin:2px auto 16px;position:relative;animation:ccPulse 1.8s ease-in-out infinite;}
-@keyframes ccPulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.35)}50%{box-shadow:0 0 24px 4px rgba(239,68,68,.5)}}
+@keyframes pulseDot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.75);}}
+@keyframes tickerFade{0%,100%{opacity:0;transform:translateY(6px);}8%,92%{opacity:1;transform:translateY(0);}}
+@keyframes badgeGlow{0%,100%{box-shadow:0 0 10px rgba(236,72,153,.3);}50%{box-shadow:0 0 24px rgba(34,211,238,.5);}}
+.top-badge{display:inline-flex;align-items:center;gap:8px;border-radius:99px;padding:7px 18px;margin:22px 0 14px;font-size:12.5px;font-weight:700;animation:fadeDown .5s ease both,badgeGlow 3s 1s ease-in-out infinite;background:rgba(255,255,255,.05);border:1px solid rgba(236,72,153,.45);color:#f472b6;}
+.ticker-wrap{width:100%;height:20px;position:relative;margin-bottom:20px;overflow:hidden;}
+.ticker-line{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#67e8f9;text-align:center;opacity:0;animation:tickerFade 4.2s ease-in-out infinite;padding:0 10px;}
+.ticker-line:nth-child(2){animation-delay:4.2s;}
+.ticker-line:nth-child(3){animation-delay:8.4s;}
+.card{width:100%;border-radius:18px;padding:26px 20px 22px;margin-bottom:18px;position:relative;overflow:hidden;animation:fadeUp .6s .1s ease both;background:linear-gradient(160deg,rgba(20,10,35,.92),rgba(12,8,28,.97));border:1.5px solid rgba(124,58,237,.4);box-shadow:0 0 44px rgba(124,58,237,.18),0 20px 60px rgba(0,0,0,.85);}
+.card::before{content:'';position:absolute;top:-2px;left:20%;right:20%;height:2px;background:linear-gradient(90deg,transparent,#22d3ee,#ec4899,transparent);}
+.card-headline{font-family:'Heebo',sans-serif;font-size:clamp(26px,7.2vw,36px);font-weight:900;text-align:center;line-height:1.24;margin-bottom:10px;background:linear-gradient(150deg,#fff 0%,#67e8f9 35%,#f472b6 70%,#fff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 2px 18px rgba(124,58,237,.55));}
+.headline-sub{font-size:clamp(13.5px,3.6vw,15.5px);font-weight:700;color:#c4b5fd;text-align:center;line-height:1.5;margin-bottom:16px;}
+.divider{width:44px;height:3px;border-radius:99px;background:linear-gradient(90deg,#22d3ee,#ec4899);margin:0 auto 16px;}
+.facts-title{font-family:'Heebo',sans-serif;font-size:14px;font-weight:800;color:#fff;text-align:center;margin-bottom:12px;}
+.facts-list{display:flex;flex-direction:column;gap:9px;margin-bottom:18px;}
+.fact-item{display:flex;align-items:center;gap:12px;border-radius:12px;padding:12px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(124,58,237,.25);}
+.fact-item:nth-child(1){animation:fadeUp .5s .2s ease both;}
+.fact-item:nth-child(2){animation:fadeUp .5s .35s ease both;}
+.fact-item:nth-child(3){animation:fadeUp .5s .5s ease both;}
+.fact-num{width:28px;height:28px;flex-shrink:0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;background:linear-gradient(135deg,#22d3ee,#7c3aed);color:#fff;}
+.fact-text{font-size:14px;font-weight:700;color:rgba(255,255,255,.88);line-height:1.4;}
+.tension-line{font-family:'Heebo',sans-serif;font-size:14.5px;font-weight:800;text-align:center;margin-bottom:16px;color:#fbcfe8;line-height:1.5;}
+.cc-label{font-size:12px;font-weight:700;color:rgba(255,255,255,.5);text-align:center;margin-bottom:6px;}
+.countdown-clock{display:flex;width:fit-content;flex-direction:column;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(236,72,153,.16),rgba(0,0,0,.55));border:1.5px solid rgba(236,72,153,.55);border-radius:14px;padding:14px 22px;margin:2px auto 18px;position:relative;animation:ccPulse 1.8s ease-in-out infinite;}
+@keyframes ccPulse{0%,100%{box-shadow:0 0 0 0 rgba(236,72,153,.35)}50%{box-shadow:0 0 24px 4px rgba(236,72,153,.5)}}
 .countdown-clock .cc-digits{display:flex;align-items:center;gap:7px;}
-.countdown-clock .cc-box{background:#050505;border:1px solid rgba(239,68,68,.45);border-radius:9px;padding:7px 12px;min-width:56px;text-align:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.06);}
-.countdown-clock .cc-num{font-size:30px;font-weight:900;color:#fff;line-height:1;font-variant-numeric:tabular-nums;text-shadow:0 0 12px rgba(239,68,68,.7);display:block;}
+.countdown-clock .cc-box{background:#08050f;border:1px solid rgba(236,72,153,.45);border-radius:9px;padding:7px 12px;min-width:56px;text-align:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.06);}
+.countdown-clock .cc-num{font-size:29px;font-weight:900;color:#fff;line-height:1;font-variant-numeric:tabular-nums;text-shadow:0 0 12px rgba(236,72,153,.65);display:block;}
 .countdown-clock .cc-unit{font-size:9.5px;color:rgba(255,255,255,.5);letter-spacing:.5px;margin-top:4px;display:block;}
-.countdown-clock .cc-sep{font-size:26px;font-weight:900;color:#f87171;animation:ccBlink 1s steps(1) infinite;}
+.countdown-clock .cc-sep{font-size:25px;font-weight:900;color:#f472b6;animation:ccBlink 1s steps(1) infinite;}
 @keyframes ccBlink{0%,49%{opacity:1}50%,100%{opacity:.25}}
 .countdown-clock.cc-critical{animation:ccPulseFast .5s ease-in-out infinite;}
 .countdown-clock.cc-critical .cc-box{border-color:#ff2b2b;}
 .countdown-clock.cc-critical .cc-num{color:#ff5252;}
 @keyframes ccPulseFast{0%,100%{box-shadow:0 0 0 0 rgba(255,0,0,.45);transform:scale(1)}50%{box-shadow:0 0 30px 6px rgba(255,0,0,.65);transform:scale(1.035)}}
-.sticky-cta{position:fixed;bottom:0;left:0;right:0;z-index:100;background:linear-gradient(transparent,rgba(0,0,0,.95) 30%);padding:16px 20px 24px;display:flex;flex-direction:column;align-items:center;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .4s,visibility .4s;}
+.btn-main{display:flex;width:100%;height:60px;background:linear-gradient(135deg,#22d3ee,#7c3aed 55%,#ec4899);background-size:220% auto;color:#fff;font-family:'Heebo',sans-serif;font-size:20px;font-weight:900;border:none;border-radius:13px;cursor:pointer;pointer-events:auto;align-items:center;justify-content:center;letter-spacing:.3px;position:relative;overflow:hidden;margin-bottom:10px;box-shadow:0 6px 30px rgba(124,58,237,.5);animation:btnPulse 2.6s ease-in-out infinite,btnShimmer 3.4s linear infinite;transition:transform .2s,box-shadow .2s;}
+.btn-main:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 10px 50px rgba(236,72,153,.65);}
+.btn-main::after{content:'';position:absolute;top:0;left:-120%;width:45%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);animation:shine 2.2s ease-in-out infinite;}
+.trust-row{display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:8px;}
+.trust-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;flex-shrink:0;animation:pulseDot 1.6s ease-in-out infinite;}
+.trust-line{font-size:12.5px;font-weight:700;color:rgba(255,255,255,.6);text-align:center;}
+.micro-copy{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:6px 14px;font-size:11.5px;color:rgba(255,255,255,.4);text-align:center;}
+.sticky-cta{position:fixed;bottom:0;left:0;right:0;z-index:100;background:linear-gradient(transparent,rgba(6,3,15,.97) 30%);padding:16px 20px 24px;display:flex;flex-direction:column;align-items:center;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .4s,visibility .4s;}
 .sticky-cta.visible{opacity:1;pointer-events:auto;visibility:visible;}
-.sticky-cta .btn-main{max-width:420px;height:54px;font-size:18px;margin-bottom:6px;}
-.sticky-sub{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:4px 12px;font-size:11px;color:rgba(255,255,255,.35);text-align:center;}
-.popup-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px);}
+.sticky-cta .btn-main{max-width:420px;height:54px;font-size:17.5px;margin-bottom:6px;}
+.sticky-sub{font-size:11px;color:rgba(255,255,255,.35);text-align:center;}
+.popup-overlay{position:fixed;inset:0;z-index:9999;background:rgba(4,2,10,.88);display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px);}
 .popup-overlay.open{display:flex;}
 @keyframes popIn{from{opacity:0;transform:scale(.85);}to{opacity:1;transform:scale(1);}}
-.popup-card{width:100%;max-width:420px;border-radius:16px;padding:28px 22px 24px;position:relative;animation:popIn .35s cubic-bezier(.34,1.56,.64,1) both;background:linear-gradient(145deg,#04100c,#08170f);border:1.5px solid rgba(16,185,129,.45);box-shadow:0 20px 60px rgba(0,0,0,.9);}
+.popup-card{width:100%;max-width:420px;border-radius:18px;padding:28px 22px 24px;position:relative;animation:popIn .35s cubic-bezier(.34,1.56,.64,1) both;background:linear-gradient(160deg,#120a24,#0c0818);border:1.5px solid rgba(124,58,237,.45);box-shadow:0 20px 60px rgba(0,0,0,.9);}
 .popup-close{position:absolute;top:14px;left:14px;width:30px;height:30px;background:rgba(255,255,255,.1);border:none;border-radius:50%;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.popup-title{font-family:'Rubik',sans-serif;font-size:clamp(20px,5.5vw,26px);font-weight:900;text-align:center;margin-bottom:6px;background:linear-gradient(135deg,#f5fff9,#6ee7b7,#fbbf24);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.popup-title{font-family:'Heebo',sans-serif;font-size:clamp(19px,5.3vw,25px);font-weight:900;text-align:center;margin-bottom:6px;background:linear-gradient(135deg,#67e8f9,#c4b5fd,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 .popup-sub{font-size:13px;color:rgba(255,255,255,.5);text-align:center;margin-bottom:18px;}
-.field{width:100%;height:50px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:#fff;font-family:'Assistant',sans-serif;font-size:15px;padding:0 14px;margin-bottom:10px;outline:none;direction:rtl;-webkit-appearance:none;transition:border .2s;}
+.field{width:100%;height:50px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:9px;color:#fff;font-family:'Assistant',sans-serif;font-size:15px;padding:0 14px;margin-bottom:10px;outline:none;direction:rtl;-webkit-appearance:none;transition:border .2s;}
 .field::placeholder{color:rgba(255,255,255,.3);}
-.field:focus{border-color:rgba(16,185,129,.55);background:rgba(255,255,255,.1);}
-.btn-popup{display:flex;width:100%;height:54px;background:linear-gradient(135deg,#fde047,#fbbf24,#f97316);color:#111827;font-family:'Rubik',sans-serif;font-size:19px;font-weight:900;border:none;border-radius:8px;cursor:pointer;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(245,158,11,.5);transition:transform .2s;margin-bottom:10px;}
+.field:focus{border-color:rgba(34,211,238,.55);background:rgba(255,255,255,.09);}
+.btn-popup{display:flex;width:100%;height:54px;background:linear-gradient(135deg,#22d3ee,#7c3aed 55%,#ec4899);color:#fff;font-family:'Heebo',sans-serif;font-size:18.5px;font-weight:900;border:none;border-radius:9px;cursor:pointer;align-items:center;justify-content:center;box-shadow:0 4px 22px rgba(124,58,237,.5);transition:transform .2s;margin-bottom:10px;}
 .btn-popup:hover{transform:translateY(-1px);}
 .btn-popup:disabled{opacity:.6;cursor:not-allowed;transform:none;}
 .err{font-size:12px;color:#ff7070;margin:-6px 0 8px 2px;display:none;}
@@ -167,7 +161,7 @@ canvas#particles{position:fixed;inset:0;z-index:0;pointer-events:none;}
 .s-sub{font-size:14px;color:rgba(255,255,255,.6);line-height:1.6;}
 footer{position:relative;z-index:2;width:100%;border-top:1px solid rgba(255,255,255,.06);padding:14px 20px;text-align:center;font-family:'Assistant',sans-serif;font-size:11px;color:rgba(255,255,255,.18);line-height:2;}
 footer a{color:rgba(255,255,255,.22);text-decoration:none;}
-footer a:hover{color:#34d399;}
+footer a:hover{color:#67e8f9;}
 footer .sep{margin:0 6px;color:rgba(255,255,255,.08);}
 </style>
 <script>
@@ -304,33 +298,30 @@ window.submitForm = async function submitForm() {
 </head>
 <body>
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WHCW874B" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<canvas id="particles"></canvas>
-<div style="position:fixed;bottom:0;left:0;right:0;z-index:999;background:rgba(5,12,10,.97);border-top:1px solid rgba(16,185,129,.22);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-family:'Assistant',sans-serif;font-size:12px;color:rgba(255,255,255,.5);" id="cookieBanner">
-  <span>אנו משתמשים בעוגיות לשיפור חווית הגלישה. <a href="../extra/privacy.html" style="color:#34d399;text-decoration:underline;">מדיניות פרטיות</a></span>
-  <button onclick="document.getElementById('cookieBanner').style.display='none';localStorage.setItem('ck','1');" style="background:linear-gradient(135deg,#34d399,#fbbf24);color:#0b1220;border:none;border-radius:6px;padding:7px 16px;font-family:'Rubik',sans-serif;font-size:12px;font-weight:800;cursor:pointer;flex-shrink:0;">אישור</button>
+<div class="bg-orbs"><div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div></div>
+<div class="scan-line"></div>
+<div style="position:fixed;bottom:0;left:0;right:0;z-index:999;background:rgba(8,4,18,.97);border-top:1px solid rgba(124,58,237,.25);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-family:'Assistant',sans-serif;font-size:12px;color:rgba(255,255,255,.5);" id="cookieBanner">
+  <span>אנו משתמשים בעוגיות לשיפור חווית הגלישה. <a href="../extra/privacy.html" style="color:#67e8f9;text-decoration:underline;">מדיניות פרטיות</a></span>
+  <button onclick="document.getElementById('cookieBanner').style.display='none';localStorage.setItem('ck','1');" style="background:linear-gradient(135deg,#22d3ee,#ec4899);color:#0b0616;border:none;border-radius:6px;padding:7px 16px;font-family:'Heebo',sans-serif;font-size:12px;font-weight:800;cursor:pointer;flex-shrink:0;">אישור</button>
 </div>
 <script>if(localStorage.getItem('ck'))document.getElementById('cookieBanner').style.display='none';</script>
 
 <div class="page-wrap">
-  <div class="human-row">
-    <div class="human-avatar">👤</div>
-    <div class="human-text">מבית דיגיטל אונליין — בלי ז'רגון, בלי הבטחות ריקות</div>
+  <div class="top-badge">✨ תופעה שרק מתחילה להתפשט</div>
+  <div class="ticker-wrap">
+    <div class="ticker-line">רוב האנשים עדיין מסתכלים על זה לא נכון</div>
+    <div class="ticker-line">מי שמבין את זה מוקדם — מקבל יתרון שקשה להדביק</div>
+    <div class="ticker-line">זה לא עניין של מזל. זה עניין של זווית</div>
   </div>
   <div class="card">
-    <h1 class="card-headline">יש שינוי שרוב האנשים<br>עדיין לא שמו לב אליו.</h1>
-    <p class="headline-sub">ומי שמבין אותו מוקדם – מקבל יתרון שקשה להדביק.</p>
-    <div class="card-sub">לא צריך להיות מומחה.<br>לא צריך ניסיון.<br>רק להבין משהו שרוב האנשים עדיין מפספסים.</div>
-    <p class="tension-line">רוב האנשים עדיין מסתכלים על העולם הישן.</p>
-    <div class="icon-row">
-      <div class="icon-item"><span class="ico">🔒</span>צפייה פרטית</div>
-      <div class="icon-item"><span class="ico">🎥</span>דוגמאות אמיתיות</div>
-      <div class="icon-item"><span class="ico">⏱</span>5 דקות בלבד</div>
-    </div>
-    <p class="benefits-title">אחרי הסרטון תדע:</p>
-    <div class="benefits-list">
-      <div class="b-item"><span class="b-check">✓</span>למה העולם הדיגיטלי משתנה</div>
-      <div class="b-item"><span class="b-check">✓</span>איך AI משנה את כללי המשחק</div>
-      <div class="b-item"><span class="b-check">✓</span>ואיך אפשר לנצל את זה בצורה פרקטית</div>
+    <h1 class="card-headline">יש דבר אחד שרוב האנשים<br>עדיין לא שמים לב אליו.</h1>
+    <p class="headline-sub">ומי שכבר ראה אותו — פשוט לא חוזר לחשוב כמו קודם.</p>
+    <div class="divider"></div>
+    <p class="facts-title">3 דברים שרוב האנשים לא יודעים:</p>
+    <div class="facts-list">
+      <div class="fact-item"><span class="fact-num">1</span><span class="fact-text">אפשר להתחיל בלי ניסיון קודם וכמעט בלי תקציב</span></div>
+      <div class="fact-item"><span class="fact-num">2</span><span class="fact-text">מי שמחכה ל"רגע הנכון" — בדרך כלל מפספס אותו</span></div>
+      <div class="fact-item"><span class="fact-num">3</span><span class="fact-text">יש דרך פשוטה להבין תוך 5 דקות אם זה מתאים לך</span></div>
     </div>
     <p class="cc-label">ההטבה נעולה בעוד:</p>
     <div class="countdown-clock">
@@ -340,23 +331,23 @@ window.submitForm = async function submitForm() {
         <div class="cc-box"><span class="cc-num cd-mins">01</span><span class="cc-unit">דקות</span></div>
       </div>
     </div>
-    <p class="tension-line" style="margin-bottom:14px;">אל תקפוץ קדימה. כל דקה בסרטון נבנתה כדי שהחלק האחרון יהיה ברור. בסוף רוב הצופים אומרים אותו דבר בדיוק: "עכשיו הכול מתחבר."</p>
-    <button class="btn-main" onclick="openPopup()">אני רוצה לראות</button>
-    <p class="trust-line">✓ כבר עזר להרבה אנשים להבין איך זה עובד</p>
-    <p class="micro-copy"><span>🎁 ללא עלות</span><span>✓ ללא התחייבות</span><span>✓ אפשר לצאת בכל רגע</span></p>
+    <p class="tension-line">אל תקפוץ קדימה. כל דקה נבנתה כדי שהחלק האחרון יהיה ברור — ובסוף רוב הצופים אומרים אותו משפט בדיוק: "עכשיו הכול מתחבר."</p>
+    <button class="btn-main" onclick="openPopup()">תראו לי עכשיו</button>
+    <div class="trust-row"><span class="trust-dot"></span><span class="trust-line">כבר צפו בזה הרבה אנשים לפניך</span></div>
+    <p class="micro-copy"><span>🎁 ללא עלות</span><span>✓ ללא התחייבות</span><span>⏱ 5 דקות בלבד</span></p>
   </div>
 </div>
 
 <div class="sticky-cta" id="stickyCta">
-  <button class="btn-main" onclick="openPopup()">אני רוצה לראות</button>
-  <div class="sticky-sub"><span>🎁 ללא עלות</span><span>✓ ללא התחייבות</span><span>✓ אפשר לצאת בכל רגע</span></div>
+  <button class="btn-main" onclick="openPopup()">תראו לי עכשיו</button>
+  <div class="sticky-sub">🎁 ללא עלות · ✓ ללא התחייבות · ⏱ 5 דקות בלבד</div>
 </div>
 
 <div class="popup-overlay" id="popup">
   <div class="popup-card">
     <button class="popup-close" onclick="document.getElementById('popup').classList.remove('open')">✕</button>
-    <p class="popup-title">לאן לשלוח לך את זה?</p>
-    <p class="popup-sub">כבר עזר להרבה אנשים. עכשיו תורך.</p>
+    <p class="popup-title">רגע לפני שממשיכים…</p>
+    <p class="popup-sub">לאן נשלח לך את זה?</p>
     <div id="formFields">
       <input class="field" id="fName" type="text" placeholder="שם מלא" autocomplete="name"/>
       <div class="err" id="eName">נא להזין שם מלא</div>
@@ -367,7 +358,7 @@ window.submitForm = async function submitForm() {
       <button class="btn-popup" id="popupBtn" onclick="submitForm()">שלח לי עכשיו</button>
       <div class="legal-check" id="legalWrap">
         <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;direction:rtl;">
-          <input type="checkbox" id="legalBox" style="width:18px;height:18px;flex-shrink:0;margin-top:2px;accent-color:#34d399;cursor:pointer;"/>
+          <input type="checkbox" id="legalBox" style="width:18px;height:18px;flex-shrink:0;margin-top:2px;accent-color:#ec4899;cursor:pointer;"/>
           <span style="font-size:12px;color:rgba(255,255,255,.45);line-height:1.6;">אני מאשר/ת יצירת קשר ותוכן שיווקי במייל, בטלפון ובוואטסאפ. אפשר להסיר בכל שלב שתרצה.</span>
         </label>
         <div class="err" id="eLegal" style="margin-top:4px;">יש לאשר את תנאי השימוש להמשך</div>
@@ -388,34 +379,8 @@ window.submitForm = async function submitForm() {
   <a href="../extra/privacy.html">מדיניות פרטיות</a><span class="sep">|</span><a href="../extra/terms.html">תנאי שימוש</a>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-(function() {
-  var c = document.getElementById('particles');
-  var ctx = c.getContext('2d');
-  var W, H, pts = [];
-  function rsz() { W = c.width = window.innerWidth; H = c.height = window.innerHeight; }
-  rsz(); window.addEventListener('resize', rsz);
-  function rnd(a,b) { return Math.random()*(b-a)+a; }
-  function mk() { return {x:rnd(0,W),y:rnd(H*.05,H),r:rnd(.3,2),dx:rnd(-.3,.3),dy:rnd(-.9,-.1),o:rnd(.4,1),fade:rnd(.002,.007),gold:Math.random()>.3,ph:rnd(0,6.28)}; }
-  for(var i=0;i<120;i++) pts.push(mk());
-  var fr = 0;
-  function draw() {
-    ctx.clearRect(0,0,W,H); fr++;
-    for(var i=0;i<pts.length;i++) {
-      var p = pts[i];
-      var a = p.o*(.6+.4*Math.sin(fr*.04+p.ph));
-      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-      ctx.fillStyle = p.gold ? 'rgba(16,185,129,'+a+')' : 'rgba(245,158,11,'+a+')';
-      ctx.fill();
-      p.x+=p.dx; p.y+=p.dy; p.o-=p.fade;
-      if(p.o<=0||p.y<-10) pts[i]=mk();
-    }
-    requestAnimationFrame(draw);
-  }
-  draw();
-})();
-
-
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+<script>
 window.addEventListener('scroll', function() {
   document.getElementById('stickyCta').classList.toggle('visible', window.scrollY > 180);
 }, {passive:true});
