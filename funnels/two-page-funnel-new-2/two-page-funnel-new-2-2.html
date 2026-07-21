@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>דיגיטל אונליין | 2 מתוך 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;700;800;900&family=Assistant:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-WHCW874B');</script>
+<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','10211443525862398');fbq('track','PageView');</script>
+<script>
+function playVideoNew2b(){
+  var t=document.getElementById('vidThumb');
+  if(t)t.classList.add('gone');
+  if(window._vpNew2b)window._vpNew2b.play();
+  else window._pending_vpNew2b=true;
+}
+</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:'Assistant',sans-serif;
+  background:#150d02;color:#fff;
+  direction:rtl;overflow-x:hidden;min-height:100svh;
+  display:flex;flex-direction:column;align-items:center;position:relative;
+}
+.bg-bloom{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 65% 35% at 50% 0%,rgba(245,158,11,.55) 0%,rgba(120,60,0,.25) 45%,transparent 70%),
+    radial-gradient(ellipse 35% 25% at 5% 90%,rgba(217,119,6,.3) 0%,transparent 60%),
+    radial-gradient(ellipse 35% 25% at 95% 75%,rgba(139,92,246,.15) 0%,transparent 55%);}
+#particles{position:fixed;inset:0;z-index:1;pointer-events:none;}
+.wrap{position:relative;z-index:2;width:100%;max-width:460px;padding:22px 18px 52px;display:flex;flex-direction:column;align-items:center;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.headline{animation:fadeUp .4s .1s ease both;}
+.subline{animation:fadeUp .4s .15s ease both;}
+.vid-outer{animation:fadeUp .5s .2s ease both;}
+.btn-box{animation:fadeUp .5s .3s ease both;}
+
+.circle-badge{
+  display:flex;flex-direction:column;align-items:center;margin-bottom:22px;animation:fadeUp .4s ease both;
+  gap:4px;
+}
+.circle-num{
+  width:52px;height:52px;border-radius:50%;
+  background:rgba(60,25,0,.85);
+  border:2px solid #f59e0b;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Rubik',sans-serif;font-size:22px;font-weight:900;color:#fde68a;
+  box-shadow:0 0 22px rgba(245,158,11,.55);
+  animation:coinSpin 3.5s ease-in-out infinite;
+}
+@keyframes coinSpin{0%,100%{transform:rotateY(0deg);}50%{transform:rotateY(20deg);}}
+.circle-label{font-family:'Assistant',sans-serif;font-size:12px;color:rgba(255,255,255,.35);letter-spacing:.3px;}
+.headline{
+  font-family:'Rubik',sans-serif;
+  font-size:clamp(24px,6.5vw,32px);font-weight:900;
+  text-align:center;line-height:1.25;margin-bottom:8px;
+  background:linear-gradient(160deg,#fef3c7 0%,#fcd34d 35%,#d97706 65%,#fef9e7 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 2px 18px rgba(245,158,11,.5));
+}
+.subline{
+  font-family:'Assistant',sans-serif;
+  font-size:clamp(13px,3.8vw,15px);color:rgba(255,255,255,.55);
+  text-align:center;line-height:1.7;margin-bottom:20px;max-width:340px;
+}
+.vid-outer{width:100%;margin-bottom:10px;border-radius:14px;animation:vidGlow 3.5s ease-in-out infinite;}
+@keyframes vidGlow{
+  0%,100%{filter:drop-shadow(0 0 14px rgba(217,119,6,.5));}
+  50%{filter:drop-shadow(0 0 30px rgba(245,158,11,.5));}
+}
+.vid-box{width:100%;border:1.5px solid #b45309;border-radius:14px;overflow:hidden;background:#000;position:relative;}
+.vid-ratio{position:relative;width:100%;padding-bottom:56.25%;height:0;overflow:hidden;}.vid-ratio iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none;display:block;}
+.vid-thumb{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:5;cursor:pointer;background:rgba(0,0,0,.12);transition:background .2s;}
+.vid-thumb:hover{background:rgba(0,0,0,.04);}
+.vid-thumb.gone{display:none;}
+.play-btn{
+  width:68px;height:48px;background:rgba(180,83,9,.92);
+  border-radius:12px;display:flex;align-items:center;justify-content:center;
+  animation:playPulse 2.8s ease-in-out infinite;
+}
+@keyframes playPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,.4),0 4px 20px rgba(245,158,11,.4);transform:scale(1);}
+  50%{box-shadow:0 0 0 8px rgba(252,211,77,.25),0 4px 30px rgba(245,158,11,.4);transform:scale(1.05);}
+}
+.vid-thumb:hover .play-btn{transform:scale(1.1)!important;animation:none;}
+.watch-hint{font-family:'Assistant',sans-serif;font-size:12px;color:rgba(255,255,255,.35);text-align:center;margin-bottom:6px;line-height:1.6;}
+.btn-box{
+  width:100%;background:rgba(16,8,0,.93);border:1.5px solid rgba(180,83,9,.22);
+  border-radius:16px;padding:16px 14px 18px;margin-bottom:14px;
+  box-shadow:0 0 40px rgba(252,211,77,.25),inset 0 1px 0 rgba(255,255,255,.03);
+  position:relative;overflow:hidden;
+}
+.btn-next{
+  display:flex;width:100%;height:56px;
+  background:rgba(20,10,0,.92);color:rgba(255,255,255,.3);
+  font-family:'Rubik',sans-serif;font-size:19px;font-weight:900;
+  border:1.5px solid rgba(180,83,9,.15);border-radius:10px;
+  align-items:center;justify-content:center;gap:8px;
+  text-decoration:none;letter-spacing:.3px;
+  cursor:not-allowed;pointer-events:none;
+  transition:all .4s;position:relative;overflow:hidden;
+}
+.btn-next.unlocked{
+  color:#fff;background:linear-gradient(135deg,#b45309,#f59e0b,#b45309);background-size:200% auto;
+  border-color:rgba(252,211,77,.25);cursor:pointer;pointer-events:auto;
+  animation:unlockShake .6s ease,btnShimmer 2s .6s linear infinite,btnGlow 2s .6s ease-in-out infinite;
+}
+@keyframes unlockShake{
+  0%{transform:translateX(0);}10%{transform:translateX(-7px);}20%{transform:translateX(7px);}
+  30%{transform:translateX(-5px);}40%{transform:translateX(5px);}60%{transform:translateX(3px);}
+  80%{transform:translateX(1px);}100%{transform:translateX(0);}
+}
+@keyframes btnShimmer{0%{background-position:200% center;}100%{background-position:0% center;}}
+@keyframes btnGlow{
+  0%,100%{box-shadow:0 4px 20px rgba(180,83,9,.5);}
+  50%{box-shadow:0 6px 36px rgba(245,158,11,.75),0 0 0 3px rgba(252,211,77,.25);}
+}
+.btn-next.unlocked::after{content:'';position:absolute;top:0;left:-120%;width:40%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);animation:shine 1.8s ease-in-out infinite;}
+@keyframes shine{0%{left:-120%}100%{left:160%}}
+.btn-next.unlocked:hover{transform:translateY(-2px) scale(1.01);}
+.btn-arrow{display:inline-block;}
+.btn-next.unlocked .btn-arrow{animation:arrowBounce 1s ease-in-out infinite;}
+@keyframes arrowBounce{0%,100%{transform:translateX(0);}50%{transform:translateX(-5px);}}
+.proposal-box{width:100%;background:rgba(16,8,0,.93);border:1.5px solid rgba(180,83,9,.22);border-radius:16px;padding:20px 16px;margin-bottom:14px;}
+.proposal-title{font-family:'Rubik',sans-serif;font-size:clamp(17px,5vw,21px);font-weight:900;text-align:center;margin-bottom:12px;color:#fbbf24;}
+.proposal-sub{font-family:'Assistant',sans-serif;font-size:14px;color:rgba(255,255,255,.5);text-align:center;line-height:1.6;margin-bottom:14px;}
+.teaser-list{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:14px;}
+.teaser-list li{font-family:'Assistant',sans-serif;font-size:13.5px;color:rgba(255,255,255,.8);line-height:1.6;text-align:right;}
+.trust-line-small{font-family:'Assistant',sans-serif;font-size:12px;color:rgba(255,255,255,.4);text-align:center;line-height:1.6;margin-top:10px;}
+.wfield{width:100%;height:52px;background:rgba(255,255,255,.06);border:1px solid rgba(180,83,9,.3);border-radius:8px;color:#fff;font-family:'Assistant',sans-serif;font-size:15px;padding:0 14px;margin-bottom:10px;outline:none;direction:rtl;-webkit-appearance:none;transition:border .2s,background .2s;}
+.wfield::placeholder{color:rgba(255,255,255,.3);}
+.wfield:focus{border-color:rgba(245,158,11,.6);background:rgba(255,255,255,.09);}
+.werr{font-size:12px;color:#ff7070;margin:-6px 0 8px 2px;display:none;}
+.werr.show{display:block;}
+.btn-next:disabled{opacity:.6;cursor:not-allowed;animation:none;pointer-events:none;}
+footer{position:relative;z-index:2;width:100%;border-top:1px solid rgba(255,255,255,.04);padding:14px 20px;text-align:center;font-family:'Assistant',sans-serif;font-size:11px;color:rgba(255,255,255,.14);line-height:2;margin-top:auto;}
+footer a{color:rgba(255,255,255,.2);text-decoration:none;}
+footer a:hover{color:#f59e0b;}
+footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
+
+</style>
+</head>
+<body>
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WHCW874B" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+<div class="bg-bloom"></div>
+<canvas id="particles"></canvas>
+<div class="wrap">
+    <div class="circle-badge">
+    <div class="circle-num">2</div>
+    <div class="circle-label">מתוך 2 שלבים</div>
+  </div>
+  <h1 class="headline">הבנתם את העיקרון. עכשיו הגיע הזמן לראות איך הוא עובד במציאות.</h1>
+  <p class="subline">בשני הסרטונים האחרונים ראיתם למה אנשים רבים מרגישים שהם מתחילים מחדש בכל יום, ומה משתנה כאשר בונים פעולות שמצטברות לאורך זמן. עכשיו נעבור מהרעיון אל התהליך המלא.</p>
+  <div class="vid-outer">
+    <div class="vid-box">
+      <div class="vid-ratio">
+      <video id="vimeoPlayer" autoplay muted playsinline controls preload="auto"
+        src="../../extra/מה_העולם_באמת_מתגמל.mp4"
+        style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">
+      </video>
+      </div>
+      <div class="vid-thumb" id="vidThumb" onclick="playVideoNew2b()">
+        <div class="play-btn">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="white"><polygon points="6,3 20,12 6,21"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="proposal-box">
+    <p class="proposal-title">התמונה הגדולה עדיין לא שלמה</p>
+    <p class="proposal-sub">אם הגעתם עד לכאן, כנראה שלא חיפשתם עוד סרטון מוטיבציה. חיפשתם להבין. להבין למה יש אנשים שמצליחים לבנות התקדמות שנשארת לאורך זמן, בעוד אחרים עובדים קשה מאוד ועדיין מרגישים שהם רצים במקום. בשני הסרטונים קיבלתם את עקרונות החשיבה. אבל עקרונות, חשובים ככל שיהיו, הם רק ההתחלה. השאלה האמיתית היא: איך מחברים את כל החלקים למערכת אחת ברורה? בהדרכה המלאה אני מראה את התמונה הרחבה:</p>
+    <ul class="teaser-list">
+      <li>✓ איך עוברים מרעיון לתהליך מסודר.</li>
+      <li>✓ איך כל שלב תומך בשלב הבא.</li>
+      <li>✓ איך בוחנים מה עובד, מה דורש שיפור, ואיך מתקדמים בצורה עקבית לאורך זמן.</li>
+      <li>✓ ואיך מסתכלים על בניית ערך בצורה שיטתית, במקום להסתמך על ניסוי וטעייה בלבד.</li>
+    </ul>
+    <p class="proposal-sub">המטרה של ההדרכה אינה לתת "פתרון קסם". המטרה היא לתת לכם מסגרת חשיבה שתאפשר לכם להבין את המנגנון כולו, ולא רק חלקים ממנו. אם שני הסרטונים גרמו לכם לעצור ולשאול שאלות שלא שאלתם קודם… יש סיכוי טוב שההדרכה המלאה תהיה החלק שיחבר עבורכם את כל הנקודות.</p>
+    <p class="proposal-sub" style="margin-bottom:0;">קבלו את ההדרכה המלאה למייל. השאירו את הפרטים שלכם בטופס שלמטה, והקלטת ההדרכה המלאה תישלח אליכם ישירות למייל, כך שתוכלו לצפות בה בזמן שנוח לכם.</p>
+  </div>
+  <div class="btn-box">
+    <input class="wfield" id="wName" type="text" placeholder="שם מלא" autocomplete="name"/>
+    <div class="werr" id="eName">נא להזין שם מלא</div>
+    <input class="wfield" id="wPhone" type="tel" placeholder="טלפון" autocomplete="tel" inputmode="numeric"/>
+    <div class="werr" id="ePhone">נא להזין מספר טלפון</div>
+    <input class="wfield" id="wEmail" type="email" placeholder="מייל" autocomplete="email"/>
+    <div class="werr" id="eEmail">נא להזין אימייל תקין</div>
+    <button class="btn-next unlocked" id="submitBtn" onclick="submitFullTraining()" style="width:100%;">
+      📩&nbsp; שלחו לי את ההדרכה המלאה
+    </button>
+    <p class="trust-line-small">ללא התחייבות. פשוט השלב הבא במסע שהתחלתם עכשיו.</p>
+  </div>
+
+</div>
+<footer>
+  דיגיטל אונליין מבית או די מסחר אונליין בע"מ<br>
+  <a href="/cdn-cgi/l/email-protection#7e0d0b0e0e110c0a3e1a1719170a1f1211101217101b501d11501712">&#115;upport&#64;digitalonline.co.il</a><br>
+  <a href="../../extra/privacy.html">מדיניות פרטיות</a><span class="sep">|</span><a href="../../extra/terms.html">תנאי שימוש</a>
+</footer>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+<script>
+(function(){
+  const c=document.getElementById('particles'),ctx=c.getContext('2d');
+  let W,H,pts=[];
+  function rsz(){W=c.width=window.innerWidth;H=c.height=window.innerHeight;}
+  rsz();window.addEventListener('resize',rsz);
+  function rnd(a,b){return Math.random()*(b-a)+a;}
+  function mk(){return{x:rnd(0,W),y:rnd(H*.1,H),r:rnd(.2,1.6),dx:rnd(-.25,.25),dy:rnd(-.8,-.05),o:rnd(.3,.8),fade:rnd(.002,.005),main:Math.random()>.3,phase:rnd(0,6.28)};}
+  for(let i=0;i<100;i++)pts.push(mk());
+  let fr=0;
+  function draw(){
+    ctx.clearRect(0,0,W,H);fr++;
+    pts.forEach((p,i)=>{
+      let a=p.o*(.6+.4*Math.sin(fr*.035+p.phase));
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=p.main?`rgba(245,158,11,${a})`:`rgba(252,211,77,${a*.35})`;
+      ctx.fill();
+      p.x+=p.dx;p.y+=p.dy;p.o-=p.fade;
+      if(p.o<=0||p.y<-10)pts[i]=mk();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+const PAGE='two_page_funnel_new_2_video_2';
+const WEBHOOK='https://hook.eu1.make.com/ylf5uesfcqpyaxaxtvayjx08h9rrwqr2';
+const TRACK_HOOK='https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q';
+window.dataLayer=window.dataLayer||[];
+const P=new URLSearchParams(location.search);
+const variant=P.get('variant')||'',sup=P.get('lm_supplier')||P.get('supplier')||'',src=P.get('utm_source')||'';
+const phone=P.get('phone')||'',email=P.get('email')||'';
+const panel=P.get('panel')||'';
+dataLayer.push({event:'page_view',page:PAGE,source_variant:variant,supplier:sup,utm_source:src});
+/* Sequential funnel gate -- see two-page-funnel-new-2-1.html for the full
+   explanation. Only counts if this browser already has a marker showing
+   it passed video_1 in order first, within this variant's own
+   'two_page_funnel_new_2' namespace. */
+try {
+  var STEP_NUM = 2, FUNNEL_PREFIX = 'two_page_funnel_new_2';
+  var MAX_KEY = 'do_max_step_' + FUNNEL_PREFIX;
+  var prevMax = parseInt(localStorage.getItem(MAX_KEY), 10) || 0;
+  var inSequence = (STEP_NUM === 1) || (prevMax >= STEP_NUM - 1);
+  if (panel && inSequence) fetch(TRACK_HOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({metric:'video_2',panel:panel})}).catch(function(){});
+  if (inSequence && STEP_NUM > prevMax) localStorage.setItem(MAX_KEY, String(STEP_NUM));
+} catch(e) { if(panel)fetch(TRACK_HOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({metric:'video_2',panel:panel})}).catch(function(){}); }
+if(typeof fbq!=='undefined')fbq('track','PageView');
+const sd={};[25,50,75,100].forEach(d=>sd[d]=0);
+window.addEventListener('scroll',()=>{
+  const s=document.body.scrollHeight-window.innerHeight;if(!s)return;
+  const p=Math.round(window.scrollY/s*100);
+  [25,50,75,100].forEach(d=>{if(!sd[d]&&p>=d){sd[d]=1;dataLayer.push({event:'scroll_depth',depth:d+'%',page:PAGE});}});
+},{passive:true});
+const t0=Date.now();
+const vm={};[25,50,75,100].forEach(m=>vm[m]=0);
+let lastPos=0,lastPct=0;
+
+async function resolveSupplier(pms) {
+  if (pms.supplier) return pms.supplier;
+  try {
+    const res = await fetch('/marketers/marketers.json');
+    const marketers = await res.json();
+    const mk = (pms.marketer && marketers[pms.marketer]) ? pms.marketer : 'yahav';
+    const entry = marketers[mk];
+    return entry ? entry.lm_supplier : 35213;
+  } catch (e) {
+    return 35213;
+  }
+}
+function submitFullTraining(){
+  var name=document.getElementById('wName').value.trim();
+  var wphone=document.getElementById('wPhone').value.trim();
+  var wemail=document.getElementById('wEmail').value.trim();
+  var ok=true;
+  ['eName','ePhone','eEmail'].forEach(function(id){document.getElementById(id).classList.remove('show');});
+  if(!name){document.getElementById('eName').classList.add('show');ok=false;}
+  if(!wphone){document.getElementById('ePhone').classList.add('show');ok=false;}
+  if(!wemail||wemail.indexOf('@')<0){document.getElementById('eEmail').classList.add('show');ok=false;}
+  if(!ok)return;
+  var btn=document.getElementById('submitBtn');
+  btn.disabled=true;btn.innerHTML='שולח…';
+  var secs=Math.round((Date.now()-t0)/1000);
+  try{dataLayer.push({event:'next_step_click',page:PAGE,pct_watched:lastPct,seconds_on_page:secs});}catch(err){}
+  if(navigator.sendBeacon){
+    navigator.sendBeacon(WEBHOOK,JSON.stringify({event:'next_step_click',page:PAGE,phone:wphone,email:wemail,pct_watched:lastPct,seconds_on_page:secs,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')}));
+  }
+  /* Lead-journey stage tracking -- logs to a Make.com Data Store
+     (append-only, keyed by phone+stage) instead of LeadManager, since
+     LM's API cannot update an existing lead. See lead-journey.html for
+     the viewer. This is the LAST step of the two-video funnel and the
+     only place it captures name/phone/email, so this submit IS the
+     funnel's real final conversion -- stage 6, not a mid-funnel video
+     milestone. */
+  fetch('https://hook.eu1.make.com/9nycxwodyby36g30ezp05idn0rqihnlh',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:wphone,name:name,email:wemail,stage:6,stage_label:'details_submitted',panel:panel}),keepalive:true}).catch(function(){});
+  /* Dashboard metric -- feeds the f10_webinar sheet cell used by the
+     4-way Two-Page Funnel split test head-to-head comparison. The
+     metric id is still literally "webinar" in the sheet/Make wiring,
+     but it now represents this end-of-funnel details submission. */
+  try { fetch(TRACK_HOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({metric:'webinar',panel:panel})}).catch(function(){}); } catch(e) {}
+
+  resolveSupplier({supplier:sup,marketer:P.get('marketer')||''}).then(function(resolvedSupplier){
+    var lmP=new URLSearchParams();
+    lmP.append('lm_form','91716');
+    lmP.append('lm_key','39a848dcacc6424a9ae29da204e743fc');
+    lmP.append('subscribers_name',name);
+    lmP.append('subscribers_phone',wphone);
+    lmP.append('subscribers_email',wemail);
+    lmP.append('fld_144377','1');
+    lmP.append('fld_105911',src||'');
+    lmP.append('fld_107862',src||'');
+    lmP.append('lm_supplier',resolvedSupplier);
+    lmP.append('lm_bc',src||'');
+    lmP.append('fields[REF]',P.get('ref')||variant||'');
+    lmP.append('utm_medium',P.get('utm_medium')||'');
+    lmP.append('utm_campaign',P.get('utm_campaign')||'');
+    lmP.append('page',PAGE);
+    fetch('https://hook.eu1.make.com/j4ktylebkczp1tgvlj0h4tfbxb77q9b1',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({qs:lmP.toString(),page:PAGE,phone:wphone,name:name,email:wemail}),
+      keepalive:true
+    }).catch(function(){});
+
+    fetch('https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name:name,phone:wphone,email:wemail,page:PAGE}),
+      keepalive:true
+    }).catch(function(){});
+  });
+
+  setTimeout(function(){
+    var q=new URLSearchParams(location.search);
+    q.set('name',name);q.set('phone',wphone);q.set('email',wemail);
+    window.location.href='../../extra/signup-video.html?'+q.toString();
+  },400);
+}
+
+window.addEventListener('load',()=>{
+  const video=document.getElementById('vimeoPlayer');
+  const thumb=document.getElementById('vidThumb');
+  thumb.onclick=function(){thumb.classList.add('gone');video.play();};
+  video.addEventListener('play',()=>{
+    thumb.classList.add('gone');
+    dataLayer.push({event:'video_play',page:PAGE});
+  });
+  video.addEventListener('pause',()=>{
+    const pos=Math.round(video.currentTime),pct=Math.round(video.currentTime/video.duration*100);
+    dataLayer.push({event:'video_pause',page:PAGE,time:pos,pct_watched:pct});
+    fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({event:'video_pause',page:PAGE,position_sec:pos,pct_watched:pct,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')})
+    }).catch(()=>{});
+  });
+  video.addEventListener('timeupdate',()=>{
+    lastPos=video.currentTime;lastPct=Math.round(video.currentTime/video.duration*100);
+    const pct=video.currentTime/video.duration*100;
+    [25,50,75,100].forEach(m=>{if(!vm[m]&&pct>=m){vm[m]=1;dataLayer.push({event:'video_progress',milestone:m+'%',time:Math.round(video.currentTime),page:PAGE});}});
+  });
+  video.addEventListener('ended',()=>{
+    dataLayer.push({event:'video_ended',page:PAGE});
+    if(typeof fbq!=='undefined')fbq('track','ViewContent',{content_name:PAGE});
+    fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({event:'video_completed',page:PAGE,pct_watched:100,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')})
+    }).catch(()=>{});
+  });
+});
+window.addEventListener('beforeunload',()=>{
+  if(navigator.sendBeacon){
+    navigator.sendBeacon(WEBHOOK,JSON.stringify({
+      event:'page_exit',page:PAGE,phone:phone,email:email,position_sec:Math.round(lastPos),pct_watched:lastPct,
+      seconds_on_page:Math.round((Date.now()-t0)/1000),supplier:sup,utm_source:src,
+      timestamp:new Date().toLocaleString('he-IL')
+    }));
+  }
+});
+</script>
+</body>
+</html>
