@@ -722,10 +722,17 @@ document.getElementById('dateFrom').addEventListener('change', function(){ saveP
 document.getElementById('dateTo').addEventListener('change', function(){ savePrefs(); applyFiltersAndRender(true); });
 document.getElementById('prevPage').addEventListener('click', function(){ currentPage--; applyFiltersAndRender(); });
 document.getElementById('nextPage').addEventListener('click', function(){ currentPage++; applyFiltersAndRender(); });
+// Polling interval for auto-refresh. Was 30s, raised to 2min -- this hook
+// (Lead Journey - Lookup) re-fetches the ENTIRE, ever-growing lead list on
+// every call, and was found to be ~30% of the whole Make.com account's
+// credit usage almost entirely from this timer running in idle open tabs.
+// 2 minutes is still fresh enough for a dashboard someone is glancing at,
+// but cuts that cost by 4x.
+const AUTO_REFRESH_MS = 120000;
 document.getElementById('autoRefresh').addEventListener('change', function(){
   if(this.checked){
     localStorage.setItem('lj_autorefresh','1');
-    autoRefreshTimer = setInterval(loadData, 30000);
+    autoRefreshTimer = setInterval(loadData, AUTO_REFRESH_MS);
   } else {
     localStorage.removeItem('lj_autorefresh');
     clearInterval(autoRefreshTimer);
@@ -733,7 +740,7 @@ document.getElementById('autoRefresh').addEventListener('change', function(){
 });
 if(localStorage.getItem('lj_autorefresh')){
   document.getElementById('autoRefresh').checked = true;
-  autoRefreshTimer = setInterval(loadData, 30000);
+  autoRefreshTimer = setInterval(loadData, AUTO_REFRESH_MS);
 }
 
 loadPrefs();
