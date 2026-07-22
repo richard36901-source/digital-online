@@ -315,6 +315,36 @@
     display: inline-flex; align-items: center; gap: 4px;
   }
 
+  .email-perf-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; }
+  .email-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 18px 20px; box-shadow: var(--shadow-sm);
+  }
+  .email-card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .email-card-badge {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--pb-soft); color: var(--pb);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px; flex-shrink: 0;
+  }
+  .email-card-title { font-size: 14px; font-weight: 700; }
+  .email-stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+  .email-stat-lbl { font-size: 10px; color: var(--text-2); font-weight: 500; margin-bottom: 2px; }
+  .email-stat-val { font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 700; color: var(--text); }
+  .email-reach-bar { height: 6px; border-radius: 999px; background: var(--card-soft); overflow: hidden; margin-bottom: 12px; }
+  .email-reach-fill { height: 100%; background: linear-gradient(90deg, var(--pb) 0%, var(--pa) 100%); border-radius: 999px; transition: width .6s ease; }
+  .email-ctor {
+    text-align: center; background: var(--card-soft); border-radius: 9px;
+    padding: 8px; font-size: 11px; color: var(--text-2); margin-bottom: 12px;
+  }
+  .email-ctor b { color: var(--pb); font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+  .email-variants { border-top: 1px dashed var(--border); padding-top: 10px; }
+  .email-variant-row {
+    display: flex; justify-content: space-between; font-size: 10px;
+    color: var(--text-3); margin-top: 4px;
+  }
+  .email-variant-row b { color: var(--text-2); font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+
   .toast {
     position: fixed; top: 76px; left: 50%; transform: translateX(-50%);
     background: white; border: 1px solid var(--good-border);
@@ -495,6 +525,18 @@
 
   <div class="section-head">
     <h2>
+      <span class="sicn blue">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+      </span>
+      ביצועי סדרת המיילים · פתיחות וקליקים
+    </h2>
+    <span class="meta">5 מיילים, כל אחד עם 3 גרסאות כותרת (A/B/C) שנשלחות אוטומטית לפי פתיחה</span>
+  </div>
+
+  <div class="email-perf-grid" id="email_perf_grid"></div>
+
+  <div class="section-head">
+    <h2>
       <span class="sicn green">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
       </span>
@@ -506,7 +548,7 @@
   <div class="ab-grid" id="ab_grid"></div>
 
   <p style="font-size:11px;color:var(--text-3);margin-top:-8px;margin-bottom:8px;">
-    * שאר מבחני ה-A/B (וואטסאפ, מיילים יזומים, טפטוף) לא מוצגים כרגע כי אין להם עדיין חיווט אמיתי שאוסף נתונים —
+    * שאר מבחני ה-A/B (וואטסאפ, טפטוף) לא מוצגים כרגע כי אין להם עדיין חיווט אמיתי שאוסף נתונים —
     יוצגו כאן אוטומטית ברגע שיהיה להם מקור נתונים אמיתי.
   </p>
 
@@ -744,7 +786,65 @@ function render() {
   }
 
   renderFunnelComparison();
+  renderEmailPerf();
   renderHeadToHead();
+}
+
+/* ============================================================================
+   EMAIL SEQUENCE PERFORMANCE (opens / clicks) · RavMessage A/B/C automation
+   Each email (1-5) has 3 subject-line variants (a/b/c) that fire in sequence
+   until one is opened. Every variant has its own open-tracking pixel and a
+   click-through redirect wrapped around the video link, both logged via the
+   same Make.com webhook as the rest of the site (see Integration Webhooks,
+   HTTP scenario) into IDs shaped fe{email}{variant}_open / _click.
+   ============================================================================ */
+
+const EMAIL_NUMS = [1, 2, 3, 4, 5];
+const EMAIL_VARIANTS = ['a', 'b', 'c'];
+
+function emailSum(n, event) {
+  return EMAIL_VARIANTS.reduce((sum, v) => sum + m(`fe${n}${v}_${event}`), 0);
+}
+
+function renderEmailPerf() {
+  const container = document.getElementById('email_perf_grid');
+  if (!container) return;
+
+  const opensByEmail = EMAIL_NUMS.map(n => emailSum(n, 'open'));
+  const maxOpens = Math.max(1, ...opensByEmail);
+
+  container.innerHTML = EMAIL_NUMS.map(n => {
+    const opens = emailSum(n, 'open');
+    const clicks = emailSum(n, 'click');
+    const ctor = pct(clicks, opens);
+    const barPct = Math.round(pct(opens, maxOpens));
+
+    const variantRows = EMAIL_VARIANTS.map(v => {
+      const o = m(`fe${n}${v}_open`), c = m(`fe${n}${v}_click`);
+      return `<div class="email-variant-row"><span>גרסה ${v.toUpperCase()}</span><span><b>${fmt(o)}</b> פתיחות · <b>${fmt(c)}</b> קליקים</span></div>`;
+    }).join('');
+
+    return `
+      <div class="email-card">
+        <div class="email-card-head">
+          <div class="email-card-badge">${n}</div>
+          <div class="email-card-title">מייל ${n}</div>
+        </div>
+        <div class="email-stats-row">
+          <div>
+            <div class="email-stat-lbl">פתיחות</div>
+            <div class="email-stat-val mono">${fmt(opens)}</div>
+          </div>
+          <div>
+            <div class="email-stat-lbl">קליקים על הלינק</div>
+            <div class="email-stat-val mono">${fmt(clicks)}</div>
+          </div>
+        </div>
+        <div class="email-reach-bar"><div class="email-reach-fill" style="width:${barPct}%"></div></div>
+        <div class="email-ctor">קליק מתוך פתיחה: <b>${fmtPct(ctor)}</b></div>
+        <div class="email-variants">${variantRows}</div>
+      </div>`;
+  }).join('');
 }
 
 // Sums a metric ID across every panel that feeds a given funnel group,
