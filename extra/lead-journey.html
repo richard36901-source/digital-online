@@ -409,12 +409,19 @@ async function loadData(){
       // carries it, and stage-1 is rarely a lead's "winning" (highest)
       // record, so this has to be captured independently too.
       if(r.page && !existing.page) existing.page = r.page;
-      if(stage > existing.stage || (stage === existing.stage && r.updated_at > existing.updated_at)){
+      if(stage > existing.stage){
         existing.stage = stage;
         existing.stage_label = r.stage_label;
-        existing.updated_at = r.updated_at;
         if(r.panel) existing.panel = r.panel;
       }
+      // updated_at tracks the lead's MOST RECENT activity of any kind --
+      // deliberately independent of which record "won" for stage above.
+      // A returning lead who revisits at a lower stage than they'd already
+      // reached (e.g. hit video_1 last week, comes back through a landing
+      // page today) would otherwise stay stuck showing last week's
+      // timestamp forever, making today's real visit invisible in the
+      // "recently updated" sort/filter even though the record exists.
+      if(r.updated_at && r.updated_at > existing.updated_at) existing.updated_at = r.updated_at;
     });
     allRows = Object.values(byPhone);
     renderKpis(allRows);
