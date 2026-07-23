@@ -264,9 +264,15 @@ let currentPage = 1;
 
 function fmtDate(s) {
   if (!s) return null;
-  const str = String(s).trim();
+  let str = String(s).trim();
   if (!str || str.startsWith('0000-00-00')) return null;
-  const d = new Date(str.replace(' ', 'T'));
+  // gviz formatted dates can be "YYYY-MM-DD H:MM:SS" with unpadded hour/min/sec —
+  // pad them so Date parsing is reliable across browsers.
+  const parts = str.match(/^(\d{4}-\d{2}-\d{2})[ T](\d{1,2}):(\d{1,2}):(\d{1,2})$/);
+  str = parts
+    ? parts[1] + 'T' + parts[2].padStart(2, '0') + ':' + parts[3].padStart(2, '0') + ':' + parts[4].padStart(2, '0')
+    : str.replace(' ', 'T');
+  const d = new Date(str);
   return isNaN(d.getTime()) ? null : d;
 }
 function relTime(s) {
@@ -330,7 +336,9 @@ async function loadData() {
     allLeads = leadRows
       .map(row => {
         const c = row.c || [];
-        const v = i => (c[i] && c[i].v != null) ? c[i].v : '';
+        // prefer gviz's formatted string (.f) over the raw value (.v) — for date
+        // cells .v is a non-parseable literal like "Date(2026,6,23,7,59,10)"
+        const v = i => (c[i] && c[i].f != null) ? c[i].f : ((c[i] && c[i].v != null) ? c[i].v : '');
         return {
           email: String(v(0) || '').trim(),
           name: String(v(1) || '').trim(),
