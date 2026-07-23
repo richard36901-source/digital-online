@@ -594,6 +594,27 @@ const HEAD_TO_HEAD_TESTS = [
     ]
   },
   {
+    /* The original 4-arm landing-page test, before OPTION2_V2 existed:
+       four different landing-page designs (option1-4.html), each with its
+       own panel ID (1-4), splitting incoming traffic and each tracking its
+       own entry → form-submission conversion. This card was dropped from
+       the dashboard when the OPTION2 vs OPTION2_V2 test replaced it as the
+       active landing-page experiment, but the historical data itself was
+       never deleted from the sheet -- restoring it here just brings that
+       real data back into view alongside everything else. Panels 3 and 4
+       have little/no recorded traffic (they were effectively retired early
+       on), so they'll correctly show as "אוסף דגימות"/no data rather than
+       a fake rate. */
+    title: 'דף נחיתה · Option 1 מול Option 2 מול Option 3 מול Option 4', tag: 'landing', tagLabel: 'דף נחיתה · מבחן היסטורי',
+    conversionLabel: 'שלחו פרטים', conversionKey: 'landing',
+    variants: [
+      { name: 'Option 1', desc: 'גרסת נחיתה מקורית 1', panel: 1 },
+      { name: 'Option 2', desc: 'גרסת נחיתה מקורית 2', panel: 2 },
+      { name: 'Option 3', desc: 'גרסת נחיתה מקורית 3', panel: 3 },
+      { name: 'Option 4', desc: 'גרסת נחיתה מקורית 4', panel: 4 }
+    ]
+  },
+  {
     /* Every landing page now splits visitors 25/25/25/25 between all FOUR
        panels (6, 7, 9, 10) right before entering the video funnel -- see the
        redirect logic in landing-pages/*.html. This card shows all four arms
