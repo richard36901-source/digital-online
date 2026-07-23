@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>מסע המיילים | דיגיטל אונליין</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#0b0d12;color:#e8e8e8;padding:24px;direction:rtl;line-height:1.4;}
+@media(max-width:720px){body{padding:14px;}}
+
+/* ---------- header ---------- */
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:22px;}
+h1{font-size:23px;font-weight:800;margin-bottom:4px;display:flex;align-items:center;gap:8px;}
+.sub{color:#8a8f98;font-size:13px;max-width:680px;}
+.refresh-meta{display:flex;align-items:center;gap:10px;font-size:12px;color:#8a8f98;background:#151821;border:1px solid #22262f;border-radius:99px;padding:7px 14px;white-space:nowrap;}
+.refresh-meta .dot{width:7px;height:7px;border-radius:50%;background:#3ecf6a;flex-shrink:0;box-shadow:0 0 0 3px rgba(62,207,106,.15);}
+.refresh-meta.loading .dot{background:#e0b357;animation:pulse 1s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.refresh-meta button{background:#1b1e26;border:1px solid #262b36;color:#c7cbd4;padding:6px 12px;border-radius:99px;cursor:pointer;font-size:12px;}
+.refresh-meta button:hover{background:#22262f;}
+
+/* ---------- notice ---------- */
+.notice{background:#171a22;border:1px solid #262b36;border-radius:12px;padding:12px 16px;font-size:12.5px;color:#a8adb8;margin-bottom:20px;line-height:1.7;}
+.notice b{color:#e0b357;}
+
+/* ---------- KPI cards ---------- */
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:22px;}
+@media(max-width:980px){.kpis{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:620px){.kpis{grid-template-columns:repeat(2,1fr);}}
+.kpi{background:linear-gradient(180deg,#171a22,#12141a);border:1px solid #22262f;border-radius:14px;padding:16px 16px 14px;position:relative;overflow:hidden;}
+.kpi::before{content:'';position:absolute;top:0;right:0;width:56px;height:56px;background:radial-gradient(circle,var(--kc,#3b6bf5) 0%,transparent 70%);opacity:.18;}
+.kpi .kv{font-size:26px;font-weight:800;color:#fff;margin-bottom:2px;}
+.kpi .kl{font-size:11.5px;color:#8a8f98;font-weight:600;letter-spacing:.2px;}
+.kpi .kd{font-size:11px;margin-top:6px;font-weight:700;color:#5b6270;}
+
+/* ---------- panels ---------- */
+.panel{background:#12141a;border:1px solid #22262f;border-radius:14px;padding:18px 20px;margin-bottom:20px;}
+.panel h2{font-size:14px;font-weight:800;margin-bottom:2px;display:flex;align-items:center;gap:7px;}
+.panel .panel-sub{font-size:12px;color:#8a8f98;margin-bottom:16px;}
+
+/* ---------- email funnel (email1 -> email5) ---------- */
+.funnel-row{display:grid;grid-template-columns:96px 1fr 150px;align-items:center;gap:12px;margin-bottom:10px;}
+@media(max-width:620px){.funnel-row{grid-template-columns:68px 1fr 104px;gap:8px;}}
+.funnel-label{font-size:12.5px;font-weight:700;color:#c7cbd4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.funnel-track{background:#1b1e26;border-radius:8px;height:26px;position:relative;overflow:hidden;}
+.funnel-fill{height:100%;border-radius:8px;transition:width .5s cubic-bezier(.3,.8,.4,1);display:flex;align-items:center;padding-inline-start:10px;}
+.funnel-fill span{font-size:11px;font-weight:800;color:#0b0d12;}
+.funnel-nums{font-size:12px;color:#c7cbd4;text-align:left;white-space:nowrap;}
+.funnel-nums b{color:#fff;font-size:13.5px;}
+.funnel-drop{font-size:10.5px;color:#e05353;margin-inline-start:2px;display:block;}
+.funnel-drop.good{color:#3ecf6a;}
+
+/* ---------- email variant cards ---------- */
+.email-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;}
+.email-card{background:#171a22;border:1px solid #22262f;border-radius:14px;padding:16px 18px;}
+.email-card-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.email-card-badge{width:30px;height:30px;border-radius:8px;background:#1a2a3a;color:#5fb3d6;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;}
+.email-card-title{font-size:13.5px;font-weight:700;color:#fff;}
+.email-stats-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.email-stat-lbl{font-size:10px;color:#8a8f98;font-weight:600;margin-bottom:2px;}
+.email-stat-val{font-size:18px;font-weight:800;color:#fff;}
+.email-ctor{text-align:center;background:#0f1116;border-radius:9px;padding:7px;font-size:11px;color:#8a8f98;margin-bottom:10px;}
+.email-ctor b{color:#5fb3d6;font-size:12.5px;}
+.email-variants{border-top:1px dashed #262b36;padding-top:8px;}
+.email-variant-row{display:flex;justify-content:space-between;font-size:10.5px;color:#5b6270;margin-top:4px;}
+.email-variant-row b{color:#a8adb8;font-weight:700;}
+
+/* ---------- controls ---------- */
+.controls{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;align-items:center;}
+input[type=text],select{background:#151821;border:1px solid #262b36;color:#e8e8e8;padding:9px 12px;border-radius:9px;font-size:13.5px;}
+input[type=text]{min-width:220px;flex:1;max-width:280px;}
+select{cursor:pointer;}
+button{background:#3b6bf5;color:#fff;border:none;padding:9px 16px;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:600;transition:background .15s;}
+button:hover{background:#2f57cc;}
+button.ghost{background:#1b1e26;border:1px solid #262b36;color:#c7cbd4;}
+button.ghost:hover{background:#22262f;}
+.spacer{flex:1;}
+.results-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px;font-size:12.5px;color:#8a8f98;}
+.results-bar .page-size{display:flex;align-items:center;gap:7px;}
+.results-bar select{padding:6px 10px;font-size:12.5px;}
+
+/* ---------- pagination ---------- */
+.pagination{display:flex;align-items:center;justify-content:center;gap:14px;padding:16px;}
+.pagination button{background:#1b1e26;border:1px solid #262b36;color:#c7cbd4;padding:7px 14px;font-size:13px;}
+.pagination button:hover:not(:disabled){background:#22262f;}
+.pagination button:disabled{opacity:.35;cursor:default;}
+.pagination .page-info{font-size:12.5px;color:#8a8f98;white-space:nowrap;}
+
+/* ---------- quick actions ---------- */
+.qa{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;background:#1b1e26;border:1px solid #262b36;text-decoration:none;font-size:12px;flex-shrink:0;transition:background .12s;margin-inline-start:6px;}
+.qa:hover{background:#262b36;}
+
+/* ---------- table ---------- */
+.table-wrap{background:#12141a;border:1px solid #22262f;border-radius:14px;overflow:hidden;}
+table{width:100%;border-collapse:collapse;font-size:13.5px;}
+th,td{padding:11px 13px;text-align:right;border-bottom:1px solid #1c2029;}
+th{background:#171a22;color:#8a8f98;font-weight:700;font-size:11.5px;text-transform:uppercase;letter-spacing:.3px;white-space:nowrap;}
+tbody tr{transition:background .12s;}
+tbody tr:hover td{background:#171a22;}
+tbody tr.recent td{background:rgba(95,214,166,.04);}
+tbody tr.recent{border-inline-start:3px solid #3ecf6a;}
+tbody tr.unsub td{opacity:.5;}
+.name-cell{font-weight:600;color:#fff;}
+.muted{color:#5b6270;}
+.status-pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11.5px;font-weight:700;white-space:nowrap;}
+.status-pill.active{background:#1a3a2f;color:#5fd6a3;}
+.status-pill.unsub{background:#3a1a1a;color:#e07a7a;}
+.status-pill.inactive{background:#232833;color:#5b6270;}
+.time-cell .abs{color:#8a8f98;font-size:11.5px;}
+.time-cell .rel{font-size:12.5px;color:#c7cbd4;}
+.empty,.loading{color:#8a8f98;text-align:center;padding:52px;}
+.err-box{color:#ff8a8a;text-align:center;padding:24px;font-size:13px;}
+.setup-bar{background:#3a2f1a;border:1px solid #5a4a26;color:#e0b357;padding:12px 16px;border-radius:10px;font-size:12px;line-height:1.6;display:none;margin-bottom:16px;}
+.setup-bar.show{display:block;}
+.setup-bar a{color:#ffd166;text-decoration:underline;font-weight:600;}
+
+/* ---------- mobile ---------- */
+@media(max-width:680px){
+  body{padding:12px;padding-bottom:calc(12px + env(safe-area-inset-bottom));}
+  .top{flex-direction:column;align-items:flex-start;gap:10px;margin-bottom:16px;}
+  h1{font-size:19px;}
+  .sub{font-size:12px;max-width:none;}
+  .refresh-meta{align-self:stretch;justify-content:space-between;}
+  .panel{padding:14px;}
+  .funnel-row{grid-template-columns:56px 1fr 82px;gap:6px;margin-bottom:8px;}
+  .funnel-label{font-size:10.5px;}
+  .funnel-track{height:22px;}
+  .funnel-nums{font-size:10px;}
+  .funnel-nums b{font-size:12px;}
+  .kpis{gap:8px;}
+  .kpi{padding:12px 12px 10px;}
+  .kpi .kv{font-size:21px;}
+  .kpi .kl{font-size:10.5px;}
+  .controls{flex-direction:column;align-items:stretch;gap:8px;}
+  .controls input[type=text],.controls select,.controls button{width:100%;max-width:none;padding:11px 12px;}
+  .spacer{display:none;}
+  .results-bar{flex-direction:column;align-items:flex-start;gap:6px;}
+  .pagination{gap:10px;padding:14px 8px;flex-wrap:wrap;}
+  .pagination button{padding:9px 14px;}
+  .table-wrap{background:transparent;border:none;overflow:visible;border-radius:0;}
+  table,thead,tbody,tr,td{display:block;width:100%;}
+  thead{display:none;}
+  tbody tr{background:#12141a;border:1px solid #22262f;border-radius:14px;padding:2px 14px;margin-bottom:12px;}
+  tbody tr:hover td{background:transparent;}
+  td{border-bottom:1px solid #1c2029;padding:10px 0;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:start;}
+  td:last-child{border-bottom:none;}
+  td::before{content:attr(data-label);font-size:11px;font-weight:700;color:#8a8f98;flex-shrink:0;}
+  td.name-cell{font-size:16px;font-weight:700;color:#fff;}
+  td.name-cell::before{content:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div>
+    <h1>מסע המיילים 📧</h1>
+    <div class="sub">ביצועי סדרת 5 המיילים האוטומטית (A/B/C לפי פתיחה) + רשימת הלידים שנכנסו לרשימת התפוצה. אחוזי הפתיחה/קליק וההמרה בין מייל למייל מגיעים מהמעקב שרץ בפועל על הקישורים בכל מייל.</div>
+  </div>
+  <div class="refresh-meta" id="refreshMeta">
+    <span class="dot"></span>
+    <span id="refreshText">טוען...</span>
+    <button id="refreshBtn" type="button">🔄 רענן</button>
+  </div>
+</div>
+
+<div class="setup-bar" id="setupBar">
+  ⚠️ <strong>נדרש שלב חיבור:</strong> פתח את הגיליון, לחץ <strong>Share → Anyone with link → Viewer</strong>, ולחץ רענן.
+</div>
+
+<div class="notice">
+  <b>לתשומת לב:</b> רב-מסר (מערכת הדיוור) לא חושפת מידע ברמת "איזה מייל ספציפי כל ליד פתח" — רק נתונים מצטברים לכל מייל/גרסה. לכן הטבלה למטה מציגה את כל הלידים ברשימת התפוצה עם תאריך ההצטרפות והפתיחה האחרונה שלהם (בכל קמפיין, לא רק בסדרה הזו), ולא איזה מייל ספציפי בסדרה כל אחד הגיע אליו.
+</div>
+
+<div class="kpis" id="kpis"></div>
+
+<div class="panel">
+  <h2>📊 משפך המיילים · מייל 1 → מייל 5</h2>
+  <div class="panel-sub">כמה פתיחות קיבל כל מייל בסדרה (סכום גרסאות A+B+C), והנשירה בין מייל למייל. ההמשך לפי פתיחה — מי שלא פותח מייל א' מקבל ניסיון ב', ורק מי שפותח ממשיך למייל הבא.</div>
+  <div id="funnel"></div>
+</div>
+
+<div class="panel">
+  <h2>✉️ ביצועים לפי מייל וגרסה</h2>
+  <div class="panel-sub">פתיחות וקליקים לכל אחד מ-5 המיילים, מפוצל לפי 3 גרסאות הכותרת (A/B/C).</div>
+  <div class="email-grid" id="emailGrid"></div>
+</div>
+
+<div class="panel">
+  <h2>🎯 מצב האוטומציה</h2>
+  <div class="panel-sub">כמה לידים נכנסו לסדרה, כמה עדיין באמצע, וכמה סיימו את כל 5 המיילים.</div>
+  <div class="kpis" id="workflowKpis" style="margin-bottom:0;"></div>
+</div>
+
+<div class="controls">
+  <input type="text" id="searchBox" placeholder="חיפוש לפי שם / אימייל / טלפון..."/>
+  <select id="statusFilter">
+    <option value="">כל הסטטוסים</option>
+    <option value="active">פעילים</option>
+    <option value="unsub">הוסרו מהרשימה</option>
+  </select>
+  <select id="sortBy">
+    <option value="created_desc">הצטרפו לאחרונה</option>
+    <option value="created_asc">הצטרפו הכי מזמן</option>
+    <option value="open_desc">פתחו לאחרונה</option>
+    <option value="name_asc">לפי שם (א-ת)</option>
+  </select>
+  <div class="spacer"></div>
+  <button class="ghost" onclick="exportCsv()">⬇️ ייצוא CSV</button>
+</div>
+
+<div class="results-bar">
+  <div id="resultsCount">-</div>
+  <div class="page-size">
+    <span>הצג בטבלה:</span>
+    <select id="pageSize">
+      <option value="20">20</option>
+      <option value="50">50</option>
+      <option value="100">100</option>
+      <option value="all">הכל</option>
+    </select>
+  </div>
+</div>
+
+<div class="table-wrap">
+  <div id="content" class="loading">טוען...</div>
+  <div class="pagination" id="pagination" style="display:none;">
+    <button id="prevPage">← הקודם</button>
+    <span class="page-info" id="pageInfo"></span>
+    <button id="nextPage">הבא →</button>
+  </div>
+</div>
+
+<script>
+/* ============================================================================
+   CONFIG
+   ============================================================================ */
+const SHEET_ID = '1BH9ek3TUQYyeTqPfxuW6Sio1dkt-Jari688owyiSRtM';
+const METRICS_TAB = 'Dashboard';   // key-value metrics (fe{n}{v}_open / _click)
+const LEADS_TAB = 'EmailLeads';    // real subscriber roster, synced from RavMessage
+
+const EMAIL_NUMS = [1, 2, 3, 4, 5];
+const EMAIL_VARIANTS = ['a', 'b', 'c'];
+
+const num = v => {
+  if (v == null || v === '') return 0;
+  const n = parseFloat(String(v).replace(/[^\d.-]/g, ''));
+  return isNaN(n) ? 0 : n;
+};
+const pct = (n, d) => d === 0 ? 0 : (n / d * 100);
+const fmt = n => n == null || isNaN(n) ? '0' : Math.round(n).toLocaleString('en-US');
+const fmtPct = n => isNaN(n) ? '0.0%' : n.toFixed(1) + '%';
+
+let metrics = {};
+function m(id) { return num(metrics[id]); }
+function emailSum(n, event) {
+  return EMAIL_VARIANTS.reduce((sum, v) => sum + m(`fe${n}${v}_${event}`), 0);
+}
+
+let allLeads = [];
+let currentPage = 1;
+
+function fmtDate(s) {
+  if (!s) return null;
+  const str = String(s).trim();
+  if (!str || str.startsWith('0000-00-00')) return null;
+  const d = new Date(str.replace(' ', 'T'));
+  return isNaN(d.getTime()) ? null : d;
+}
+function relTime(s) {
+  const d = fmtDate(s);
+  if (!d) return '';
+  const diffMs = Date.now() - d.getTime();
+  const mins = Math.floor(diffMs / 60000);
+  if (mins < 0) return '';
+  if (mins < 1) return 'הרגע';
+  if (mins < 60) return 'לפני ' + mins + ' דק\'';
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return 'לפני ' + hrs + ' שעות';
+  const days = Math.floor(hrs / 24);
+  if (days === 1) return 'אתמול';
+  if (days < 30) return 'לפני ' + days + ' ימים';
+  const months = Math.floor(days / 30);
+  return 'לפני ' + months + ' חודשים';
+}
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+/* ============================================================================
+   FETCH: read both tabs as gviz JSON (public "anyone with link can view" sheet)
+   ============================================================================ */
+
+async function fetchTab(tabName) {
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(tabName)}&t=${Date.now()}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  const txt = await res.text();
+  const match = txt.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);/);
+  if (!match) throw new Error('Sheet not accessible');
+  const json = JSON.parse(match[1]);
+  if (json.status === 'error') throw new Error((json.errors && json.errors[0] && json.errors[0].detailed_message) || 'Query error');
+  return json.table.rows || [];
+}
+
+async function loadData() {
+  const meta = document.getElementById('refreshMeta');
+  const setupBar = document.getElementById('setupBar');
+  meta.classList.add('loading');
+  document.getElementById('refreshText').textContent = 'מרענן...';
+
+  try {
+    const [metricRows, leadRows] = await Promise.all([
+      fetchTab(METRICS_TAB),
+      fetchTab(LEADS_TAB)
+    ]);
+
+    const freshMetrics = {};
+    metricRows.forEach(row => {
+      const cells = row.c || [];
+      const id = cells[0] && cells[0].v != null ? String(cells[0].v).trim() : '';
+      const value = cells[2] && cells[2].v != null ? cells[2].v : '';
+      if (id) freshMetrics[id] = value;
+    });
+    metrics = freshMetrics;
+
+    // EmailLeads tab: email | name | phone | created | last_open | active | unsubscribed | score
+    allLeads = leadRows
+      .map(row => {
+        const c = row.c || [];
+        const v = i => (c[i] && c[i].v != null) ? c[i].v : '';
+        return {
+          email: String(v(0) || '').trim(),
+          name: String(v(1) || '').trim(),
+          phone: String(v(2) || '').trim(),
+          created: String(v(3) || '').trim(),
+          lastOpen: String(v(4) || '').trim(),
+          active: num(v(5)) === 1,
+          unsubscribed: num(v(6)) === 1,
+          score: num(v(7))
+        };
+      })
+      .filter(r => r.email && r.email !== 'email');
+
+    setupBar.classList.remove('show');
+    document.getElementById('refreshText').textContent = 'עודכן ' + new Date().toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
+
+    renderKpis();
+    renderFunnel();
+    renderEmailGrid();
+    renderWorkflowKpis();
+    applyFiltersAndRender(true);
+  } catch (e) {
+    setupBar.classList.add('show');
+    setupBar.innerHTML = '⚠️ <strong>הרענון נכשל.</strong> ודא שהגיליון משותף עם <strong>Share → Anyone with link → Viewer</strong>, ואז לחץ רענן. (' + esc(e.message) + ')';
+    document.getElementById('refreshText').textContent = 'שגיאת חיבור';
+    console.error(e);
+  } finally {
+    meta.classList.remove('loading');
+  }
+}
+
+/* ============================================================================
+   KPIs
+   ============================================================================ */
+
+function renderKpis() {
+  const totalLeads = allLeads.length;
+  const activeLeads = allLeads.filter(r => r.active && !r.unsubscribed).length;
+  const email1Opens = emailSum(1, 'open');
+  const email5Opens = emailSum(5, 'open');
+  const totalClicks = EMAIL_NUMS.reduce((s, n) => s + emailSum(n, 'click'), 0);
+  const totalOpens = EMAIL_NUMS.reduce((s, n) => s + emailSum(n, 'open'), 0);
+  const ctor = pct(totalClicks, totalOpens);
+  const seriesCompletionRate = pct(email5Opens, Math.max(email1Opens, 1));
+
+  const cards = [
+    { v: fmt(totalLeads), l: 'לידים ברשימת התפוצה', c: '#3b6bf5' },
+    { v: fmt(activeLeads), l: 'לידים פעילים', c: '#5fd6a3', d: totalLeads ? Math.round(pct(activeLeads, totalLeads)) + '% מהרשימה' : '' },
+    { v: fmt(totalOpens), l: 'סה"כ פתיחות מייל', c: '#e0b357' },
+    { v: fmtPct(ctor), l: 'קליק מתוך פתיחה (ממוצע)', c: '#5fb3d6' },
+    { v: fmtPct(seriesCompletionRate), l: 'הגיעו למייל 5 מתוך מייל 1', c: '#a066d6' }
+  ];
+  document.getElementById('kpis').innerHTML = cards.map(c =>
+    '<div class="kpi" style="--kc:' + c.c + '">'
+    + '<div class="kv">' + c.v + '</div>'
+    + '<div class="kl">' + c.l + '</div>'
+    + (c.d ? '<div class="kd">' + c.d + '</div>' : '')
+    + '</div>'
+  ).join('');
+}
+
+function renderWorkflowKpis() {
+  const started = m('email_wf_started');
+  const ongoing = m('email_wf_ongoing');
+  const completed = m('email_wf_completed');
+  const cards = [
+    { v: fmt(started), l: 'נכנסו לאוטומציה', c: '#3b6bf5' },
+    { v: fmt(ongoing), l: 'עדיין באמצע הסדרה', c: '#e0b357' },
+    { v: fmt(completed), l: 'סיימו את כל 5 המיילים', c: '#5fd6a3' }
+  ];
+  const el = document.getElementById('workflowKpis');
+  if (started === 0 && ongoing === 0 && completed === 0) {
+    el.innerHTML = '<div style="grid-column:1/-1;font-size:12px;color:#5b6270;padding:8px 0;">אין עדיין נתוני מצב-אוטומציה מסונכרנים (נשלף ידנית מרב-מסר בעת הצורך — לא זמין דרך ה-API הציבורי).</div>';
+    return;
+  }
+  el.innerHTML = cards.map(c =>
+    '<div class="kpi" style="--kc:' + c.c + '">'
+    + '<div class="kv">' + c.v + '</div>'
+    + '<div class="kl">' + c.l + '</div>'
+    + '</div>'
+  ).join('');
+}
+
+/* ============================================================================
+   EMAIL 1->5 FUNNEL (aggregate opens per email, summed across variants)
+   ============================================================================ */
+
+function renderFunnel() {
+  const opensByEmail = EMAIL_NUMS.map(n => emailSum(n, 'open'));
+  const maxOpens = Math.max(1, ...opensByEmail);
+  let prevCount = null;
+  let html = '';
+  EMAIL_NUMS.forEach(n => {
+    const count = emailSum(n, 'open');
+    const pctOfMax = Math.round(pct(count, maxOpens));
+    let dropHtml = '';
+    if (prevCount !== null) {
+      const drop = prevCount ? Math.round((1 - count / prevCount) * 100) : 0;
+      dropHtml = '<span class="funnel-drop' + (drop <= 0 ? ' good' : '') + '">' + (drop > 0 ? '−' + drop + '% נשירה' : 'ללא נשירה') + '</span>';
+    }
+    html += '<div class="funnel-row">'
+      + '<div class="funnel-label">מייל ' + n + '</div>'
+      + '<div class="funnel-track"><div class="funnel-fill" style="width:' + Math.max(pctOfMax, 3) + '%;background:#5fb3d6"><span>' + (pctOfMax >= 12 ? pctOfMax + '%' : '') + '</span></div></div>'
+      + '<div class="funnel-nums"><b>' + fmt(count) + '</b> פתיחות' + dropHtml + '</div>'
+      + '</div>';
+    prevCount = count;
+  });
+  document.getElementById('funnel').innerHTML = html;
+}
+
+function renderEmailGrid() {
+  const container = document.getElementById('emailGrid');
+  container.innerHTML = EMAIL_NUMS.map(n => {
+    const opens = emailSum(n, 'open');
+    const clicks = emailSum(n, 'click');
+    const ctor = pct(clicks, opens);
+    const variantRows = EMAIL_VARIANTS.map(v => {
+      const o = m(`fe${n}${v}_open`), c = m(`fe${n}${v}_click`);
+      return `<div class="email-variant-row"><span>גרסה ${v.toUpperCase()}</span><span><b>${fmt(o)}</b> פתיחות · <b>${fmt(c)}</b> קליקים</span></div>`;
+    }).join('');
+    return `
+      <div class="email-card">
+        <div class="email-card-head">
+          <div class="email-card-badge">${n}</div>
+          <div class="email-card-title">מייל ${n}</div>
+        </div>
+        <div class="email-stats-row">
+          <div><div class="email-stat-lbl">פתיחות</div><div class="email-stat-val">${fmt(opens)}</div></div>
+          <div><div class="email-stat-lbl">קליקים</div><div class="email-stat-val">${fmt(clicks)}</div></div>
+        </div>
+        <div class="email-ctor">קליק מתוך פתיחה: <b>${fmtPct(ctor)}</b></div>
+        <div class="email-variants">${variantRows}</div>
+      </div>`;
+  }).join('');
+}
+
+/* ============================================================================
+   LEADS TABLE
+   ============================================================================ */
+
+function getFilteredSortedRows() {
+  const q = document.getElementById('searchBox').value.trim().toLowerCase();
+  const statusF = document.getElementById('statusFilter').value;
+  let rows = allLeads.filter(r =>
+    (!q || r.email.toLowerCase().includes(q) || r.name.toLowerCase().includes(q) || r.phone.toLowerCase().includes(q))
+    && (!statusF || (statusF === 'active' ? (r.active && !r.unsubscribed) : r.unsubscribed))
+  );
+  const sortVal = document.getElementById('sortBy').value;
+  rows = rows.slice().sort((a, b) => {
+    switch (sortVal) {
+      case 'created_asc': return (a.created || '').localeCompare(b.created || '');
+      case 'open_desc': return (b.lastOpen || '').localeCompare(a.lastOpen || '');
+      case 'name_asc': return (a.name || '').localeCompare(b.name || '', 'he');
+      default: return (b.created || '').localeCompare(a.created || '');
+    }
+  });
+  return rows;
+}
+
+function applyFiltersAndRender(resetPage) {
+  if (resetPage) currentPage = 1;
+  const rows = getFilteredSortedRows();
+  document.getElementById('resultsCount').textContent = fmt(rows.length) + ' לידים תואמים';
+
+  const pageSizeVal = document.getElementById('pageSize').value;
+  let pageRows = rows;
+  const pagination = document.getElementById('pagination');
+  if (pageSizeVal !== 'all') {
+    const size = Number(pageSizeVal);
+    const totalPages = Math.max(1, Math.ceil(rows.length / size));
+    if (currentPage > totalPages) currentPage = totalPages;
+    if (currentPage < 1) currentPage = 1;
+    const start = (currentPage - 1) * size;
+    pageRows = rows.slice(start, start + size);
+    if (rows.length > size) {
+      pagination.style.display = 'flex';
+      document.getElementById('pageInfo').textContent = 'עמוד ' + currentPage + ' מתוך ' + totalPages + ' (מציג ' + (start + 1) + '-' + Math.min(start + size, rows.length) + ' מתוך ' + rows.length + ')';
+      document.getElementById('prevPage').disabled = currentPage <= 1;
+      document.getElementById('nextPage').disabled = currentPage >= totalPages;
+    } else {
+      pagination.style.display = 'none';
+    }
+  } else {
+    pagination.style.display = 'none';
+  }
+  render(pageRows);
+}
+
+function render(rows) {
+  const content = document.getElementById('content');
+  if (!allLeads.length) {
+    content.className = 'empty';
+    content.textContent = 'אין נתונים עדיין.';
+    return;
+  }
+  if (!rows.length) {
+    content.className = 'empty';
+    content.textContent = 'לא נמצאו לידים התואמים את הסינון.';
+    return;
+  }
+  content.className = '';
+  let html = '<table><thead><tr>'
+    + '<th>שם</th><th>אימייל</th><th>טלפון</th><th>הצטרפו</th><th>פתיחה אחרונה</th><th>ניקוד</th><th>סטטוס</th>'
+    + '</tr></thead><tbody>';
+  rows.forEach(r => {
+    const isRecent = (() => { const d = fmtDate(r.lastOpen); return d && (Date.now() - d.getTime()) < 24 * 60 * 60 * 1000; })();
+    const rowClass = r.unsubscribed ? 'unsub' : (isRecent ? 'recent' : '');
+    const statusHtml = r.unsubscribed
+      ? '<span class="status-pill unsub">הוסר/ה</span>'
+      : (r.active ? '<span class="status-pill active">פעיל/ה</span>' : '<span class="status-pill inactive">לא פעיל/ה</span>');
+    const lastOpenD = fmtDate(r.lastOpen);
+    html += '<tr class="' + rowClass + '">'
+      + '<td class="name-cell">' + esc(r.name || '-') + '</td>'
+      + '<td class="muted" data-label="אימייל"><span dir="ltr">' + esc(r.email || '-') + '</span></td>'
+      + '<td class="muted" data-label="טלפון"><span dir="ltr">' + esc(r.phone || '-') + '</span></td>'
+      + '<td class="time-cell" data-label="הצטרפו"><div class="abs">' + esc(r.created || '-') + '</div></td>'
+      + '<td class="time-cell" data-label="פתיחה אחרונה">' + (lastOpenD ? '<div class="rel">' + esc(relTime(r.lastOpen)) + '</div><div class="abs">' + esc(r.lastOpen) + '</div>' : '<span class="muted">אף פעם</span>') + '</td>'
+      + '<td class="muted" data-label="ניקוד">' + fmt(r.score) + '</td>'
+      + '<td data-label="סטטוס">' + statusHtml + '</td>'
+      + '</tr>';
+  });
+  html += '</tbody></table>';
+  content.innerHTML = html;
+}
+
+function exportCsv() {
+  const rows = getFilteredSortedRows();
+  if (!rows.length) return;
+  const header = ['שם', 'אימייל', 'טלפון', 'הצטרפו', 'פתיחה אחרונה', 'ניקוד', 'סטטוס'];
+  const lines = [header.join(',')];
+  rows.forEach(r => {
+    const status = r.unsubscribed ? 'הוסר' : (r.active ? 'פעיל' : 'לא פעיל');
+    const vals = [r.name || '', r.email || '', r.phone || '', r.created || '', r.lastOpen || '', r.score || 0, status];
+    lines.push(vals.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(','));
+  });
+  const blob = new Blob(['﻿' + lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'email_leads_' + new Date().toISOString().slice(0, 10) + '.csv';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+document.getElementById('searchBox').addEventListener('input', function () { applyFiltersAndRender(true); });
+document.getElementById('statusFilter').addEventListener('change', function () { applyFiltersAndRender(true); });
+document.getElementById('sortBy').addEventListener('change', function () { applyFiltersAndRender(true); });
+document.getElementById('pageSize').addEventListener('change', function () { applyFiltersAndRender(true); });
+document.getElementById('prevPage').addEventListener('click', function () { currentPage--; applyFiltersAndRender(); });
+document.getElementById('nextPage').addEventListener('click', function () { currentPage++; applyFiltersAndRender(); });
+document.getElementById('refreshBtn').addEventListener('click', loadData);
+
+setInterval(loadData, 5 * 60 * 1000);
+loadData();
+</script>
+</body>
+</html>
