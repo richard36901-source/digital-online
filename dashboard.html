@@ -623,6 +623,9 @@ const HEAD_TO_HEAD_TESTS = [
        the full 4-way breakdown in the funnel-steps table below. */
     title: 'השוואת 4 הזרועות · Two-Page Funnel · Funnel D V2 · New 1 · New 2', tag: 'funnel', tagLabel: 'משפך וידאו',
     conversionLabel: 'השאירו פרטים', conversionKey: 'webinar',
+    // 'entry' undercounts here (see groupBase() comment) -- fall back to
+    // max(entry, video_1) so this card's rate matches the funnel table above.
+    robustBase: true,
     variants: [
       { name: 'Two-Page Funnel', desc: 'משפך דו-שלבי מקוצר (פאנל 6)', panel: 6 },
       { name: 'Funnel D V2', desc: 'עיצוב סקרנות (סגול/ציאן) + קופי חדש (פאנל 7)', panel: 7 },
@@ -874,6 +877,20 @@ function groupSum(group, metricKey) {
   return group.panels.reduce((sum, p) => sum + m(`f${p}_${metricKey}`), 0);
 }
 
+// The 'entry' ping fires from the landing page right before it navigates
+// to the video funnel, via a plain (non-keepalive) fetch -- the browser is
+// allowed to cancel that request mid-flight once navigation starts, so some
+// entries silently never get counted. video_1 (fired once the visitor is
+// already ON the funnel page, no navigation racing it) is the more reliable
+// signal and by construction can never exceed the true number of entrants.
+// Using max(entry, video_1) as the funnel's real base means a raw undercount
+// in 'entry' can no longer produce a >100% or otherwise-inflated percentage
+// for every step after it (e.g. 2 leads out of a broken "5" reading 40%
+// instead of the honest 2-out-of-8 = 25%).
+function groupBase(group) {
+  return Math.max(groupSum(group, 'entry'), groupSum(group, 'video_1'));
+}
+
 function renderFunnelComparison() {
   const container = document.getElementById('funnel_steps'); // <tbody>
   if (!container) return; // section not present, skip safely
@@ -918,7 +935,7 @@ function renderFunnelComparison() {
       }
 
       const count = groupSum(group, step.key);
-      const entryCount = groupSum(group, 'entry');
+      const entryCount = groupBase(group);
       const pOfEntry = entryCount > 0 ? Math.min(100, pct(count, entryCount)) : 0;
       let pctText = '', pctClass = '', srPrefix = '';
 
@@ -947,7 +964,7 @@ function renderFunnelComparison() {
 
   let bestRate = -1, bestGroup = null;
   FUNNEL_GROUPS.forEach(group => {
-    const entry = groupSum(group, 'entry');
+    const entry = groupBase(group);
     const web = groupSum(group, 'webinar');
     const r = pct(web, entry);
     if (entry >= 10 && r > bestRate) { bestRate = r; bestGroup = group.key; }
@@ -957,7 +974,7 @@ function renderFunnelComparison() {
     const el = document.getElementById('fw_' + group.key);
     if (!el) return;
     const isWinner = bestGroup === group.key;
-    const rate = pct(groupSum(group, 'webinar'), groupSum(group, 'entry'));
+    const rate = pct(groupSum(group, 'webinar'), groupBase(group));
     el.querySelector('.fwinner-rate').textContent = fmtPct(rate);
     el.querySelector('.fwinner-trophy').textContent = isWinner ? '🏆' : '';
     el.querySelector('.fw-winner-tag').textContent = isWinner ? ' — המנצח' : '';
@@ -981,7 +998,9 @@ function renderHeadToHeadCard(test) {
   const convKey = test.conversionKey || 'webinar';
 
   const variants = test.variants.map((v, i) => {
-    const sent = m(`f${v.panel}_entry`);
+    const sent = test.robustBase
+      ? Math.max(m(`f${v.panel}_entry`), m(`f${v.panel}_video_1`))
+      : m(`f${v.panel}_entry`);
     const conv = m(`f${v.panel}_${convKey}`);
     return Object.assign({}, v, { sent, conv, rate: pct(conv, sent), vClass: 'v' + (i + 1) });
   });
