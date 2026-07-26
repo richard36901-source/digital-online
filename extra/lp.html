@@ -99,6 +99,20 @@ var PAGES = {
 };
 
 var WEBHOOK = 'https://hook.eu1.make.com/jp6ukjt7tpk3y4yly9c691g01f47cq8q';
+/* Dashboard tracking -- same {metric,panel} hook every other landing page
+   uses to feed dashboard.html (the "Integration Webhooks, HTTP" Make
+   scenario increments sheet row f{panel}_{metric}). This is separate from
+   WEBHOOK above (lead-form/confirmation-email pipeline) -- lp.html never
+   sent anything to the dashboard sheet before, so all its daily WhatsApp
+   traffic (entries, video clicks, WA/IG clicks, form submissions) was
+   invisible on the dashboard. Panel 12 is dedicated to this page, shared
+   across every p= value since p only swaps which day's video autoplays. */
+var TRACK_HOOK = 'https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q';
+var PANEL = '12';
+function trackMetric(metric){
+  try{fetch(TRACK_HOOK,{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({metric:metric,panel:PANEL}),keepalive:true}).catch(function(){});}catch(e){}
+}
 window.dataLayer = window.dataLayer || [];
 var P = new URLSearchParams(location.search);
 var pageNum = parseInt(P.get('p') || '1');
@@ -135,6 +149,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
   try{dataLayer.push({event:'page_view',page:PAGE_ID,video_id:cfg.vimeo,source_variant:variant,supplier:sup,utm_source:src});}catch(e){}
   try{if(typeof fbq!=='undefined')fbq('track','PageView');}catch(e){}
+  trackMetric('entry');
 
   var sd={};[25,50,75,100].forEach(function(d){sd[d]=0;});
   window.addEventListener('scroll',function(){
@@ -156,6 +171,7 @@ function startVideo(){
   if(thumb)thumb.classList.add('gone');
   try{dataLayer.push({event:'cta_click',page:PAGE_ID,video_id:cfg.vimeo});}catch(e){}
   try{if(typeof fbq!=='undefined')fbq('track','InitiateCheckout');}catch(e){}
+  trackMetric('video_1');
   /* Drive iframe — just show it, no JS API available */
   var iframe=document.getElementById('vimeoPlayer');
   if(iframe){
@@ -194,6 +210,7 @@ async function submitForm(){
     var varVal=(typeof variant!=='undefined')?variant:'';
     try{if(window.dataLayer)dataLayer.push({event:'form_submit',page:pageId,video_id:vimeoId});}catch(e){}
     try{if(typeof fbq!=='undefined')fbq('track','Lead');}catch(e){}
+    trackMetric('landing');
     /* Make webhook */
     try{fetch(webhook,{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({event:'lead_form',page:pageId,video_id:vimeoId,name:name,phone:phone,email:email,supplier:supVal,utm_source:srcVal,variant:varVal,timestamp:new Date().toLocaleString('he-IL')})
@@ -257,8 +274,8 @@ async function submitForm(){
   }
 }
 
-function trackWA(){try{dataLayer.push({event:'wa_click',page:PAGE_ID,video_id:cfg.vimeo});}catch(e){}try{if(typeof fbq!=='undefined')fbq('track','Contact');}catch(e){}}
-function trackIG(){try{dataLayer.push({event:'ig_click',page:PAGE_ID,video_id:cfg.vimeo});}catch(e){}}
+function trackWA(){try{dataLayer.push({event:'wa_click',page:PAGE_ID,video_id:cfg.vimeo});}catch(e){}try{if(typeof fbq!=='undefined')fbq('track','Contact');}catch(e){}trackMetric('wa_click');}
+function trackIG(){try{dataLayer.push({event:'ig_click',page:PAGE_ID,video_id:cfg.vimeo});}catch(e){}trackMetric('ig_click');}
 </script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
