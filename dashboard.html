@@ -345,6 +345,17 @@
   }
   .email-variant-row b { color: var(--text-2); font-family: 'JetBrains Mono', monospace; font-weight: 600; }
 
+  .lp-stats-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 20px 22px; box-shadow: var(--shadow-sm);
+  }
+  .lp-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 14px; }
+  .lp-stat { background: var(--card-soft); border: 1px solid var(--border); border-radius: 10px; padding: 16px 12px; text-align: center; }
+  .lp-stat-val { font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 700; color: var(--text); }
+  .lp-stat-lbl { font-size: 11px; color: var(--text-2); margin-top: 5px; font-weight: 500; line-height: 1.4; }
+  .lp-stat-rate { font-size: 10px; color: var(--text-3); margin-top: 3px; }
+  .lp-stat.entry .lp-stat-val { color: var(--good); }
+
   .toast {
     position: fixed; top: 76px; left: 50%; transform: translateX(-50%);
     background: white; border: 1px solid var(--good-border);
@@ -537,6 +548,18 @@
 
   <div class="section-head">
     <h2>
+      <span class="sicn" style="background:var(--good-bg);color:var(--good);">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/><path d="M12 22a10 10 0 1 0-8.66-5L2 22l5.34-1.34A10 10 0 0 0 12 22z"/></svg>
+      </span>
+      חמש דקות ביום · דף נחיתה מוואטסאפ
+    </h2>
+    <span class="meta">lp.html · הלינק היומי שנשלח לקבוצת "חמש דקות ביום" (marketer=yahav)</span>
+  </div>
+
+  <div class="lp-stats-card" id="lp_stats_card"></div>
+
+  <div class="section-head">
+    <h2>
       <span class="sicn green">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
       </span>
@@ -548,7 +571,7 @@
   <div class="ab-grid" id="ab_grid"></div>
 
   <p style="font-size:11px;color:var(--text-3);margin-top:-8px;margin-bottom:8px;">
-    * שאר מבחני ה-A/B (וואטסאפ, טפטוף) לא מוצגים כרגע כי אין להם עדיין חיווט אמיתי שאוסף נתונים —
+    * שאר מבחני ה-A/B (טפטוף) לא מוצגים כרגע כי אין להם עדיין חיווט אמיתי שאוסף נתונים —
     יוצגו כאן אוטומטית ברגע שיהיה להם מקור נתונים אמיתי.
   </p>
 
@@ -826,7 +849,47 @@ function render() {
 
   renderFunnelComparison();
   renderEmailPerf();
+  renderLpStats();
   renderHeadToHead();
+}
+
+/* ============================================================================
+   LP.HTML STATS · daily WhatsApp "חמש דקות ביום" landing page (panel 12)
+   Unlike the other landing pages, lp.html isn't part of an A/B split -- it's
+   a single standalone page whose p= query param only swaps which day's video
+   autoplays, so all traffic (regardless of p) rolls up into one panel. Shown
+   as a flat stat grid rather than the ab-card comparison layout since there's
+   nothing to compare it against.
+   ============================================================================ */
+
+const LP_PANEL = 12;
+
+function renderLpStats() {
+  const el = document.getElementById('lp_stats_card');
+  if (!el) return;
+
+  const entry = m(`f${LP_PANEL}_entry`);
+  const video = m(`f${LP_PANEL}_video_1`);
+  const wa = m(`f${LP_PANEL}_wa_click`);
+  const ig = m(`f${LP_PANEL}_ig_click`);
+  const landing = m(`f${LP_PANEL}_landing`);
+
+  const rate = v => entry > 0 ? `<div class="lp-stat-rate">${fmtPct(pct(v, entry))} מהכניסות</div>` : '';
+
+  const stats = [
+    { cls: 'entry', lbl: 'כניסות לדף', val: entry, extra: '' },
+    { cls: '', lbl: 'לחצו לצפות בסרטון', val: video, extra: rate(video) },
+    { cls: '', lbl: 'הצטרפו לקבוצת הוואטסאפ', val: wa, extra: rate(wa) },
+    { cls: '', lbl: 'עקבו באינסטגרם', val: ig, extra: rate(ig) },
+    { cls: '', lbl: 'שלחו פרטים (טופס)', val: landing, extra: rate(landing) }
+  ];
+
+  el.innerHTML = `<div class="lp-stats-grid">${stats.map(s => `
+    <div class="lp-stat ${s.cls}">
+      <div class="lp-stat-val mono">${fmt(s.val)}</div>
+      <div class="lp-stat-lbl">${s.lbl}</div>
+      ${s.extra}
+    </div>`).join('')}</div>`;
 }
 
 /* ============================================================================
