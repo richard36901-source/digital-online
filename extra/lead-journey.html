@@ -729,18 +729,45 @@ document.getElementById('nextPage').addEventListener('click', function(){ curren
 // 2 minutes is still fresh enough for a dashboard someone is glancing at,
 // but cuts that cost by 4x.
 const AUTO_REFRESH_MS = 120000;
+
+// The timer above still burned credits for tabs left open in the background
+// (browser minimized, different tab focused, laptop lid down) where nobody
+// was actually looking at the data. This pauses the interval the moment the
+// tab loses visibility and only resumes it once it's visible again -- with
+// one immediate refresh on return so the data isn't stale when you come
+// back -- instead of ticking blindly every 2 minutes regardless of whether
+// anyone's watching.
+function startAutoRefresh(){
+  stopAutoRefresh();
+  autoRefreshTimer = setInterval(function(){
+    if(!document.hidden) loadData();
+  }, AUTO_REFRESH_MS);
+}
+function stopAutoRefresh(){
+  if(autoRefreshTimer){ clearInterval(autoRefreshTimer); autoRefreshTimer = null; }
+}
+document.addEventListener('visibilitychange', function(){
+  if(!document.getElementById('autoRefresh').checked) return;
+  if(document.hidden){
+    stopAutoRefresh();
+  } else {
+    loadData();
+    startAutoRefresh();
+  }
+});
+
 document.getElementById('autoRefresh').addEventListener('change', function(){
   if(this.checked){
     localStorage.setItem('lj_autorefresh','1');
-    autoRefreshTimer = setInterval(loadData, AUTO_REFRESH_MS);
+    startAutoRefresh();
   } else {
     localStorage.removeItem('lj_autorefresh');
-    clearInterval(autoRefreshTimer);
+    stopAutoRefresh();
   }
 });
 if(localStorage.getItem('lj_autorefresh')){
   document.getElementById('autoRefresh').checked = true;
-  autoRefreshTimer = setInterval(loadData, AUTO_REFRESH_MS);
+  startAutoRefresh();
 }
 
 loadPrefs();
