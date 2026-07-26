@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>דיגיטל אונליין | יש דבר אחד שרוב האנשים מפספסים</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;800;900&family=Assistant:wght@400;500;600&display=swap" rel="stylesheet"/>
+
+<script src="/shared/params.js"></script>
+<script src="/shared/pixels.js"></script>
+<script src="/shared/countdown.js"></script>
+
+<script>
+(function(w,d,s,l,i){
+  w[l]=w[l]||[];
+  w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
+  var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';
+  j.async=true;
+  j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+  f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-WHCW874B');
+</script>
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:'Heebo',sans-serif;direction:rtl;overflow-x:hidden;min-height:100svh;color:#fff;display:flex;flex-direction:column;align-items:center;position:relative;background-color:#0A0F1C;background-image:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(255,90,43,.20) 0%,transparent 65%),radial-gradient(ellipse 50% 35% at 10% 90%,rgba(140,30,10,.25) 0%,transparent 55%);}
+canvas#particles{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.page-wrap{position:relative;z-index:2;width:100%;max-width:480px;padding:0 16px 120px;display:flex;flex-direction:column;align-items:center;}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-12px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+@keyframes btnPulse{0%,100%{box-shadow:0 6px 30px rgba(255,90,43,.5),0 0 0 0 rgba(255,90,43,0);}50%{box-shadow:0 8px 40px rgba(255,90,43,.75),0 0 0 8px rgba(255,90,43,.08);}}
+@keyframes btnShimmer{0%{background-position:200% center;}100%{background-position:0% center;}}
+@keyframes shine{0%{left:-120%}100%{left:160%}}
+@keyframes btnWiggle{0%,100%{transform:translateY(0);}20%{transform:translateY(-5px);}40%{transform:translateY(0);}60%{transform:translateY(-3px);}80%{transform:translateY(0);}}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+@keyframes iconPop{0%,100%{transform:scale(1);}50%{transform:scale(1.18);}}
+@keyframes flicker{0%,100%{opacity:1;}45%{opacity:.65;}50%{opacity:1;}55%{opacity:.55;}60%{opacity:1;}}
+@keyframes slideInRight{from{opacity:0;transform:translateX(24px);}to{opacity:1;transform:translateX(0);}}
+@keyframes badgeGlow{0%,100%{box-shadow:0 0 8px rgba(255,90,43,.2);}50%{box-shadow:0 0 22px rgba(255,90,43,.55);}}
+@keyframes triggerBlink{0%,100%{opacity:1;}50%{opacity:.45;}}
+@keyframes pulseDot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.7);}}
+.top-badge{display:inline-flex;align-items:center;gap:8px;border-radius:99px;padding:7px 18px;margin:24px 0 18px;font-size:13px;font-weight:700;animation:fadeDown .5s ease both,badgeGlow 2.2s 1s ease-in-out infinite;background:rgba(255,255,255,.06);border:1px solid rgba(255,90,43,.45);color:#ff9466;}
+.top-badge .dot{width:7px;height:7px;border-radius:50%;background:#ff5a2b;display:inline-block;animation:pulseDot 1.4s ease-in-out infinite;}
+.card{width:100%;border-radius:16px;padding:28px 20px 24px;margin-bottom:20px;position:relative;overflow:hidden;animation:fadeUp .6s .1s ease both;background:linear-gradient(145deg,rgba(20,8,4,.95),rgba(30,10,3,.98));border:1.5px solid rgba(255,90,43,.4);box-shadow:0 0 40px rgba(255,90,43,.14),0 20px 60px rgba(0,0,0,.8);}
+.card-headline{font-family:'Heebo',sans-serif;font-size:clamp(28px,7.5vw,38px);font-weight:900;text-align:center;line-height:1.2;margin-bottom:10px;background:linear-gradient(160deg,#fff0e0 0%,#ff9a5a 30%,#e8461a 60%,#ffddb0 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 2px 20px rgba(255,90,43,.6));}
+.card-sub{font-size:clamp(14px,3.8vw,16px);color:rgba(255,255,255,.68);text-align:center;line-height:1.75;margin-bottom:16px;}
+.tension-line{font-family:'Heebo',sans-serif;font-size:15px;font-weight:800;text-align:center;margin-bottom:18px;color:rgba(255,150,90,.9);animation:flicker 5s 2s ease-in-out infinite;}
+.icon-row{display:flex;justify-content:center;gap:16px;margin-bottom:20px;}
+.icon-item{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;font-weight:700;color:rgba(255,255,255,.7);text-align:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,90,43,.25);border-radius:10px;padding:10px 12px;min-width:76px;}
+.icon-item:nth-child(1){animation:float 3s .2s ease-in-out infinite;}
+.icon-item:nth-child(2){animation:float 3s .7s ease-in-out infinite;}
+.icon-item:nth-child(3){animation:float 3s 1.2s ease-in-out infinite;}
+.icon-item .ico{font-size:22px;display:inline-block;animation:iconPop 2s ease-in-out infinite;}
+.steps{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+.step-item{display:flex;align-items:center;gap:12px;border-radius:10px;padding:12px 14px;background:linear-gradient(145deg,rgba(20,8,4,.95),rgba(30,10,3,.98))}
+.step-num{width:32px;height:32px;flex-shrink:0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;}
+.step-text{font-size:15px;font-weight:700;color:rgba(255,255,255,.85);}
+.step-item:nth-child(1){animation:slideInRight .5s .3s ease both;}
+.step-item:nth-child(2){animation:slideInRight .5s .5s ease both;}
+.step-item:nth-child(3){animation:slideInRight .5s .7s ease both;}
+.btn-main{display:flex;width:100%;height:60px;background:linear-gradient(135deg,#c23616,#ff7a45,#e8461a);background-size:200% auto;color:#fff;font-family:'Heebo',sans-serif;font-size:21px;font-weight:900;border:none;border-radius:10px;cursor:pointer;pointer-events:auto;align-items:center;justify-content:center;letter-spacing:.3px;position:relative;overflow:hidden;margin-bottom:8px;box-shadow:0 6px 30px rgba(255,90,43,.5);animation:btnPulse 2.2s ease-in-out infinite,btnShimmer 3s linear infinite,btnWiggle 4s 2s ease-in-out infinite;transition:transform .2s,box-shadow .2s;}
+.btn-main:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 10px 50px rgba(255,90,43,.7);}
+.btn-main::after{content:'';position:absolute;top:0;left:-120%;width:45%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);animation:shine 2s ease-in-out infinite;}
+.micro-copy{font-size:12px;color:rgba(255,255,255,.4);text-align:center;margin-bottom:16px;}
+.trigger-lines{display:flex;flex-direction:column;gap:4px;text-align:center;}
+.trigger-line{font-size:13px;font-weight:700;color:rgba(255,140,80,.85);}
+.trigger-line:nth-child(1){animation:triggerBlink 2.2s 1s ease-in-out infinite;}
+.trigger-line:nth-child(2){animation:triggerBlink 2.2s 1.6s ease-in-out infinite;}
+.countdown-clock{display:flex;width:fit-content;flex-direction:column;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(229,57,53,.16),rgba(0,0,0,.55));border:1.5px solid rgba(229,57,53,.55);border-radius:14px;padding:14px 22px;margin:2px auto 16px;position:relative;animation:ccPulse 1.8s ease-in-out infinite;}
+@keyframes ccPulse{0%,100%{box-shadow:0 0 0 0 rgba(229,57,53,.35)}50%{box-shadow:0 0 24px 4px rgba(229,57,53,.5)}}
+.countdown-clock .cc-digits{display:flex;align-items:center;gap:7px;}
+.countdown-clock .cc-box{background:#050505;border:1px solid rgba(229,57,53,.45);border-radius:9px;padding:7px 12px;min-width:56px;text-align:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.06);}
+.countdown-clock .cc-num{font-size:30px;font-weight:900;color:#fff;line-height:1;font-variant-numeric:tabular-nums;text-shadow:0 0 12px rgba(229,57,53,.65);display:block;}
+.countdown-clock .cc-unit{font-size:9.5px;color:rgba(255,255,255,.5);letter-spacing:.5px;margin-top:4px;display:block;}
+.countdown-clock .cc-sep{font-size:26px;font-weight:900;color:#ff5252;animation:ccBlink 1s steps(1) infinite;}
+@keyframes ccBlink{0%,49%{opacity:1}50%,100%{opacity:.25}}
+.countdown-clock.cc-critical{animation:ccPulseFast .5s ease-in-out infinite;}
+.countdown-clock.cc-critical .cc-box{border-color:#ff2b2b;}
+.countdown-clock.cc-critical .cc-num{color:#ff5252;}
+@keyframes ccPulseFast{0%,100%{box-shadow:0 0 0 0 rgba(255,0,0,.45);transform:scale(1)}50%{box-shadow:0 0 30px 6px rgba(255,0,0,.65);transform:scale(1.035)}}
+.sticky-cta{position:fixed;bottom:0;left:0;right:0;z-index:100;background:linear-gradient(transparent,rgba(0,0,0,.95) 30%);padding:16px 20px 24px;display:flex;flex-direction:column;align-items:center;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .4s,visibility .4s;}
+.sticky-cta.visible{opacity:1;pointer-events:auto;visibility:visible;}
+.sticky-cta .btn-main{max-width:420px;height:54px;font-size:18px;margin-bottom:6px;}
+.sticky-sub{font-size:11px;color:rgba(255,255,255,.3);text-align:center;}
+.popup-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px);}
+.popup-overlay.open{display:flex;}
+@keyframes popIn{from{opacity:0;transform:scale(.85);}to{opacity:1;transform:scale(1);}}
+.popup-card{width:100%;max-width:420px;border-radius:16px;padding:28px 22px 24px;position:relative;animation:popIn .35s cubic-bezier(.34,1.56,.64,1) both;background:linear-gradient(145deg,#100603,#1e0d02);border:1.5px solid rgba(255,90,43,.45);box-shadow:0 20px 60px rgba(0,0,0,.9);}
+.popup-close{position:absolute;top:14px;left:14px;width:30px;height:30px;background:rgba(255,255,255,.1);border:none;border-radius:50%;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.popup-title{font-size:clamp(20px,5.5vw,26px);font-weight:900;text-align:center;margin-bottom:6px;background:linear-gradient(135deg,#fff0e0,#ff9a5a,#e8461a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.popup-sub{font-size:13px;color:rgba(255,255,255,.5);text-align:center;margin-bottom:18px;}
+.field{width:100%;height:50px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:#fff;font-family:'Heebo',sans-serif;font-size:15px;padding:0 14px;margin-bottom:10px;outline:none;direction:rtl;-webkit-appearance:none;transition:border .2s;}
+.field::placeholder{color:rgba(255,255,255,.3);}
+.field:focus{border-color:rgba(255,90,43,.55);background:rgba(255,255,255,.1);}
+.btn-popup{display:flex;width:100%;height:54px;background:linear-gradient(135deg,#c23616,#ff7a45,#e8461a);color:#fff;font-family:'Heebo',sans-serif;font-size:19px;font-weight:900;border:none;border-radius:8px;cursor:pointer;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(255,90,43,.4);transition:transform .2s;margin-bottom:10px;}
+.btn-popup:hover{transform:translateY(-1px);}
+.btn-popup:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.err{font-size:12px;color:#ff7070;margin:-6px 0 8px 2px;display:none;}
+.err.show{display:block;}
+.legal{font-size:11px;color:rgba(255,255,255,.3);text-align:center;line-height:1.6;margin-bottom:8px;}
+.reassure{font-size:11px;color:rgba(255,255,255,.25);text-align:center;}
+.success-msg{display:none;text-align:center;padding:16px 0;}
+.success-msg.show{display:block;}
+.s-icon{font-size:44px;margin-bottom:10px;}
+.s-title{font-size:22px;font-weight:900;color:#4ade80;margin-bottom:6px;}
+.s-sub{font-size:14px;color:rgba(255,255,255,.6);line-height:1.6;}
+footer{position:relative;z-index:2;width:100%;border-top:1px solid rgba(255,255,255,.06);padding:14px 20px;text-align:center;font-family:'Assistant',sans-serif;font-size:11px;color:rgba(255,255,255,.18);line-height:2;}
+footer a{color:rgba(255,255,255,.22);text-decoration:none;}
+footer a:hover{color:#ff9466;}
+footer .sep{margin:0 6px;color:rgba(255,255,255,.08);}
+</style>
+<script>
+  var TRACK_HOOK = 'https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q';
+  var PANEL = '8';
+  async function resolveSupplier(p) {
+  if (p.supplier) return p.supplier;
+  // Default to the "yahav" marketer whenever the link carries no marketer
+  // param, or names one that isn't in marketers.json -- so a lead never
+  // ends up with an unassigned/unrecognized supplier in LeadManager.
+  try {
+    const res = await fetch('/marketers/marketers.json');
+    const marketers = await res.json();
+    const mk = (p.marketer && marketers[p.marketer]) ? p.marketer : 'yahav';
+    const entry = marketers[mk];
+    return entry ? entry.lm_supplier : 35213; // yahav's lm_supplier, last-resort fallback
+  } catch (e) {
+    return 35213; // marketers.json unreachable -- still default to yahav
+  }
+}
+
+window.openPopup = function openPopup() {
+  document.getElementById('popup').classList.add('open');
+  try { dataLayer.push({event:'cta_clicked', variant:'v26071', page:'landing_option_26071'});} catch(e) {}
+  try { if(typeof fbq==='function') fbq('track','InitiateCheckout'); } catch(e) {}
+}
+
+window.submitForm = async function submitForm() {
+  var name = document.getElementById('fName').value.trim();
+  var phone = document.getElementById('fPhone').value.trim();
+  var email = document.getElementById('fEmail').value.trim();
+  var ok = true;
+  const p = getParams();
+  const resolvedSupplier = await resolveSupplier(p);
+  document.getElementById('eName').classList.remove('show');
+  document.getElementById('ePhone').classList.remove('show');
+  document.getElementById('eEmail').classList.remove('show');
+  document.getElementById('eLegal').classList.remove('show');
+  if(!name) { document.getElementById('eName').classList.add('show'); ok=false; }
+  if(!phone) { document.getElementById('ePhone').classList.add('show'); ok=false; }
+  if(!email || email.indexOf('@')<0) { document.getElementById('eEmail').classList.add('show'); ok=false; }
+  if(!document.getElementById('legalBox').checked) { document.getElementById('eLegal').classList.add('show'); ok=false; }
+  if(!ok) return;
+
+  var btn = document.getElementById('popupBtn');
+  btn.disabled = true;
+  btn.textContent = 'שולח…';
+  submitted71 = 1;
+
+  try { dataLayer.push({event:'form_submitted', name:name, phone:phone, email:email, page:'landing_option_26071'}); } catch(e) {}
+  try { if(typeof fbq==='function') fbq('track','Lead'); } catch(e) {}
+
+  // Fire the confirmation-email webhook and the tracking webhook in parallel
+  // so a slow/failing call never delays or blocks the other -- in particular,
+  // the "send email now" hook must fire immediately.
+  await Promise.allSettled([
+    fetch('https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ name: name, phone: phone, email: email, page: 'landing_option_26071', metric: 'landing', panel: PANEL })
+    }),
+    fetch('https://hook.eu1.make.com/jp6ukjt7tpk3y4yly9c691g01f47cq8q', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        event: 'lead_form',
+        page: 'landing_option_26071',
+        name: name,
+        phone: phone,
+        email: email,
+        supplier: resolvedSupplier,
+        timestamp: new Date().toLocaleString('he-IL')
+      })
+    })
+  ]);
+
+  /* LeadManager */
+  try {
+    var lmP = new URLSearchParams();
+    lmP.append('lm_form', '89937');
+    lmP.append('lm_key', '5403c690523845fdadf0c18bfe002da0');
+    lmP.append('subscribers_name', name);
+    lmP.append('subscribers_phone', phone);
+    lmP.append('subscribers_email', email);
+    lmP.append('fld_144377', '1');
+    lmP.append('fld_105911', p.src || '');
+    lmP.append('fld_107862', p.src || '');
+    lmP.append('lm_supplier', resolvedSupplier);
+    lmP.append('lm_bc', p.src || '');
+    lmP.append('fields[REF]', p.ref || '');
+    lmP.append('utm_medium', p.medium || '');
+    lmP.append('utm_campaign', p.campaign || '');
+    lmP.append('page', 'landing_option_26071');
+    /* keepalive:true is essential here -- this fetch fires right before
+       window.location.href navigates away, and without keepalive the browser
+       is allowed to cancel an in-flight request mid-navigation, silently
+       dropping the lead from LeadManager while everything else (which is
+       awaited earlier) still succeeds. */
+    fetch('https://hook.eu1.make.com/j4ktylebkczp1tgvlj0h4tfbxb77q9b1', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ qs: lmP.toString(), page: 'landing_option_26071', phone: phone, name: name, email: email }),
+      keepalive: true
+    }).catch(function(){});
+  } catch(e) {}
+
+  try {
+    fetch('https://hook.eu1.make.com/9nycxwodyby36g30ezp05idn0rqihnlh', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({phone: phone, name: name, email: email, stage: 1, stage_label: 'landing', page: 'landing_option_26071'}),
+      keepalive: true
+    }).catch(function(){});
+  } catch(e) {}
+
+  var sep71 = location.search ? '&' : '?';
+  /* 25/25/25/25 split test: Two-Page Funnel / Funnel D V2 / New 1 / New 2 --
+     panels 6/7/9/10 are dedicated to this split so the head-to-head
+     comparison in the dashboard is clean and independent of which landing
+     page sent the visitor here. */
+  var r = Math.random();
+  var arm = r < 0.25
+    ? { path: '../funnels/two-page-funnel/two-page-funnel-1.html', panel: '6' }
+    : r < 0.5
+    ? { path: '../funnels/funnel-d-v2/funnel-d-v2-1.html', panel: '7' }
+    : r < 0.75
+    ? { path: '../funnels/two-page-funnel-new-1/two-page-funnel-new-1-1.html', panel: '9' }
+    : { path: '../funnels/two-page-funnel-new-2/two-page-funnel-new-2-1.html', panel: '10' };
+  try { fetch(TRACK_HOOK, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ metric: 'entry', panel: arm.panel }), keepalive: true }).catch(function(){}); } catch(e) {}
+  /* Carry the lead's identity (and the LM form/key it was created under)
+     forward into the funnel so each video-step page can push a "how far
+     did they get" update to the SAME lead record in LeadManager
+     (fld_181980) -- lets the sales team prioritize leads who actually
+     watched vs. those who only filled the form. Different landing pages
+     submit to different LM forms, so lmf/lmk must travel with the lead. */
+  window.location.href = arm.path + location.search + sep71 + 'panel=' + arm.panel + '&phone=' + encodeURIComponent(phone) + '&email=' + encodeURIComponent(email);
+}
+</script>
+</head>
+<body>
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WHCW874B" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<canvas id="particles"></canvas>
+<div style="position:fixed;bottom:0;left:0;right:0;z-index:999;background:rgba(10,10,10,.97);border-top:1px solid rgba(255,90,43,.2);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-family:'Assistant',sans-serif;font-size:12px;color:rgba(255,255,255,.5);" id="cookieBanner">
+  <span>אנו משתמשים בעוגיות לשיפור חווית הגלישה. <a href="../extra/privacy.html" style="color:#ff9466;text-decoration:underline;">מדיניות פרטיות</a></span>
+  <button onclick="document.getElementById('cookieBanner').style.display='none';localStorage.setItem('ck','1');" style="background:linear-gradient(135deg,#e8461a,#ff9466);color:#000;border:none;border-radius:6px;padding:7px 16px;font-family:'Heebo',sans-serif;font-size:12px;font-weight:800;cursor:pointer;flex-shrink:0;">אישור</button>
+</div>
+<script>if(localStorage.getItem('ck'))document.getElementById('cookieBanner').style.display='none';</script>
+
+<div class="page-wrap">
+  <div class="top-badge"><span class="dot"></span>קורה עכשיו · בזמן אמת</div>
+  <div class="card">
+    <h1 class="card-headline">יש דבר אחד שמשנה הכול —<br>ורוב האנשים עדיין לא מכירים אותו.</h1>
+    <div class="card-sub">לא עוד קורס. לא עוד תיאוריה.<br>שיטה אחת שעובדת — גם בלעדיך.</div>
+    <p class="tension-line">מה שתראה בעוד רגע עלול לשנות איך אתה רואה הכנסה דיגיטלית</p>
+    <div class="icon-row">
+      <div class="icon-item"><span class="ico">⏱</span>5 דקות</div>
+      <div class="icon-item"><span class="ico">🎯</span>בדיוק בשבילך</div>
+      <div class="icon-item"><span class="ico">🔓</span>פתוח כרגע</div>
+    </div>
+    <div class="countdown-clock">
+      <div class="cc-digits">
+        <div class="cc-box"><span class="cc-num cd-secs">00</span><span class="cc-unit">שניות</span></div>
+        <div class="cc-sep">:</div>
+        <div class="cc-box"><span class="cc-num cd-mins">01</span><span class="cc-unit">דקות</span></div>
+      </div>
+    </div>
+    <p class="tension-line" style="margin-bottom:14px;">כל סרטון חושף עוד חלק מהתמונה. מי שעוצר באמצע — מפספס את החלק שבאמת משנה הכול</p>
+    <button class="btn-main" onclick="openPopup()">אני רוצה לראות את זה עכשיו</button>
+    <p class="micro-copy">🔒 סרטונים קצרים, פרקטיים וללא התחייבות. מומלץ לראות עד הסוף.</p>
+  </div>
+</div>
+
+<div class="sticky-cta" id="stickyCta">
+  <button class="btn-main" onclick="openPopup()">אני רוצה לראות את זה עכשיו</button>
+  <div class="sticky-sub">🔒 סרטונים קצרים, פרקטיים וללא התחייבות. מומלץ לראות עד הסוף.</div>
+</div>
+
+<div class="popup-overlay" id="popup">
+  <div class="popup-card">
+    <button class="popup-close" onclick="document.getElementById('popup').classList.remove('open')">✕</button>
+    <p class="popup-title">לאן שולחים לך את הגישה?</p>
+    <p class="popup-sub">כבר נפתח לאלפים היום</p>
+    <div id="formFields">
+      <input class="field" id="fName" type="text" placeholder="שם מלא" autocomplete="name"/>
+      <div class="err" id="eName">נא להזין שם מלא</div>
+      <input class="field" id="fPhone" type="tel" placeholder="טלפון" autocomplete="tel" inputmode="numeric"/>
+      <div class="err" id="ePhone">נא להזין מספר טלפון</div>
+      <input class="field" id="fEmail" type="email" placeholder="אימייל" autocomplete="email"/>
+      <div class="err" id="eEmail">נא להזין אימייל תקין</div>
+      <button class="btn-popup" id="popupBtn" onclick="submitForm()">כן, תנו לי גישה</button>
+      <div class="legal-check" id="legalWrap">
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;direction:rtl;">
+          <input type="checkbox" id="legalBox" style="width:18px;height:18px;flex-shrink:0;margin-top:2px;accent-color:#ff7a45;cursor:pointer;"/>
+          <span style="font-size:12px;color:rgba(255,255,255,.45);line-height:1.6;">אני מאשר/ת יצירת קשר ותוכן שיווקי במייל, בטלפון ובוואטסאפ. אפשר להסיר בכל שלב שתרצה.</span>
+        </label>
+        <div class="err" id="eLegal" style="margin-top:4px;">יש לאשר את תנאי השימוש להמשך</div>
+      </div>
+      <p class="reassure">הפרטים שלך מוגנים ולא מועברים לאף גורם</p>
+    </div>
+    <div class="success-msg" id="successMsg">
+      <div class="s-icon">✅</div>
+      <div class="s-title">נשלח בהצלחה!</div>
+      <div class="s-sub">ניצור איתך קשר בהקדם.<br>תודה!</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  דיגיטל אונליין מבית או די מסחר אונליין בע"מ<br>
+  <a href="/cdn-cgi/l/email-protection#72010702021d000632161b151b06131e1d1c1e1b1c175c111d5c1b1e">&#115;upport&#64;digitalonline.co.il</a><br>
+  <a href="../extra/privacy.html">מדיניות פרטיות</a><span class="sep">|</span><a href="../extra/terms.html">תנאי שימוש</a>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+(function() {
+  var c = document.getElementById('particles');
+  var ctx = c.getContext('2d');
+  var W, H, pts = [];
+  function rsz() { W = c.width = window.innerWidth; H = c.height = window.innerHeight; }
+  rsz(); window.addEventListener('resize', rsz);
+  function rnd(a,b) { return Math.random()*(b-a)+a; }
+  function mk() { return {x:rnd(0,W),y:rnd(H*.05,H),r:rnd(.3,2),dx:rnd(-.3,.3),dy:rnd(-.9,-.1),o:rnd(.4,1),fade:rnd(.002,.007),gold:Math.random()>.3,ph:rnd(0,6.28)}; }
+  for(var i=0;i<120;i++) pts.push(mk());
+  var fr = 0;
+  function draw() {
+    ctx.clearRect(0,0,W,H); fr++;
+    for(var i=0;i<pts.length;i++) {
+      var p = pts[i];
+      var a = p.o*(.6+.4*Math.sin(fr*.04+p.ph));
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle = p.gold ? 'rgba(255,90,43,'+a+')' : 'rgba(255,160,90,'+a+')';
+      ctx.fill();
+      p.x+=p.dx; p.y+=p.dy; p.o-=p.fade;
+      if(p.o<=0||p.y<-10) pts[i]=mk();
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+
+window.addEventListener('scroll', function() {
+  document.getElementById('stickyCta').classList.toggle('visible', window.scrollY > 180);
+}, {passive:true});
+document.addEventListener('DOMContentLoaded', () => {
+    loadFacebookPixel();
+    if(typeof initCountdown==='function') initCountdown();
+});
+
+setTimeout(function() {
+  var btns = document.querySelectorAll('.btn-main');
+  for(var i=0;i<btns.length;i++) {
+    btns[i].style.transform = 'translateX(-6px)';
+    setTimeout(function(b) { return function() { b.style.transform=''; }; }(btns[i]), 500);
+  }
+}, 5000);
+
+window.dataLayer = window.dataLayer || [];
+var formStarted71 = 0, submitted71 = 0;
+var t0_71 = Date.now();
+
+document.addEventListener('focusin', function(e) {
+  if (!e.target.matches('#fName, #fPhone, #fEmail')) return;
+  if (!formStarted71) {
+    formStarted71 = 1;
+    dataLayer.push({event:'form_started', page:'landing_option_26071'});
+  }
+});
+document.addEventListener('focusout', function(e) {
+  if (!e.target.matches('#fName, #fPhone, #fEmail')) return;
+  if (e.target.value.trim()) {
+    dataLayer.push({event:'form_field_filled', field:e.target.id, page:'landing_option_26071'});
+  }
+});
+window.addEventListener('beforeunload', function() {
+  dataLayer.push({event:'page_time', seconds:Math.round((Date.now()-t0_71)/1000), page:'landing_option_26071'});
+  if (formStarted71 && !submitted71) {
+    dataLayer.push({event:'form_abandoned', page:'landing_option_26071'});
+  }
+});
+try {
+  var urlP = new URLSearchParams(location.search);
+  dataLayer.push({event:'page_view',page:'landing_option_26071',utm_source:urlP.get('utm_source')||'',supplier:urlP.get('lm_supplier')||urlP.get('supplier')||''});
+} catch(e) {}
+try {
+  fetch(TRACK_HOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({metric:'entry',panel:PANEL})}).catch(function(){});
+} catch(e) {}
+
+var sd = {};
+[25,50,75,100].forEach(function(d) { sd[d]=0; });
+window.addEventListener('scroll', function() {
+  var s = document.body.scrollHeight - window.innerHeight; if(!s) return;
+  var pct = Math.round(window.scrollY/s*100);
+  [25,50,75,100].forEach(function(d) {
+    if(!sd[d] && pct>=d) { sd[d]=1; try{dataLayer.push({event:'scroll_depth',depth:d+'%',page:'landing_option_26071'});}catch(e){} }
+  });
+}, {passive:true});
+</script>
+</body>
+</html>
