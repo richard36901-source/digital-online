@@ -594,6 +594,21 @@ const HEAD_TO_HEAD_TESTS = [
     ]
   },
   {
+    /* Newest landing-page CTR experiment: OPTION2 (the current baseline)
+       against two brand-new cosmetic/copy variants built specifically to
+       push CTR higher -- Option 26071 (red/orange urgency framing, panel 8)
+       and Option 26072 (blue/cyan curiosity framing, panel 11). Same
+       conversionKey as the other landing-page cards: entries vs. actually
+       submitting the lead form. */
+    title: 'דף נחיתה · OPTION2 מול Option 26071 מול Option 26072', tag: 'landing', tagLabel: 'דף נחיתה · מבחן CTR חדש',
+    conversionLabel: 'שלחו פרטים', conversionKey: 'landing',
+    variants: [
+      { name: 'OPTION2', desc: 'הגרסה המקורית (זהב)', panel: 2 },
+      { name: 'Option 26071', desc: 'וריאציית דחיפות (אדום/כתום)', panel: 8 },
+      { name: 'Option 26072', desc: 'וריאציית סקרנות (כחול/ציאן)', panel: 11 }
+    ]
+  },
+  {
     /* The original 4-arm landing-page test, before OPTION2_V2 existed:
        four different landing-page designs (option1-4.html), each with its
        own panel ID (1-4), splitting incoming traffic and each tracking its
