@@ -288,7 +288,7 @@ window.submitForm = async function submitForm() {
     : r < 0.75
     ? { path: '../funnels/two-page-funnel-new-1/two-page-funnel-new-1-1.html', panel: '9' }
     : { path: '../funnels/two-page-funnel-new-2/two-page-funnel-new-2-1.html', panel: '10' };
-  try { fetch(TRACK_HOOK, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ metric: 'entry', panel: arm.panel }) }).catch(function(){}); } catch(e) {}
+  try { fetch(TRACK_HOOK, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ metric: 'entry', panel: arm.panel }), keepalive: true }).catch(function(){}); } catch(e) {}
   /* Carry the lead's identity (and the LM form/key it was created under)
      forward into the funnel so each video-step page can push a "how far
      did they get" update to the SAME lead record in LeadManager
