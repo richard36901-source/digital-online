@@ -356,34 +356,12 @@
   .lp-stat-rate { font-size: 10px; color: var(--text-3); margin-top: 3px; }
   .lp-stat.entry .lp-stat-val { color: var(--good); }
 
-  .panel-legend-card {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 14px; padding: 8px 10px; box-shadow: var(--shadow-sm);
-    overflow-x: auto;
-  }
-  .panel-legend-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-  .panel-legend-table th {
-    text-align: right; padding: 10px 12px; color: var(--text-2);
-    font-size: 10px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;
-    border-bottom: 1px solid var(--border);
-  }
-  .panel-legend-table td { padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
-  .panel-legend-table tr:last-child td { border-bottom: none; }
-  .panel-legend-table tr:hover td { background: var(--card-soft); }
-  .panel-legend-num {
-    display: inline-flex; align-items: center; justify-content: center;
-    min-width: 24px; height: 24px; padding: 0 6px; border-radius: 6px;
-    background: var(--pa-soft); color: var(--pa); font-weight: 700;
-    font-family: 'JetBrains Mono', monospace; font-size: 11px;
-  }
-  .panel-legend-type {
-    font-size: 10px; padding: 3px 8px; border-radius: 5px; font-weight: 600;
-    background: var(--pb-soft); color: var(--pb); border: 1px solid var(--pb-border);
-    white-space: nowrap;
-  }
-  .panel-legend-type.funnel { background: var(--card-soft); color: var(--text-2); border-color: var(--border); }
-  .panel-legend-table a { color: var(--pa); text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 11px; word-break: break-all; }
-  .panel-legend-table a:hover { text-decoration: underline; }
+  /* Titles/headers that are now clickable links straight to the live page --
+     keep them visually identical to plain text (no blue link styling, no
+     underline until hover) so the linkified titles don't look out of place
+     next to the rest of the dashboard's typography. */
+  .title-link { color: inherit; text-decoration: none; }
+  .title-link:hover { text-decoration: underline; }
 
   .toast {
     position: fixed; top: 76px; left: 50%; transform: translateX(-50%);
@@ -527,10 +505,10 @@
       <thead>
         <tr>
           <th scope="col" class="fcol-head label">שלב</th>
-          <th scope="col" class="fcol-head f1"><span class="inner"><span class="dot" aria-hidden="true"></span> Two-Page Funnel (פאנל 6)</span></th>
-          <th scope="col" class="fcol-head f2"><span class="inner"><span class="dot" aria-hidden="true"></span> Funnel D V2 · עיצוב חדש (פאנל 7)</span></th>
-          <th scope="col" class="fcol-head f3"><span class="inner"><span class="dot" aria-hidden="true"></span> New 1 · קופי חדש (פאנל 9)</span></th>
-          <th scope="col" class="fcol-head f4"><span class="inner"><span class="dot" aria-hidden="true"></span> New 2 · קופי חדש (פאנל 10)</span></th>
+          <th scope="col" class="fcol-head f1"><span class="inner"><span class="dot" aria-hidden="true"></span> <a class="title-link" href="https://funnel.digitalonline.co.il/funnels/two-page-funnel/two-page-funnel-1.html" target="_blank" rel="noopener">Two-Page Funnel (פאנל 6)</a></span></th>
+          <th scope="col" class="fcol-head f2"><span class="inner"><span class="dot" aria-hidden="true"></span> <a class="title-link" href="https://funnel.digitalonline.co.il/funnels/funnel-d-v2/funnel-d-v2-1.html" target="_blank" rel="noopener">Funnel D V2 · עיצוב חדש (פאנל 7)</a></span></th>
+          <th scope="col" class="fcol-head f3"><span class="inner"><span class="dot" aria-hidden="true"></span> <a class="title-link" href="https://funnel.digitalonline.co.il/funnels/two-page-funnel-new-1/two-page-funnel-new-1-1.html" target="_blank" rel="noopener">New 1 · קופי חדש (פאנל 9)</a></span></th>
+          <th scope="col" class="fcol-head f4"><span class="inner"><span class="dot" aria-hidden="true"></span> <a class="title-link" href="https://funnel.digitalonline.co.il/funnels/two-page-funnel-new-2/two-page-funnel-new-2-1.html" target="_blank" rel="noopener">New 2 · קופי חדש (פאנל 10)</a></span></th>
         </tr>
       </thead>
       <tbody id="funnel_steps"></tbody>
@@ -540,22 +518,22 @@
           <td class="fwinner-cell" id="fw_twopage">
             <div class="fwinner-trophy" aria-hidden="true"></div>
             <div class="fwinner-rate mono">0.0%</div>
-            <div class="fwinner-name">Two-Page Funnel<span class="sr-only fw-winner-tag"></span></div>
+            <div class="fwinner-name"><a class="title-link" href="https://funnel.digitalonline.co.il/funnels/two-page-funnel/two-page-funnel-1.html" target="_blank" rel="noopener">Two-Page Funnel</a><span class="sr-only fw-winner-tag"></span></div>
           </td>
           <td class="fwinner-cell" id="fw_dv2">
             <div class="fwinner-trophy" aria-hidden="true"></div>
             <div class="fwinner-rate mono">0.0%</div>
-            <div class="fwinner-name">Funnel D V2<span class="sr-only fw-winner-tag"></span></div>
+            <div class="fwinner-name"><a class="title-link" href="https://funnel.digitalonline.co.il/funnels/funnel-d-v2/funnel-d-v2-1.html" target="_blank" rel="noopener">Funnel D V2</a><span class="sr-only fw-winner-tag"></span></div>
           </td>
           <td class="fwinner-cell" id="fw_tpfn1">
             <div class="fwinner-trophy" aria-hidden="true"></div>
             <div class="fwinner-rate mono">0.0%</div>
-            <div class="fwinner-name">New 1<span class="sr-only fw-winner-tag"></span></div>
+            <div class="fwinner-name"><a class="title-link" href="https://funnel.digitalonline.co.il/funnels/two-page-funnel-new-1/two-page-funnel-new-1-1.html" target="_blank" rel="noopener">New 1</a><span class="sr-only fw-winner-tag"></span></div>
           </td>
           <td class="fwinner-cell" id="fw_tpfn2">
             <div class="fwinner-trophy" aria-hidden="true"></div>
             <div class="fwinner-rate mono">0.0%</div>
-            <div class="fwinner-name">New 2<span class="sr-only fw-winner-tag"></span></div>
+            <div class="fwinner-name"><a class="title-link" href="https://funnel.digitalonline.co.il/funnels/two-page-funnel-new-2/two-page-funnel-new-2-1.html" target="_blank" rel="noopener">New 2</a><span class="sr-only fw-winner-tag"></span></div>
           </td>
         </tr>
       </tfoot>
@@ -580,7 +558,7 @@
       <span class="sicn" style="background:var(--good-bg);color:var(--good);">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/><path d="M12 22a10 10 0 1 0-8.66-5L2 22l5.34-1.34A10 10 0 0 0 12 22z"/></svg>
       </span>
-      חמש דקות ביום · דף נחיתה מוואטסאפ
+      <a class="title-link" href="https://funnel.digitalonline.co.il/extra/whatsapp.html" target="_blank" rel="noopener">חמש דקות ביום · דף נחיתה מוואטסאפ</a>
     </h2>
     <span class="meta">whatsapp.html · הלינק היומי שנשלח לקבוצת "חמש דקות ביום" (marketer=yahav)</span>
   </div>
@@ -603,30 +581,6 @@
     * שאר מבחני ה-A/B (טפטוף) לא מוצגים כרגע כי אין להם עדיין חיווט אמיתי שאוסף נתונים —
     יוצגו כאן אוטומטית ברגע שיהיה להם מקור נתונים אמיתי.
   </p>
-
-  <div class="section-head">
-    <h2>
-      <span class="sicn" style="background:var(--pb-soft);color:var(--pb);">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-      </span>
-      מקרא פאנלים · לינק לכל דף
-    </h2>
-    <span class="meta">כל דף נחיתה וכל זרוע משפך, עם הפאנל שלו והלינק החי</span>
-  </div>
-
-  <div class="panel-legend-card">
-    <table class="panel-legend-table">
-      <thead>
-        <tr>
-          <th scope="col">פאנל</th>
-          <th scope="col">שם</th>
-          <th scope="col">סוג</th>
-          <th scope="col">לינק</th>
-        </tr>
-      </thead>
-      <tbody id="panel_legend_body"></tbody>
-    </table>
-  </div>
 
 
 </main>
@@ -904,7 +858,6 @@ function render() {
   renderEmailPerf();
   renderLpStats();
   renderHeadToHead();
-  renderPanelLegend();
 }
 
 /* ============================================================================
@@ -973,20 +926,13 @@ const PANEL_LEGEND = [
   { panel: 13, name: 'Option 26071',        type: 'landing', path: 'landing-pages/landing_option_26071.html' }
 ];
 
-function renderPanelLegend() {
-  const el = document.getElementById('panel_legend_body');
-  if (!el) return;
-  const sorted = PANEL_LEGEND.slice().sort((a, b) => a.panel - b.panel);
-  el.innerHTML = sorted.map(p => {
-    const url = SITE_BASE + p.path;
-    const typeLabel = p.type === 'funnel' ? 'זרוע משפך (פנימי)' : 'דף נחיתה';
-    return `<tr>
-      <td><span class="panel-legend-num">${p.panel}</span></td>
-      <td>${p.name}</td>
-      <td><span class="panel-legend-type ${p.type}">${typeLabel}</span></td>
-      <td><a href="${url}" target="_blank" rel="noopener">${url}</a></td>
-    </tr>`;
-  }).join('');
+// Looks up a panel's live URL from PANEL_LEGEND -- used to turn every
+// panel/landing-page title across the dashboard (head-to-head card names,
+// funnel table headers/footers, section headers) into a direct link to that
+// page, instead of a separate legend table.
+function panelUrl(panelNum) {
+  const p = PANEL_LEGEND.find(x => x.panel === Number(panelNum));
+  return p ? SITE_BASE + p.path : '#';
 }
 
 /* ============================================================================
@@ -1211,7 +1157,7 @@ function renderHeadToHeadCard(test) {
             ${isWinner ? '<div class="ab-winner-pill">🏆 מנצח</div>' : ''}
             <div class="ab-var-head">
               <div class="ab-var-badge">${v.panel}</div>
-              <div class="ab-var-name">${v.name}</div>
+              <div class="ab-var-name"><a class="title-link" href="${panelUrl(v.panel)}" target="_blank" rel="noopener">${v.name}</a></div>
             </div>
             <div class="ab-var-desc">${v.desc || '&nbsp;'}</div>
             <div class="ab-body">
