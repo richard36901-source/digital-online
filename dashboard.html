@@ -147,6 +147,31 @@
   .funnel-title-row h3 { font-size: 17px; font-weight: 700; }
   .funnel-title-row p { font-size: 11px; color: var(--text-3); margin-top: 6px; }
 
+  /* CLOSE-RATE BY DROPOUT STAGE · uses LeadManager close status */
+  .close-stage-wrap {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 24px 26px; box-shadow: var(--shadow-sm);
+  }
+  .close-stage-note {
+    background: var(--warn-bg); border: 1px solid var(--warn-border);
+    color: #92500a; font-size: 11.5px; line-height: 1.6;
+    border-radius: 10px; padding: 10px 14px; margin-bottom: 18px;
+  }
+  .close-stage-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .close-stage-table th, .close-stage-table td { padding: 10px 12px; text-align: center; }
+  .close-stage-table thead th {
+    font-size: 11px; color: var(--text-3); font-weight: 600;
+    border-bottom: 1px solid var(--border);
+  }
+  .close-stage-table th:first-child, .close-stage-table td:first-child { text-align: right; }
+  .close-stage-table tbody tr { border-bottom: 1px solid var(--border); }
+  .close-stage-table tbody tr:last-child { border-bottom: none; }
+  .close-stage-table tbody tr.final-row { background: var(--good-bg); font-weight: 700; }
+  .close-stage-table .mono { font-family: 'JetBrains Mono', monospace; }
+  .close-stage-pct { font-weight: 700; }
+  .close-stage-pct.zero { color: var(--text-3); font-weight: 500; }
+  .close-stage-updated { font-size: 10.5px; color: var(--text-3); text-align: left; margin-top: 12px; }
+
   /* Funnel comparison is a real <table> now (screen readers can navigate it by
      row/column instead of guessing at a grid of divs), styled to look the same. */
   .funnel-table { width: 100%; border-collapse: separate; border-spacing: 8px 6px; table-layout: fixed; }
@@ -543,6 +568,34 @@
 
   <div class="section-head">
     <h2>
+      <span class="sicn" style="background:var(--bad-bg);color:var(--bad);">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </span>
+      אחוז סגירת עסקה · לפי שלב הנטישה במשפך
+    </h2>
+    <span class="meta">מבוסס על סטטוס "טופל-נסגרה עסקה" ב-LeadManager, מוצלב מול השלב האחרון שהליד הגיע אליו במעקב שלנו</span>
+  </div>
+
+  <div class="close-stage-wrap">
+    <div class="close-stage-note">
+      ⚠️ המעקב הפנימי (Lead Journey) פעיל כ-11 יום בלבד, כך שזו תמונה ראשונית — עסקאות רבות עדיין "בדרך" ולא נסגרו. הנתון מתעדכן <strong>אחת לשבוע</strong> מול LeadManager, כדי לשקף גם עסקאות שנסגרות בפיגור אחרי הכניסה לליד.
+    </div>
+    <table class="close-stage-table" id="close_stage_table" aria-label="אחוז סגירה לפי שלב נטישה">
+      <thead>
+        <tr>
+          <th scope="col">היכן הליד נטש</th>
+          <th scope="col">סה"כ לידים</th>
+          <th scope="col">מהם נסגרה עסקה</th>
+          <th scope="col">אחוז סגירה</th>
+        </tr>
+      </thead>
+      <tbody id="close_stage_body"></tbody>
+    </table>
+    <div class="close-stage-updated" id="close_stage_updated"></div>
+  </div>
+
+  <div class="section-head">
+    <h2>
       <span class="sicn blue">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
       </span>
@@ -855,9 +908,51 @@ function render() {
   }
 
   renderFunnelComparison();
+  renderCloseStage();
   renderEmailPerf();
   renderLpStats();
   renderHeadToHead();
+}
+
+/* ============================================================================
+   CLOSE RATE BY DROPOUT STAGE
+   Denominators come from our own Lead Journey Data Store (furthest funnel
+   stage reached per phone, deduped). Numerators come from a manual weekly
+   check against LeadManager: leads whose status = "טופל-נסגרה עסקה" /
+   "נסגרה עסקה - ליד כפול", filtered to our 9 own channels, cross-referenced
+   by phone against the Data Store to find which stage they'd reached.
+   LeadManager has no read API, so this pair of numbers is refreshed by hand
+   (agent-driven browser check) roughly once a week -- see close_last_checked.
+   ============================================================================ */
+function renderCloseStage() {
+  const body = document.getElementById('close_stage_body');
+  const updated = document.getElementById('close_stage_updated');
+  if (!body) return;
+
+  const rows = [
+    { key: 'landing_only', label: 'נטשו בדף הנחיתה (לא צפו בוידאו)' },
+    { key: 'video1',       label: 'צפו בוידאו 1 ונטשו' },
+    { key: 'video2',       label: 'צפו בוידאו 2 ונטשו' },
+    { key: 'video3',       label: 'צפו בוידאו 3 ונטשו' },
+    { key: 'video4',       label: 'צפו בוידאו 4 ונטשו' },
+    { key: 'completed',    label: 'סיימו את המשפך (השאירו פרטים)', final: true }
+  ];
+
+  body.innerHTML = rows.map(r => {
+    const total = m(`close_${r.key}_total`);
+    const closed = m(`close_${r.key}_closed`);
+    const rate = pct(closed, total);
+    const rateCls = closed === 0 ? 'close-stage-pct zero' : 'close-stage-pct';
+    return `<tr class="${r.final ? 'final-row' : ''}">
+      <td>${r.label}</td>
+      <td class="mono">${fmt(total)}</td>
+      <td class="mono">${fmt(closed)}</td>
+      <td class="mono ${rateCls}">${total > 0 ? fmtPct(rate) : '—'}</td>
+    </tr>`;
+  }).join('');
+
+  const checkedRaw = metrics['close_last_checked'];
+  updated.textContent = checkedRaw ? `בדיקה אחרונה מול LeadManager: ${checkedRaw}` : '';
 }
 
 /* ============================================================================
