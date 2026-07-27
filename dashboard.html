@@ -356,6 +356,35 @@
   .lp-stat-rate { font-size: 10px; color: var(--text-3); margin-top: 3px; }
   .lp-stat.entry .lp-stat-val { color: var(--good); }
 
+  .panel-legend-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 8px 10px; box-shadow: var(--shadow-sm);
+    overflow-x: auto;
+  }
+  .panel-legend-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .panel-legend-table th {
+    text-align: right; padding: 10px 12px; color: var(--text-2);
+    font-size: 10px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+  }
+  .panel-legend-table td { padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .panel-legend-table tr:last-child td { border-bottom: none; }
+  .panel-legend-table tr:hover td { background: var(--card-soft); }
+  .panel-legend-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 24px; height: 24px; padding: 0 6px; border-radius: 6px;
+    background: var(--pa-soft); color: var(--pa); font-weight: 700;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  }
+  .panel-legend-type {
+    font-size: 10px; padding: 3px 8px; border-radius: 5px; font-weight: 600;
+    background: var(--pb-soft); color: var(--pb); border: 1px solid var(--pb-border);
+    white-space: nowrap;
+  }
+  .panel-legend-type.funnel { background: var(--card-soft); color: var(--text-2); border-color: var(--border); }
+  .panel-legend-table a { color: var(--pa); text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 11px; word-break: break-all; }
+  .panel-legend-table a:hover { text-decoration: underline; }
+
   .toast {
     position: fixed; top: 76px; left: 50%; transform: translateX(-50%);
     background: white; border: 1px solid var(--good-border);
@@ -575,6 +604,30 @@
     יוצגו כאן אוטומטית ברגע שיהיה להם מקור נתונים אמיתי.
   </p>
 
+  <div class="section-head">
+    <h2>
+      <span class="sicn" style="background:var(--pb-soft);color:var(--pb);">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      </span>
+      מקרא פאנלים · לינק לכל דף
+    </h2>
+    <span class="meta">כל דף נחיתה וכל זרוע משפך, עם הפאנל שלו והלינק החי</span>
+  </div>
+
+  <div class="panel-legend-card">
+    <table class="panel-legend-table">
+      <thead>
+        <tr>
+          <th scope="col">פאנל</th>
+          <th scope="col">שם</th>
+          <th scope="col">סוג</th>
+          <th scope="col">לינק</th>
+        </tr>
+      </thead>
+      <tbody id="panel_legend_body"></tbody>
+    </table>
+  </div>
+
 
 </main>
 
@@ -627,7 +680,7 @@ const HEAD_TO_HEAD_TESTS = [
     conversionLabel: 'שלחו פרטים', conversionKey: 'landing',
     variants: [
       { name: 'OPTION2', desc: 'הגרסה המקורית (זהב)', panel: 2 },
-      { name: 'Option 26071', desc: 'וריאציית דחיפות (אדום/כתום)', panel: 8 },
+      { name: 'Option 26071', desc: 'וריאציית דחיפות (אדום/כתום)', panel: 13 },
       { name: 'Option 26072', desc: 'וריאציית סקרנות (כחול/ציאן)', panel: 11 }
     ]
   },
@@ -851,6 +904,7 @@ function render() {
   renderEmailPerf();
   renderLpStats();
   renderHeadToHead();
+  renderPanelLegend();
 }
 
 /* ============================================================================
@@ -890,6 +944,49 @@ function renderLpStats() {
       <div class="lp-stat-lbl">${s.lbl}</div>
       ${s.extra}
     </div>`).join('')}</div>`;
+}
+
+/* ============================================================================
+   PANEL LEGEND · static reference table, panel ID -> live URL
+   Landing pages are direct entry points (safe to share as marketing links).
+   Funnel arms are internal redirect targets a visitor only reaches AFTER
+   submitting a landing-page form (the landing page appends phone/email/panel
+   query params and redirects there) -- not meant to be shared directly, but
+   listed here too so the panel numbers in the tables above are traceable.
+   ============================================================================ */
+
+const SITE_BASE = 'https://funnel.digitalonline.co.il/';
+
+const PANEL_LEGEND = [
+  { panel: 1,  name: 'Option 1',            type: 'landing', path: 'landing-pages/landing_option1.html' },
+  { panel: 2,  name: 'Option 2',            type: 'landing', path: 'landing-pages/landing_option2.html' },
+  { panel: 3,  name: 'Option 3',            type: 'landing', path: 'landing-pages/landing_option3.html' },
+  { panel: 4,  name: 'Option 4',            type: 'landing', path: 'landing-pages/landing_option4.html' },
+  { panel: 5,  name: 'Option 2 V2',         type: 'landing', path: 'landing-pages/landing_option2_v2.html' },
+  { panel: 6,  name: 'Two-Page Funnel · שלב 1', type: 'funnel', path: 'funnels/two-page-funnel/two-page-funnel-1.html' },
+  { panel: 7,  name: 'Funnel D V2 · שלב 1',     type: 'funnel', path: 'funnels/funnel-d-v2/funnel-d-v2-1.html' },
+  { panel: 8,  name: 'TikTok',              type: 'landing', path: 'landing-pages/landing_tiktok.html' },
+  { panel: 9,  name: 'Two-Page Funnel New 1 · שלב 1', type: 'funnel', path: 'funnels/two-page-funnel-new-1/two-page-funnel-new-1-1.html' },
+  { panel: 10, name: 'Two-Page Funnel New 2 · שלב 1', type: 'funnel', path: 'funnels/two-page-funnel-new-2/two-page-funnel-new-2-1.html' },
+  { panel: 11, name: 'Option 26072',        type: 'landing', path: 'landing-pages/landing_option_26072.html' },
+  { panel: 12, name: 'חמש דקות ביום (WhatsApp)', type: 'landing', path: 'extra/whatsapp.html' },
+  { panel: 13, name: 'Option 26071',        type: 'landing', path: 'landing-pages/landing_option_26071.html' }
+];
+
+function renderPanelLegend() {
+  const el = document.getElementById('panel_legend_body');
+  if (!el) return;
+  const sorted = PANEL_LEGEND.slice().sort((a, b) => a.panel - b.panel);
+  el.innerHTML = sorted.map(p => {
+    const url = SITE_BASE + p.path;
+    const typeLabel = p.type === 'funnel' ? 'זרוע משפך (פנימי)' : 'דף נחיתה';
+    return `<tr>
+      <td><span class="panel-legend-num">${p.panel}</span></td>
+      <td>${p.name}</td>
+      <td><span class="panel-legend-type ${p.type}">${typeLabel}</span></td>
+      <td><a href="${url}" target="_blank" rel="noopener">${url}</a></td>
+    </tr>`;
+  }).join('');
 }
 
 /* ============================================================================
