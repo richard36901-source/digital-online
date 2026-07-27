@@ -131,6 +131,10 @@
     font-weight: 700; line-height: 1.1; color: var(--text);
   }
   .kpi-sub { font-size: 10px; color: var(--text-3); margin-top: 3px; }
+  .kpi-value.text-value {
+    font-family: 'Heebo', sans-serif; font-size: 15px; font-weight: 700;
+    line-height: 1.3; white-space: normal;
+  }
 
   .section-head { display: flex; align-items: center; justify-content: space-between; margin: 32px 0 14px; }
   .section-head h2 { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
@@ -459,7 +463,7 @@
       <span class="page-title-icon">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><polyline points="20 6 9 17 4 12"/></svg>
       </span>
-      אופטימיזציה · מבחני A/B
+      סיכום סגירות עסקה
     </h1>
   </div>
 
@@ -474,9 +478,9 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       </div>
       <div class="kpi-text">
-        <div class="kpi-label">סה״כ נשלח ללידים</div>
-        <div class="kpi-value mono" id="kpi_total">0</div>
-        <div class="kpi-sub">כל המבחנים</div>
+        <div class="kpi-label">סה״כ לידים במעקב</div>
+        <div class="kpi-value mono" id="kpi_close_total">0</div>
+        <div class="kpi-sub">Lead Journey · כל שלבי הנטישה</div>
       </div>
     </div>
 
@@ -485,9 +489,9 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/></svg>
       </div>
       <div class="kpi-text">
-        <div class="kpi-label">סה״כ השלימו הרשמה</div>
-        <div class="kpi-value mono" id="kpi_webinar">0</div>
-        <div class="kpi-sub">המרה סופית</div>
+        <div class="kpi-label">מהם נסגרה עסקה</div>
+        <div class="kpi-value mono" id="kpi_close_closed">0</div>
+        <div class="kpi-sub">טופל-נסגרה עסקה ב-LeadManager</div>
       </div>
     </div>
 
@@ -496,9 +500,9 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
       </div>
       <div class="kpi-text">
-        <div class="kpi-label">שיעור המרה ממוצע</div>
-        <div class="kpi-value mono" id="kpi_rate" style="color: var(--good);">0.0%</div>
-        <div class="kpi-sub">לידים → המרה סופית</div>
+        <div class="kpi-label">אחוז סגירה כולל</div>
+        <div class="kpi-value mono" id="kpi_close_rate" style="color: var(--good);">0.0%</div>
+        <div class="kpi-sub">מכל הלידים שבמעקב</div>
       </div>
     </div>
 
@@ -507,9 +511,9 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M13 2 3 14h7l-1 8 11-14h-7l1-6z"/></svg>
       </div>
       <div class="kpi-text">
-        <div class="kpi-label">מוביל כרגע</div>
-        <div class="kpi-value mono" id="kpi_ab" style="color: #b8881d;">—</div>
-        <div class="kpi-sub" id="kpi_ab_sub">אין עדיין מספיק נתונים</div>
+        <div class="kpi-label">השלב עם הכי הרבה סגירות</div>
+        <div class="kpi-value text-value" id="kpi_close_top" style="color: #b8881d;">—</div>
+        <div class="kpi-sub" id="kpi_close_top_sub">אין עדיין מספיק נתונים</div>
       </div>
     </div>
   </div>
@@ -741,9 +745,10 @@ const HEAD_TO_HEAD_TESTS = [
     ]
   }
 ];
-// Kept as an alias to the first test: the top "leader" KPI card is
-// specifically about the OPTION2 vs OPTION2_V2 landing-page test and
-// references this directly (via HEAD_TO_HEAD.variants[0]/[1]).
+// Alias to the first (only) head-to-head test. No longer used by the top
+// KPI strip (that now shows a close-deal summary, see CLOSE_STAGE_ROWS /
+// render()) -- kept in case another card wants a shorthand for "the main
+// 4-way test" without indexing into HEAD_TO_HEAD_TESTS.
 const HEAD_TO_HEAD = HEAD_TO_HEAD_TESTS[0];
 
 /* The funnel STEP TABLE below tracks the split test that's actually live
@@ -876,44 +881,37 @@ async function loadData() {
    ============================================================================ */
 
 function render() {
-  document.getElementById('kpi_total').textContent = fmt(m('total_leads'));
-  document.getElementById('kpi_webinar').textContent = fmt(m('webinar_total'));
+  // Top KPI strip: close-deal summary, rolled up from the same close_*
+  // metrics that back the "אחוז סגירת עסקה · לפי שלב הנטישה" table below
+  // (see CLOSE_STAGE_ROWS / renderCloseStage). Replaces the old "A/B test"
+  // KPI strip, which was only ever comparing 2 of the now-4 funnel arms and
+  // had gone stale (labels still said "OPTION2").
+  let closeTotalAll = 0, closeClosedAll = 0;
+  let topStage = null, topStageClosed = 0;
+  CLOSE_STAGE_ROWS.forEach(r => {
+    const total = m(`close_${r.key}_total`);
+    const closed = m(`close_${r.key}_closed`);
+    closeTotalAll += total;
+    closeClosedAll += closed;
+    if (closed > topStageClosed) { topStageClosed = closed; topStage = r; }
+  });
+  const closeRateAll = pct(closeClosedAll, closeTotalAll);
 
-  // conv rate: prefer explicit, else compute from totals
-  const explicitRate = m('conv_rate_pct');
-  const computedRate = pct(m('webinar_total'), m('total_leads'));
-  const rateToShow = explicitRate > 0 ? explicitRate : computedRate;
-  document.getElementById('kpi_rate').textContent = fmtPct(rateToShow);
+  document.getElementById('kpi_close_total').textContent = fmt(closeTotalAll);
+  document.getElementById('kpi_close_closed').textContent = fmt(closeClosedAll);
+  document.getElementById('kpi_close_rate').textContent = fmtPct(closeRateAll);
 
-  // "Leader" KPI: whichever panel currently has the higher entry→conversion
-  // rate (using the same conversionKey as the card itself -- 'landing' i.e.
-  // submitted their details, for the OPTION2 vs OPTION2_V2 test), once
-  // there's enough traffic to say anything meaningful.
-  const leaderConvKey = HEAD_TO_HEAD.conversionKey || 'webinar';
-  const leaderA = HEAD_TO_HEAD.variants[0];
-  const leaderB = HEAD_TO_HEAD.variants[1];
-  const entryA = m(`f${leaderA.panel}_entry`);
-  const entryB = m(`f${leaderB.panel}_entry`);
-  const rateA0 = pct(m(`f${leaderA.panel}_${leaderConvKey}`), entryA);
-  const rateB0 = pct(m(`f${leaderB.panel}_${leaderConvKey}`), entryB);
-  const kpiAbEl = document.getElementById('kpi_ab');
-  const kpiAbSubEl = document.getElementById('kpi_ab_sub');
-  if (entryA < 10 || entryB < 10) {
-    kpiAbEl.textContent = '—';
-    kpiAbEl.style.color = '#b8881d';
-    kpiAbSubEl.textContent = 'אין עדיין מספיק נתונים';
-  } else if (Math.abs(rateA0 - rateB0) < 0.5) {
-    kpiAbEl.textContent = 'תיקו';
-    kpiAbEl.style.color = '#b8881d';
-    kpiAbSubEl.textContent = 'שני העמודים קרובים';
-  } else if (rateA0 > rateB0) {
-    kpiAbEl.textContent = 'OPTION2';
-    kpiAbEl.style.color = 'var(--pa)';
-    kpiAbSubEl.textContent = `+${(rateA0 - rateB0).toFixed(1)} נק׳ אחוז`;
+  const kpiTopEl = document.getElementById('kpi_close_top');
+  const kpiTopSubEl = document.getElementById('kpi_close_top_sub');
+  if (!topStage || topStageClosed === 0) {
+    kpiTopEl.textContent = '—';
+    kpiTopEl.style.color = '#b8881d';
+    kpiTopSubEl.textContent = 'אין עדיין מספיק נתונים';
   } else {
-    kpiAbEl.textContent = 'OPTION2_V2';
-    kpiAbEl.style.color = 'var(--pb)';
-    kpiAbSubEl.textContent = `+${(rateB0 - rateA0).toFixed(1)} נק׳ אחוז`;
+    kpiTopEl.textContent = topStage.label;
+    kpiTopEl.style.color = 'var(--pa)';
+    const stageTotal = m(`close_${topStage.key}_total`);
+    kpiTopSubEl.textContent = `${fmt(topStageClosed)} נסגרו · ${fmtPct(pct(topStageClosed, stageTotal))} מהשלב`;
   }
 
   renderFunnelComparison();
@@ -933,19 +931,21 @@ function render() {
    LeadManager has no read API, so this pair of numbers is refreshed by hand
    (agent-driven browser check) roughly once a week -- see close_last_checked.
    ============================================================================ */
+const CLOSE_STAGE_ROWS = [
+  { key: 'landing_only', label: 'נטשו בדף הנחיתה (לא צפו בוידאו)' },
+  { key: 'video1',       label: 'צפו בוידאו 1 ונטשו' },
+  { key: 'video2',       label: 'צפו בוידאו 2 ונטשו' },
+  { key: 'video3',       label: 'צפו בוידאו 3 ונטשו' },
+  { key: 'video4',       label: 'צפו בוידאו 4 ונטשו' },
+  { key: 'completed',    label: 'סיימו את המשפך (השאירו פרטים)', final: true }
+];
+
 function renderCloseStage() {
   const body = document.getElementById('close_stage_body');
   const updated = document.getElementById('close_stage_updated');
   if (!body) return;
 
-  const rows = [
-    { key: 'landing_only', label: 'נטשו בדף הנחיתה (לא צפו בוידאו)' },
-    { key: 'video1',       label: 'צפו בוידאו 1 ונטשו' },
-    { key: 'video2',       label: 'צפו בוידאו 2 ונטשו' },
-    { key: 'video3',       label: 'צפו בוידאו 3 ונטשו' },
-    { key: 'video4',       label: 'צפו בוידאו 4 ונטשו' },
-    { key: 'completed',    label: 'סיימו את המשפך (השאירו פרטים)', final: true }
-  ];
+  const rows = CLOSE_STAGE_ROWS;
 
   body.innerHTML = rows.map(r => {
     const total = m(`close_${r.key}_total`);
