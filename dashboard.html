@@ -18,7 +18,11 @@
     --pb: #3b82f6; --pb-2: #2563eb; --pb-soft: #eff5ff; --pb-softer: #f5f9ff; --pb-border: #dbe7fb;
     --f1: #7c3aed; --f1-bg: #f3effe; --f1-border: #e9defb;
     --f2: #3b82f6; --f2-bg: #eff5ff; --f2-border: #dbe7fb;
-    --f3: #10b981; --f3-bg: #ecfdf5; --f3-border: #d1f5e2;
+    /* f3 (panel 9 / "New 1") deliberately grayed out -- this arm was removed
+       from the landing-page traffic split (see FUNNEL_GROUPS / HEAD_TO_HEAD_TESTS
+       below), so it no longer receives traffic. Kept in the palette but muted
+       to signal "inactive", not a bug. */
+    --f3: #9aa1b0; --f3-bg: #f1f2f6; --f3-border: #dfe1ea;
     --f4: #f59e0b; --f4-bg: #fef6e6; --f4-border: #fde8b8;
     --good: #10b981; --good-bg: #ecfdf5; --good-border: #d1f5e2;
     --warn: #f59e0b; --warn-bg: #fef6e6; --warn-border: #fde8b8;
@@ -195,6 +199,11 @@
   .fcol-head.f2 .dot { background: var(--f2); }
   .fcol-head.f3 .dot { background: var(--f3); }
   .fcol-head.f4 .dot { background: var(--f4); }
+  .no-traffic-badge {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.02em;
+    background: #e2e4ec; color: #6f7689; border-radius: 6px;
+    padding: 1px 6px; white-space: nowrap;
+  }
 
   .fstep-th { text-align: center; padding: 6px 4px; font-weight: 500; }
   .fstep-lbl {
@@ -532,7 +541,7 @@
           <th scope="col" class="fcol-head label">שלב</th>
           <th scope="col" class="fcol-head f1"><span class="inner"><span class="dot" aria-hidden="true"></span> <a class="title-link" href="https://funnel.digitalonline.co.il/funnels/two-page-funnel/two-page-funnel-1.html" target="_blank" rel="noopener">Two-Page Funnel (פאנל 6)</a></span></th>
           <th scope="col" class="fcol-head f2"><span class="inner"><span class="dot" aria-hidden="true"></span> <a class="title-link" href="https://funnel.digitalonline.co.il/funnels/funnel-d-v2/funnel-d-v2-1.html" target="_blank" rel="noopener">Funnel D V2 · עיצוב חדש (פאנל 7)</a></span></th>
-          <th scope="col" class="fcol-head f3"><span class="inner"><span class="dot" aria-hidden="true"></span> <a class="title-link" href="https://funnel.digitalonline.co.il/funnels/two-page-funnel-new-1/two-page-funnel-new-1-1.html" target="_blank" rel="noopener">New 1 · קופי חדש (פאנל 9)</a></span></th>
+          <th scope="col" class="fcol-head f3 no-traffic"><span class="inner"><span class="dot" aria-hidden="true"></span> <a class="title-link" href="https://funnel.digitalonline.co.il/funnels/two-page-funnel-new-1/two-page-funnel-new-1-1.html" target="_blank" rel="noopener">New 1 · קופי חדש (פאנל 9)</a> <span class="no-traffic-badge">ללא תנועה</span></span></th>
           <th scope="col" class="fcol-head f4"><span class="inner"><span class="dot" aria-hidden="true"></span> <a class="title-link" href="https://funnel.digitalonline.co.il/funnels/two-page-funnel-new-2/two-page-funnel-new-2-1.html" target="_blank" rel="noopener">New 2 · קופי חדש (פאנל 10)</a></span></th>
         </tr>
       </thead>
@@ -727,7 +736,7 @@ const HEAD_TO_HEAD_TESTS = [
     variants: [
       { name: 'Two-Page Funnel', desc: 'משפך דו-שלבי מקוצר (פאנל 6)', panel: 6 },
       { name: 'Funnel D V2', desc: 'עיצוב סקרנות (סגול/ציאן) + קופי חדש (פאנל 7)', panel: 7 },
-      { name: 'New 1', desc: 'משפך דו-שלבי · קופי חדש (פאנל 9)', panel: 9 },
+      { name: 'New 1', desc: 'משפך דו-שלבי · קופי חדש (פאנל 9) · ⚪ הוסר מהפיצול, ללא תנועה', panel: 9 },
       { name: 'New 2', desc: 'משפך דו-שלבי · קופי חדש (פאנל 10)', panel: 10 }
     ]
   }
