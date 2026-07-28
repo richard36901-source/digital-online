@@ -353,6 +353,40 @@
     display: inline-flex; align-items: center; gap: 4px;
   }
 
+  /* VIDEO VERSION HISTORY (per panel 6/7/9/10). Each card lists every video
+     "version" that has ever run in that panel's video_1 slot, oldest first,
+     current last. Numbers per version are computed as a diff between two
+     checkpoints (see VIDEO_VERSIONS / renderVideoVersions() in the script),
+     so swapping in a new video never touches or deletes the old rows in the
+     sheet -- it only adds one new checkpoint going forward. */
+  .vv-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+  .vv-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 18px 20px; box-shadow: var(--shadow-sm);
+  }
+  .vv-card-head {
+    display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700;
+    margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border);
+  }
+  .vv-card-head .dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .vv-card-head.f1 .dot { background: var(--f1); }
+  .vv-card-head.f2 .dot { background: var(--f2); }
+  .vv-card-head.f3 .dot { background: var(--f3); }
+  .vv-card-head.f4 .dot { background: var(--f4); }
+  .vv-body { display: flex; flex-direction: column; gap: 10px; }
+  .vv-row { border-radius: 10px; padding: 12px 14px; border: 1px dashed var(--border-2); }
+  .vv-row.vv-current { border: 1px solid var(--good-border); background: var(--good-bg); }
+  .vv-row.vv-past { background: var(--card-soft); opacity: 0.85; }
+  .vv-row-head { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+  .vv-ver { font-size: 12px; font-weight: 700; }
+  .vv-row.vv-current .vv-ver { color: var(--good); }
+  .vv-label { font-size: 11px; color: var(--text-2); }
+  .vv-since { font-size: 10px; color: var(--text-3); margin-inline-start: auto; }
+  .vv-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .vv-stat-lbl { display: block; font-size: 9px; color: var(--text-3); margin-bottom: 2px; }
+  .vv-stat-val { display: block; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; color: var(--text); }
+  .vv-stat-val.rate { color: var(--pa); }
+
   .email-perf-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; }
   .email-card {
     background: var(--card); border: 1px solid var(--border);
@@ -648,6 +682,17 @@
     יוצגו כאן אוטומטית ברגע שיהיה להם מקור נתונים אמיתי.
   </p>
 
+  <div class="section-head">
+    <h2>
+      <span class="sicn" style="background:var(--pa-soft);color:var(--pa);">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+      </span>
+      היסטוריית גרסאות וידאו · לפי פאנל
+    </h2>
+    <span class="meta">בכל החלפת וידאו נשמר צ'ק-פוינט - הנתונים הישנים קפואים, החדשים נספרים בנפרד. שום נתון לא נמחק.</span>
+  </div>
+
+  <div class="vv-grid" id="video_versions_grid"></div>
 
 </main>
 
@@ -767,6 +812,38 @@ const FUNNEL_GROUPS = [
   { id: 'tpfn1', key: 'tpfn1', label: 'Two-Page Funnel New 1 (פאנל 9)', cls: 'f3', panels: ['9'], steps: ['entry', 'landing', 'video_1', 'video_2', 'webinar'] },
   { id: 'tpfn2', key: 'tpfn2', label: 'Two-Page Funnel New 2 (פאנל 10)', cls: 'f4', panels: ['10'], steps: ['entry', 'landing', 'video_1', 'video_2', 'webinar'] }
 ];
+
+/* VIDEO VERSION HISTORY -- per-panel log of video swaps for the 4 panels
+   under active video optimization (6, 7, 9, 10). This is a pure dashboard
+   feature: it does NOT change anything about how the live pages track data
+   (no new webhook params, no sheet schema change, zero redeploy risk to
+   panels currently receiving real traffic). It works by taking a manual
+   "checkpoint" snapshot of each panel's ever-growing cumulative counters
+   (f{panel}_entry / video_1 / video_2 / webinar) at the exact moment a video
+   gets swapped, then showing every version's own numbers as the DIFFERENCE
+   between two checkpoints. Nothing is ever reset, edited or deleted --
+   old data stays exactly where it is, a new version just adds a new
+   snapshot to look forward from.
+
+   HOW TO RECORD A SWAP (do this the day a new video actually goes live):
+     1. Read the current values of f{panel}_entry, f{panel}_video_1,
+        f{panel}_video_2, f{panel}_webinar from the Dashboard sheet tab.
+     2. Push a new object onto that panel's array below:
+          { version: N, label: '<short description of the new video>',
+            since: 'YYYY-MM-DD', snapshot: { entry, video_1, video_2, webinar } }
+        using the values from step 1 as the snapshot.
+     3. That's it -- nothing else needs to change. The previous version's
+        row automatically freezes at that snapshot, and the new version's
+        row starts counting from zero relative to it.
+   Each panel starts with a single "version 1" entry with snapshot:null,
+   meaning version 1's baseline is zero (it owns 100% of the panel's history
+   to date) -- this matches reality, since no swap has happened yet. */
+const VIDEO_VERSIONS = {
+  6:  [ { version: 1, label: 'וידאו מקורי', since: null, snapshot: null } ],
+  7:  [ { version: 1, label: 'וידאו מקורי', since: null, snapshot: null } ],
+  9:  [ { version: 1, label: 'וידאו מקורי (טרם הוחלף)', since: null, snapshot: null } ],
+  10: [ { version: 1, label: 'וידאו מקורי', since: null, snapshot: null } ]
+};
 
 const FUNNEL_STEPS = [
   // hidden:true  =>  הנתון עדיין נטען ומחושב כרגיל, רק השורה לא מצוירת בדף.
@@ -919,6 +996,7 @@ function render() {
   renderEmailPerf();
   renderLpStats();
   renderHeadToHead();
+  renderVideoVersions();
 }
 
 /* ============================================================================
@@ -1308,6 +1386,68 @@ function renderHeadToHeadCard(test) {
         <div class="ab-variants-grid">${cardsHtml}</div>
       </div>
     `;
+}
+
+// Renders one card per video-optimization panel (6, 7, 9, 10), each listing
+// its version history. Every version's numbers = diff between its own
+// snapshot and the NEXT version's snapshot (or the panel's live totals, if
+// it's the current/last version) -- see the VIDEO_VERSIONS comment above for
+// how to add a new version when a video actually gets swapped.
+function renderVideoVersions() {
+  const container = document.getElementById('video_versions_grid');
+  if (!container) return;
+
+  container.innerHTML = FUNNEL_GROUPS.map(group => {
+    const panel = group.panels[0]; // each of these 4 groups is exactly one panel
+    const history = VIDEO_VERSIONS[panel] || [];
+
+    const liveEntry = groupBase(group);
+    const live = {
+      entry: liveEntry,
+      video_1: groupSum(group, 'video_1'),
+      video_2: groupSum(group, 'video_2'),
+      webinar: groupSum(group, 'webinar')
+    };
+
+    const rows = history.map((v, i) => {
+      const next = history[i + 1];
+      const base = v.snapshot || { entry: 0, video_1: 0, video_2: 0, webinar: 0 };
+      const upper = next ? (next.snapshot || base) : live;
+
+      const baseEntry = Math.max(base.entry || 0, base.video_1 || 0);
+      const upperEntry = next ? Math.max(upper.entry || 0, upper.video_1 || 0) : liveEntry;
+
+      const dEntry = Math.max(0, upperEntry - baseEntry);
+      const dVideo2 = Math.max(0, (upper.video_2 || 0) - (base.video_2 || 0));
+      const dWebinar = Math.max(0, (upper.webinar || 0) - (base.webinar || 0));
+      const rate = pct(dWebinar, dEntry);
+      const isCurrent = !next;
+
+      return `
+        <div class="vv-row ${isCurrent ? 'vv-current' : 'vv-past'}">
+          <div class="vv-row-head">
+            <span class="vv-ver">גרסה ${v.version}${isCurrent ? ' · נוכחית' : ''}</span>
+            <span class="vv-label">${v.label || ''}</span>
+            <span class="vv-since">${v.since ? `מ-${v.since}` : 'מתחילת המעקב'}</span>
+          </div>
+          <div class="vv-stats">
+            <div><span class="vv-stat-lbl">כניסות</span><span class="vv-stat-val">${fmt(dEntry)}</span></div>
+            <div><span class="vv-stat-lbl">הגיעו לוידאו 2</span><span class="vv-stat-val">${fmt(dVideo2)}</span></div>
+            <div><span class="vv-stat-lbl">השאירו פרטים</span><span class="vv-stat-val">${fmt(dWebinar)}</span></div>
+            <div><span class="vv-stat-lbl">שיעור המרה</span><span class="vv-stat-val rate">${fmtPct(rate)}</span></div>
+          </div>
+        </div>`;
+    }).join('');
+
+    return `
+      <div class="vv-card">
+        <div class="vv-card-head ${group.cls}">
+          <span class="dot"></span>
+          <a class="title-link" href="${panelUrl(panel)}" target="_blank" rel="noopener">${group.label}</a>
+        </div>
+        <div class="vv-body">${rows}</div>
+      </div>`;
+  }).join('');
 }
 
 const refreshBtn = document.getElementById('refreshBtn');
