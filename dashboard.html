@@ -829,7 +829,10 @@ const FUNNEL_GROUPS = [
    to date) -- this matches reality, since no swap has happened yet. */
 const VIDEO_VERSIONS = {
   6:  [ { version: 1, label: 'וידאו מקורי', since: null, snapshot: null } ],
-  7:  [ { version: 1, label: 'וידאו מקורי', since: null, snapshot: null } ],
+  7:  [
+        { version: 1, label: 'וידאו מקורי', since: null, snapshot: null },
+        { version: 2, label: 'וידאו 1 הוחלף לסרטון YouTube חדש', since: '2026-07-30', snapshot: { entry: 76, video_1: 108, video_2: 33, webinar: 16 } }
+      ],
   9:  [
         { version: 1, label: 'וידאו מקורי', since: null, snapshot: null },
         { version: 2, label: 'וידאו חדש - האוטומט השקט', since: '2026-07-28', snapshot: { entry: 22, video_1: 31, video_2: 4, webinar: 2 } }
