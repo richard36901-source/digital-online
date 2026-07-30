@@ -166,10 +166,12 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.06);}
   <div class="vid-outer">
     <div class="vid-box">
       <div class="vid-ratio">
-      <video id="vimeoPlayer" autoplay  playsinline controls
-        src="../../extra/funnel-d-v2-1.mp4"
-        style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">
-      </video>
+        <iframe id="vimeoPlayer"
+          src="https://www.youtube.com/embed/uIEszFDfA-E?rel=0&modestbranding=1&enablejsapi=1"
+          allow="autoplay; fullscreen; picture-in-picture"
+          allowfullscreen
+          title="סרטון 1">
+        </iframe>
       </div>
       <div class="vid-thumb" id="vidThumb" onclick="playVideoDv2_1()">
         <div class="play-btn">
@@ -274,39 +276,65 @@ document.getElementById('btnNext').addEventListener('click',function(){
      the viewer. */
   fetch('https://hook.eu1.make.com/9nycxwodyby36g30ezp05idn0rqihnlh',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:phone,email:email,stage:2,stage_label:'video_1',panel:panel}),keepalive:true}).catch(function(){});
 });
+const thumbEl=document.getElementById('vidThumb');
+const btnNextEl=document.getElementById('btnNext');
+
+window.onYouTubeIframeAPIReady=function(){
+  var _pollInt=null;
+  const player=new YT.Player('vimeoPlayer',{
+    events:{
+      onReady:function(e){
+        thumbEl.onclick=function(){thumbEl.classList.add('gone');e.target.playVideo();};
+        // Poll playback position every second -- the YouTube iframe API has no
+        // native "timeupdate" event, so this is how we keep lastPos/lastPct
+        // (used by the page_exit beacon) accurate, and how we detect the
+        // 25/50/75/100% video_progress milestones.
+        _pollInt=setInterval(function(){
+          try{
+            var cur=e.target.getCurrentTime(),dur=e.target.getDuration();
+            if(dur>0){
+              lastPos=cur;lastPct=Math.round(cur/dur*100);
+              var pct=cur/dur*100;
+              [25,50,75,100].forEach(function(m){if(!vm[m]&&pct>=m){vm[m]=1;dataLayer.push({event:'video_progress',milestone:m+'%',time:Math.round(cur),page:PAGE});}});
+            }
+          }catch(err){}
+        },1000);
+      },
+      onStateChange:function(e){
+        if(e.data===YT.PlayerState.PLAYING){
+          thumbEl.classList.add('gone');btnNextEl.classList.add('watching');
+          dataLayer.push({event:'video_play',page:PAGE});
+        }
+        if(e.data===YT.PlayerState.PAUSED){
+          btnNextEl.classList.remove('watching');
+          var pos=Math.round(e.target.getCurrentTime()),pct=Math.round(e.target.getCurrentTime()/e.target.getDuration()*100);
+          dataLayer.push({event:'video_pause',page:PAGE,time:pos,pct_watched:pct});
+          fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({event:'video_pause',page:PAGE,position_sec:pos,pct_watched:pct,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')})
+          }).catch(()=>{});
+        }
+        if(e.data===YT.PlayerState.ENDED){
+          btnNextEl.classList.remove('watching');
+          if(_pollInt){clearInterval(_pollInt);_pollInt=null;}
+          lastPos=e.target.getDuration();lastPct=100;
+          dataLayer.push({event:'video_ended',page:PAGE});
+          if(typeof fbq!=='undefined')fbq('track','ViewContent',{content_name:PAGE});
+          fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({event:'video_completed',page:PAGE,pct_watched:100,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')})
+          }).catch(()=>{});
+          btnNextEl.classList.add('unlocked');
+          btnNextEl.innerHTML='&#9658;&nbsp; לעבור לשלב הבא &nbsp;<span class="btn-arrow">←</span>';
+          setTimeout(()=>{btnNextEl.scrollIntoView({behavior:'smooth',block:'center'});},300);
+        }
+      }
+    }
+  });
+};
+
 window.addEventListener('load',()=>{
-  const video=document.getElementById('vimeoPlayer');
-  const thumb=document.getElementById('vidThumb');
-  const btnNext=document.getElementById('btnNext');
-  thumb.onclick=function(){thumb.classList.add('gone');video.play();};
-  video.addEventListener('play',()=>{
-    thumb.classList.add('gone');btnNext.classList.add('watching');
-    dataLayer.push({event:'video_play',page:PAGE});
-  });
-  video.addEventListener('pause',()=>{
-    btnNext.classList.remove('watching');
-    const pos=Math.round(video.currentTime),pct=Math.round(video.currentTime/video.duration*100);
-    dataLayer.push({event:'video_pause',page:PAGE,time:pos,pct_watched:pct});
-    fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({event:'video_pause',page:PAGE,position_sec:pos,pct_watched:pct,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')})
-    }).catch(()=>{});
-  });
-  video.addEventListener('timeupdate',()=>{
-    lastPos=video.currentTime;lastPct=Math.round(video.currentTime/video.duration*100);
-    const pct=video.currentTime/video.duration*100;
-    [25,50,75,100].forEach(m=>{if(!vm[m]&&pct>=m){vm[m]=1;dataLayer.push({event:'video_progress',milestone:m+'%',time:Math.round(video.currentTime),page:PAGE});}});
-  });
-  video.addEventListener('ended',()=>{
-    btnNext.classList.remove('watching');
-    dataLayer.push({event:'video_ended',page:PAGE});
-    if(typeof fbq!=='undefined')fbq('track','ViewContent',{content_name:PAGE});
-    fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({event:'video_completed',page:PAGE,pct_watched:100,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')})
-    }).catch(()=>{});
-    btnNext.classList.add('unlocked');
-    btnNext.innerHTML='&#9658;&nbsp; לעבור לשלב הבא &nbsp;<span class="btn-arrow">←</span>';
-    setTimeout(()=>{btnNext.scrollIntoView({behavior:'smooth',block:'center'});},300);
-  });
+  const tag=document.createElement('script');
+  tag.src='https://www.youtube.com/iframe_api';
+  document.head.appendChild(tag);
 });
 window.addEventListener('beforeunload',()=>{
   if(navigator.sendBeacon){
