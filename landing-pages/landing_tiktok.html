@@ -256,6 +256,28 @@ async function handleSubmit(){
   if(typeof fbq !== 'undefined') fbq('track','Lead');
   document.getElementById('formWrap').style.display = 'none';
   document.getElementById('successBox').classList.add('show');
+
+    setTimeout(function(){
+          var sep = location.search ? '&' : '?';
+          /* 25/25/25/25 split test: Two-Page Funnel / Funnel D V2 / New 1 / New 2 --
+                 panels 6/7/9/10 are dedicated to this split so the head-to-head
+                        comparison in the dashboard is clean and independent of which landing
+                               page sent the visitor here. TikTok now joins the same split so every
+                                      landing page feeds panels 6/7/9/10 equally. */
+          var r = Math.random();
+          var arm = r < 0.25
+            ? { path: '../funnels/two-page-funnel/two-page-funnel-1.html', panel: '6' }
+                  : r < 0.5
+            ? { path: '../funnels/funnel-d-v2/funnel-d-v2-1.html', panel: '7' }
+                  : r < 0.75
+            ? { path: '../funnels/two-page-funnel-new-1/two-page-funnel-new-1-1.html', panel: '9' }
+                  : { path: '../funnels/two-page-funnel-new-2/two-page-funnel-new-2-1.html', panel: '10' };
+          try { fetch(TRACK_HOOK, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ metric: 'entry', panel: arm.panel }), keepalive: true }).catch(function(){}); } catch(e) {}
+          /* Carry the lead's identity forward into the funnel so each video-step
+                 page can push a "how far did they get" update to the SAME lead
+                        record in LeadManager (fld_181980). */
+          window.location.href = arm.path + location.search + sep + 'panel=' + arm.panel + '&phone=' + encodeURIComponent(data.phone) + '&email=' + encodeURIComponent(data.email);
+    }, 1800);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
