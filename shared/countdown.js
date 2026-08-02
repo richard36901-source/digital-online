@@ -21,7 +21,7 @@
      attached too late and the event had already passed).
    ============================================================================ */
 (function () {
-  var DURATION_MS = 60 * 1000;     // 1 minute
+  var DURATION_MS = (window.COUNTDOWN_DURATION_MS || 60 * 1000);  // 1 minute default, overridable via window.COUNTDOWN_DURATION_MS
   var CRITICAL_MS = 30 * 1000;     // last 30 seconds = "critical" styling
   var started = false;             // guard against double-starting the clock
 
