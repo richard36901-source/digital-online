@@ -35,7 +35,7 @@ canvas#particles{position:fixed;inset:0;z-index:0;pointer-events:none;}
 @keyframes btnPulse{0%,100%{box-shadow:0 6px 30px rgba(212,168,67,.5),0 0 0 0 rgba(212,168,67,0);}50%{box-shadow:0 8px 40px rgba(212,168,67,.75),0 0 0 8px rgba(212,168,67,.08);}}
 @keyframes btnShimmer{0%{background-position:200% center;}100%{background-position:0% center;}}
 @keyframes shine{0%{left:-120%}100%{left:160%}}
-@keyframes btnWiggle{0%,100%{transform:translateY(0) scale(1);}20%{transform:translateY(-5px) scale(1.06);}40%{transform:translateY(0) scale(1);}60%{transform:translateY(-3px) scale(1.04);}80%{transform:translateY(0) scale(1);}}
+@keyframes btnVibrate{0%,100%{transform:translateX(0) rotate(0);}2%{transform:translateX(-3px) rotate(-1.5deg);}4%{transform:translateX(3px) rotate(1.5deg);}6%{transform:translateX(-3px) rotate(-1deg);}8%{transform:translateX(3px) rotate(1deg);}10%{transform:translateX(-2px) rotate(-.5deg);}12%{transform:translateX(2px) rotate(.5deg);}14%{transform:translateX(0) rotate(0);}}}
 @keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
 @keyframes iconPop{0%,100%{transform:scale(1);}50%{transform:scale(1.18);}}
 @keyframes flicker{0%,100%{opacity:1;}45%{opacity:.65;}50%{opacity:1;}55%{opacity:.55;}60%{opacity:1;}}
@@ -51,6 +51,19 @@ canvas#particles{position:fixed;inset:0;z-index:0;pointer-events:none;}
 .video-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
 .video-title{font-family:'Heebo',sans-serif;font-size:16px;font-weight:800;text-align:center;margin-bottom:18px;color:#fff;}
 .trust-line{font-size:13px;font-weight:700;text-align:center;color:rgba(120,230,150,.9);margin-bottom:10px;}
+.feature-card{border:1.5px solid rgba(212,168,67,.3);border-radius:14px;padding:18px 16px;margin-bottom:16px;background:rgba(255,255,255,.03);text-align:center;}
+.feature-card .feature-icon{font-size:26px;margin-bottom:8px;display:block;}
+.feature-card h3{font-family:'Heebo',sans-serif;font-size:16px;font-weight:800;color:#fff;margin:0 0 8px;}
+.feature-card p{font-family:'Assistant',sans-serif;font-size:13.5px;line-height:1.5;color:rgba(255,255,255,.65);margin:0;}
+.video-card{padding:14px 14px 4px;}
+.video-card .video-wrap{margin-bottom:10px;}
+.timer-card{border:1.5px solid rgba(212,168,67,.35);border-radius:14px;padding:16px 14px 4px;margin-bottom:16px;background:rgba(255,255,255,.03);text-align:center;}
+.timer-card .timer-card-title{font-family:'Heebo',sans-serif;font-size:14px;font-weight:800;color:rgba(255,220,80,.9);margin-bottom:4px;}
+.timer-card .countdown-clock{margin:2px auto 16px;}
+.click-chevrons{margin-top:10px;font-size:20px;color:#f5c842;letter-spacing:2px;animation:arrowBounce 1.2s ease-in-out infinite;}
+.click-label{font-size:11px;font-weight:800;color:rgba(255,220,80,.8);margin-top:2px;letter-spacing:.5px;}
+.btn-arrow{font-size:20px;margin-inline-end:6px;line-height:1;}
+
 .cta-arrow{text-align:center;font-size:26px;line-height:1;margin:-2px 0 10px;color:#f5c842;animation:arrowBounce 1.2s ease-in-out infinite;}
 @keyframes arrowBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(8px);}}
 
@@ -67,7 +80,7 @@ canvas#particles{position:fixed;inset:0;z-index:0;pointer-events:none;}
 .step-item:nth-child(1){animation:slideInRight .5s .3s ease both;}
 .step-item:nth-child(2){animation:slideInRight .5s .5s ease both;}
 .step-item:nth-child(3){animation:slideInRight .5s .7s ease both;}
-.btn-main{display:flex;width:100%;height:60px;background:linear-gradient(135deg,#b8860a,#f5c842,#d4920a);background-size:200% auto;color:#000;font-family:'Heebo',sans-serif;font-size:21px;font-weight:900;border:none;border-radius:10px;cursor:pointer;pointer-events:auto;align-items:center;justify-content:center;letter-spacing:.3px;position:relative;overflow:hidden;margin-bottom:8px;box-shadow:0 6px 30px rgba(212,168,67,.5);animation:btnPulse 2.5s ease-in-out infinite,btnShimmer 3s linear infinite,btnWiggle 4s 2s ease-in-out infinite;transition:transform .2s,box-shadow .2s;}
+.btn-main{display:flex;width:100%;height:66px;background:linear-gradient(135deg,#b8860a,#f5c842,#d4920a);background-size:200% auto;color:#000;font-family:'Heebo',sans-serif;font-size:22px;font-weight:900;border:none;border-radius:10px;cursor:pointer;pointer-events:auto;align-items:center;justify-content:center;letter-spacing:.3px;position:relative;overflow:hidden;margin-bottom:8px;box-shadow:0 6px 30px rgba(212,168,67,.5);animation:btnPulse 2.5s ease-in-out infinite,btnShimmer 3s linear infinite,btnVibrate 3s ease-in-out infinite;transition:transform .2s,box-shadow .2s;}
 .btn-main:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 10px 50px rgba(212,168,67,.7);}
 .btn-main::after{content:'';position:absolute;top:0;left:-120%;width:45%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);animation:shine 2s ease-in-out infinite;}
 .micro-copy{font-size:12px;color:rgba(255,255,255,.4);text-align:center;margin-bottom:16px;}
@@ -87,9 +100,9 @@ canvas#particles{position:fixed;inset:0;z-index:0;pointer-events:none;}
 .countdown-clock.cc-critical .cc-box{border-color:#ff2b2b;}
 .countdown-clock.cc-critical .cc-num{color:#ff5252;}
 @keyframes ccPulseFast{0%,100%{box-shadow:0 0 0 0 rgba(255,0,0,.45);transform:scale(1)}50%{box-shadow:0 0 30px 6px rgba(255,0,0,.65);transform:scale(1.035)}}
-.sticky-cta{position:fixed;bottom:0;left:0;right:0;z-index:100;background:linear-gradient(transparent,rgba(0,0,0,.95) 30%);padding:16px 20px 24px;display:flex;flex-direction:column;align-items:center;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .4s,visibility .4s;}
+.sticky-cta{position:fixed;bottom:0;left:0;right:0;z-index:100;background:linear-gradient(transparent,rgba(0,0,0,.95) 30%);padding:16px 20px 24px;display:flex;flex-direction:column;align-items:center;pointer-events:auto;opacity:1;visibility:visible;}
 .sticky-cta.visible{opacity:1;pointer-events:auto;visibility:visible;}
-.sticky-cta .btn-main{max-width:420px;height:54px;font-size:18px;margin-bottom:6px;}
+.sticky-cta .btn-main{max-width:420px;height:60px;font-size:19px;margin-bottom:6px;}
 .sticky-sub{font-size:11px;color:rgba(255,255,255,.3);text-align:center;}
 .popup-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px);}
 .popup-overlay.open{display:flex;}
@@ -268,24 +281,39 @@ window.submitForm = async function submitForm() {
     <h1 class="card-headline">משהו קורה עכשיו —<br>ואנשים כבר מייצרים תוצאות.</h1>
     <div class="card-sub">זה לא כישרון<br>זה לא מזל<br>זה פשוט להבין איך זה עובד</div>
     <p class="tension-line">ורוב האנשים… עדיין לא ראו את זה</p>
-    <div class="video-wrap"><iframe src="https://www.youtube.com/embed/UlnfZmtXiRk" title="סרטון הסבר" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>
-    <p class="video-title">🎬 הצצה קצרה לפני שממשיכים</p>
     <div class="icon-row">
-      <div class="icon-item"><span class="ico">⏱</span>5 דקות</div>
-      <div class="icon-item"><span class="ico">▶️</span>הסבר ברור</div>
       <div class="icon-item"><span class="ico">🔒</span>גישה מאובטחת</div>
+      <div class="icon-item"><span class="ico">▶️</span>הסבר ברור</div>
+      <div class="icon-item"><span class="ico">⏱</span>5 דקות</div>
     </div>
-    <p class="trust-line">🔒 שיטה מאומתת, ללא הבטחות ריקות</p>
-    <div class="countdown-clock">
-      <div class="cc-digits">
-        <div class="cc-box"><span class="cc-num cd-secs">00</span><span class="cc-unit">שניות</span></div>
-        <div class="cc-sep">:</div>
-        <div class="cc-box"><span class="cc-num cd-mins">02</span><span class="cc-unit">דקות</span></div>
+    <div class="feature-card">
+      <span class="feature-icon">🎁</span>
+      <h3>מה תראה ברגע שנכנסים?</h3>
+      <p>פירוט קצר וממוקד שמסביר איך זה בנוי — בלי הבטחות ריקות ובלי סיבוכים מיותרים.</p>
+    </div>
+    <div class="feature-card video-card">
+      <div class="video-wrap"><iframe src="https://www.youtube.com/embed/UlnfZmtXiRk?autoplay=1&mute=1&playsinline=1&rel=0" title="סרטון הסבר" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+      <p class="video-title">🎬 הצצה קצרה לפני שממשיכים</p>
+    </div>
+    <div class="timer-card">
+      <p class="timer-card-title">⏳ הגישה נשמרת עבורך רק לעוד:</p>
+      <div class="countdown-clock">
+        <div class="cc-digits">
+          <div class="cc-box"><span class="cc-num cd-secs">00</span><span class="cc-unit">שניות</span></div>
+          <div class="cc-sep">:</div>
+          <div class="cc-box"><span class="cc-num cd-mins">02</span><span class="cc-unit">דקות</span></div>
+        </div>
       </div>
     </div>
+    <div class="feature-card">
+      <span class="feature-icon">🎯</span>
+      <h3>שלב אחרון לפני שרואים הכל</h3>
+      <p>לחיצה אחת מפרידה בינך לבין ההסבר המלא — בלי טפסים ארוכים ובלי בלגן.</p>
+      <div class="click-chevrons">≫ ≫</div>
+      <div class="click-label">לחץ עכשיו</div>
+    </div>
     <p class="tension-line" style="margin-bottom:14px;">אל תשאיר את זה סתם ברקע — תתחיל עכשיו</p>
-    <div class="cta-arrow">⬇</div>
-    <button class="btn-main" onclick="openPopup()">תן לי גישה עכשיו</button>
+    <button class="btn-main" onclick="openPopup()"><span class="btn-arrow">»</span>תן לי גישה עכשיו</button>
     <p class="micro-copy">🔒 סרטונים קצרים, פרקטיים וללא התחייבות. מומלץ לראות עד הסוף.</p>
   </div>
 </div>
@@ -359,9 +387,6 @@ window.submitForm = async function submitForm() {
 })();
 
 
-window.addEventListener('scroll', function() {
-  document.getElementById('stickyCta').classList.toggle('visible', window.scrollY > 180);
-}, {passive:true});
 document.addEventListener('DOMContentLoaded', () => {
     loadFacebookPixel();
     if(typeof initCountdown==='function') initCountdown();
