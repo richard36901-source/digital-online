@@ -161,9 +161,9 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.06);}
     <div class="circle-num">1</div>
     <div class="circle-label">מתוך 2 שלבים</div>
   </div>
-  <h1 class="headline">למה יש אנשים שממשיכים להתקדם, ואחרים תקועים באותו מקום בדיוק?</h1>
-  <p class="subline">אם גם אתם מרגישים שבלי קשר לכמות המאמץ, שום דבר לא ממש נשאר בסוף היום - הסרטון הקצר הזה יראה לכם למה זה קורה, ולמה זו כמעט אף פעם לא בעיה של מוטיבציה.</p>
-  <p class="watch-hint">🎥 תנו לזה כמה דקות. החלק האחרון פותח זווית שכנראה עוד לא חשבתם עליה.</p>
+  <h1 class="headline">למה יש אנשים שעובדים קשה במשך שנים...<br>ועדיין כמעט לא מתקדמים?</h1>
+  <p class="subline">אולי הבעיה היא בכלל לא בכמה אתם עובדים... אלא במה שהעולם באמת מתגמל. בסרטון הזה תתחילו להבין למה.</p>
+  <p class="watch-hint">🎥 צפו עד הסוף. המשפט האחרון בסרטון הוא בדיוק מה שמוביל לחלק הבא.</p>
 
   <div class="vid-outer">
     <div class="vid-box">
@@ -182,20 +182,23 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.06);}
   </div>
 
   <div class="next-box">
-    <p class="next-title">אם הבנתם עכשיו למה אתם מרגישים תקועים - השלב הבא הוא להבין מה עושים עם זה.</p>
-    <p class="next-body">בסרטון הזה יצאנו מנקודת הנחה שגויה: שהבעיה היא זמן, כסף או מאמץ. בפועל, הבעיה האמיתית היא שכל יום מתחיל מאפס, בלי שדבר באמת נשאר מהיום שלפניו. ברגע שרואים את זה נכון, עולה שאלה אחת: מה בעצם גורם לדברים להצטבר במקום להתאפס?</p>
-    <p class="next-close">בסרטון הבא נראה מה בעצם משתנה אצל אנשים שמצליחים לשמור על התקדמות רציפה - וזה לא קיצור דרך, אלא דרך חשיבה אחרת לגמרי.</p>
+    <p class="next-title">אם העולם כבר לא מתגמל רק זמן ומאמץ... מה הוא כן מתגמל?</p>
+    <p class="next-body">זו בדיוק השאלה שנענה עליה בסרטון הבא.</p>
+    <ul class="teaser-list">
+      <li>✓ למה אנשים יכולים להשקיע מאמץ דומה — ולהגיע לתוצאות שונות לחלוטין.</li>
+      <li>✓ מה באמת בונה התקדמות שממשיכה לצבור ערך לאורך זמן.</li>
+      <li>✓ ולמה רוב האנשים עובדים לפי המדד הלא נכון.</li>
+    </ul>
   </div>
 
-  <p class="closing-hint">המשך לסרטון הבא ← "מה עושים עם זה בפועל?"</p>
+  <p class="closing-hint">עוד דקה אחת... והתמונה מתחילה להתחבר.</p>
   <div class="btn-box">
-    <a class="btn-next" id="btnNext" data-text="לעבור לשלב הבא" href="two-page-funnel-new-2-b-2.html">
-      🔒&nbsp; לעבור לשלב הבא &nbsp;<span class="btn-arrow">←</span>
+    <a class="btn-next" id="btnNext" data-text="המשך לסרטון הבא" href="two-page-funnel-new-2-b-2.html">
+      🔒&nbsp; המשך לסרטון הבא &nbsp;<span class="btn-arrow">←</span>
     </a>
-    <p class="lock-hint" style="margin-top:10px;margin-bottom:0;">🔒 הכפתור ייפתח בסיום הסרטון</p>
+    <p class="lock-hint" style="margin-top:10px;margin-bottom:0;">🔒 עוד שלב אחד — ותראו את התמונה המלאה</p>
     <div class="series-block">
-      <p class="series-line">✅ סרטון 1 – למה אתם תקועים<br>⬜ סרטון 2 – איך זה עובד במציאות</p>
-      <p class="importance-line">בסרטון הבא נראה איך כל מה שלמדת כאן הופך לתהליך אחד שעובד בפועל, מהחשיפה הראשונה ועד לתוצאה.</p>
+      <p class="series-line">✅ סרטון 1 — למה אנשים נשארים תקועים<br>⬜ סרטון 2 — מה העולם באמת מתגמל</p>
     </div>
   </div>
 
@@ -302,7 +305,7 @@ window.addEventListener('load',()=>{
     watchsecSent=true;
     fetch(TRACK_HOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({wmetric:'video_1',wsec:Math.round(video.duration||0),panel:panel})}).catch(()=>{});
     btnNext.classList.add('unlocked');
-    btnNext.innerHTML='&#9658;&nbsp; לעבור לשלב הבא &nbsp;<span class="btn-arrow">←</span>';
+    btnNext.innerHTML='&#9658;&nbsp; המשך לסרטון הבא &nbsp;<span class="btn-arrow">←</span>';
     setTimeout(()=>{btnNext.scrollIntoView({behavior:'smooth',block:'center'});},300);
   });
 });
@@ -325,7 +328,7 @@ setTimeout(function(){
   b.classList.add('unlocked');
   b.style.cursor='pointer';
   b.style.pointerEvents='auto';
-  b.innerHTML='&#9658;&nbsp; לעבור לשלב הבא &nbsp;<span class="btn-arrow">&#8592;</span>';
+  b.innerHTML='&#9658;&nbsp; המשך לסרטון הבא &nbsp;<span class="btn-arrow">&#8592;</span>';
   setTimeout(function(){b.scrollIntoView({behavior:'smooth',block:'center'});},300);
 },60000);
 </script>
