@@ -423,6 +423,9 @@
   .lp-stat-rate { font-size: 10px; color: var(--text-3); margin-top: 3px; }
   .lp-stat.entry .lp-stat-val { color: var(--good); }
 
+  .watchtime-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+  .watchtime-card-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
+
   /* Titles/headers that are now clickable links straight to the live page --
      keep them visually identical to plain text (no blue link styling, no
      underline until hover) so the linkified titles don't look out of place
@@ -601,6 +604,17 @@
     </table>
   </div>
 
+  <div class="section-head">
+    <h2>
+      <span class="sicn" style="background:var(--pb-soft, #e0f2fe);color:var(--pb, #0369a1);">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </span>
+      זמן צפייה ממוצע בסרטון לפני נטישה
+    </h2>
+    <span class="meta">לכל כניסה לסרטון נשלחת נקודת מדידה אחת: זמן הצפייה המלא אם הסרטון הושלם, או המיקום האחרון שנצפה אם הדף ננטש קודם — הממוצע כאן הוא סך השניות חלקי מספר הדגימות</span>
+  </div>
+
+  <div class="watchtime-grid" id="watchtime_grid"></div>
 
   <div class="section-head">
     <h2>
@@ -1038,6 +1052,7 @@ function render() {
   renderHeadToHead();
   renderHeadToHeadHistory();
   renderVideoVersions();
+  renderWatchTime();
 }
 
 /* ============================================================================
@@ -1360,6 +1375,53 @@ function renderFunnelComparison() {
     el.querySelector('.fw-winner-tag').textContent = isWinner ? ' — המנצח' : '';
     el.classList.toggle('is-winner', isWinner);
   });
+}
+
+// Average seconds watched before abandonment/completion, per funnel
+// variant panel and video step. Backed by f{panel}_{video_1|video_2}_watchsec_sum
+// / _watchsec_count cells, fed by a single watch-time ping per page-view
+// (sent on 'ended' with the full duration, or as a beforeunload fallback
+// with the last known playback position if the visitor left first) --
+// see the funnel pages' TRACK_HOOK wiring for wmetric/wsec/panel.
+function avgWatchSec(panel, videoKey) {
+  const sum = m(`f${panel}_${videoKey}_watchsec_sum`);
+  const count = m(`f${panel}_${videoKey}_watchsec_count`);
+  return count > 0 ? sum / count : null;
+}
+
+function fmtSec(s) {
+  if (s == null) return '—';
+  const r = Math.round(s);
+  const mm = Math.floor(r / 60), ss = r % 60;
+  return mm > 0 ? `${mm}:${String(ss).padStart(2, '0')}` : `${ss} שנ'`;
+}
+
+function renderWatchTime() {
+  const container = document.getElementById('watchtime_grid');
+  if (!container) return;
+  container.innerHTML = FUNNEL_GROUPS.map(group => {
+    const panel = group.panels[0];
+    const v1 = avgWatchSec(panel, 'video_1');
+    const v1n = m(`f${panel}_video_1_watchsec_count`);
+    const v2 = avgWatchSec(panel, 'video_2');
+    const v2n = m(`f${panel}_video_2_watchsec_count`);
+    return `
+      <div class="lp-stats-card">
+        <div class="watchtime-card-title">${group.label}</div>
+        <div class="lp-stats-grid">
+          <div class="lp-stat">
+            <div class="lp-stat-val mono">${fmtSec(v1)}</div>
+            <div class="lp-stat-lbl">זמן צפייה ממוצע · סרטון 1</div>
+            <div class="lp-stat-rate">${fmt(v1n)} דגימות</div>
+          </div>
+          <div class="lp-stat">
+            <div class="lp-stat-val mono">${fmtSec(v2)}</div>
+            <div class="lp-stat-lbl">זמן צפייה ממוצע · סרטון 2</div>
+            <div class="lp-stat-rate">${fmt(v2n)} דגימות</div>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
 }
 
 function renderHeadToHead() {
