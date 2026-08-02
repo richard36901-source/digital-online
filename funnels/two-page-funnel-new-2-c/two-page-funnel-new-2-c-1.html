@@ -161,9 +161,9 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.06);}
     <div class="circle-num">1</div>
     <div class="circle-label">מתוך 2 שלבים</div>
   </div>
-  <h1 class="headline">התקדמות אמיתית לא קורית במקרה - יש לה מנגנון. הנה איך הוא נראה.</h1>
-  <p class="subline">אם גם אתם מרגישים שכל חודש אתם מתחילים כמעט מאפס, למרות כל מה שכבר עשיתם - הסרטון הזה מסביר בדיוק למה זה קורה, ולמה זה הרבה יותר נפוץ ממה שנראה.</p>
-  <p class="watch-hint">🎥 הישארו עד הסוף. השאלה שנשאלת בדקות האחרונות משנה את כל זווית ההסתכלות.</p>
+  <h1 class="headline">כנראה שהבעיה היא לא כמה אתם עובדים...<br>אלא לפי אילו חוקים אתם מנסים להתקדם.</h1>
+  <p class="subline">בסרטון הזה התחלתם להבין למה אנשים יכולים לעבוד קשה במשך שנים... ועדיין להרגיש שכל חודש הם כמעט מתחילים מחדש. עכשיו הגיע הזמן להבין מה העולם באמת מתחיל לתגמל.</p>
+  <p class="watch-hint">🎥 צפו עד הסוף - החלק האחרון פותח את החלק הבא.</p>
 
   <div class="vid-outer">
     <div class="vid-box">
@@ -182,20 +182,23 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.06);}
   </div>
 
   <div class="next-box">
-    <p class="next-title">עכשיו כשראיתם למה זה קורה - השאלה הבאה היא מה עושים עם זה.</p>
-    <p class="next-body">בסרטון הזה פירקנו את התחושה של "לרוץ במקום" לגורם האמיתי שמאחוריה: לא זמן, לא כסף, ולא כמות המאמץ - אלא היעדר מנגנון שגורם לדברים להצטבר. ברגע שמבינים את זה, נשארת שאלה אחת מרכזית: איך בונים כזה מנגנון בעצמכם?</p>
-    <p class="next-close">בסרטון הבא נראה מה בדיוק גורם לחלק מהאנשים להתקדם באופן עקבי - וזה קרוב יותר לשיטת עבודה מסודרת מאשר לכל "טריק" חד פעמי.</p>
+    <p class="next-title">אם הסרטון הזה גרם לכם לעצור לרגע... כנראה שגם אתם מרגישים שיש משהו שלא מסתדר.</p>
+    <p class="next-body">אנשים עובדים קשה. משקיעים. מתקדמים. ועדיין, אצל רבים התחושה היא שהם בונים בעיקר את החודש הבא — ולא משהו שממשיך לייצר ערך לאורך זמן. בסרטון הבא תבינו למה.</p>
+    <ul class="teaser-list">
+      <li>✓ למה שני אנשים יכולים להשקיע מאמץ דומה — ולהגיע למציאות שונה לחלוטין.</li>
+      <li>✓ מה באמת ממשיך לצבור ערך גם אחרי שהפעולה עצמה הסתיימה.</li>
+      <li>✓ ולמה רוב האנשים עדיין מודדים הצלחה לפי מדד שכבר לא מייצג את העולם של היום.</li>
+    </ul>
   </div>
 
-  <p class="closing-hint">המשך לסרטון הבא ← "מה גורם לזה לעבוד בפועל?"</p>
+  <p class="closing-hint">נשאר עוד סרטון אחד בלבד... והתמונה תתחיל להתחבר.</p>
   <div class="btn-box">
-    <a class="btn-next" id="btnNext" data-text="לעבור לשלב הבא" href="two-page-funnel-new-2-c-2.html">
-      🔒&nbsp; לעבור לשלב הבא &nbsp;<span class="btn-arrow">←</span>
+    <a class="btn-next" id="btnNext" data-text="המשך לסרטון הבא" href="two-page-funnel-new-2-c-2.html">
+      🔒&nbsp; המשך לסרטון הבא &nbsp;<span class="btn-arrow">←</span>
     </a>
-    <p class="lock-hint" style="margin-top:10px;margin-bottom:0;">🔒 הכפתור ייפתח בסיום הסרטון</p>
+    <p class="lock-hint" style="margin-top:10px;margin-bottom:0;">🔒 עוד שלב אחד — ותראו את התמונה המלאה</p>
     <div class="series-block">
-      <p class="series-line">✅ סרטון 1 – למה אתם תקועים<br>⬜ סרטון 2 – איך זה עובד במציאות</p>
-      <p class="importance-line">בסרטון הבא נראה איך כל מה שלמדת כאן הופך לתהליך אחד שעובד בפועל, מהחשיפה הראשונה ועד לתוצאה.</p>
+      <p class="series-line">✅ סרטון 1 — למה אנשים נשארים תקועים<br>⬜ סרטון 2 — מה העולם באמת מתגמל</p>
     </div>
   </div>
 
@@ -302,7 +305,7 @@ window.addEventListener('load',()=>{
     watchsecSent=true;
     fetch(TRACK_HOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({wmetric:'video_1',wsec:Math.round(video.duration||0),panel:panel})}).catch(()=>{});
     btnNext.classList.add('unlocked');
-    btnNext.innerHTML='&#9658;&nbsp; לעבור לשלב הבא &nbsp;<span class="btn-arrow">←</span>';
+    btnNext.innerHTML='&#9658;&nbsp; המשך לסרטון הבא &nbsp;<span class="btn-arrow">←</span>';
     setTimeout(()=>{btnNext.scrollIntoView({behavior:'smooth',block:'center'});},300);
   });
 });
@@ -325,7 +328,7 @@ setTimeout(function(){
   b.classList.add('unlocked');
   b.style.cursor='pointer';
   b.style.pointerEvents='auto';
-  b.innerHTML='&#9658;&nbsp; לעבור לשלב הבא &nbsp;<span class="btn-arrow">&#8592;</span>';
+  b.innerHTML='&#9658;&nbsp; המשך לסרטון הבא &nbsp;<span class="btn-arrow">&#8592;</span>';
   setTimeout(function(){b.scrollIntoView({behavior:'smooth',block:'center'});},300);
 },60000);
 </script>
