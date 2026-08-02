@@ -575,27 +575,52 @@
   <div class="section-head">
     <h2>
       <span class="sicn" style="background:var(--pb-soft);color:var(--pb);">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
       </span>
-      כל דפי הנחיתה והפאנלים שנוצרו אי פעם
+      דפי נחיתה שנוצרו אי פעם
     </h2>
     <span class="meta">כולל כאלה שאינם פעילים כרגע · שורות אפורות עם התג "לא פעיל" לא מקבלות תנועה חדשה, אך הנתונים ההיסטוריים שלהן נשארים כאן</span>
   </div>
 
   <div class="panel-registry-wrap">
-    <table class="panel-registry-table" aria-label="כל דפי הנחיתה והפאנלים">
+    <table class="panel-registry-table" aria-label="דפי נחיתה שנוצרו אי פעם">
       <thead>
         <tr>
           <th scope="col">#</th>
           <th scope="col">שם</th>
-          <th scope="col">סוג</th>
           <th scope="col">סטטוס</th>
           <th scope="col">כניסות</th>
           <th scope="col">המרות</th>
           <th scope="col">אחוז המרה</th>
         </tr>
       </thead>
-      <tbody id="panel_registry_body"></tbody>
+      <tbody id="panel_registry_landing_body"></tbody>
+    </table>
+  </div>
+
+  <div class="section-head">
+    <h2>
+      <span class="sicn" style="background:var(--pb-soft);color:var(--pb);">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
+      </span>
+      משפכים (פאנלים) שנוצרו אי פעם
+    </h2>
+    <span class="meta">כולל כאלה שאינם פעילים כרגע · שורות אפורות עם התג "לא פעיל" לא מקבלות תנועה חדשה, אך הנתונים ההיסטוריים שלהן נשארים כאן</span>
+  </div>
+
+  <div class="panel-registry-wrap">
+    <table class="panel-registry-table" aria-label="משפכים שנוצרו אי פעם">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">שם</th>
+          <th scope="col">סטטוס</th>
+          <th scope="col">כניסות</th>
+          <th scope="col">המרות</th>
+          <th scope="col">אחוז המרה</th>
+        </tr>
+      </thead>
+      <tbody id="panel_registry_funnel_body"></tbody>
     </table>
   </div>
 
@@ -663,34 +688,6 @@
   </div>
 
   <div class="watchtime-grid" id="watchtime_grid"></div>
-
-  <div class="section-head">
-    <h2>
-      <span class="sicn" style="background:var(--bad-bg);color:var(--bad);">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-      </span>
-      אחוז סגירת עסקה · לפי שלב הנטישה במשפך
-    </h2>
-    <span class="meta">מבוסס על סטטוס "טופל-נסגרה עסקה" ב-LeadManager, מוצלב מול השלב האחרון שהליד הגיע אליו במעקב שלנו</span>
-  </div>
-
-  <div class="close-stage-wrap">
-    <div class="close-stage-note">
-      ⚠️ המעקב הפנימי (Lead Journey) פעיל כ-11 יום בלבד, כך שזו תמונה ראשונית — עסקאות רבות עדיין "בדרך" ולא נסגרו. הנתון מתעדכן <strong>אחת לשבוע</strong> מול LeadManager, כדי לשקף גם עסקאות שנסגרות בפיגור אחרי הכניסה לליד.
-    </div>
-    <table class="close-stage-table" id="close_stage_table" aria-label="אחוז סגירה לפי שלב נטישה">
-      <thead>
-        <tr>
-          <th scope="col">היכן הליד נטש</th>
-          <th scope="col">סה"כ לידים</th>
-          <th scope="col">מהם נסגרה עסקה</th>
-          <th scope="col">אחוז סגירה</th>
-        </tr>
-      </thead>
-      <tbody id="close_stage_body"></tbody>
-    </table>
-    <div class="close-stage-updated" id="close_stage_updated"></div>
-  </div>
 
   <div class="section-head">
     <h2>
@@ -767,6 +764,34 @@
   </div>
 
   <div class="vv-grid" id="video_versions_grid"></div>
+
+  <div class="section-head">
+    <h2>
+      <span class="sicn" style="background:var(--bad-bg);color:var(--bad);">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </span>
+      אחוז סגירת עסקה · לפי שלב הנטישה במשפך
+    </h2>
+    <span class="meta">מבוסס על סטטוס "טופל-נסגרה עסקה" ב-LeadManager, מוצלב מול השלב האחרון שהליד הגיע אליו במעקב שלנו</span>
+  </div>
+
+  <div class="close-stage-wrap">
+    <div class="close-stage-note">
+      ⚠️ המעקב הפנימי (Lead Journey) פעיל כ-11 יום בלבד, כך שזו תמונה ראשונית — עסקאות רבות עדיין "בדרך" ולא נסגרו. הנתון מתעדכן <strong>אחת לשבוע</strong> מול LeadManager, כדי לשקף גם עסקאות שנסגרות בפיגור אחרי הכניסה לליד.
+    </div>
+    <table class="close-stage-table" id="close_stage_table" aria-label="אחוז סגירה לפי שלב נטישה">
+      <thead>
+        <tr>
+          <th scope="col">היכן הליד נטש</th>
+          <th scope="col">סה"כ לידים</th>
+          <th scope="col">מהם נסגרה עסקה</th>
+          <th scope="col">אחוז סגירה</th>
+        </tr>
+      </thead>
+      <tbody id="close_stage_body"></tbody>
+    </table>
+    <div class="close-stage-updated" id="close_stage_updated"></div>
+  </div>
 
 </main>
 
@@ -1268,33 +1293,39 @@ function panelUrl(panelNum) {
 const ACTIVE_PANELS = new Set([2, 8, 12, 14, 15, 16, 17]);
 
 // Renders every panel ever created (from PANEL_LEGEND, which is never
-// pruned) into one flat table, active or not -- so nothing the site has
-// ever run is hidden. Inactive rows are visually muted (.pr-inactive) and
-// carry an explicit "not receiving traffic" pill rather than being dropped
-// or tucked into a collapsed section.
+// pruned) into two flat tables split by type (landing pages / funnels),
+// active or not -- so nothing the site has ever run is hidden. Inactive
+// rows are visually muted (.pr-inactive) and carry an explicit "not
+// receiving traffic" pill rather than being dropped or tucked into a
+// collapsed section.
+function renderPanelRegistryRow(p) {
+  const isActive = ACTIVE_PANELS.has(p.panel);
+  const entries = Math.max(m(`f${p.panel}_entry`), m(`f${p.panel}_video_1`));
+  const conv = p.type === 'funnel' ? m(`f${p.panel}_webinar`) : m(`f${p.panel}_landing`);
+  const rate = pct(conv, entries);
+  const statusPill = isActive
+    ? '<span class="pr-pill pr-live">🟢 פעיל · מקבל תנועה</span>'
+    : '<span class="pr-pill pr-off">⚪ לא פעיל · לא מוזרמת תנועה</span>';
+  return `
+    <tr class="${isActive ? '' : 'pr-inactive'}">
+      <td class="pr-num mono">${p.panel}</td>
+      <td><a class="title-link" href="${SITE_BASE + p.path}" target="_blank" rel="noopener">${p.name}</a></td>
+      <td>${statusPill}</td>
+      <td class="mono">${fmt(entries)}</td>
+      <td class="mono">${fmt(conv)}</td>
+      <td class="mono">${fmtPct(rate)}</td>
+    </tr>`;
+}
+
 function renderPanelRegistry() {
-  const tbody = document.getElementById('panel_registry_body');
-  if (!tbody) return;
-  tbody.innerHTML = PANEL_LEGEND.map(p => {
-    const isActive = ACTIVE_PANELS.has(p.panel);
-    const entries = Math.max(m(`f${p.panel}_entry`), m(`f${p.panel}_video_1`));
-    const conv = p.type === 'funnel' ? m(`f${p.panel}_webinar`) : m(`f${p.panel}_landing`);
-    const rate = pct(conv, entries);
-    const typeLabel = p.type === 'funnel' ? 'משפך' : 'דף נחיתה';
-    const statusPill = isActive
-      ? '<span class="pr-pill pr-live">🟢 פעיל · מקבל תנועה</span>'
-      : '<span class="pr-pill pr-off">⚪ לא פעיל · לא מוזרמת תנועה</span>';
-    return `
-      <tr class="${isActive ? '' : 'pr-inactive'}">
-        <td class="pr-num mono">${p.panel}</td>
-        <td><a class="title-link" href="${SITE_BASE + p.path}" target="_blank" rel="noopener">${p.name}</a></td>
-        <td>${typeLabel}</td>
-        <td>${statusPill}</td>
-        <td class="mono">${fmt(entries)}</td>
-        <td class="mono">${fmt(conv)}</td>
-        <td class="mono">${fmtPct(rate)}</td>
-      </tr>`;
-  }).join('');
+  const landingBody = document.getElementById('panel_registry_landing_body');
+  const funnelBody = document.getElementById('panel_registry_funnel_body');
+  if (landingBody) {
+    landingBody.innerHTML = PANEL_LEGEND.filter(p => p.type === 'landing').map(renderPanelRegistryRow).join('');
+  }
+  if (funnelBody) {
+    funnelBody.innerHTML = PANEL_LEGEND.filter(p => p.type === 'funnel').map(renderPanelRegistryRow).join('');
+  }
 }
 
 /* ============================================================================
