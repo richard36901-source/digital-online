@@ -258,6 +258,7 @@ window.addEventListener('scroll',()=>{
 const t0=Date.now();
 const vm={};[25,50,75,100].forEach(m=>vm[m]=0);
 let lastPos=0,lastPct=0;
+let watchsecSent=false;
 
 async function resolveSupplier(pms) {
   if (pms.supplier) return pms.supplier;
@@ -364,10 +365,13 @@ window.addEventListener('load',()=>{
     fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({event:'video_completed',page:PAGE,pct_watched:100,supplier:sup,utm_source:src,timestamp:new Date().toLocaleString('he-IL')})
     }).catch(()=>{});
+    watchsecSent=true;
+    fetch(TRACK_HOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({wmetric:'video_2',wsec:Math.round(video.duration||0),panel:panel})}).catch(()=>{});
   });
 });
 window.addEventListener('beforeunload',()=>{
   if(navigator.sendBeacon){
+    if(!watchsecSent && lastPos>0){navigator.sendBeacon(TRACK_HOOK,JSON.stringify({wmetric:'video_2',wsec:Math.round(lastPos),panel:panel}));}
     navigator.sendBeacon(WEBHOOK,JSON.stringify({
       event:'page_exit',page:PAGE,phone:phone,email:email,position_sec:Math.round(lastPos),pct_watched:lastPct,
       seconds_on_page:Math.round((Date.now()-t0)/1000),supplier:sup,utm_source:src,
