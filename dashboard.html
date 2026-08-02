@@ -190,6 +190,11 @@
   }
   .fcol-head .inner { display: flex; align-items: center; justify-content: center; gap: 6px; }
   .fcol-head.label { background: transparent; color: var(--text-3); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; }
+  .history-block { border: 1px solid var(--line, #e5e0d8); border-radius: 12px; padding: 10px 14px; margin: 4px 0 20px; background: rgba(0,0,0,.015); }
+  .history-summary { cursor: pointer; font-size: 13px; font-weight: 700; color: var(--text-2, #555); list-style: none; display: flex; align-items: center; gap: 8px; user-select: none; }
+  .history-summary::-webkit-details-marker { display: none; }
+  .history-summary::before { content: '▸'; font-size: 11px; transition: transform .15s; }
+  .history-block[open] .history-summary::before { transform: rotate(90deg); }
   .fcol-head.f1 { background: var(--f1-bg); color: var(--f1); border: 1px solid var(--f1-border); }
   .fcol-head.f2 { background: var(--f2-bg); color: var(--f2); border: 1px solid var(--f2-border); }
   .fcol-head.f3 { background: var(--f3-bg); color: var(--f3); border: 1px solid var(--f3-border); }
@@ -548,54 +553,48 @@
       <span class="sicn">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
       </span>
-      השוואת משפכים · פיצול 4 זרועות
+      השוואת משפכים · New 2 מול Variant B מול Variant C
     </h2>
     <span class="meta">המרה לאורך מסע הווידאו, מבחן הפיצול הפעיל כרגע</span>
   </div>
 
   <div class="funnel-wrap">
     <div class="funnel-title-row">
-      <h3 id="funnelCaption">בדיקת משפך המרות · Two-Page Funnel מול Funnel D V2 מול שני משפכי הקופי החדשים</h3>
-      <p>כל 5 דפי הנחיתה מפצלים את התנועה 25/25/25/25 בין 4 הזרועות לפני כניסה לסרטון הראשון · פאנל 6 = Two-Page Funnel (משפך דו-שלבי), פאנל 7 = Funnel D V2, פאנל 9 = Two-Page Funnel New 1 (קופי חדש), פאנל 10 = Two-Page Funnel New 2 (קופי חדש) · האחוז בכל שורה = כמה מהכניסות לאותה גרסה הגיעו לשלב הזה · המשפכים הדו-שלביים (6, 9, 10) מסתיימים אחרי וידאו 2, ולכן אין להם נתונים לשלבים 3-4</p>
+      <h3 id="funnelCaption">בדיקת משפך המרות · New 2 (בסיס) מול שני השכפולים שלו עם עיצוב וקופי שונים</h3>
+      <p>כל דפי הנחיתה הפעילים מפצלים את התנועה 50/50 בין Variant B ו-Variant C לפני כניסה לסרטון הראשון · שני הווריאנטים משתמשים באותם 2 סרטונים בדיוק כמו New 2, רק העיצוב והקופי שונים · פאנל 10 = New 2 (הגרסה המקורית, לא מקבל יותר תנועה חדשה מההפניה אך נשאר כאן כבסיס השוואה), פאנל 16 = Variant B, פאנל 17 = Variant C · האחוז בכל שורה = כמה מהכניסות לאותה גרסה הגיעו לשלב הזה</p>
     </div>
 
     <table class="funnel-table" aria-labelledby="funnelCaption">
       <colgroup>
         <col class="lbl-col"/>
-        <col/><col/><col/><col/>
+        <col/><col/><col/>
       </colgroup>
       <thead>
         <tr>
           <th scope="col" class="fcol-head label">שלב</th>
-          <th scope="col" class="fcol-head f1"><span class="inner"><span class="dot" aria-hidden="true"></span> <a class="title-link" href="https://funnel.digitalonline.co.il/funnels/two-page-funnel/two-page-funnel-1.html" target="_blank" rel="noopener">Two-Page Funnel (פאנל 6)</a></span></th>
-          <th scope="col" class="fcol-head f2"><span class="inner"><span class="dot" aria-hidden="true"></span> <a class="title-link" href="https://funnel.digitalonline.co.il/funnels/funnel-d-v2/funnel-d-v2-1.html" target="_blank" rel="noopener">Funnel D V2 · עיצוב חדש (פאנל 7)</a></span></th>
-          <th scope="col" class="fcol-head f3"><span class="inner"><span class="dot" aria-hidden="true"></span> <a class="title-link" href="https://funnel.digitalonline.co.il/funnels/two-page-funnel-new-1/two-page-funnel-new-1-1.html" target="_blank" rel="noopener">New 1 · קופי חדש (פאנל 9)</a></span></th>
-          <th scope="col" class="fcol-head f4"><span class="inner"><span class="dot" aria-hidden="true"></span> <a class="title-link" href="https://funnel.digitalonline.co.il/funnels/two-page-funnel-new-2/two-page-funnel-new-2-1.html" target="_blank" rel="noopener">New 2 · קופי חדש (פאנל 10)</a></span></th>
+          <th scope="col" class="fcol-head f1"><span class="inner"><span class="dot" aria-hidden="true"></span> <a class="title-link" href="https://funnel.digitalonline.co.il/funnels/two-page-funnel-new-2/two-page-funnel-new-2-1.html" target="_blank" rel="noopener">New 2 (פאנל 10)</a></span></th>
+          <th scope="col" class="fcol-head f2"><span class="inner"><span class="dot" aria-hidden="true"></span> <a class="title-link" href="https://funnel.digitalonline.co.il/funnels/two-page-funnel-new-2-b/two-page-funnel-new-2-b-1.html" target="_blank" rel="noopener">Variant B (פאנל 16)</a></span></th>
+          <th scope="col" class="fcol-head f3"><span class="inner"><span class="dot" aria-hidden="true"></span> <a class="title-link" href="https://funnel.digitalonline.co.il/funnels/two-page-funnel-new-2-c/two-page-funnel-new-2-c-1.html" target="_blank" rel="noopener">Variant C (פאנל 17)</a></span></th>
         </tr>
       </thead>
       <tbody id="funnel_steps"></tbody>
       <tfoot id="funnel_winners">
         <tr>
           <th scope="row" class="fwinner-lbl">המרה סופית</th>
-          <td class="fwinner-cell" id="fw_twopage">
-            <div class="fwinner-trophy" aria-hidden="true"></div>
-            <div class="fwinner-rate mono">0.0%</div>
-            <div class="fwinner-name"><a class="title-link" href="https://funnel.digitalonline.co.il/funnels/two-page-funnel/two-page-funnel-1.html" target="_blank" rel="noopener">Two-Page Funnel</a><span class="sr-only fw-winner-tag"></span></div>
-          </td>
-          <td class="fwinner-cell" id="fw_dv2">
-            <div class="fwinner-trophy" aria-hidden="true"></div>
-            <div class="fwinner-rate mono">0.0%</div>
-            <div class="fwinner-name"><a class="title-link" href="https://funnel.digitalonline.co.il/funnels/funnel-d-v2/funnel-d-v2-1.html" target="_blank" rel="noopener">Funnel D V2</a><span class="sr-only fw-winner-tag"></span></div>
-          </td>
-          <td class="fwinner-cell" id="fw_tpfn1">
-            <div class="fwinner-trophy" aria-hidden="true"></div>
-            <div class="fwinner-rate mono">0.0%</div>
-            <div class="fwinner-name"><a class="title-link" href="https://funnel.digitalonline.co.il/funnels/two-page-funnel-new-1/two-page-funnel-new-1-1.html" target="_blank" rel="noopener">New 1</a><span class="sr-only fw-winner-tag"></span></div>
-          </td>
           <td class="fwinner-cell" id="fw_tpfn2">
             <div class="fwinner-trophy" aria-hidden="true"></div>
             <div class="fwinner-rate mono">0.0%</div>
             <div class="fwinner-name"><a class="title-link" href="https://funnel.digitalonline.co.il/funnels/two-page-funnel-new-2/two-page-funnel-new-2-1.html" target="_blank" rel="noopener">New 2</a><span class="sr-only fw-winner-tag"></span></div>
+          </td>
+          <td class="fwinner-cell" id="fw_tpfn2b">
+            <div class="fwinner-trophy" aria-hidden="true"></div>
+            <div class="fwinner-rate mono">0.0%</div>
+            <div class="fwinner-name"><a class="title-link" href="https://funnel.digitalonline.co.il/funnels/two-page-funnel-new-2-b/two-page-funnel-new-2-b-1.html" target="_blank" rel="noopener">Variant B</a><span class="sr-only fw-winner-tag"></span></div>
+          </td>
+          <td class="fwinner-cell" id="fw_tpfn2c">
+            <div class="fwinner-trophy" aria-hidden="true"></div>
+            <div class="fwinner-rate mono">0.0%</div>
+            <div class="fwinner-name"><a class="title-link" href="https://funnel.digitalonline.co.il/funnels/two-page-funnel-new-2-c/two-page-funnel-new-2-c-1.html" target="_blank" rel="noopener">Variant C</a><span class="sr-only fw-winner-tag"></span></div>
           </td>
         </tr>
       </tfoot>
@@ -684,6 +683,17 @@
     יוצגו כאן אוטומטית ברגע שיהיה להם מקור נתונים אמיתי.
   </p>
 
+  <details class="history-block">
+    <summary class="history-summary">
+      <span class="sicn" style="background:var(--pa-soft);color:var(--pa);">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+      </span>
+      היסטוריית גרסאות דפי נחיתה · מבחנים שהוחלפו (לחצו להרחבה)
+    </summary>
+    <p class="meta" style="margin:8px 0 12px;">שום נתון לא נמחק -- אלו מבחנים שהיו פעילים בעבר ואינם מקבלים תנועה חדשה כרגע, מוצגים כאן להשוואה היסטורית בלבד.</p>
+    <div class="ab-grid" id="ab_grid_history"></div>
+  </details>
+
   <div class="section-head">
     <h2>
       <span class="sicn" style="background:var(--pa-soft);color:var(--pa);">
@@ -725,18 +735,6 @@ const SHEET_TAB = 'Dashboard';             // ← tab name (default 'Dashboard')
    "0". */
 const HEAD_TO_HEAD_TESTS = [
   {
-    /* This card measures the landing page's OWN conversion -- entries (page
-       views) vs. actually submitting the lead form -- not the downstream
-       end-of-funnel conversion, which depends on the video funnel too and
-       would mix in noise unrelated to the landing page copy/design itself. */
-    title: 'דף נחיתה · OPTION2 מול OPTION2_V2', tag: 'landing', tagLabel: 'דף נחיתה',
-    conversionLabel: 'שלחו פרטים', conversionKey: 'landing',
-    variants: [
-      { name: 'OPTION2', desc: 'הגרסה המקורית (זהב)', panel: 2 },
-      { name: 'OPTION2_V2', desc: 'וריאציית CTR (כחול/כתום)', panel: 5 }
-    ]
-  },
-  {
     /* Newest experiment: OPTION2 (proven baseline, no video) against two
        new video-enabled variants built from the same winning copy/design --
        each embeds one of the two YouTube explainer videos near the top of
@@ -745,7 +743,10 @@ const HEAD_TO_HEAD_TESTS = [
        pre-button copy, popping CTA button) so the two variants can also be
        compared against each other, not just against the baseline. Same
        conversionKey as the other landing-page cards: entries vs. actually
-       submitting the lead form. */
+       submitting the lead form. This is the only ACTIVE landing-page test --
+       everything else that used to live here (OPTION2_V2, Option 26071/26072,
+       the original Option 1-4 test) has been moved down into
+       HEAD_TO_HEAD_HISTORY so this section only shows what's live today. */
     title: 'דף נחיתה · OPTION2 מול Video 1 מול Video 2', tag: 'landing', tagLabel: 'דף נחיתה · מבחן וידאו',
     conversionLabel: 'שלחו פרטים', conversionKey: 'landing',
     variants: [
@@ -755,13 +756,44 @@ const HEAD_TO_HEAD_TESTS = [
     ]
   },
   {
-    /* Newest landing-page CTR experiment: OPTION2 (the current baseline)
-       against two brand-new cosmetic/copy variants built specifically to
-       push CTR higher -- Option 26071 (red/orange urgency framing, panel 8)
-       and Option 26072 (blue/cyan curiosity framing, panel 11). Same
-       conversionKey as the other landing-page cards: entries vs. actually
-       submitting the lead form. */
-    title: 'דף נחיתה · OPTION2 מול Option 26071 מול Option 26072', tag: 'landing', tagLabel: 'דף נחיתה · מבחן CTR חדש',
+    /* Active funnel experiment: New 2 (baseline design/videos, panel 10)
+       against two brand-new cosmetic + copy duplicates of it -- Variant B
+       (panel 16) and Variant C (panel 17). Same two videos as New 2 in all
+       three arms; only the on-page design and copy differ. All landing-page
+       traffic now routes 50/50 into panels 16/17 only (see the redirect
+       logic in landing-pages/*.html) -- New 2 itself (panel 10) no longer
+       receives new redirected traffic but stays listed here as the active
+       baseline it's measured against, not archived into history. The old
+       4-arm test (Two-Page Funnel / Funnel D V2 / New 1 / New 2) has been
+       moved into HEAD_TO_HEAD_HISTORY. */
+    title: 'משפך וידאו · New 2 מול Variant B מול Variant C', tag: 'funnel', tagLabel: 'משפך וידאו · מבחן פעיל',
+    conversionLabel: 'השאירו פרטים', conversionKey: 'webinar',
+    robustBase: true,
+    variants: [
+      { name: 'New 2', desc: 'הגרסה המקורית (סגול/ענבר)', panel: 10 },
+      { name: 'Variant B', desc: 'עיצוב + קופי חדשים (טורקיז), אותם סרטונים', panel: 16 },
+      { name: 'Variant C', desc: 'עיצוב + קופי חדשים (ורוד/אדום), אותם סרטונים', panel: 17 }
+    ]
+  }
+];
+
+/* HISTORY -- tests that were active in the past but are no longer receiving
+   new traffic today. Nothing here was deleted: all the underlying sheet
+   data is 100% intact, this array just controls what shows in the
+   collapsed "היסטוריית גרסאות דפי נחיתה" section instead of the main
+   active grid, so the dashboard's headline view only reflects what's
+   actually live right now. */
+const HEAD_TO_HEAD_HISTORY = [
+  {
+    title: 'דף נחיתה · OPTION2 מול OPTION2_V2', tag: 'landing', tagLabel: 'דף נחיתה · היסטורי',
+    conversionLabel: 'שלחו פרטים', conversionKey: 'landing',
+    variants: [
+      { name: 'OPTION2', desc: 'הגרסה המקורית (זהב)', panel: 2 },
+      { name: 'OPTION2_V2', desc: 'וריאציית CTR (כחול/כתום)', panel: 5 }
+    ]
+  },
+  {
+    title: 'דף נחיתה · OPTION2 מול Option 26071 מול Option 26072', tag: 'landing', tagLabel: 'דף נחיתה · היסטורי',
     conversionLabel: 'שלחו פרטים', conversionKey: 'landing',
     variants: [
       { name: 'OPTION2', desc: 'הגרסה המקורית (זהב)', panel: 2 },
@@ -770,18 +802,7 @@ const HEAD_TO_HEAD_TESTS = [
     ]
   },
   {
-    /* The original 4-arm landing-page test, before OPTION2_V2 existed:
-       four different landing-page designs (option1-4.html), each with its
-       own panel ID (1-4), splitting incoming traffic and each tracking its
-       own entry → form-submission conversion. This card was dropped from
-       the dashboard when the OPTION2 vs OPTION2_V2 test replaced it as the
-       active landing-page experiment, but the historical data itself was
-       never deleted from the sheet -- restoring it here just brings that
-       real data back into view alongside everything else. Panels 3 and 4
-       have little/no recorded traffic (they were effectively retired early
-       on), so they'll correctly show as "אוסף דגימות"/no data rather than
-       a fake rate. */
-    title: 'דף נחיתה · Option 1 מול Option 2 מול Option 3 מול Option 4', tag: 'landing', tagLabel: 'דף נחיתה · מבחן היסטורי',
+    title: 'דף נחיתה · Option 1 מול Option 2 מול Option 3 מול Option 4', tag: 'landing', tagLabel: 'דף נחיתה · היסטורי',
     conversionLabel: 'שלחו פרטים', conversionKey: 'landing',
     variants: [
       { name: 'Option 1', desc: 'גרסת נחיתה מקורית 1', panel: 1 },
@@ -791,16 +812,8 @@ const HEAD_TO_HEAD_TESTS = [
     ]
   },
   {
-    /* Every landing page now splits visitors 25/25/25/25 between all FOUR
-       panels (6, 7, 9, 10) right before entering the video funnel -- see the
-       redirect logic in landing-pages/*.html. This card shows all four arms
-       side by side (renderHeadToHeadCard() loops generically over
-       test.variants, no longer limited to a hardcoded "VS" pair), matching
-       the full 4-way breakdown in the funnel-steps table below. */
-    title: 'השוואת 4 הזרועות · Two-Page Funnel · Funnel D V2 · New 1 · New 2', tag: 'funnel', tagLabel: 'משפך וידאו',
+    title: 'השוואת 4 הזרועות · Two-Page Funnel · Funnel D V2 · New 1 · New 2', tag: 'funnel', tagLabel: 'משפך וידאו · היסטורי',
     conversionLabel: 'השאירו פרטים', conversionKey: 'webinar',
-    // 'entry' undercounts here (see groupBase() comment) -- fall back to
-    // max(entry, video_1) so this card's rate matches the funnel table above.
     robustBase: true,
     variants: [
       { name: 'Two-Page Funnel', desc: 'משפך דו-שלבי מקוצר (פאנל 6)', panel: 6 },
@@ -826,10 +839,9 @@ const HEAD_TO_HEAD = HEAD_TO_HEAD_TESTS[0];
    placeholder instead of a misleading 0%/dropoff for the video_3/video_4
    rows those funnels just don't have. */
 const FUNNEL_GROUPS = [
-  { id: 'twopage', key: 'twopage', label: 'Two-Page Funnel (פאנל 6)', cls: 'f1', panels: ['6'], steps: ['entry', 'landing', 'video_1', 'video_2', 'webinar'] },
-  { id: 'dv2', key: 'dv2', label: 'Funnel D V2 · עיצוב חדש (פאנל 7)', cls: 'f2', panels: ['7'] },
-  { id: 'tpfn1', key: 'tpfn1', label: 'Two-Page Funnel New 1 (פאנל 9)', cls: 'f3', panels: ['9'], steps: ['entry', 'landing', 'video_1', 'video_2', 'webinar'] },
-  { id: 'tpfn2', key: 'tpfn2', label: 'Two-Page Funnel New 2 (פאנל 10)', cls: 'f4', panels: ['10'], steps: ['entry', 'landing', 'video_1', 'video_2', 'webinar'] }
+  { id: 'tpfn2', key: 'tpfn2', label: 'New 2 (פאנל 10)', cls: 'f1', panels: ['10'], steps: ['entry', 'landing', 'video_1', 'video_2', 'webinar'] },
+  { id: 'tpfn2b', key: 'tpfn2b', label: 'Variant B (פאנל 16)', cls: 'f2', panels: ['16'], steps: ['entry', 'landing', 'video_1', 'video_2', 'webinar'] },
+  { id: 'tpfn2c', key: 'tpfn2c', label: 'Variant C (פאנל 17)', cls: 'f3', panels: ['17'], steps: ['entry', 'landing', 'video_1', 'video_2', 'webinar'] }
 ];
 
 /* VIDEO VERSION HISTORY -- per-panel log of video swaps for the 4 panels
@@ -867,7 +879,9 @@ const VIDEO_VERSIONS = {
         { version: 1, label: 'וידאו מקורי', since: null, snapshot: null },
         { version: 2, label: 'וידאו חדש - האוטומט השקט', since: '2026-07-28', snapshot: { entry: 22, video_1: 31, video_2: 4, webinar: 2 } }
       ],
-  10: [ { version: 1, label: 'וידאו מקורי', since: null, snapshot: null } ]
+  10: [ { version: 1, label: 'וידאו מקורי', since: null, snapshot: null } ],
+  16: [ { version: 1, label: 'וידאו מקורי (זהה ל-New 2)', since: null, snapshot: null } ],
+  17: [ { version: 1, label: 'וידאו מקורי (זהה ל-New 2)', since: null, snapshot: null } ]
 };
 
 const FUNNEL_STEPS = [
@@ -1022,6 +1036,7 @@ function render() {
   renderLpStats();
   renderTikTokStats();
   renderHeadToHead();
+  renderHeadToHeadHistory();
   renderVideoVersions();
 }
 
@@ -1165,7 +1180,9 @@ const PANEL_LEGEND = [
   { panel: 12, name: 'חמש דקות ביום (WhatsApp)', type: 'landing', path: 'extra/whatsapp.html' },
   { panel: 13, name: 'Option 26071',        type: 'landing', path: 'landing-pages/landing_option_26071.html' },
   { panel: 14, name: 'Option 2 · Video 1',  type: 'landing', path: 'landing-pages/landing_option2_video1.html' },
-  { panel: 15, name: 'Option 2 · Video 2',  type: 'landing', path: 'landing-pages/landing_option2_video2.html' }
+  { panel: 15, name: 'Option 2 · Video 2',  type: 'landing', path: 'landing-pages/landing_option2_video2.html' },
+  { panel: 16, name: 'New 2 · Variant B',   type: 'funnel',  path: 'funnels/two-page-funnel-new-2-b/two-page-funnel-new-2-b-1.html' },
+  { panel: 17, name: 'New 2 · Variant C',   type: 'funnel',  path: 'funnels/two-page-funnel-new-2-c/two-page-funnel-new-2-c-1.html' }
 ];
 
 // Looks up a panel's live URL from PANEL_LEGEND -- used to turn every
@@ -1349,6 +1366,15 @@ function renderHeadToHead() {
   const container = document.getElementById('ab_grid');
   if (!container) return;
   container.innerHTML = HEAD_TO_HEAD_TESTS.map(renderHeadToHeadCard).join('');
+}
+
+// Same rendering logic, just pointed at the collapsed history section and
+// the HEAD_TO_HEAD_HISTORY array instead -- keeps retired tests visible for
+// reference without cluttering the main active-tests view above.
+function renderHeadToHeadHistory() {
+  const container = document.getElementById('ab_grid_history');
+  if (!container) return;
+  container.innerHTML = HEAD_TO_HEAD_HISTORY.map(renderHeadToHeadCard).join('');
 }
 
 // Builds one head-to-head "ab-card" for a single test definition. Pulled out
