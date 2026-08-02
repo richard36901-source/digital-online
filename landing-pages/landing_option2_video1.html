@@ -63,6 +63,9 @@ canvas#particles{position:fixed;inset:0;z-index:0;pointer-events:none;}
 .timer-card .countdown-clock{margin:2px auto 16px;}
 .click-chevrons{margin-top:10px;font-size:20px;color:#f5c842;letter-spacing:2px;animation:arrowBounce 1.2s ease-in-out infinite;}
 .click-label{font-size:11px;font-weight:800;color:rgba(255,220,80,.8);margin-top:2px;letter-spacing:.5px;}
+.click-card{cursor:pointer;transition:transform .15s,border-color .15s;}
+.click-card:hover{transform:translateY(-2px);border-color:rgba(212,168,67,.6);}
+.click-card:active{transform:translateY(0);}
 .btn-arrow{font-size:20px;margin-inline-end:6px;line-height:1;display:inline-block;animation:arrowSpin 2s linear infinite;}
 @keyframes arrowSpin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
 .progress-track{width:100%;height:8px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;margin-bottom:6px;}
@@ -299,10 +302,6 @@ window.submitForm = async function submitForm() {
       <h3>מה מחכה לך בפנים?</h3>
       <p>הסבר שמחבר את כל החלקים, חושף את הנקודה שרוב האנשים מפספסים, ועוזר לך לראות את הדרך קדימה בצורה הרבה יותר ברורה.</p>
     </div>
-    <div class="feature-card video-card">
-      <div class="video-wrap"><iframe src="https://www.youtube.com/embed/skjW_CUa3ac?autoplay=1&mute=1&playsinline=1&rel=0" title="סרטון הסבר" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
-      <p class="video-title">🎬 חלק ראשון: ככה זה נראה בפועל</p>
-    </div>
     <div class="timer-card">
       <p class="timer-card-title">⏳ הגישה לצפייה נשמרת לך לעוד:</p>
       <div class="countdown-clock">
@@ -313,14 +312,13 @@ window.submitForm = async function submitForm() {
         </div>
       </div>
     </div>
-    <div class="feature-card">
+    <div class="feature-card click-card" onclick="openPopup()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')openPopup()">
       <span class="feature-icon">🎯</span>
       <h3>עוד קליק אחד ותראה</h3>
       <p>איך זה נראה כשמשתמשים בזה בפועל — ולמה זה כבר עובד בשבילם.</p>
       <div class="click-chevrons">≫ ≫</div>
       <div class="click-label">לחץ עכשיו</div>
     </div>
-    <p class="tension-line" style="margin-bottom:14px;">ראית איך זה עובד — עכשיו תורך לקבל גישה</p>
     <button class="btn-main" onclick="openPopup()"><span class="btn-arrow">»</span>תן לי גישה עכשיו</button>
     <p class="micro-copy">🔒 ללא עלות וללא התחייבות. אפשר לצאת מתי שרוצים.</p>
   </div>
