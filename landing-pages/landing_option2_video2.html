@@ -245,18 +245,17 @@ window.submitForm = async function submitForm() {
   } catch(e) {}
 
   var sep2 = location.search ? '&' : '?';
-  /* 25/25/25/25 split test: Two-Page Funnel / Funnel D V2 / New 1 / New 2 --
-     panels 6/7/9/10 are dedicated to this split so the head-to-head
-     comparison in the dashboard is clean and independent of which landing
-     page sent the visitor here. Panel 9 re-added: new video 1 live. */
+  /* 50/50 split test: Variant B / Variant C -- two cosmetic + copy
+     duplicates of New 2 (panel 10), same 2 videos, different design/copy.
+     All traffic now routes only into these two panels (16/17) so the
+     head-to-head comparison in the dashboard stays clean; New 2 itself
+     (panel 10) no longer receives new redirected traffic but remains the
+     active baseline it's compared against. The old 4-way split
+     (Two-Page Funnel / Funnel D V2 / New 1 / New 2) has been retired. */
   var r = Math.random();
-  var arm = r < 0.25
-    ? { path: '../funnels/two-page-funnel/two-page-funnel-1.html', panel: '6' }
-    : r < 0.5
-    ? { path: '../funnels/funnel-d-v2/funnel-d-v2-1.html', panel: '7' }
-    : r < 0.75
-    ? { path: '../funnels/two-page-funnel-new-1/two-page-funnel-new-1-1.html', panel: '9' }
-    : { path: '../funnels/two-page-funnel-new-2/two-page-funnel-new-2-1.html', panel: '10' };
+  var arm = r < 0.5
+    ? { path: '../funnels/two-page-funnel-new-2-b/two-page-funnel-new-2-b-1.html', panel: '16' }
+    : { path: '../funnels/two-page-funnel-new-2-c/two-page-funnel-new-2-c-1.html', panel: '17' };
   try { fetch(TRACK_HOOK, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ metric: 'entry', panel: arm.panel }), keepalive: true }).catch(function(){}); } catch(e) {}
   /* Carry the lead's identity (and the LM form/key it was created under)
      forward into the funnel so each video-step page can push a "how far
