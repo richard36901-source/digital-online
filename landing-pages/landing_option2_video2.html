@@ -27,69 +27,44 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-text-size-adjust:100%}
-body{font-family:'Heebo',sans-serif;direction:rtl;overflow-x:hidden;min-height:100svh;color:#fff;display:flex;flex-direction:column;align-items:center;position:relative;background-color:#0A0F1C;background-image:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(212,168,67,.18) 0%,transparent 65%),radial-gradient(ellipse 50% 35% at 10% 90%,rgba(100,80,10,.25) 0%,transparent 55%);}
+body{font-family:'Heebo',sans-serif;direction:rtl;overflow-x:hidden;min-height:100svh;color:#fff;display:flex;flex-direction:column;align-items:center;position:relative;background-color:#0A0F1C;background-image:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(255,90,43,.20) 0%,transparent 65%),radial-gradient(ellipse 50% 35% at 10% 90%,rgba(140,30,10,.25) 0%,transparent 55%);}
 canvas#particles{position:fixed;inset:0;z-index:0;pointer-events:none;}
 .page-wrap{position:relative;z-index:2;width:100%;max-width:480px;padding:0 16px 120px;display:flex;flex-direction:column;align-items:center;}
 @keyframes fadeDown{from{opacity:0;transform:translateY(-12px);}to{opacity:1;transform:translateY(0);}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
-@keyframes btnPulse{0%,100%{box-shadow:0 6px 30px rgba(212,168,67,.5),0 0 0 0 rgba(212,168,67,0);}50%{box-shadow:0 8px 40px rgba(212,168,67,.75),0 0 0 8px rgba(212,168,67,.08);}}
+@keyframes btnPulse{0%,100%{box-shadow:0 6px 30px rgba(255,90,43,.5),0 0 0 0 rgba(255,90,43,0);}50%{box-shadow:0 8px 40px rgba(255,90,43,.75),0 0 0 8px rgba(255,90,43,.08);}}
 @keyframes btnShimmer{0%{background-position:200% center;}100%{background-position:0% center;}}
 @keyframes shine{0%{left:-120%}100%{left:160%}}
-@keyframes btnVibrate{0%,100%{transform:translateX(0) rotate(0);}2%{transform:translateX(-3px) rotate(-1.5deg);}4%{transform:translateX(3px) rotate(1.5deg);}6%{transform:translateX(-3px) rotate(-1deg);}8%{transform:translateX(3px) rotate(1deg);}10%{transform:translateX(-2px) rotate(-.5deg);}12%{transform:translateX(2px) rotate(.5deg);}14%{transform:translateX(0) rotate(0);}}}
+@keyframes btnVibrate{0%,100%{transform:translateX(0) rotate(0);}2%{transform:translateX(-3px) rotate(-1.5deg);}4%{transform:translateX(3px) rotate(1.5deg);}6%{transform:translateX(-3px) rotate(-1deg);}8%{transform:translateX(3px) rotate(1deg);}10%{transform:translateX(-2px) rotate(-.5deg);}12%{transform:translateX(2px) rotate(.5deg);}14%{transform:translateX(0) rotate(0);}}
 @keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
 @keyframes iconPop{0%,100%{transform:scale(1);}50%{transform:scale(1.18);}}
 @keyframes flicker{0%,100%{opacity:1;}45%{opacity:.65;}50%{opacity:1;}55%{opacity:.55;}60%{opacity:1;}}
 @keyframes slideInRight{from{opacity:0;transform:translateX(24px);}to{opacity:1;transform:translateX(0);}}
-@keyframes badgeGlow{0%,100%{box-shadow:0 0 8px rgba(212,168,67,.2);}50%{box-shadow:0 0 22px rgba(212,168,67,.55);}}
+@keyframes badgeGlow{0%,100%{box-shadow:0 0 8px rgba(255,90,43,.2);}50%{box-shadow:0 0 22px rgba(255,90,43,.55);}}
 @keyframes triggerBlink{0%,100%{opacity:1;}50%{opacity:.45;}}
-.top-badge{display:inline-flex;align-items:center;gap:8px;border-radius:99px;padding:7px 18px;margin:24px 0 18px;font-size:13px;font-weight:700;animation:fadeDown .5s ease both,badgeGlow 2.5s 1s ease-in-out infinite;background:rgba(255,255,255,.06);border:1px solid rgba(212,168,67,.4);color:#f0c040;}
-.card{width:100%;border-radius:16px;padding:28px 20px 24px;margin-bottom:20px;position:relative;overflow:hidden;animation:fadeUp .6s .1s ease both;background:linear-gradient(145deg,rgba(15,12,2,.95),rgba(25,20,3,.98));border:1.5px solid rgba(212,168,67,.35);box-shadow:0 0 40px rgba(212,168,67,.12),0 20px 60px rgba(0,0,0,.8);}
-.card-headline{font-family:'Heebo',sans-serif;font-size:clamp(28px,7.5vw,38px);font-weight:900;text-align:center;line-height:1.2;margin-bottom:10px;background:linear-gradient(160deg,#fff8cc 0%,#f5c842 30%,#d4920a 60%,#fff0a0 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 2px 20px rgba(212,168,67,.6));}
-.card-sub{font-size:clamp(14px,3.8vw,16px);color:rgba(255,255,255,.65);text-align:center;line-height:1.75;margin-bottom:16px;}
-.tension-line{font-family:'Heebo',sans-serif;font-size:15px;font-weight:800;text-align:center;margin-bottom:18px;color:rgba(255,220,80,.85);animation:flicker 5s 2s ease-in-out infinite;}
-.video-wrap{position:relative;width:100%;max-width:270px;aspect-ratio:9/16;margin:0 auto;border-radius:14px;overflow:hidden;border:1.5px solid rgba(212,168,67,.35);box-shadow:0 10px 40px rgba(0,0,0,.5);animation:fadeUp .6s .15s ease both;background:#000;}
-.video-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
-.video-title{font-family:'Heebo',sans-serif;font-size:16px;font-weight:800;text-align:center;margin-bottom:18px;color:#fff;}
-.trust-line{font-size:13px;font-weight:700;text-align:center;color:rgba(120,230,150,.9);margin-bottom:10px;}
-.feature-card{border:1.5px solid rgba(212,168,67,.3);border-radius:14px;padding:18px 16px;margin-bottom:16px;background:rgba(255,255,255,.03);text-align:center;}
-.feature-card .feature-icon{font-size:26px;margin-bottom:8px;display:block;}
-.feature-card h3{font-family:'Heebo',sans-serif;font-size:16px;font-weight:800;color:#fff;margin:0 0 8px;}
-.feature-card p{font-family:'Assistant',sans-serif;font-size:13.5px;line-height:1.5;color:rgba(255,255,255,.65);margin:0;}
-.video-card{padding:14px 14px 4px;}
-.video-card .video-wrap{margin-bottom:10px;}
-.video-card{display:flex;flex-direction:column;align-items:center;}
-.timer-card{border:1.5px solid rgba(212,168,67,.35);border-radius:14px;padding:16px 14px 4px;margin-bottom:16px;background:rgba(255,255,255,.03);text-align:center;}
-.timer-card .timer-card-title{font-family:'Heebo',sans-serif;font-size:14px;font-weight:800;color:rgba(255,220,80,.9);margin-bottom:4px;}
-.timer-card .countdown-clock{margin:2px auto 16px;}
-.click-chevrons{margin-top:10px;font-size:20px;color:#f5c842;letter-spacing:2px;animation:arrowBounce 1.2s ease-in-out infinite;}
-.click-label{font-size:11px;font-weight:800;color:rgba(255,220,80,.8);margin-top:2px;letter-spacing:.5px;}
-.btn-arrow{font-size:20px;margin-inline-end:6px;line-height:1;}
-
-.cta-arrow{text-align:center;font-size:26px;line-height:1;margin:-2px 0 10px;color:#f5c842;animation:arrowBounce 1.2s ease-in-out infinite;}
-@keyframes arrowBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(8px);}}
-
+@keyframes pulseDot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.7);}}
+@keyframes arrowSpin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+.top-badge{display:inline-flex;align-items:center;gap:8px;border-radius:99px;padding:7px 18px;margin:24px 0 18px;font-size:13px;font-weight:700;animation:fadeDown .5s ease both,badgeGlow 2.2s 1s ease-in-out infinite;background:rgba(255,255,255,.06);border:1px solid rgba(255,90,43,.45);color:#ff9466;}
+.top-badge .dot{width:7px;height:7px;border-radius:50%;background:#ff5a2b;display:inline-block;animation:pulseDot 1.4s ease-in-out infinite;}
+.card{width:100%;border-radius:16px;padding:28px 20px 24px;margin-bottom:20px;position:relative;overflow:hidden;animation:fadeUp .6s .1s ease both;background:linear-gradient(145deg,rgba(20,8,4,.95),rgba(30,10,3,.98));border:1.5px solid rgba(255,90,43,.4);box-shadow:0 0 40px rgba(255,90,43,.14),0 20px 60px rgba(0,0,0,.8);}
+.card-headline{font-family:'Heebo',sans-serif;font-size:clamp(28px,7.5vw,38px);font-weight:900;text-align:center;line-height:1.2;margin-bottom:10px;background:linear-gradient(160deg,#fff0e0 0%,#ff9a5a 30%,#e8461a 60%,#ffddb0 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 2px 20px rgba(255,90,43,.6));}
+.card-sub{font-size:clamp(14px,3.8vw,16px);color:rgba(255,255,255,.68);text-align:center;line-height:1.75;margin-bottom:16px;}
+.tension-line{font-family:'Heebo',sans-serif;font-size:15px;font-weight:800;text-align:center;margin-bottom:18px;color:rgba(255,150,90,.9);animation:flicker 5s 2s ease-in-out infinite;}
 .icon-row{display:flex;justify-content:center;gap:16px;margin-bottom:20px;}
-.icon-item{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;font-weight:700;color:rgba(255,255,255,.7);text-align:center;background:rgba(255,255,255,.05);border:1px solid rgba(212,168,67,.2);border-radius:10px;padding:10px 12px;min-width:76px;}
+.icon-item{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;font-weight:700;color:rgba(255,255,255,.7);text-align:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,90,43,.25);border-radius:10px;padding:10px 12px;min-width:76px;}
 .icon-item:nth-child(1){animation:float 3s .2s ease-in-out infinite;}
 .icon-item:nth-child(2){animation:float 3s .7s ease-in-out infinite;}
 .icon-item:nth-child(3){animation:float 3s 1.2s ease-in-out infinite;}
 .icon-item .ico{font-size:22px;display:inline-block;animation:iconPop 2s ease-in-out infinite;}
-.steps{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
-.step-item{display:flex;align-items:center;gap:12px;border-radius:10px;padding:12px 14px;background:linear-gradient(145deg,rgba(15,12,2,.95),rgba(25,20,3,.98))}
-.step-num{width:32px;height:32px;flex-shrink:0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;}
-.step-text{font-size:15px;font-weight:700;color:rgba(255,255,255,.85);}
-.step-item:nth-child(1){animation:slideInRight .5s .3s ease both;}
-.step-item:nth-child(2){animation:slideInRight .5s .5s ease both;}
-.step-item:nth-child(3){animation:slideInRight .5s .7s ease both;}
-.btn-main{display:flex;width:100%;height:66px;background:linear-gradient(135deg,#b8860a,#f5c842,#d4920a);background-size:200% auto;color:#000;font-family:'Heebo',sans-serif;font-size:22px;font-weight:900;border:none;border-radius:10px;cursor:pointer;pointer-events:auto;align-items:center;justify-content:center;letter-spacing:.3px;position:relative;overflow:hidden;margin-bottom:8px;box-shadow:0 6px 30px rgba(212,168,67,.5);animation:btnPulse 2.5s ease-in-out infinite,btnShimmer 3s linear infinite,btnVibrate 3s ease-in-out infinite;transition:transform .2s,box-shadow .2s;}
-.btn-main:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 10px 50px rgba(212,168,67,.7);}
+.video-wrap{position:relative;width:100%;max-width:270px;aspect-ratio:9/16;margin:4px auto 6px;border-radius:14px;overflow:hidden;border:1.5px solid rgba(255,90,43,.35);box-shadow:0 10px 40px rgba(0,0,0,.5);animation:fadeUp .6s .15s ease both;background:#000;}
+.video-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
+.video-title{font-family:'Heebo',sans-serif;font-size:14px;font-weight:700;text-align:center;margin-bottom:16px;color:rgba(255,255,255,.75);}
+.btn-arrow{font-size:20px;margin-inline-end:6px;line-height:1;display:inline-block;animation:arrowSpin 2s linear infinite;}
+.btn-main{display:flex;width:100%;height:60px;background:linear-gradient(135deg,#c23616,#ff7a45,#e8461a);background-size:200% auto;color:#fff;font-family:'Heebo',sans-serif;font-size:21px;font-weight:900;border:none;border-radius:10px;cursor:pointer;pointer-events:auto;align-items:center;justify-content:center;letter-spacing:.3px;position:relative;overflow:hidden;margin-bottom:8px;box-shadow:0 6px 30px rgba(255,90,43,.5);animation:btnPulse 2.2s ease-in-out infinite,btnShimmer 3s linear infinite,btnVibrate 3s ease-in-out infinite;transition:transform .2s,box-shadow .2s;}
+.btn-main:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 10px 50px rgba(255,90,43,.7);}
 .btn-main::after{content:'';position:absolute;top:0;left:-120%;width:45%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);animation:shine 2s ease-in-out infinite;}
 .micro-copy{font-size:12px;color:rgba(255,255,255,.4);text-align:center;margin-bottom:16px;}
-.trigger-lines{display:flex;flex-direction:column;gap:4px;text-align:center;}
-.trigger-line{font-size:13px;font-weight:700;color:rgba(255,180,50,.8);}
-.trigger-line:nth-child(1){animation:triggerBlink 2.2s 1s ease-in-out infinite;}
-.trigger-line:nth-child(2){animation:triggerBlink 2.2s 1.6s ease-in-out infinite;}
-.countdown-clock{display:flex;width:fit-content;flex-direction:column;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(229,57,53,.14),rgba(0,0,0,.55));border:1.5px solid rgba(229,57,53,.55);border-radius:14px;padding:14px 22px;margin:2px auto 16px;position:relative;animation:ccPulse 1.8s ease-in-out infinite;}
+.countdown-clock{display:flex;width:fit-content;flex-direction:column;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(229,57,53,.16),rgba(0,0,0,.55));border:1.5px solid rgba(229,57,53,.55);border-radius:14px;padding:14px 22px;margin:2px auto 16px;position:relative;animation:ccPulse 1.8s ease-in-out infinite;}
 @keyframes ccPulse{0%,100%{box-shadow:0 0 0 0 rgba(229,57,53,.35)}50%{box-shadow:0 0 24px 4px rgba(229,57,53,.5)}}
 .countdown-clock .cc-digits{display:flex;align-items:center;gap:7px;}
 .countdown-clock .cc-box{background:#050505;border:1px solid rgba(229,57,53,.45);border-radius:9px;padding:7px 12px;min-width:56px;text-align:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.06);}
@@ -103,19 +78,19 @@ canvas#particles{position:fixed;inset:0;z-index:0;pointer-events:none;}
 @keyframes ccPulseFast{0%,100%{box-shadow:0 0 0 0 rgba(255,0,0,.45);transform:scale(1)}50%{box-shadow:0 0 30px 6px rgba(255,0,0,.65);transform:scale(1.035)}}
 .sticky-cta{position:fixed;bottom:0;left:0;right:0;z-index:100;background:linear-gradient(transparent,rgba(0,0,0,.95) 30%);padding:16px 20px 24px;display:flex;flex-direction:column;align-items:center;pointer-events:auto;opacity:1;visibility:visible;}
 .sticky-cta.visible{opacity:1;pointer-events:auto;visibility:visible;}
-.sticky-cta .btn-main{max-width:420px;height:60px;font-size:19px;margin-bottom:6px;}
+.sticky-cta .btn-main{max-width:420px;height:54px;font-size:18px;margin-bottom:6px;}
 .sticky-sub{font-size:11px;color:rgba(255,255,255,.3);text-align:center;}
 .popup-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px);}
 .popup-overlay.open{display:flex;}
 @keyframes popIn{from{opacity:0;transform:scale(.85);}to{opacity:1;transform:scale(1);}}
-.popup-card{width:100%;max-width:420px;border-radius:16px;padding:28px 22px 24px;position:relative;animation:popIn .35s cubic-bezier(.34,1.56,.64,1) both;background:linear-gradient(145deg,#0d0a01,#1a1400);border:1.5px solid rgba(212,168,67,.4);box-shadow:0 20px 60px rgba(0,0,0,.9);}
+.popup-card{width:100%;max-width:420px;border-radius:16px;padding:28px 22px 24px;position:relative;animation:popIn .35s cubic-bezier(.34,1.56,.64,1) both;background:linear-gradient(145deg,#100603,#1e0d02);border:1.5px solid rgba(255,90,43,.45);box-shadow:0 20px 60px rgba(0,0,0,.9);}
 .popup-close{position:absolute;top:14px;left:14px;width:30px;height:30px;background:rgba(255,255,255,.1);border:none;border-radius:50%;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.popup-title{font-size:clamp(20px,5.5vw,26px);font-weight:900;text-align:center;margin-bottom:6px;background:linear-gradient(135deg,#fff8cc,#f5c842,#d4920a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.popup-title{font-size:clamp(20px,5.5vw,26px);font-weight:900;text-align:center;margin-bottom:6px;background:linear-gradient(135deg,#fff0e0,#ff9a5a,#e8461a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 .popup-sub{font-size:13px;color:rgba(255,255,255,.5);text-align:center;margin-bottom:18px;}
 .field{width:100%;height:50px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:#fff;font-family:'Heebo',sans-serif;font-size:15px;padding:0 14px;margin-bottom:10px;outline:none;direction:rtl;-webkit-appearance:none;transition:border .2s;}
 .field::placeholder{color:rgba(255,255,255,.3);}
-.field:focus{border-color:rgba(212,168,67,.5);background:rgba(255,255,255,.1);}
-.btn-popup{display:flex;width:100%;height:54px;background:linear-gradient(135deg,#b8860a,#f5c842,#d4920a);color:#000;font-family:'Heebo',sans-serif;font-size:19px;font-weight:900;border:none;border-radius:8px;cursor:pointer;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(212,168,67,.4);transition:transform .2s;margin-bottom:10px;}
+.field:focus{border-color:rgba(255,90,43,.55);background:rgba(255,255,255,.1);}
+.btn-popup{display:flex;width:100%;height:54px;background:linear-gradient(135deg,#c23616,#ff7a45,#e8461a);color:#fff;font-family:'Heebo',sans-serif;font-size:19px;font-weight:900;border:none;border-radius:8px;cursor:pointer;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(255,90,43,.4);transition:transform .2s;margin-bottom:10px;}
 .btn-popup:hover{transform:translateY(-1px);}
 .btn-popup:disabled{opacity:.6;cursor:not-allowed;transform:none;}
 .err{font-size:12px;color:#ff7070;margin:-6px 0 8px 2px;display:none;}
@@ -129,7 +104,7 @@ canvas#particles{position:fixed;inset:0;z-index:0;pointer-events:none;}
 .s-sub{font-size:14px;color:rgba(255,255,255,.6);line-height:1.6;}
 footer{position:relative;z-index:2;width:100%;border-top:1px solid rgba(255,255,255,.06);padding:14px 20px;text-align:center;font-family:'Assistant',sans-serif;font-size:11px;color:rgba(255,255,255,.18);line-height:2;}
 footer a{color:rgba(255,255,255,.22);text-decoration:none;}
-footer a:hover{color:#d4a843;}
+footer a:hover{color:#ff9466;}
 footer .sep{margin:0 6px;color:rgba(255,255,255,.08);}
 </style>
 <script>
@@ -137,17 +112,14 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.08);}
   var PANEL = '15';
   async function resolveSupplier(p) {
   if (p.supplier) return p.supplier;
-  // Default to the "yahav" marketer whenever the link carries no marketer
-  // param, or names one that isn't in marketers.json -- so a lead never
-  // ends up with an unassigned/unrecognized supplier in LeadManager.
   try {
     const res = await fetch('/marketers/marketers.json');
     const marketers = await res.json();
     const mk = (p.marketer && marketers[p.marketer]) ? p.marketer : 'yahav';
     const entry = marketers[mk];
-    return entry ? entry.lm_supplier : 35213; // yahav's lm_supplier, last-resort fallback
+    return entry ? entry.lm_supplier : 35213;
   } catch (e) {
-    return 35213; // marketers.json unreachable -- still default to yahav
+    return 35213;
   }
 }
 
@@ -182,9 +154,6 @@ window.submitForm = async function submitForm() {
   try { dataLayer.push({event:'form_submitted', name:name, phone:phone, email:email, page:'landing_option2_video2'}); } catch(e) {}
   try { if(typeof fbq==='function') fbq('track','Lead'); } catch(e) {}
 
-  // Fire the confirmation-email webhook and the tracking webhook in parallel
-  // so a slow/failing call never delays or blocks the other — in particular,
-  // the "send email now" hook must fire immediately.
   await Promise.allSettled([
     fetch('https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q', {
       method: 'POST',
@@ -223,11 +192,6 @@ window.submitForm = async function submitForm() {
     lmP.append('utm_medium', p.medium || '');
     lmP.append('utm_campaign', p.campaign || '');
     lmP.append('page', 'landing_option2_video2');
-    /* keepalive:true is essential here -- this fetch fires right before
-       window.location.href navigates away, and without keepalive the browser
-       is allowed to cancel an in-flight request mid-navigation, silently
-       dropping the lead from LeadManager while everything else (which is
-       awaited earlier) still succeeds. */
     fetch('https://hook.eu1.make.com/j4ktylebkczp1tgvlj0h4tfbxb77q9b1', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -250,19 +214,12 @@ window.submitForm = async function submitForm() {
      All traffic now routes only into these two panels (16/17) so the
      head-to-head comparison in the dashboard stays clean; New 2 itself
      (panel 10) no longer receives new redirected traffic but remains the
-     active baseline it's compared against. The old 4-way split
-     (Two-Page Funnel / Funnel D V2 / New 1 / New 2) has been retired. */
+     active baseline it's compared against. */
   var r = Math.random();
   var arm = r < 0.5
     ? { path: '../funnels/two-page-funnel-new-2-b/two-page-funnel-new-2-b-1.html', panel: '16' }
     : { path: '../funnels/two-page-funnel-new-2-c/two-page-funnel-new-2-c-1.html', panel: '17' };
   try { fetch(TRACK_HOOK, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ metric: 'entry', panel: arm.panel }), keepalive: true }).catch(function(){}); } catch(e) {}
-  /* Carry the lead's identity (and the LM form/key it was created under)
-     forward into the funnel so each video-step page can push a "how far
-     did they get" update to the SAME lead record in LeadManager
-     (fld_181980) -- lets the sales team prioritize leads who actually
-     watched vs. those who only filled the form. Different landing pages
-     submit to different LM forms, so lmf/lmk must travel with the lead. */
   window.location.href = arm.path + location.search + sep2 + 'panel=' + arm.panel + '&phone=' + encodeURIComponent(phone) + '&email=' + encodeURIComponent(email);
 }
 </script>
@@ -270,64 +227,48 @@ window.submitForm = async function submitForm() {
 <body>
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WHCW874B" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <canvas id="particles"></canvas>
-<div style="position:fixed;bottom:0;left:0;right:0;z-index:999;background:rgba(10,10,10,.97);border-top:1px solid rgba(212,168,67,.2);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-family:'Assistant',sans-serif;font-size:12px;color:rgba(255,255,255,.5);" id="cookieBanner">
-  <span>אנו משתמשים בעוגיות לשיפור חווית הגלישה. <a href="../extra/privacy.html" style="color:#d4a843;text-decoration:underline;">מדיניות פרטיות</a></span>
-  <button onclick="document.getElementById('cookieBanner').style.display='none';localStorage.setItem('ck','1');" style="background:linear-gradient(135deg,#d4a843,#f0c060);color:#000;border:none;border-radius:6px;padding:7px 16px;font-family:'Heebo',sans-serif;font-size:12px;font-weight:800;cursor:pointer;flex-shrink:0;">אישור</button>
+<div style="position:fixed;bottom:0;left:0;right:0;z-index:999;background:rgba(10,10,10,.97);border-top:1px solid rgba(255,90,43,.2);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-family:'Assistant',sans-serif;font-size:12px;color:rgba(255,255,255,.5);" id="cookieBanner">
+  <span>אנו משתמשים בעוגיות לשיפור חווית הגלישה. <a href="../extra/privacy.html" style="color:#ff9466;text-decoration:underline;">מדיניות פרטיות</a></span>
+  <button onclick="document.getElementById('cookieBanner').style.display='none';localStorage.setItem('ck','1');" style="background:linear-gradient(135deg,#e8461a,#ff9466);color:#000;border:none;border-radius:6px;padding:7px 16px;font-family:'Heebo',sans-serif;font-size:12px;font-weight:800;cursor:pointer;flex-shrink:0;">אישור</button>
 </div>
 <script>if(localStorage.getItem('ck'))document.getElementById('cookieBanner').style.display='none';</script>
 
 <div class="page-wrap">
+  <div class="top-badge"><span class="dot"></span>קורה עכשיו · בזמן אמת</div>
   <div class="card">
-    <h1 class="card-headline">משהו קורה עכשיו —<br>ואנשים כבר מייצרים תוצאות.</h1>
-    <div class="card-sub">זה לא כישרון<br>זה לא מזל<br>זה פשוט להבין איך זה עובד</div>
-    <p class="tension-line">ורוב האנשים… עדיין לא ראו את זה</p>
+    <h1 class="card-headline">יש דבר אחד שמשנה הכול —<br>ורוב האנשים עדיין לא מכירים אותו.</h1>
+    <div class="card-sub">לא עוד קורס. לא עוד תיאוריה.<br>שיטה אחת שעובדת — גם בלעדיך.</div>
+    <p class="tension-line">מה שתראה בעוד רגע עלול לשנות איך אתה רואה הכנסה דיגיטלית</p>
     <div class="icon-row">
-      <div class="icon-item"><span class="ico">🔒</span>גישה מאובטחת</div>
-      <div class="icon-item"><span class="ico">▶️</span>הסבר ברור</div>
       <div class="icon-item"><span class="ico">⏱</span>5 דקות</div>
+      <div class="icon-item"><span class="ico">🎯</span>בדיוק בשבילך</div>
+      <div class="icon-item"><span class="ico">🔓</span>פתוח כרגע</div>
     </div>
-    <div class="feature-card">
-      <span class="feature-icon">🎁</span>
-      <h3>מה תראה ברגע שנכנסים?</h3>
-      <p>פירוט קצר וממוקד שמסביר איך זה בנוי — בלי הבטחות ריקות ובלי סיבוכים מיותרים.</p>
-    </div>
-    <div class="feature-card video-card">
-      <div class="video-wrap"><iframe src="https://www.youtube.com/embed/UlnfZmtXiRk?autoplay=1&mute=1&playsinline=1&rel=0" title="סרטון הסבר" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
-      <p class="video-title">🎬 הצצה קצרה לפני שממשיכים</p>
-    </div>
-    <div class="timer-card">
-      <p class="timer-card-title">⏳ הגישה נשמרת עבורך רק לעוד:</p>
-      <div class="countdown-clock">
-        <div class="cc-digits">
-          <div class="cc-box"><span class="cc-num cd-secs">00</span><span class="cc-unit">שניות</span></div>
-          <div class="cc-sep">:</div>
-          <div class="cc-box"><span class="cc-num cd-mins">02</span><span class="cc-unit">דקות</span></div>
-        </div>
+    <div class="video-wrap"><iframe src="https://www.youtube.com/embed/UlnfZmtXiRk?autoplay=1&mute=1&playsinline=1&rel=0" title="סרטון הסבר" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+    <p class="video-title">🎬 הצצה קצרה לפני שממשיכים</p>
+    <div class="countdown-clock">
+      <div class="cc-digits">
+        <div class="cc-box"><span class="cc-num cd-secs">00</span><span class="cc-unit">שניות</span></div>
+        <div class="cc-sep">:</div>
+        <div class="cc-box"><span class="cc-num cd-mins">02</span><span class="cc-unit">דקות</span></div>
       </div>
     </div>
-    <div class="feature-card">
-      <span class="feature-icon">🎯</span>
-      <h3>שלב אחרון לפני שרואים הכל</h3>
-      <p>לחיצה אחת מפרידה בינך לבין ההסבר המלא — בלי טפסים ארוכים ובלי בלגן.</p>
-      <div class="click-chevrons">≫ ≫</div>
-      <div class="click-label">לחץ עכשיו</div>
-    </div>
-    <p class="tension-line" style="margin-bottom:14px;">אל תשאיר את זה סתם ברקע — תתחיל עכשיו</p>
-    <button class="btn-main" onclick="openPopup()"><span class="btn-arrow">»</span>תן לי גישה עכשיו</button>
+    <p class="tension-line" style="margin-bottom:14px;">כל סרטון חושף עוד חלק מהתמונה. מי שעוצר באמצע — מפספס את החלק שבאמת משנה הכול</p>
+    <button class="btn-main" onclick="openPopup()">אני רוצה לראות את זה עכשיו</button>
     <p class="micro-copy">🔒 סרטונים קצרים, פרקטיים וללא התחייבות. מומלץ לראות עד הסוף.</p>
   </div>
 </div>
 
 <div class="sticky-cta" id="stickyCta">
-  <button class="btn-main" onclick="openPopup()">תן לי גישה עכשיו</button>
+  <button class="btn-main" onclick="openPopup()">אני רוצה לראות את זה עכשיו</button>
   <div class="sticky-sub">🔒 סרטונים קצרים, פרקטיים וללא התחייבות. מומלץ לראות עד הסוף.</div>
 </div>
 
 <div class="popup-overlay" id="popup">
   <div class="popup-card">
     <button class="popup-close" onclick="document.getElementById('popup').classList.remove('open')">✕</button>
-    <p class="popup-title">לאן לשלוח לך את זה?</p>
-    <p class="popup-sub">זה כבר נשלח לאלפים</p>
+    <p class="popup-title">לאן שולחים לך את הגישה?</p>
+    <p class="popup-sub">כבר נפתח לאלפים היום</p>
     <div id="formFields">
       <input class="field" id="fName" type="text" placeholder="שם מלא" autocomplete="name"/>
       <div class="err" id="eName">נא להזין שם מלא</div>
@@ -335,10 +276,10 @@ window.submitForm = async function submitForm() {
       <div class="err" id="ePhone">נא להזין מספר טלפון</div>
       <input class="field" id="fEmail" type="email" placeholder="אימייל" autocomplete="email"/>
       <div class="err" id="eEmail">נא להזין אימייל תקין</div>
-      <button class="btn-popup" id="popupBtn" onclick="submitForm()">שלח לי עכשיו</button>
+      <button class="btn-popup" id="popupBtn" onclick="submitForm()">כן, תנו לי גישה</button>
       <div class="legal-check" id="legalWrap">
         <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;direction:rtl;">
-          <input type="checkbox" id="legalBox" style="width:18px;height:18px;flex-shrink:0;margin-top:2px;accent-color:#f5c842;cursor:pointer;"/>
+          <input type="checkbox" id="legalBox" style="width:18px;height:18px;flex-shrink:0;margin-top:2px;accent-color:#ff7a45;cursor:pointer;"/>
           <span style="font-size:12px;color:rgba(255,255,255,.45);line-height:1.6;">אני מאשר/ת יצירת קשר ותוכן שיווקי במייל, בטלפון ובוואטסאפ. אפשר להסיר בכל שלב שתרצה.</span>
         </label>
         <div class="err" id="eLegal" style="margin-top:4px;">יש לאשר את תנאי השימוש להמשך</div>
@@ -376,7 +317,7 @@ window.submitForm = async function submitForm() {
       var p = pts[i];
       var a = p.o*(.6+.4*Math.sin(fr*.04+p.ph));
       ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-      ctx.fillStyle = p.gold ? 'rgba(212,168,67,'+a+')' : 'rgba(255,220,80,'+a+')';
+      ctx.fillStyle = p.gold ? 'rgba(255,90,43,'+a+')' : 'rgba(255,160,90,'+a+')';
       ctx.fill();
       p.x+=p.dx; p.y+=p.dy; p.o-=p.fade;
       if(p.o<=0||p.y<-10) pts[i]=mk();
@@ -385,7 +326,6 @@ window.submitForm = async function submitForm() {
   }
   draw();
 })();
-
 
 document.addEventListener('DOMContentLoaded', () => {
     loadFacebookPixel();
