@@ -107,6 +107,28 @@
   .setup-bar a { color: #78350f; text-decoration: underline; font-weight: 600; }
 
   .kpi-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+
+  .panel-registry-wrap {
+    background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+    padding: 8px 8px 4px; box-shadow: var(--shadow-sm); margin-bottom: 28px; overflow-x: auto;
+  }
+  .panel-registry-table { width: 100%; border-collapse: collapse; font-size: 12.5px; min-width: 720px; }
+  .panel-registry-table th {
+    text-align: right; font-size: 11px; color: var(--text-3); font-weight: 700;
+    padding: 10px 12px; border-bottom: 1px solid var(--border); white-space: nowrap;
+  }
+  .panel-registry-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .panel-registry-table tr:last-child td { border-bottom: none; }
+  .pr-num { color: var(--text-3); font-weight: 700; }
+  .pr-pill {
+    display: inline-flex; align-items: center; gap: 5px; font-size: 10.5px; font-weight: 700;
+    padding: 4px 9px; border-radius: 999px; white-space: nowrap;
+  }
+  .pr-live { background: var(--good-bg); color: var(--good); }
+  .pr-off { background: var(--card-soft); color: var(--text-4); border: 1px solid var(--border-2); }
+  tr.pr-inactive td { color: var(--text-4); }
+  tr.pr-inactive .title-link { color: var(--text-4); }
+  tr.pr-inactive { background: var(--card-soft); }
   .kpi {
     background: var(--card); border: 1px solid var(--border);
     border-radius: 12px; padding: 18px 20px; box-shadow: var(--shadow-sm);
@@ -550,6 +572,32 @@
     </div>
   </div>
 
+  <div class="section-head">
+    <h2>
+      <span class="sicn" style="background:var(--pb-soft);color:var(--pb);">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      </span>
+      כל דפי הנחיתה והפאנלים שנוצרו אי פעם
+    </h2>
+    <span class="meta">כולל כאלה שאינם פעילים כרגע · שורות אפורות עם התג "לא פעיל" לא מקבלות תנועה חדשה, אך הנתונים ההיסטוריים שלהן נשארים כאן</span>
+  </div>
+
+  <div class="panel-registry-wrap">
+    <table class="panel-registry-table" aria-label="כל דפי הנחיתה והפאנלים">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">שם</th>
+          <th scope="col">סוג</th>
+          <th scope="col">סטטוס</th>
+          <th scope="col">כניסות</th>
+          <th scope="col">המרות</th>
+          <th scope="col">אחוז המרה</th>
+        </tr>
+      </thead>
+      <tbody id="panel_registry_body"></tbody>
+    </table>
+  </div>
 
   <div class="section-head">
     <h2>
@@ -1053,6 +1101,7 @@ function render() {
   renderHeadToHeadHistory();
   renderVideoVersions();
   renderWatchTime();
+  renderPanelRegistry();
 }
 
 /* ============================================================================
@@ -1207,6 +1256,45 @@ const PANEL_LEGEND = [
 function panelUrl(panelNum) {
   const p = PANEL_LEGEND.find(x => x.panel === Number(panelNum));
   return p ? SITE_BASE + p.path : '#';
+}
+
+// Master "is this panel currently wired into a live redirect / ad
+// destination" set, used to gray out retired panels in the full registry
+// table below without deleting their historical data. Determined from the
+// actual current redirect logic in the 3 active landing pages (all of which
+// route into 16/17 only) plus the standalone TikTok/WhatsApp pages, which
+// are not A/B'd against anything so they don't appear in HEAD_TO_HEAD_TESTS
+// but are still live traffic destinations.
+const ACTIVE_PANELS = new Set([2, 8, 12, 14, 15, 16, 17]);
+
+// Renders every panel ever created (from PANEL_LEGEND, which is never
+// pruned) into one flat table, active or not -- so nothing the site has
+// ever run is hidden. Inactive rows are visually muted (.pr-inactive) and
+// carry an explicit "not receiving traffic" pill rather than being dropped
+// or tucked into a collapsed section.
+function renderPanelRegistry() {
+  const tbody = document.getElementById('panel_registry_body');
+  if (!tbody) return;
+  tbody.innerHTML = PANEL_LEGEND.map(p => {
+    const isActive = ACTIVE_PANELS.has(p.panel);
+    const entries = Math.max(m(`f${p.panel}_entry`), m(`f${p.panel}_video_1`));
+    const conv = p.type === 'funnel' ? m(`f${p.panel}_webinar`) : m(`f${p.panel}_landing`);
+    const rate = pct(conv, entries);
+    const typeLabel = p.type === 'funnel' ? 'משפך' : 'דף נחיתה';
+    const statusPill = isActive
+      ? '<span class="pr-pill pr-live">🟢 פעיל · מקבל תנועה</span>'
+      : '<span class="pr-pill pr-off">⚪ לא פעיל · לא מוזרמת תנועה</span>';
+    return `
+      <tr class="${isActive ? '' : 'pr-inactive'}">
+        <td class="pr-num mono">${p.panel}</td>
+        <td><a class="title-link" href="${SITE_BASE + p.path}" target="_blank" rel="noopener">${p.name}</a></td>
+        <td>${typeLabel}</td>
+        <td>${statusPill}</td>
+        <td class="mono">${fmt(entries)}</td>
+        <td class="mono">${fmt(conv)}</td>
+        <td class="mono">${fmtPct(rate)}</td>
+      </tr>`;
+  }).join('');
 }
 
 /* ============================================================================
