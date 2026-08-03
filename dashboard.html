@@ -277,6 +277,9 @@
   .fwinner-cell.is-winner .fwinner-rate { color: #a37810; }
   .fwinner-trophy { font-size: 15px; height: 18px; line-height: 1; }
   .fwinner-name { font-size: 10px; color: var(--text-3); margin-top: 4px; font-weight: 500; }
+  .small-n-note { font-size: 9px; color: var(--warn); font-weight: 700; }
+  .small-n-note.head { margin-inline-start: 4px; text-transform: none; letter-spacing: 0; }
+  .fwinner-name .small-n-note { display: block; margin-top: 2px; }
 
   .ab-grid { display: grid; gap: 16px; }
   .ab-card {
@@ -734,6 +737,30 @@
 
   <div class="section-head">
     <h2>
+      <span class="sicn" style="background:var(--pb-soft);color:var(--pb);">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+      </span>
+      עמוד בונוס · סרטון נוסף + הצטרפות לוואטסאפ (signup-video.html)
+    </h2>
+    <span class="meta">כל אחד מ-6 המשפכים הפעילים מפנה לעמוד המשותף הזה מיד אחרי השארת פרטים (עמוד 2) -- מודד כמה מהלידים צפו בסרטון הבונוס וכמה מהם הצטרפו לקבוצת הוואטסאפ</span>
+  </div>
+
+  <div class="panel-registry-wrap">
+    <table class="panel-registry-table" aria-label="עמוד בונוס לפי משפך">
+      <thead>
+        <tr>
+          <th scope="col">משפך</th>
+          <th scope="col">הגיעו לעמוד הבונוס</th>
+          <th scope="col">הצטרפו לוואטסאפ</th>
+          <th scope="col">אחוז הצטרפות</th>
+        </tr>
+      </thead>
+      <tbody id="bonus_page_body"></tbody>
+    </table>
+  </div>
+
+  <div class="section-head">
+    <h2>
       <span class="sicn" style="background:var(--pb-soft, #e0f2fe);color:var(--pb, #0369a1);">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
       </span>
@@ -1175,6 +1202,7 @@ function render() {
   }
 
   renderFunnelComparison();
+  renderBonusPage();
   renderCloseStage();
   renderEmailPerf();
   renderLpStats();
@@ -1545,12 +1573,54 @@ function renderFunnelComparison() {
     const el = document.getElementById('fw_' + group.key);
     if (!el) return;
     const isWinner = bestGroup === group.key;
-    const rate = pct(groupSum(group, 'webinar'), groupBase(group));
+    const entryN = groupBase(group);
+    const rate = pct(groupSum(group, 'webinar'), entryN);
+    const smallSample = entryN < 10;
     el.querySelector('.fwinner-rate').textContent = fmtPct(rate);
     el.querySelector('.fwinner-trophy').textContent = isWinner ? '🏆' : '';
     el.querySelector('.fw-winner-tag').textContent = isWinner ? ' — המנצח' : '';
     el.classList.toggle('is-winner', isWinner);
+    let noteEl = el.querySelector('.small-n-note');
+    if (!noteEl) {
+      noteEl = document.createElement('div');
+      noteEl.className = 'small-n-note';
+      el.querySelector('.fwinner-name').appendChild(noteEl);
+    }
+    noteEl.textContent = smallSample ? `מדגם קטן (${fmt(entryN)} כניסות) — עוד מוקדם להסיק` : '';
+    const headInner = document.querySelector('.fcol-head.' + group.cls + ' .inner');
+    if (headInner) {
+      let hNote = headInner.querySelector('.small-n-note');
+      if (!hNote) {
+        hNote = document.createElement('span');
+        hNote.className = 'small-n-note head';
+        headInner.appendChild(hNote);
+      }
+      hNote.textContent = smallSample ? ' · מדגם קטן' : '';
+      hNote.title = smallSample ? 'פחות מ-10 כניסות עד כה - האחוזים בעמודה הזו עלולים להשתנות משמעותית עם כל מבקר חדש' : '';
+    }
   });
+}
+
+const BONUS_PAGE_PANELS = [
+  { panel: '6',  name: 'Two-Page Funnel' },
+  { panel: '7',  name: 'Funnel D V2' },
+  { panel: '9',  name: 'New 1' },
+  { panel: '10', name: 'New 2' },
+  { panel: '16', name: 'Variant B' },
+  { panel: '17', name: 'Variant C' }
+];
+
+function renderBonusPage() {
+  const body = document.getElementById('bonus_page_body');
+  if (!body) return;
+  let html = '';
+  BONUS_PAGE_PANELS.forEach(p => {
+    const views = m(`f${p.panel}_bonus_view`);
+    const joins = m(`f${p.panel}_whatsapp_join`);
+    const rate = pct(joins, views);
+    html += `<tr><td>${p.name} (פאנל ${p.panel})</td><td class="mono">${fmt(views)}</td><td class="mono">${fmt(joins)}</td><td class="mono">${fmtPct(rate)}</td></tr>`;
+  });
+  body.innerHTML = html;
 }
 
 // Average seconds watched before abandonment/completion, per funnel
