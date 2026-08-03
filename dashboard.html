@@ -280,6 +280,7 @@
   .small-n-note { font-size: 9px; color: var(--warn); font-weight: 700; }
   .small-n-note.head { margin-inline-start: 4px; text-transform: none; letter-spacing: 0; }
   .fwinner-name .small-n-note { display: block; margin-top: 2px; }
+  .fw-gate-note { margin: 10px 0 18px; padding: 10px 14px; background: var(--warn-bg); border: 1px solid var(--warn-border); border-radius: 10px; font-size: 12.5px; line-height: 1.6; color: var(--text-2); }
 
   .ab-grid { display: grid; gap: 16px; }
   .ab-card {
@@ -734,6 +735,8 @@
       </tfoot>
     </table>
   </div>
+
+  <div id="fw_gate_note" class="fw-gate-note" style="display:none;"></div>
 
   <div class="section-head">
     <h2>
@@ -1562,12 +1565,25 @@ function renderFunnelComparison() {
   container.innerHTML = html;
 
   let bestRate = -1, bestGroup = null;
+  let topRate = -1, topGroup = null;
   FUNNEL_GROUPS.forEach(group => {
     const entry = groupBase(group);
     const web = groupSum(group, 'webinar');
     const r = pct(web, entry);
+    if (r > topRate) { topRate = r; topGroup = group; }
     if (entry >= 10 && r > bestRate) { bestRate = r; bestGroup = group.key; }
   });
+  const gateNoteEl = document.getElementById('fw_gate_note');
+  if (gateNoteEl) {
+    if (bestGroup && topGroup && topGroup.key !== bestGroup && groupBase(topGroup) < 10) {
+      const bestLabel = FUNNEL_GROUPS.find(g => g.key === bestGroup).label;
+      gateNoteEl.innerHTML = '⚠️ שימו לב: ל<b>' + topGroup.label + '</b> יש כרגע אחוז המרה גבוה יותר (' + fmtPct(topRate) + '), אבל המדגם שלו קטן מדי (' + fmt(groupBase(topGroup)) + ' כניסות בלבד) כדי להכריז עליו כמנצח באמינות. לכן <b>' + bestLabel + '</b> עדיין מוצג כמוביל \u2014 יש לו מדגם גדול מספיק (10+ כניסות) להשוואה יציבה. ברגע ש' + topGroup.label + ' יצבור 10+ כניסות, ההשוואה תתעדכן אוטומטית.';
+      gateNoteEl.style.display = 'block';
+    } else {
+      gateNoteEl.style.display = 'none';
+      gateNoteEl.innerHTML = '';
+    }
+  }
 
   FUNNEL_GROUPS.forEach(group => {
     const el = document.getElementById('fw_' + group.key);
