@@ -105,6 +105,8 @@ tbody tr.hot{border-inline-start:3px solid #ff6ba0;}
 .funnel-badge.dv2{background:#2a1a3a;color:#b98af0;}
 .funnel-badge.tpfn1{background:#1a3a2f;color:#5fd6a3;}
 .funnel-badge.tpfn2{background:#3a2a1a;color:#e0a458;}
+.funnel-badge.varb{background:#1a3a30;color:#5fd6b0;}
+.funnel-badge.varc{background:#2a1a3a;color:#d68af0;}
 .funnel-badge.other{background:#232833;color:#5b6270;}
 .time-cell .abs{color:#8a8f98;font-size:11.5px;}
 .time-cell .rel{font-size:12.5px;color:#c7cbd4;}
@@ -128,140 +130,142 @@ tbody tr.hot{border-inline-start:3px solid #ff6ba0;}
 
 /* ---------- mobile (phones, e.g. iPhone) ---------- */
 @media(max-width:680px){
-  body{padding:12px;padding-bottom:calc(12px + env(safe-area-inset-bottom));}
-  .top{flex-direction:column;align-items:flex-start;gap:10px;margin-bottom:16px;}
-  h1{font-size:19px;}
-  .sub{font-size:12px;max-width:none;}
-  .refresh-meta{align-self:stretch;justify-content:space-between;}
+body{padding:12px;padding-bottom:calc(12px + env(safe-area-inset-bottom));}
+.top{flex-direction:column;align-items:flex-start;gap:10px;margin-bottom:16px;}
+h1{font-size:19px;}
+.sub{font-size:12px;max-width:none;}
+.refresh-meta{align-self:stretch;justify-content:space-between;}
 
-  .panel{padding:14px;}
-  .funnel-row{grid-template-columns:62px 1fr 72px;gap:6px;margin-bottom:8px;}
-  .funnel-label{font-size:10.5px;}
-  .funnel-track{height:22px;}
-  .funnel-nums{font-size:10px;}
-  .funnel-nums b{font-size:12px;}
-  .funnel-drop{display:block;font-size:9.5px;margin-inline-start:0;}
+.panel{padding:14px;}
+.funnel-row{grid-template-columns:62px 1fr 72px;gap:6px;margin-bottom:8px;}
+.funnel-label{font-size:10.5px;}
+.funnel-track{height:22px;}
+.funnel-nums{font-size:10px;}
+.funnel-nums b{font-size:12px;}
+.funnel-drop{display:block;font-size:9.5px;margin-inline-start:0;}
 
-  .kpis{gap:8px;}
-  .kpi{padding:12px 12px 10px;}
-  .kpi .kv{font-size:21px;}
-  .kpi .kl{font-size:10.5px;}
+.kpis{gap:8px;}
+.kpi{padding:12px 12px 10px;}
+.kpi .kv{font-size:21px;}
+.kpi .kl{font-size:10.5px;}
 
-  .controls{flex-direction:column;align-items:stretch;gap:8px;}
-  .controls input[type=text],
-  .controls select,
-  .controls button{width:100%;max-width:none;padding:11px 12px;}
-  .spacer{display:none;}
-  .custom-range{width:100%;}
-  .custom-range input[type=date]{flex:1;min-width:0;}
+.controls{flex-direction:column;align-items:stretch;gap:8px;}
+.controls input[type=text],
+.controls select,
+.controls button{width:100%;max-width:none;padding:11px 12px;}
+.spacer{display:none;}
+.custom-range{width:100%;}
+.custom-range input[type=date]{flex:1;min-width:0;}
 
-  .results-bar{flex-direction:column;align-items:flex-start;gap:6px;}
+.results-bar{flex-direction:column;align-items:flex-start;gap:6px;}
 
-  .pagination{gap:10px;padding:14px 8px;flex-wrap:wrap;}
-  .pagination button{padding:9px 14px;}
+.pagination{gap:10px;padding:14px 8px;flex-wrap:wrap;}
+.pagination button{padding:9px 14px;}
 
-  /* table -> stacked cards, one per lead */
-  .table-wrap{background:transparent;border:none;overflow:visible;border-radius:0;}
-  table, thead, tbody, tr, td{display:block;width:100%;}
-  thead{display:none;}
-  tbody tr{background:#12141a;border:1px solid #22262f;border-radius:14px;padding:2px 14px;margin-bottom:12px;}
-  tbody tr.hot{border-color:rgba(255,107,160,.45);}
-  tbody tr:hover td{background:transparent;}
-  td{border-bottom:1px solid #1c2029;padding:10px 0;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:start;}
-  td:last-child{border-bottom:none;justify-content:center;padding:12px 0;}
-  td::before{content:attr(data-label);font-size:11px;font-weight:700;color:#8a8f98;flex-shrink:0;}
-  td.name-cell{font-size:16px;font-weight:700;color:#fff;}
-  td.name-cell::before{content:none;}
-  .del-btn{width:100%;padding:11px 16px;}
-  .cell-inner{display:flex;flex-direction:column;align-items:flex-end;gap:5px;}
-  .progress-dots{margin-top:0;}
+/* table -> stacked cards, one per lead */
+.table-wrap{background:transparent;border:none;overflow:visible;border-radius:0;}
+table, thead, tbody, tr, td{display:block;width:100%;}
+thead{display:none;}
+tbody tr{background:#12141a;border:1px solid #22262f;border-radius:14px;padding:2px 14px;margin-bottom:12px;}
+tbody tr.hot{border-color:rgba(255,107,160,.45);}
+tbody tr:hover td{background:transparent;}
+td{border-bottom:1px solid #1c2029;padding:10px 0;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:start;}
+td:last-child{border-bottom:none;justify-content:center;padding:12px 0;}
+td::before{content:attr(data-label);font-size:11px;font-weight:700;color:#8a8f98;flex-shrink:0;}
+td.name-cell{font-size:16px;font-weight:700;color:#fff;}
+td.name-cell::before{content:none;}
+.del-btn{width:100%;padding:11px 16px;}
+.cell-inner{display:flex;flex-direction:column;align-items:flex-end;gap:5px;}
+.progress-dots{margin-top:0;}
 }
 </style>
 </head>
 <body>
 
 <div class="top">
-  <div>
-    <h1>מעקב מסע לקוח 🔥</h1>
-    <div class="sub">כל ליד + השלב הכי רחוק שהגיע אליו במסע (דף נחיתה → סרטוני ההדרכה → המרה סופית: השארת פרטים בסוף המשפך). לא כל המשפכים זהים באורכם — יש משפכים עם 2 סרטונים ויש עם 4, כך שלא כל ליד יעבור דרך כל השלבים. מתעדכן אוטומטית מכל האתר, בלי תלות ב-LeadManager.</div>
-  </div>
-  <div class="refresh-meta" id="refreshMeta">
-    <span class="dot"></span>
-    <span id="refreshText">טוען...</span>
-    <label><input type="checkbox" id="autoRefresh"/> רענון אוטומטי</label>
-  </div>
+<div>
+<h1>מעקב מסע לקוח 🔥</h1>
+<div class="sub">כל ליד + השלב הכי רחוק שהגיע אליו במסע (דף נחיתה → סרטוני ההדרכה → המרה סופית: השארת פרטים בסוף המשפך). לא כל המשפכים זהים באורכם — יש משפכים עם 2 סרטונים ויש עם 4, כך שלא כל ליד יעבור דרך כל השלבים. מתעדכן אוטומטית מכל האתר, בלי תלות ב-LeadManager.</div>
+</div>
+<div class="refresh-meta" id="refreshMeta">
+<span class="dot"></span>
+<span id="refreshText">טוען...</span>
+<label><input type="checkbox" id="autoRefresh"/> רענון אוטומטי</label>
+</div>
 </div>
 
 <div class="kpis" id="kpis"></div>
 
 <div class="panel">
-  <h2>📊 משפך המרה</h2>
-  <div class="panel-sub">כמה לידים הגיעו לכל שלב (מתוך סה"כ הלידים), והנשירה בין שלב לשלב.</div>
-  <div id="funnel"></div>
+<h2>📊 משפך המרה</h2>
+<div class="panel-sub">כמה לידים הגיעו לכל שלב (מתוך סה"כ הלידים), והנשירה בין שלב לשלב.</div>
+<div id="funnel"></div>
 </div>
 
 <div class="controls">
-  <input type="text" id="searchBox" placeholder="חיפוש לפי טלפון / שם / אימייל..."/>
-  <select id="stageFilter">
-    <option value="">כל השלבים</option>
-    <option value="1">דף נחיתה</option>
-    <option value="2">סרטון 1</option>
-    <option value="3">סרטון 2</option>
-    <option value="4">סרטון 3</option>
-    <option value="5">סרטון 4</option>
-    <option value="6">🏆 המרה סופית (השארת פרטים)</option>
-    <option value="7">⭐ הצטרפו לוואטסאפ (בונוס)</option>
-  </select>
-  <select id="funnelFilter">
-    <option value="">כל המשפכים</option>
-    <option value="6">Two-Page Funnel (פאנל 6)</option>
-    <option value="7">Funnel D V2 (פאנל 7)</option>
-  </select>
-  <select id="dateRange">
-    <option value="">כל התאריכים</option>
-    <option value="today">היום</option>
-    <option value="7d">7 הימים האחרונים</option>
-    <option value="30d">30 הימים האחרונים</option>
-    <option value="month">החודש הזה</option>
-    <option value="year">השנה הזו</option>
-    <option value="custom">טווח מותאם אישית...</option>
-  </select>
-  <div class="custom-range" id="customRange">
-    <span>מ-</span><input type="date" id="dateFrom"/>
-    <span>עד</span><input type="date" id="dateTo"/>
-  </div>
-  <select id="sortBy">
-    <option value="updated_desc">החדשים ביותר</option>
-    <option value="updated_asc">הישנים ביותר</option>
-    <option value="stage_desc">הכי מתקדמים</option>
-    <option value="stage_asc">הכי פחות מתקדמים</option>
-    <option value="name_asc">לפי שם (א-ת)</option>
-  </select>
-  <div class="spacer"></div>
-  <button class="ghost" onclick="exportCsv()">⬇️ ייצוא CSV</button>
-  <button onclick="loadData()">🔄 רענן</button>
+<input type="text" id="searchBox" placeholder="חיפוש לפי טלפון / שם / אימייל..."/>
+<select id="stageFilter">
+<option value="">כל השלבים</option>
+<option value="1">דף נחיתה</option>
+<option value="2">סרטון 1</option>
+<option value="3">סרטון 2</option>
+<option value="4">סרטון 3</option>
+<option value="5">סרטון 4</option>
+<option value="6">🏆 המרה סופית (השארת פרטים)</option>
+<option value="7">⭐ הצטרפו לוואטסאפ (בונוס)</option>
+</select>
+<select id="funnelFilter">
+<option value="">כל המשפכים</option>
+<option value="16">New 2 · Variant B (פאנל 16)</option>
+<option value="17">New 2 · Variant C (פאנל 17)</option>
+<option value="6">Two-Page Funnel (פאנל 6)</option>
+<option value="7">Funnel D V2 (פאנל 7)</option>
+</select>
+<select id="dateRange">
+<option value="">כל התאריכים</option>
+<option value="today">היום</option>
+<option value="7d">7 הימים האחרונים</option>
+<option value="30d">30 הימים האחרונים</option>
+<option value="month">החודש הזה</option>
+<option value="year">השנה הזו</option>
+<option value="custom">טווח מותאם אישית...</option>
+</select>
+<div class="custom-range" id="customRange">
+<span>מ-</span><input type="date" id="dateFrom"/>
+<span>עד</span><input type="date" id="dateTo"/>
+</div>
+<select id="sortBy">
+<option value="updated_desc">החדשים ביותר</option>
+<option value="updated_asc">הישנים ביותר</option>
+<option value="stage_desc">הכי מתקדמים</option>
+<option value="stage_asc">הכי פחות מתקדמים</option>
+<option value="name_asc">לפי שם (א-ת)</option>
+</select>
+<div class="spacer"></div>
+<button class="ghost" onclick="exportCsv()">⬇️ ייצוא CSV</button>
+<button onclick="loadData()">🔄 רענן</button>
 </div>
 
 <div class="results-bar">
-  <div id="resultsCount">-</div>
-  <div class="page-size">
-    <span>הצג בטבלה:</span>
-    <select id="pageSize">
-      <option value="20">20</option>
-      <option value="50">50</option>
-      <option value="100">100</option>
-      <option value="all">הכל</option>
-    </select>
-  </div>
+<div id="resultsCount">-</div>
+<div class="page-size">
+<span>הצג בטבלה:</span>
+<select id="pageSize">
+<option value="20">20</option>
+<option value="50">50</option>
+<option value="100">100</option>
+<option value="all">הכל</option>
+</select>
+</div>
 </div>
 
 <div class="table-wrap">
-  <div id="content" class="loading">טוען...</div>
-  <div class="pagination" id="pagination" style="display:none;">
-    <button id="prevPage">← הקודם</button>
-    <span class="page-info" id="pageInfo"></span>
-    <button id="nextPage">הבא →</button>
-  </div>
+<div id="content" class="loading">טוען...</div>
+<div class="pagination" id="pagination" style="display:none;">
+<button id="prevPage">← הקודם</button>
+<span class="page-info" id="pageInfo"></span>
+<button id="nextPage">הבא →</button>
+</div>
 </div>
 
 <script>
@@ -272,13 +276,13 @@ const DELETE_HOOK = 'https://hook.eu1.make.com/roprlw5d1k90tai1bqptq9jih6w964uy'
 // Not every funnel has all 6 stages: two-page-funnel (2 videos) only ever
 // reaches stage 3, then jumps straight to stage 6 if the lead converts.
 const STAGE_LABELS = {
-  1: 'דף נחיתה',
-  2: 'סרטון 1',
-  3: 'סרטון 2',
-  4: 'סרטון 3',
-  5: 'סרטון 4',
-  6: '🏆 המרה סופית',
-  7: '⭐ הצטרפו לוואטסאפ'
+1: 'דף נחיתה',
+2: 'סרטון 1',
+3: 'סרטון 2',
+4: 'סרטון 3',
+5: 'סרטון 4',
+6: '🏆 המרה סופית',
+7: '⭐ הצטרפו לוואטסאפ'
 };
 // Precise per-lead label, keyed by the raw stage_label string each funnel
 // page actually sends. Falls back to STAGE_LABELS[stage] when a record's
@@ -290,422 +294,426 @@ const STAGE_LABELS = {
 // their optional WhatsApp-group click (a bonus step, not the main
 // conversion) is a separate stage 7.
 const STAGE_LABEL_DETAIL = {
-  landing: 'דף נחיתה',
-  video_1: 'סרטון 1',
-  video_2: 'סרטון 2',
-  video_3: 'סרטון 3',
-  video_4: 'סרטון 4',
-  webinar_signup: '🏆 נרשם לוובינר',
-  details_submitted: '🏆 השאיר/ה פרטים',
-  whatsapp_join: '⭐ הצטרף/ה לקבוצת הוואטסאפ'
+landing: 'דף נחיתה',
+video_1: 'סרטון 1',
+video_2: 'סרטון 2',
+video_3: 'סרטון 3',
+video_4: 'סרטון 4',
+webinar_signup: '🏆 נרשם לוובינר',
+details_submitted: '🏆 השאיר/ה פרטים',
+whatsapp_join: '⭐ הצטרף/ה לקבוצת הוואטסאפ'
 };
 function stageDisplay(r){
-  return STAGE_LABEL_DETAIL[r.stage_label] || STAGE_LABELS[r.stage] || r.stage_label || '-';
+return STAGE_LABEL_DETAIL[r.stage_label] || STAGE_LABELS[r.stage] || r.stage_label || '-';
 }
 const STAGE_COLORS = {1:'#e0b357',2:'#a8d666',3:'#5fd6b0',4:'#5fb3d6',5:'#a066d6',6:'#ff6ba0',7:'#ffd166'};
-// Distinguishes which of the two active split-test funnels a lead went
-// through. Only panels 6/7 are tagged today (Two-Page Funnel vs Funnel D
-// V2); every other page's stage-tracking calls don't send a panel yet, so
-// those leads show no funnel badge.
+// Distinguishes which of the active split-test funnels a lead went
+// through. Panel 16/17 are the current live arms (New 2 · Variant B/C --
+// fed by the Option 2 / Video 1 / Video 2 landing pages' 50/50 post-submit
+// split). Panels 6/7/9/10 are retired funnels kept here only so old leads
+// still recorded under them keep a readable badge instead of falling
+// back to "—".
 const PANEL_LABELS = {
-  '6': { name: 'Two-Page Funnel', cls: 'tpf' },
-  '7': { name: 'Funnel D V2', cls: 'dv2' },
-  '9': { name: 'Two-Page Funnel New 1', cls: 'tpfn1' },
-  '10': { name: 'Two-Page Funnel New 2', cls: 'tpfn2' }
+'16': { name: 'New 2 · Variant B', cls: 'varb' },
+'17': { name: 'New 2 · Variant C', cls: 'varc' },
+'6': { name: 'Two-Page Funnel', cls: 'tpf' },
+'7': { name: 'Funnel D V2', cls: 'dv2' },
+'9': { name: 'Two-Page Funnel New 1', cls: 'tpfn1' },
+'10': { name: 'Two-Page Funnel New 2', cls: 'tpfn2' }
 };
 function funnelBadge(r){
-  const p = PANEL_LABELS[r.panel];
-  if(!p) return '<span class="funnel-badge other">—</span>';
-  return '<span class="funnel-badge ' + p.cls + '">' + p.name + '</span>';
+const p = PANEL_LABELS[r.panel];
+if(!p) return '<span class="funnel-badge other">—</span>';
+return '<span class="funnel-badge ' + p.cls + '">' + p.name + '</span>';
 }
 // Which landing page a lead first arrived through. Only sent by the
 // stage-1 "landing" tracking call (see each landing page's submit handler),
 // so leads created before this field existed -- or that skip landing-page
 // tracking entirely -- show no source.
 const PAGE_LABELS = {
-  landing_option1: 'עמוד נחיתה 1',
-  landing_option2: 'עמוד נחיתה 2',
-  landing_option2_v2: 'עמוד נחיתה 2 (V2)',
-  landing_option3: 'עמוד נחיתה 3',
-  landing_option4: 'עמוד נחיתה 4',
-  landing_tiktok: 'עמוד TikTok',
-  lp: 'עמוד LP'
+landing_option1: 'עמוד נחיתה 1',
+landing_option2: 'עמוד נחיתה 2',
+landing_option2_v2: 'עמוד נחיתה 2 (V2)',
+landing_option3: 'עמוד נחיתה 3',
+landing_option4: 'עמוד נחיתה 4',
+landing_tiktok: 'עמוד TikTok',
+lp: 'עמוד LP'
 };
 function pageLabel(r){
-  return PAGE_LABELS[r.page] || r.page || '—';
+return PAGE_LABELS[r.page] || r.page || '—';
 }
 let allRows = [];
 let autoRefreshTimer = null;
 let currentPage = 1;
 
 function fmtDate(s){
-  if(!s) return null;
-  const d = new Date(String(s).replace(' ','T'));
-  return isNaN(d.getTime()) ? null : d;
+if(!s) return null;
+const d = new Date(String(s).replace(' ','T'));
+return isNaN(d.getTime()) ? null : d;
 }
 function normalizePhone(p){
-  let d = String(p||'').replace(/[^\d+]/g,'');
-  if(d.startsWith('+972')) d = d.slice(1);
-  else if(d.startsWith('0')) d = '972' + d.slice(1);
-  return d;
+let d = String(p||'').replace(/[^\d+]/g,'');
+if(d.startsWith('+972')) d = d.slice(1);
+else if(d.startsWith('0')) d = '972' + d.slice(1);
+return d;
 }
 function relTime(s){
-  const d = fmtDate(s);
-  if(!d) return '';
-  const diffMs = Date.now() - d.getTime();
-  const mins = Math.floor(diffMs/60000);
-  if(mins < 1) return 'הרגע';
-  if(mins < 60) return 'לפני ' + mins + ' דק\'';
-  const hrs = Math.floor(mins/60);
-  if(hrs < 24) return 'לפני ' + hrs + ' שעות';
-  const days = Math.floor(hrs/24);
-  if(days === 1) return 'אתמול';
-  if(days < 30) return 'לפני ' + days + ' ימים';
-  const months = Math.floor(days/30);
-  return 'לפני ' + months + ' חודשים';
+const d = fmtDate(s);
+if(!d) return '';
+const diffMs = Date.now() - d.getTime();
+const mins = Math.floor(diffMs/60000);
+if(mins < 1) return 'הרגע';
+if(mins < 60) return 'לפני ' + mins + ' דק\'';
+const hrs = Math.floor(mins/60);
+if(hrs < 24) return 'לפני ' + hrs + ' שעות';
+const days = Math.floor(hrs/24);
+if(days === 1) return 'אתמול';
+if(days < 30) return 'לפני ' + days + ' ימים';
+const months = Math.floor(days/30);
+return 'לפני ' + months + ' חודשים';
 }
 
 async function loadData(){
-  const meta = document.getElementById('refreshMeta');
-  const content = document.getElementById('content');
-  meta.classList.add('loading');
-  document.getElementById('refreshText').textContent = 'מרענן...';
-  if(!allRows.length){
-    content.className = 'loading';
-    content.textContent = 'טוען...';
-  }
-  try {
-    const res = await fetch(LOOKUP_HOOK, { cache: 'no-store' });
-    const raw = await res.json();
-    // Collapse to one row per phone = the highest stage reached. Name/email
-    // are tracked separately from stage/updated_at: the video-stage tracking
-    // calls (stage 2-5, fired from the funnel pages) only ever send
-    // {phone, email, stage} -- they never carry the lead's name. Only the
-    // stage-1 "landing" call (and stage-6 "webinar_signup"/"details_submitted")
-    // include it. If we
-    // just took name/email from whichever record has the highest stage (the
-    // old behavior), any lead whose highest stage happens to be a video step
-    // shows up with a blank name, even though we know it perfectly well from
-    // their stage-1 record. So: keep the first non-empty name/email seen for
-    // each phone across ALL of that phone's records, independent of which
-    // record ends up "winning" for stage/updated_at.
-    const byPhone = {};
-    (raw || []).forEach(r => {
-      if(!r || !r.phone) return;
-      const stage = Number(r.stage) || 0;
-      let existing = byPhone[r.phone];
-      if(!existing){
-        existing = byPhone[r.phone] = { phone: r.phone, name: '', email: '', stage: -1, stage_label: '', panel: '', page: '', updated_at: '' };
-      }
-      if(r.name && !existing.name) existing.name = r.name;
-      if(r.email && !existing.email) existing.email = r.email;
-      // Keep the first panel value seen for this phone too (independent of
-      // which record "wins" for stage) -- landing (stage 1) never carries a
-      // panel since the split hasn't happened yet, so without this a lead
-      // whose winning record happens to lack a panel would lose the badge
-      // even though an earlier video-stage record for the same phone has it.
-      if(r.panel && !existing.panel) existing.panel = r.panel;
-      // Same idea for the landing-page source: only the stage-1 record
-      // carries it, and stage-1 is rarely a lead's "winning" (highest)
-      // record, so this has to be captured independently too.
-      if(r.page && !existing.page) existing.page = r.page;
-      if(stage > existing.stage){
-        existing.stage = stage;
-        existing.stage_label = r.stage_label;
-        if(r.panel) existing.panel = r.panel;
-      }
-      // updated_at tracks the lead's MOST RECENT activity of any kind --
-      // deliberately independent of which record "won" for stage above.
-      // A returning lead who revisits at a lower stage than they'd already
-      // reached (e.g. hit video_1 last week, comes back through a landing
-      // page today) would otherwise stay stuck showing last week's
-      // timestamp forever, making today's real visit invisible in the
-      // "recently updated" sort/filter even though the record exists.
-      if(r.updated_at && r.updated_at > existing.updated_at) existing.updated_at = r.updated_at;
-    });
-    allRows = Object.values(byPhone);
-    renderKpis(allRows);
-    renderFunnel(allRows);
-    applyFiltersAndRender();
-    document.getElementById('refreshText').textContent = 'עודכן ' + new Date().toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
-  } catch(e) {
-    content.className = 'err-box';
-    content.textContent = 'שגיאה בטעינת הנתונים: ' + e.message;
-    document.getElementById('refreshText').textContent = 'שגיאת רענון';
-  } finally {
-    meta.classList.remove('loading');
-  }
+const meta = document.getElementById('refreshMeta');
+const content = document.getElementById('content');
+meta.classList.add('loading');
+document.getElementById('refreshText').textContent = 'מרענן...';
+if(!allRows.length){
+content.className = 'loading';
+content.textContent = 'טוען...';
+}
+try {
+const res = await fetch(LOOKUP_HOOK, { cache: 'no-store' });
+const raw = await res.json();
+// Collapse to one row per phone = the highest stage reached. Name/email
+// are tracked separately from stage/updated_at: the video-stage tracking
+// calls (stage 2-5, fired from the funnel pages) only ever send
+// {phone, email, stage} -- they never carry the lead's name. Only the
+// stage-1 "landing" call (and stage-6 "webinar_signup"/"details_submitted")
+// include it. If we
+// just took name/email from whichever record has the highest stage (the
+// old behavior), any lead whose highest stage happens to be a video step
+// shows up with a blank name, even though we know it perfectly well from
+// their stage-1 record. So: keep the first non-empty name/email seen for
+// each phone across ALL of that phone's records, independent of which
+// record ends up "winning" for stage/updated_at.
+const byPhone = {};
+(raw || []).forEach(r => {
+if(!r || !r.phone) return;
+const stage = Number(r.stage) || 0;
+let existing = byPhone[r.phone];
+if(!existing){
+existing = byPhone[r.phone] = { phone: r.phone, name: '', email: '', stage: -1, stage_label: '', panel: '', page: '', updated_at: '' };
+}
+if(r.name && !existing.name) existing.name = r.name;
+if(r.email && !existing.email) existing.email = r.email;
+// Keep the first panel value seen for this phone too (independent of
+// which record "wins" for stage) -- landing (stage 1) never carries a
+// panel since the split hasn't happened yet, so without this a lead
+// whose winning record happens to lack a panel would lose the badge
+// even though an earlier video-stage record for the same phone has it.
+if(r.panel && !existing.panel) existing.panel = r.panel;
+// Same idea for the landing-page source: only the stage-1 record
+// carries it, and stage-1 is rarely a lead's "winning" (highest)
+// record, so this has to be captured independently too.
+if(r.page && !existing.page) existing.page = r.page;
+if(stage > existing.stage){
+existing.stage = stage;
+existing.stage_label = r.stage_label;
+if(r.panel) existing.panel = r.panel;
+}
+// updated_at tracks the lead's MOST RECENT activity of any kind --
+// deliberately independent of which record "won" for stage above.
+// A returning lead who revisits at a lower stage than they'd already
+// reached (e.g. hit video_1 last week, comes back through a landing
+// page today) would otherwise stay stuck showing last week's
+// timestamp forever, making today's real visit invisible in the
+// "recently updated" sort/filter even though the record exists.
+if(r.updated_at && r.updated_at > existing.updated_at) existing.updated_at = r.updated_at;
+});
+allRows = Object.values(byPhone);
+renderKpis(allRows);
+renderFunnel(allRows);
+applyFiltersAndRender();
+document.getElementById('refreshText').textContent = 'עודכן ' + new Date().toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
+} catch(e) {
+content.className = 'err-box';
+content.textContent = 'שגיאה בטעינת הנתונים: ' + e.message;
+document.getElementById('refreshText').textContent = 'שגיאת רענון';
+} finally {
+meta.classList.remove('loading');
+}
 }
 
 function renderKpis(rows){
-  const total = rows.length;
-  const reachedVideo = rows.filter(r => r.stage >= 2).length;
-  const finishedSeries = rows.filter(r => r.stage >= 5).length;
-  const hot = rows.filter(r => r.stage >= 6).length;
-  const conv = total ? Math.round(hot/total*100) : 0;
-  const cards = [
-    { v: total, l: 'סה"כ לידים', c: '#3b6bf5' },
-    { v: reachedVideo, l: 'הגיעו לסרטונים', c: '#a8d666', d: total ? Math.round(reachedVideo/total*100)+'% מהכניסות' : '' },
-    { v: finishedSeries, l: 'סיימו את הסדרה', c: '#a066d6', d: total ? Math.round(finishedSeries/total*100)+'% מהכניסות' : '' },
-    { v: hot, l: 'המרה סופית 🏆', c: '#ff6ba0', d: total ? Math.round(hot/total*100)+'% מהכניסות' : '' },
-    { v: conv+'%', l: 'יחס המרה כולל', c: '#5fd6b0', d: 'דף נחיתה ⟶ המרה סופית' }
-  ];
-  document.getElementById('kpis').innerHTML = cards.map(c =>
-    '<div class="kpi" style="--kc:'+c.c+'">'
-    + '<div class="kv">' + c.v + '</div>'
-    + '<div class="kl">' + c.l + '</div>'
-    + (c.d ? '<div class="kd flat">' + c.d + '</div>' : '')
-    + '</div>'
-  ).join('');
+const total = rows.length;
+const reachedVideo = rows.filter(r => r.stage >= 2).length;
+const finishedSeries = rows.filter(r => r.stage >= 5).length;
+const hot = rows.filter(r => r.stage >= 6).length;
+const conv = total ? Math.round(hot/total*100) : 0;
+const cards = [
+{ v: total, l: 'סה"כ לידים', c: '#3b6bf5' },
+{ v: reachedVideo, l: 'הגיעו לסרטונים', c: '#a8d666', d: total ? Math.round(reachedVideo/total*100)+'% מהכניסות' : '' },
+{ v: finishedSeries, l: 'סיימו את הסדרה', c: '#a066d6', d: total ? Math.round(finishedSeries/total*100)+'% מהכניסות' : '' },
+{ v: hot, l: 'המרה סופית 🏆', c: '#ff6ba0', d: total ? Math.round(hot/total*100)+'% מהכניסות' : '' },
+{ v: conv+'%', l: 'יחס המרה כולל', c: '#5fd6b0', d: 'דף נחיתה ⟶ המרה סופית' }
+];
+document.getElementById('kpis').innerHTML = cards.map(c =>
+'<div class="kpi" style="--kc:'+c.c+'">'
++ '<div class="kv">' + c.v + '</div>'
++ '<div class="kl">' + c.l + '</div>'
++ (c.d ? '<div class="kd flat">' + c.d + '</div>' : '')
++ '</div>'
+).join('');
 }
 
 function renderFunnel(rows){
-  const total = rows.length || 1;
-  let prevCount = null;
-  let html = '';
-  [1,2,3,4,5,6].forEach(stage => {
-    const count = rows.filter(r => r.stage >= stage).length;
-    const pct = Math.round(count/total*100);
-    let dropHtml = '';
-    if(prevCount !== null){
-      const drop = prevCount ? Math.round((1 - count/prevCount)*100) : 0;
-      dropHtml = '<span class="funnel-drop' + (drop <= 0 ? ' good' : '') + '">' + (drop > 0 ? '−'+drop+'% נשירה' : 'ללא נשירה') + '</span>';
-    }
-    html += '<div class="funnel-row">'
-      + '<div class="funnel-label">' + STAGE_LABELS[stage] + '</div>'
-      + '<div class="funnel-track"><div class="funnel-fill" style="width:' + Math.max(pct,3) + '%;background:' + STAGE_COLORS[stage] + '"><span>' + (pct >= 8 ? pct+'%' : '') + '</span></div></div>'
-      + '<div class="funnel-nums"><b>' + count + '</b> לידים ' + dropHtml + '</div>'
-      + '</div>';
-    prevCount = count;
-  });
-  document.getElementById('funnel').innerHTML = html;
+const total = rows.length || 1;
+let prevCount = null;
+let html = '';
+[1,2,3,4,5,6].forEach(stage => {
+const count = rows.filter(r => r.stage >= stage).length;
+const pct = Math.round(count/total*100);
+let dropHtml = '';
+if(prevCount !== null){
+const drop = prevCount ? Math.round((1 - count/prevCount)*100) : 0;
+dropHtml = '<span class="funnel-drop' + (drop <= 0 ? ' good' : '') + '">' + (drop > 0 ? '−'+drop+'% נשירה' : 'ללא נשירה') + '</span>';
+}
+html += '<div class="funnel-row">'
++ '<div class="funnel-label">' + STAGE_LABELS[stage] + '</div>'
++ '<div class="funnel-track"><div class="funnel-fill" style="width:' + Math.max(pct,3) + '%;background:' + STAGE_COLORS[stage] + '"><span>' + (pct >= 8 ? pct+'%' : '') + '</span></div></div>'
++ '<div class="funnel-nums"><b>' + count + '</b> לידים ' + dropHtml + '</div>'
++ '</div>';
+prevCount = count;
+});
+document.getElementById('funnel').innerHTML = html;
 }
 
 function inDateRange(r){
-  const rangeVal = document.getElementById('dateRange').value;
-  if(!rangeVal) return true;
-  const d = fmtDate(r.updated_at);
-  if(!d) return false;
-  const now = new Date();
-  if(rangeVal === 'today'){
-    return d.toDateString() === now.toDateString();
-  }
-  if(rangeVal === '7d'){
-    return (now - d) <= 7*24*60*60*1000;
-  }
-  if(rangeVal === '30d'){
-    return (now - d) <= 30*24*60*60*1000;
-  }
-  if(rangeVal === 'month'){
-    return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
-  }
-  if(rangeVal === 'year'){
-    return d.getFullYear() === now.getFullYear();
-  }
-  if(rangeVal === 'custom'){
-    const fromVal = document.getElementById('dateFrom').value;
-    const toVal = document.getElementById('dateTo').value;
-    if(fromVal && d < new Date(fromVal + 'T00:00:00')) return false;
-    if(toVal && d > new Date(toVal + 'T23:59:59')) return false;
-    return true;
-  }
-  return true;
+const rangeVal = document.getElementById('dateRange').value;
+if(!rangeVal) return true;
+const d = fmtDate(r.updated_at);
+if(!d) return false;
+const now = new Date();
+if(rangeVal === 'today'){
+return d.toDateString() === now.toDateString();
+}
+if(rangeVal === '7d'){
+return (now - d) <= 7*24*60*60*1000;
+}
+if(rangeVal === '30d'){
+return (now - d) <= 30*24*60*60*1000;
+}
+if(rangeVal === 'month'){
+return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+}
+if(rangeVal === 'year'){
+return d.getFullYear() === now.getFullYear();
+}
+if(rangeVal === 'custom'){
+const fromVal = document.getElementById('dateFrom').value;
+const toVal = document.getElementById('dateTo').value;
+if(fromVal && d < new Date(fromVal + 'T00:00:00')) return false;
+if(toVal && d > new Date(toVal + 'T23:59:59')) return false;
+return true;
+}
+return true;
 }
 
 function getFilteredSortedRows(){
-  const q = document.getElementById('searchBox').value.trim().toLowerCase();
-  const stageF = document.getElementById('stageFilter').value;
-  const funnelF = document.getElementById('funnelFilter').value;
-  let rows = allRows.filter(r =>
-    (!q || (r.phone||'').toLowerCase().includes(q) || (r.name||'').toLowerCase().includes(q) || (r.email||'').toLowerCase().includes(q))
-    && (!stageF || String(r.stage) === stageF)
-    && (!funnelF || r.panel === funnelF)
-    && inDateRange(r)
-  );
-  const sortVal = document.getElementById('sortBy').value;
-  rows = rows.slice().sort((a,b) => {
-    switch(sortVal){
-      case 'updated_asc': return (a.updated_at||'').localeCompare(b.updated_at||'');
-      case 'stage_desc': return b.stage - a.stage || (b.updated_at||'').localeCompare(a.updated_at||'');
-      case 'stage_asc': return a.stage - b.stage || (b.updated_at||'').localeCompare(a.updated_at||'');
-      case 'name_asc': return (a.name||'').localeCompare(b.name||'','he');
-      default: return (b.updated_at||'').localeCompare(a.updated_at||'');
-    }
-  });
-  return rows;
+const q = document.getElementById('searchBox').value.trim().toLowerCase();
+const stageF = document.getElementById('stageFilter').value;
+const funnelF = document.getElementById('funnelFilter').value;
+let rows = allRows.filter(r =>
+(!q || (r.phone||'').toLowerCase().includes(q) || (r.name||'').toLowerCase().includes(q) || (r.email||'').toLowerCase().includes(q))
+&& (!stageF || String(r.stage) === stageF)
+&& (!funnelF || r.panel === funnelF)
+&& inDateRange(r)
+);
+const sortVal = document.getElementById('sortBy').value;
+rows = rows.slice().sort((a,b) => {
+switch(sortVal){
+case 'updated_asc': return (a.updated_at||'').localeCompare(b.updated_at||'');
+case 'stage_desc': return b.stage - a.stage || (b.updated_at||'').localeCompare(a.updated_at||'');
+case 'stage_asc': return a.stage - b.stage || (b.updated_at||'').localeCompare(a.updated_at||'');
+case 'name_asc': return (a.name||'').localeCompare(b.name||'','he');
+default: return (b.updated_at||'').localeCompare(a.updated_at||'');
+}
+});
+return rows;
 }
 
 function applyFiltersAndRender(resetPage){
-  if(resetPage) currentPage = 1;
-  const rows = getFilteredSortedRows();
-  document.getElementById('resultsCount').textContent = rows.length + ' לידים תואמים';
+if(resetPage) currentPage = 1;
+const rows = getFilteredSortedRows();
+document.getElementById('resultsCount').textContent = rows.length + ' לידים תואמים';
 
-  const pageSizeVal = document.getElementById('pageSize').value;
-  let pageRows = rows;
-  const pagination = document.getElementById('pagination');
-  if(pageSizeVal !== 'all'){
-    const size = Number(pageSizeVal);
-    const totalPages = Math.max(1, Math.ceil(rows.length / size));
-    if(currentPage > totalPages) currentPage = totalPages;
-    if(currentPage < 1) currentPage = 1;
-    const start = (currentPage - 1) * size;
-    pageRows = rows.slice(start, start + size);
-    if(rows.length > size){
-      pagination.style.display = 'flex';
-      document.getElementById('pageInfo').textContent = 'עמוד ' + currentPage + ' מתוך ' + totalPages + ' (מציג ' + (start+1) + '-' + Math.min(start+size, rows.length) + ' מתוך ' + rows.length + ')';
-      document.getElementById('prevPage').disabled = currentPage <= 1;
-      document.getElementById('nextPage').disabled = currentPage >= totalPages;
-    } else {
-      pagination.style.display = 'none';
-    }
-  } else {
-    pagination.style.display = 'none';
-  }
-  render(pageRows);
+const pageSizeVal = document.getElementById('pageSize').value;
+let pageRows = rows;
+const pagination = document.getElementById('pagination');
+if(pageSizeVal !== 'all'){
+const size = Number(pageSizeVal);
+const totalPages = Math.max(1, Math.ceil(rows.length / size));
+if(currentPage > totalPages) currentPage = totalPages;
+if(currentPage < 1) currentPage = 1;
+const start = (currentPage - 1) * size;
+pageRows = rows.slice(start, start + size);
+if(rows.length > size){
+pagination.style.display = 'flex';
+document.getElementById('pageInfo').textContent = 'עמוד ' + currentPage + ' מתוך ' + totalPages + ' (מציג ' + (start+1) + '-' + Math.min(start+size, rows.length) + ' מתוך ' + rows.length + ')';
+document.getElementById('prevPage').disabled = currentPage <= 1;
+document.getElementById('nextPage').disabled = currentPage >= totalPages;
+} else {
+pagination.style.display = 'none';
+}
+} else {
+pagination.style.display = 'none';
+}
+render(pageRows);
 }
 
 function render(rows){
-  const content = document.getElementById('content');
-  if(!allRows.length){
-    content.className = 'empty';
-    content.textContent = 'אין נתונים עדיין.';
-    return;
-  }
-  if(!rows.length){
-    content.className = 'empty';
-    content.textContent = 'לא נמצאו לידים התואמים את הסינון.';
-    return;
-  }
-  content.className = '';
-  let html = '<table><thead><tr>'
-    + '<th>שם</th><th>טלפון</th><th>אימייל</th><th>דף נחיתה</th><th>משפך</th><th>התקדמות</th><th>עודכן</th><th></th>'
-    + '</tr></thead><tbody>';
-  rows.forEach(r => {
-    const dots = [1,2,3,4,5,6].map(s =>
-      '<span class="pdot" style="' + (r.stage >= s ? 'background:'+STAGE_COLORS[s] : '') + '" title="' + STAGE_LABELS[s] + '"></span>'
-    ).join('');
-    const norm = normalizePhone(r.phone);
-    const quickActions = norm ? (
-      '<a class="qa call" href="tel:+' + norm + '" title="התקשר">📞</a>'
-      + '<a class="qa wa" href="https://wa.me/' + norm + '" target="_blank" rel="noopener" title="וואטסאפ">💬</a>'
-    ) : '';
-    html += '<tr class="' + (r.stage >= 6 ? 'hot' : '') + '">'
-      + '<td class="name-cell">' + esc(r.name || '-') + '</td>'
-      + '<td data-label="טלפון"><div class="phone-cell" dir="ltr"><span>' + esc(r.phone || '-') + '</span>' + quickActions + '</div></td>'
-      + '<td class="muted" data-label="אימייל"><span dir="ltr">' + esc(r.email || '-') + '</span></td>'
-      + '<td class="muted" data-label="דף נחיתה">' + esc(pageLabel(r)) + '</td>'
-      + '<td data-label="משפך">' + funnelBadge(r) + '</td>'
-      + '<td data-label="התקדמות"><div class="cell-inner"><span class="stage-pill s' + r.stage + '">' + stageDisplay(r) + '</span><div class="progress-dots">' + dots + '</div></div></td>'
-      + '<td class="time-cell" data-label="עודכן"><div class="cell-inner"><div class="rel">' + esc(relTime(r.updated_at) || '-') + '</div><div class="abs">' + esc(r.updated_at || '-') + '</div></div></td>'
-      + '<td><button class="del-btn" data-phone="' + esc(r.phone || '') + '" onclick="deleteLead(this)">🗑️ מחק</button></td>'
-      + '</tr>';
-  });
-  html += '</tbody></table>';
-  content.innerHTML = html;
+const content = document.getElementById('content');
+if(!allRows.length){
+content.className = 'empty';
+content.textContent = 'אין נתונים עדיין.';
+return;
+}
+if(!rows.length){
+content.className = 'empty';
+content.textContent = 'לא נמצאו לידים התואמים את הסינון.';
+return;
+}
+content.className = '';
+let html = '<table><thead><tr>'
++ '<th>שם</th><th>טלפון</th><th>אימייל</th><th>דף נחיתה</th><th>משפך</th><th>התקדמות</th><th>עודכן</th><th></th>'
++ '</tr></thead><tbody>';
+rows.forEach(r => {
+const dots = [1,2,3,4,5,6].map(s =>
+'<span class="pdot" style="' + (r.stage >= s ? 'background:'+STAGE_COLORS[s] : '') + '" title="' + STAGE_LABELS[s] + '"></span>'
+).join('');
+const norm = normalizePhone(r.phone);
+const quickActions = norm ? (
+'<a class="qa call" href="tel:+' + norm + '" title="התקשר">📞</a>'
++ '<a class="qa wa" href="https://wa.me/' + norm + '" target="_blank" rel="noopener" title="וואטסאפ">💬</a>'
+) : '';
+html += '<tr class="' + (r.stage >= 6 ? 'hot' : '') + '">'
++ '<td class="name-cell">' + esc(r.name || '-') + '</td>'
++ '<td data-label="טלפון"><div class="phone-cell" dir="ltr"><span>' + esc(r.phone || '-') + '</span>' + quickActions + '</div></td>'
++ '<td class="muted" data-label="אימייל"><span dir="ltr">' + esc(r.email || '-') + '</span></td>'
++ '<td class="muted" data-label="דף נחיתה">' + esc(pageLabel(r)) + '</td>'
++ '<td data-label="משפך">' + funnelBadge(r) + '</td>'
++ '<td data-label="התקדמות"><div class="cell-inner"><span class="stage-pill s' + r.stage + '">' + stageDisplay(r) + '</span><div class="progress-dots">' + dots + '</div></div></td>'
++ '<td class="time-cell" data-label="עודכן"><div class="cell-inner"><div class="rel">' + esc(relTime(r.updated_at) || '-') + '</div><div class="abs">' + esc(r.updated_at || '-') + '</div></div></td>'
++ '<td><button class="del-btn" data-phone="' + esc(r.phone || '') + '" onclick="deleteLead(this)">🗑️ מחק</button></td>'
++ '</tr>';
+});
+html += '</tbody></table>';
+content.innerHTML = html;
 }
 
 function exportCsv(){
-  const rows = getFilteredSortedRows();
-  if(!rows.length){ showToast('אין נתונים לייצוא'); return; }
-  const header = ['שם','טלפון','אימייל','דף נחיתה','משפך','שלב','עודכן'];
-  const lines = [header.join(',')];
-  rows.forEach(r => {
-    const funnelName = (PANEL_LABELS[r.panel] && PANEL_LABELS[r.panel].name) || '';
-    const vals = [r.name||'', r.phone||'', r.email||'', pageLabel(r), funnelName, stageDisplay(r), r.updated_at||''];
-    lines.push(vals.map(v => '"' + String(v).replace(/"/g,'""') + '"').join(','));
-  });
-  const blob = new Blob(['﻿' + lines.join('\n')], {type:'text/csv;charset=utf-8;'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'leads_' + new Date().toISOString().slice(0,10) + '.csv';
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
+const rows = getFilteredSortedRows();
+if(!rows.length){ showToast('אין נתונים לייצוא'); return; }
+const header = ['שם','טלפון','אימייל','דף נחיתה','משפך','שלב','עודכן'];
+const lines = [header.join(',')];
+rows.forEach(r => {
+const funnelName = (PANEL_LABELS[r.panel] && PANEL_LABELS[r.panel].name) || '';
+const vals = [r.name||'', r.phone||'', r.email||'', pageLabel(r), funnelName, stageDisplay(r), r.updated_at||''];
+lines.push(vals.map(v => '"' + String(v).replace(/"/g,'""') + '"').join(','));
+});
+const blob = new Blob([' ' + lines.join('\n')], {type:'text/csv;charset=utf-8;'});
+const url = URL.createObjectURL(blob);
+const a = document.createElement('a');
+a.href = url;
+a.download = 'leads_' + new Date().toISOString().slice(0,10) + '.csv';
+document.body.appendChild(a);
+a.click();
+a.remove();
+URL.revokeObjectURL(url);
 }
 
 function deleteLead(btn){
-  const phone = btn.getAttribute('data-phone');
-  if(!phone) return;
-  showConfirm('למחוק את הליד עם הטלפון ' + phone + ' מהטבלה? הפעולה אינה הפיכה.', function(){
-    doDelete(phone, btn);
-  });
+const phone = btn.getAttribute('data-phone');
+if(!phone) return;
+showConfirm('למחוק את הליד עם הטלפון ' + phone + ' מהטבלה? הפעולה אינה הפיכה.', function(){
+doDelete(phone, btn);
+});
 }
 
 async function doDelete(phone, btn){
-  btn.disabled = true;
-  btn.textContent = 'מוחק...';
-  try {
-    const res = await fetch(DELETE_HOOK, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ phone: phone })
-    });
-    if(!res.ok) throw new Error('שגיאת שרת');
-    allRows = allRows.filter(r => r.phone !== phone);
-    renderKpis(allRows);
-    renderFunnel(allRows);
-    applyFiltersAndRender();
-    showToast('הליד נמחק בהצלחה');
-  } catch(e) {
-    showToast('מחיקה נכשלה: ' + e.message, true);
-    btn.disabled = false;
-    btn.textContent = '🗑️ מחק';
-  }
+btn.disabled = true;
+btn.textContent = 'מוחק...';
+try {
+const res = await fetch(DELETE_HOOK, {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ phone: phone })
+});
+if(!res.ok) throw new Error('שגיאת שרת');
+allRows = allRows.filter(r => r.phone !== phone);
+renderKpis(allRows);
+renderFunnel(allRows);
+applyFiltersAndRender();
+showToast('הליד נמחק בהצלחה');
+} catch(e) {
+showToast('מחיקה נכשלה: ' + e.message, true);
+btn.disabled = false;
+btn.textContent = '🗑️ מחק';
+}
 }
 
 function showConfirm(message, onConfirm){
-  const overlay = document.createElement('div');
-  overlay.className = 'confirm-overlay';
-  overlay.innerHTML = '<div class="confirm-box">'
-    + '<p>' + esc(message) + '</p>'
-    + '<div class="confirm-actions">'
-    + '<button class="confirm-yes">מחק</button>'
-    + '<button class="confirm-no">ביטול</button>'
-    + '</div></div>';
-  document.body.appendChild(overlay);
-  overlay.querySelector('.confirm-no').onclick = function(){ overlay.remove(); };
-  overlay.addEventListener('click', function(e){ if(e.target === overlay) overlay.remove(); });
-  overlay.querySelector('.confirm-yes').onclick = function(){ overlay.remove(); onConfirm(); };
+const overlay = document.createElement('div');
+overlay.className = 'confirm-overlay';
+overlay.innerHTML = '<div class="confirm-box">'
++ '<p>' + esc(message) + '</p>'
++ '<div class="confirm-actions">'
++ '<button class="confirm-yes">מחק</button>'
++ '<button class="confirm-no">ביטול</button>'
++ '</div></div>';
+document.body.appendChild(overlay);
+overlay.querySelector('.confirm-no').onclick = function(){ overlay.remove(); };
+overlay.addEventListener('click', function(e){ if(e.target === overlay) overlay.remove(); });
+overlay.querySelector('.confirm-yes').onclick = function(){ overlay.remove(); onConfirm(); };
 }
 
 function showToast(message, isErr){
-  const t = document.createElement('div');
-  t.className = 'toast' + (isErr ? ' err' : '');
-  t.textContent = message;
-  document.body.appendChild(t);
-  setTimeout(function(){ t.remove(); }, 3500);
+const t = document.createElement('div');
+t.className = 'toast' + (isErr ? ' err' : '');
+t.textContent = message;
+document.body.appendChild(t);
+setTimeout(function(){ t.remove(); }, 3500);
 }
 
 function esc(s){
-  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
 const PREF_KEY = 'lj_prefs';
 function savePrefs(){
-  localStorage.setItem(PREF_KEY, JSON.stringify({
-    stageFilter: document.getElementById('stageFilter').value,
-    funnelFilter: document.getElementById('funnelFilter').value,
-    dateRange: document.getElementById('dateRange').value,
-    dateFrom: document.getElementById('dateFrom').value,
-    dateTo: document.getElementById('dateTo').value,
-    sortBy: document.getElementById('sortBy').value,
-    pageSize: document.getElementById('pageSize').value
-  }));
+localStorage.setItem(PREF_KEY, JSON.stringify({
+stageFilter: document.getElementById('stageFilter').value,
+funnelFilter: document.getElementById('funnelFilter').value,
+dateRange: document.getElementById('dateRange').value,
+dateFrom: document.getElementById('dateFrom').value,
+dateTo: document.getElementById('dateTo').value,
+sortBy: document.getElementById('sortBy').value,
+pageSize: document.getElementById('pageSize').value
+}));
 }
 function loadPrefs(){
-  try {
-    const p = JSON.parse(localStorage.getItem(PREF_KEY) || '{}');
-    if(p.stageFilter) document.getElementById('stageFilter').value = p.stageFilter;
-    if(p.funnelFilter) document.getElementById('funnelFilter').value = p.funnelFilter;
-    if(p.dateRange) document.getElementById('dateRange').value = p.dateRange;
-    if(p.dateFrom) document.getElementById('dateFrom').value = p.dateFrom;
-    if(p.dateTo) document.getElementById('dateTo').value = p.dateTo;
-    if(p.sortBy) document.getElementById('sortBy').value = p.sortBy;
-    if(p.pageSize) document.getElementById('pageSize').value = p.pageSize;
-    document.getElementById('customRange').classList.toggle('show', p.dateRange === 'custom');
-  } catch(e) {}
+try {
+const p = JSON.parse(localStorage.getItem(PREF_KEY) || '{}');
+if(p.stageFilter) document.getElementById('stageFilter').value = p.stageFilter;
+if(p.funnelFilter) document.getElementById('funnelFilter').value = p.funnelFilter;
+if(p.dateRange) document.getElementById('dateRange').value = p.dateRange;
+if(p.dateFrom) document.getElementById('dateFrom').value = p.dateFrom;
+if(p.dateTo) document.getElementById('dateTo').value = p.dateTo;
+if(p.sortBy) document.getElementById('sortBy').value = p.sortBy;
+if(p.pageSize) document.getElementById('pageSize').value = p.pageSize;
+document.getElementById('customRange').classList.toggle('show', p.dateRange === 'custom');
+} catch(e) {}
 }
 
 document.getElementById('searchBox').addEventListener('input', function(){ applyFiltersAndRender(true); });
@@ -714,9 +722,9 @@ document.getElementById('funnelFilter').addEventListener('change', function(){ s
 document.getElementById('sortBy').addEventListener('change', function(){ savePrefs(); applyFiltersAndRender(true); });
 document.getElementById('pageSize').addEventListener('change', function(){ savePrefs(); applyFiltersAndRender(true); });
 document.getElementById('dateRange').addEventListener('change', function(){
-  document.getElementById('customRange').classList.toggle('show', this.value === 'custom');
-  savePrefs();
-  applyFiltersAndRender(true);
+document.getElementById('customRange').classList.toggle('show', this.value === 'custom');
+savePrefs();
+applyFiltersAndRender(true);
 });
 document.getElementById('dateFrom').addEventListener('change', function(){ savePrefs(); applyFiltersAndRender(true); });
 document.getElementById('dateTo').addEventListener('change', function(){ savePrefs(); applyFiltersAndRender(true); });
@@ -738,36 +746,36 @@ const AUTO_REFRESH_MS = 120000;
 // back -- instead of ticking blindly every 2 minutes regardless of whether
 // anyone's watching.
 function startAutoRefresh(){
-  stopAutoRefresh();
-  autoRefreshTimer = setInterval(function(){
-    if(!document.hidden) loadData();
-  }, AUTO_REFRESH_MS);
+stopAutoRefresh();
+autoRefreshTimer = setInterval(function(){
+if(!document.hidden) loadData();
+}, AUTO_REFRESH_MS);
 }
 function stopAutoRefresh(){
-  if(autoRefreshTimer){ clearInterval(autoRefreshTimer); autoRefreshTimer = null; }
+if(autoRefreshTimer){ clearInterval(autoRefreshTimer); autoRefreshTimer = null; }
 }
 document.addEventListener('visibilitychange', function(){
-  if(!document.getElementById('autoRefresh').checked) return;
-  if(document.hidden){
-    stopAutoRefresh();
-  } else {
-    loadData();
-    startAutoRefresh();
-  }
+if(!document.getElementById('autoRefresh').checked) return;
+if(document.hidden){
+stopAutoRefresh();
+} else {
+loadData();
+startAutoRefresh();
+}
 });
 
 document.getElementById('autoRefresh').addEventListener('change', function(){
-  if(this.checked){
-    localStorage.setItem('lj_autorefresh','1');
-    startAutoRefresh();
-  } else {
-    localStorage.removeItem('lj_autorefresh');
-    stopAutoRefresh();
-  }
+if(this.checked){
+localStorage.setItem('lj_autorefresh','1');
+startAutoRefresh();
+} else {
+localStorage.removeItem('lj_autorefresh');
+stopAutoRefresh();
+}
 });
 if(localStorage.getItem('lj_autorefresh')){
-  document.getElementById('autoRefresh').checked = true;
-  startAutoRefresh();
+document.getElementById('autoRefresh').checked = true;
+startAutoRefresh();
 }
 
 loadPrefs();
