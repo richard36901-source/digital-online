@@ -42,6 +42,7 @@ function trackWaJoin() {
       }).catch(function(){});
     }
   } catch(e) {}
+  try { fetch(TRACK_HOOK, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ metric: 'whatsapp_join', panel: panel }), keepalive: true }).catch(function(){}); } catch(e) {}
 }
 </script>
 
@@ -443,6 +444,9 @@ const variant=P.get('variant')||'',sup=P.get('lm_supplier')||P.get('supplier')||
 const phone=P.get('phone')||'',email=P.get('email')||'',name=P.get('name')||'',panel=P.get('panel')||'';
 dataLayer.push({event:'page_view',page:PAGE,source_variant:variant,supplier:sup,utm_source:src});
 if(typeof fbq!=='undefined')fbq('track','PageView');
+
+const TRACK_HOOK = 'https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q';
+try { fetch(TRACK_HOOK, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ metric: 'bonus_view', panel: panel }), keepalive: true }).catch(function(){}); } catch(e) {}
 
 const sd={};[25,50,75,100].forEach(function(d){sd[d]=0;});
 window.addEventListener('scroll',function(){
