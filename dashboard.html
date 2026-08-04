@@ -18,11 +18,7 @@
     --pb: #3b82f6; --pb-2: #2563eb; --pb-soft: #eff5ff; --pb-softer: #f5f9ff; --pb-border: #dbe7fb;
     --f1: #7c3aed; --f1-bg: #f3effe; --f1-border: #e9defb;
     --f2: #3b82f6; --f2-bg: #eff5ff; --f2-border: #dbe7fb;
-    /* f3 (panel 9 / "New 1") deliberately grayed out -- this arm was removed
-       from the landing-page traffic split (see FUNNEL_GROUPS / HEAD_TO_HEAD_TESTS
-       below), so it no longer receives traffic. Kept in the palette but muted
-       to signal "inactive", not a bug. */
-    --f3: #9aa1b0; --f3-bg: #f1f2f6; --f3-border: #dfe1ea;
+    --f3: #0d9488; --f3-bg: #ecfbf9; --f3-border: #cceee9;
     --f4: #f59e0b; --f4-bg: #fef6e6; --f4-border: #fde8b8;
     --good: #10b981; --good-bg: #ecfdf5; --good-border: #d1f5e2;
     --warn: #f59e0b; --warn-bg: #fef6e6; --warn-border: #fde8b8;
@@ -111,6 +107,28 @@
   .setup-bar a { color: #78350f; text-decoration: underline; font-weight: 600; }
 
   .kpi-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+
+  .panel-registry-wrap {
+    background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+    padding: 8px 8px 4px; box-shadow: var(--shadow-sm); margin-bottom: 28px; overflow-x: auto;
+  }
+  .panel-registry-table { width: 100%; border-collapse: collapse; font-size: 12.5px; min-width: 720px; }
+  .panel-registry-table th {
+    text-align: right; font-size: 11px; color: var(--text-3); font-weight: 700;
+    padding: 10px 12px; border-bottom: 1px solid var(--border); white-space: nowrap;
+  }
+  .panel-registry-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .panel-registry-table tr:last-child td { border-bottom: none; }
+  .pr-num { color: var(--text-3); font-weight: 700; }
+  .pr-pill {
+    display: inline-flex; align-items: center; gap: 5px; font-size: 10.5px; font-weight: 700;
+    padding: 4px 9px; border-radius: 999px; white-space: nowrap;
+  }
+  .pr-live { background: var(--good-bg); color: var(--good); }
+  .pr-off { background: var(--card-soft); color: var(--text-4); border: 1px solid var(--border-2); }
+  tr.pr-inactive td { color: var(--text-4); }
+  tr.pr-inactive .title-link { color: var(--text-4); }
+  tr.pr-inactive { background: var(--card-soft); }
   .kpi {
     background: var(--card); border: 1px solid var(--border);
     border-radius: 12px; padding: 18px 20px; box-shadow: var(--shadow-sm);
@@ -165,7 +183,8 @@
     color: #92500a; font-size: 11.5px; line-height: 1.6;
     border-radius: 10px; padding: 10px 14px; margin-bottom: 18px;
   }
-  .close-stage-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .close-stage-scroll { overflow-x: auto; }
+  .close-stage-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 460px; }
   .close-stage-table th, .close-stage-table td { padding: 10px 12px; text-align: center; }
   .close-stage-table thead th {
     font-size: 11px; color: var(--text-3); font-weight: 600;
@@ -194,6 +213,11 @@
   }
   .fcol-head .inner { display: flex; align-items: center; justify-content: center; gap: 6px; }
   .fcol-head.label { background: transparent; color: var(--text-3); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; }
+  .history-block { border: 1px solid var(--line, #e5e0d8); border-radius: 12px; padding: 10px 14px; margin: 4px 0 20px; background: rgba(0,0,0,.015); }
+  .history-summary { cursor: pointer; font-size: 13px; font-weight: 700; color: var(--text-2, #555); list-style: none; display: flex; align-items: center; gap: 8px; user-select: none; }
+  .history-summary::-webkit-details-marker { display: none; }
+  .history-summary::before { content: '▸'; font-size: 11px; transition: transform .15s; }
+  .history-block[open] .history-summary::before { transform: rotate(90deg); }
   .fcol-head.f1 { background: var(--f1-bg); color: var(--f1); border: 1px solid var(--f1-border); }
   .fcol-head.f2 { background: var(--f2-bg); color: var(--f2); border: 1px solid var(--f2-border); }
   .fcol-head.f3 { background: var(--f3-bg); color: var(--f3); border: 1px solid var(--f3-border); }
@@ -203,12 +227,6 @@
   .fcol-head.f2 .dot { background: var(--f2); }
   .fcol-head.f3 .dot { background: var(--f3); }
   .fcol-head.f4 .dot { background: var(--f4); }
-  .no-traffic-badge {
-    font-size: 9px; font-weight: 700; letter-spacing: 0.02em;
-    background: #e2e4ec; color: #6f7689; border-radius: 6px;
-    padding: 1px 6px; white-space: nowrap;
-  }
-
   .fstep-th { text-align: center; padding: 6px 4px; font-weight: 500; }
   .fstep-lbl {
     display: flex; align-items: center; justify-content: center; flex-direction: column;
@@ -259,6 +277,10 @@
   .fwinner-cell.is-winner .fwinner-rate { color: #a37810; }
   .fwinner-trophy { font-size: 15px; height: 18px; line-height: 1; }
   .fwinner-name { font-size: 10px; color: var(--text-3); margin-top: 4px; font-weight: 500; }
+  .small-n-note { font-size: 9px; color: var(--warn); font-weight: 700; }
+  .small-n-note.head { margin-inline-start: 4px; text-transform: none; letter-spacing: 0; }
+  .fwinner-name .small-n-note { display: block; margin-top: 2px; }
+  .fw-gate-note { margin: 10px 0 18px; padding: 10px 14px; background: var(--warn-bg); border: 1px solid var(--warn-border); border-radius: 10px; font-size: 12.5px; line-height: 1.6; color: var(--text-2); }
 
   .ab-grid { display: grid; gap: 16px; }
   .ab-card {
@@ -442,6 +464,9 @@
   .lp-stat-rate { font-size: 10px; color: var(--text-3); margin-top: 3px; }
   .lp-stat.entry .lp-stat-val { color: var(--good); }
 
+  .watchtime-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+  .watchtime-card-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
+
   /* Titles/headers that are now clickable links straight to the live page --
      keep them visually identical to plain text (no blue link styling, no
      underline until hover) so the linkified titles don't look out of place
@@ -464,6 +489,18 @@
   .loading-dots::after { content: '...'; animation: dots 1.4s steps(4, end) infinite; }
   @keyframes dots { 0%, 20% { content: ''; } 40% { content: '.'; } 60% { content: '..'; } 80%, 100% { content: '...'; } }
 
+  /* ============================================================================
+     RESPONSIVE / MOBILE
+     ============================================================================
+     Three breakpoints:
+     - 960px: tablets -- KPI strip goes from 4 to 2 columns, tighter main padding
+     - 700px: large phones -- funnel table shrinks, A/B cards stack, header wraps
+     - 480px: small phones -- single-column KPIs, section heads stack, tables
+       shrink further so as much as possible fits without horizontal scroll
+     (Grids like watchtime-grid / email-perf-grid / vv-grid / lp-stats-grid /
+     ab-variants-grid already use `repeat(auto-fit, minmax(...))`, so they
+     collapse to a single column on their own as the viewport narrows and
+     don't need explicit rules here.) */
   @media (max-width: 960px) {
     .kpi-strip { grid-template-columns: repeat(2, 1fr); }
     main { padding: 20px 16px 40px; }
@@ -478,10 +515,52 @@
     .fstep-lbl { font-size: 9px; }
     .ab-body { grid-template-columns: 1fr; text-align: center; }
     .ab-ring { margin: 0 auto; }
-    .funnel-wrap { padding: 14px; }
+    .funnel-wrap { padding: 14px; overflow-x: auto; }
     .ab-card { padding: 16px; }
-    header.top { padding: 12px 16px; }
+    header.top { padding: 12px 16px; flex-wrap: wrap; row-gap: 10px; }
     .page-title h1 { font-size: 18px; }
+
+    .header-right { gap: 8px; }
+    .sync-pill { font-size: 10px; padding: 5px 9px; }
+    .btn-refresh { padding: 7px 11px; font-size: 11px; }
+
+    .section-head { flex-direction: column; align-items: flex-start; gap: 4px; margin: 26px 0 12px; }
+    .section-head .meta { text-align: right; }
+
+    .close-stage-wrap, .panel-registry-wrap { padding: 14px 14px 10px; }
+    .close-stage-wrap { padding: 14px; }
+    .panel-registry-wrap { overflow-x: auto; }
+  }
+  @media (max-width: 480px) {
+    main { padding: 16px 12px 32px; }
+    .kpi-strip { grid-template-columns: 1fr; gap: 12px; }
+    .kpi { padding: 15px 16px; }
+    .kpi-value { font-size: 22px; }
+
+    header.top { gap: 10px; }
+    .brand-icon { width: 30px; height: 30px; font-size: 12px; }
+    .brand-text .name { font-size: 14px; }
+    .brand-text .sub { font-size: 10px; }
+    .header-right { margin-right: 0; width: 100%; justify-content: space-between; }
+    .btn-refresh span.btn-refresh-label { display: none; }
+
+    .page-title h1 { font-size: 17px; gap: 8px; }
+    .page-title-icon { width: 26px; height: 26px; }
+
+    .panel-registry-table, .close-stage-table { font-size: 11.5px; }
+    .panel-registry-table th, .panel-registry-table td { padding: 8px 8px; }
+    .close-stage-table th, .close-stage-table td { padding: 8px 6px; }
+
+    .funnel-title-row h3 { font-size: 14.5px; }
+    .funnel-title-row p { font-size: 10px; }
+
+    .ab-head { flex-direction: column; align-items: flex-start; }
+    .ab-var-desc { min-height: 0; }
+
+    .vv-stats { grid-template-columns: repeat(2, 1fr); }
+    .email-stats-row { grid-template-columns: 1fr 1fr; }
+
+    .toast { top: auto; bottom: 20px; left: 12px; right: 12px; transform: none; text-align: center; justify-content: center; }
   }
 </style>
 </head>
@@ -566,94 +645,142 @@
     </div>
   </div>
 
+  <div class="section-head">
+    <h2>
+      <span class="sicn" style="background:var(--pb-soft);color:var(--pb);">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+      </span>
+      דפי נחיתה שנוצרו אי פעם
+    </h2>
+    <span class="meta">כולל כאלה שאינם פעילים כרגע · שורות אפורות עם התג "לא פעיל" לא מקבלות תנועה חדשה, אך הנתונים ההיסטוריים שלהן נשארים כאן</span>
+  </div>
+
+  <div class="panel-registry-wrap">
+    <table class="panel-registry-table" aria-label="דפי נחיתה שנוצרו אי פעם">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">שם</th>
+          <th scope="col">סטטוס</th>
+          <th scope="col">כניסות</th>
+          <th scope="col">המרות</th>
+          <th scope="col">אחוז המרה</th>
+        </tr>
+      </thead>
+      <tbody id="panel_registry_landing_body"></tbody>
+    </table>
+  </div>
+
+  <div class="section-head">
+    <h2>
+      <span class="sicn" style="background:var(--pb-soft);color:var(--pb);">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
+      </span>
+      משפכים (פאנלים) שנוצרו אי פעם
+    </h2>
+    <span class="meta">כולל כאלה שאינם פעילים כרגע · שורות אפורות עם התג "לא פעיל" לא מקבלות תנועה חדשה, אך הנתונים ההיסטוריים שלהן נשארים כאן</span>
+  </div>
+
+  <div class="panel-registry-wrap">
+    <table class="panel-registry-table" aria-label="משפכים שנוצרו אי פעם">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">שם</th>
+          <th scope="col">סטטוס</th>
+          <th scope="col">כניסות</th>
+          <th scope="col">המרות</th>
+          <th scope="col">אחוז המרה</th>
+        </tr>
+      </thead>
+      <tbody id="panel_registry_funnel_body"></tbody>
+    </table>
+  </div>
 
   <div class="section-head">
     <h2>
       <span class="sicn">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
       </span>
-      השוואת משפכים · פיצול 4 זרועות
+      השוואת משפכים · Variant B מול Variant C
     </h2>
     <span class="meta">המרה לאורך מסע הווידאו, מבחן הפיצול הפעיל כרגע</span>
   </div>
 
   <div class="funnel-wrap">
     <div class="funnel-title-row">
-      <h3 id="funnelCaption">בדיקת משפך המרות · Two-Page Funnel מול Funnel D V2 מול שני משפכי הקופי החדשים</h3>
-      <p>כל 5 דפי הנחיתה מפצלים את התנועה 25/25/25/25 בין 4 הזרועות לפני כניסה לסרטון הראשון · פאנל 6 = Two-Page Funnel (משפך דו-שלבי), פאנל 7 = Funnel D V2, פאנל 9 = Two-Page Funnel New 1 (קופי חדש), פאנל 10 = Two-Page Funnel New 2 (קופי חדש) · האחוז בכל שורה = כמה מהכניסות לאותה גרסה הגיעו לשלב הזה · המשפכים הדו-שלביים (6, 9, 10) מסתיימים אחרי וידאו 2, ולכן אין להם נתונים לשלבים 3-4</p>
+      <h3 id="funnelCaption">בדיקת משפך המרות · Variant B מול Variant C</h3>
+      <p>כל דפי הנחיתה הפעילים מפצלים את התנועה 50/50 בין Variant B ו-Variant C בלבד לפני כניסה לסרטון הראשון · שני הווריאנטים משתמשים באותם 2 סרטונים, רק העיצוב והקופי שונים · פאנל 16 = Variant B, פאנל 17 = Variant C · האחוז בכל שורה = כמה מהכניסות לאותה גרסה הגיעו לשלב הזה</p>
     </div>
 
     <table class="funnel-table" aria-labelledby="funnelCaption">
       <colgroup>
         <col class="lbl-col"/>
-        <col/><col/><col/><col/>
+        <col/><col/>
       </colgroup>
       <thead>
         <tr>
           <th scope="col" class="fcol-head label">שלב</th>
-          <th scope="col" class="fcol-head f1"><span class="inner"><span class="dot" aria-hidden="true"></span> <a class="title-link" href="https://funnel.digitalonline.co.il/funnels/two-page-funnel/two-page-funnel-1.html" target="_blank" rel="noopener">Two-Page Funnel (פאנל 6)</a></span></th>
-          <th scope="col" class="fcol-head f2"><span class="inner"><span class="dot" aria-hidden="true"></span> <a class="title-link" href="https://funnel.digitalonline.co.il/funnels/funnel-d-v2/funnel-d-v2-1.html" target="_blank" rel="noopener">Funnel D V2 · עיצוב חדש (פאנל 7)</a></span></th>
-          <th scope="col" class="fcol-head f3 no-traffic"><span class="inner"><span class="dot" aria-hidden="true"></span> <a class="title-link" href="https://funnel.digitalonline.co.il/funnels/two-page-funnel-new-1/two-page-funnel-new-1-1.html" target="_blank" rel="noopener">New 1 · קופי חדש (פאנל 9)</a> <span class="no-traffic-badge">ללא תנועה</span></span></th>
-          <th scope="col" class="fcol-head f4"><span class="inner"><span class="dot" aria-hidden="true"></span> <a class="title-link" href="https://funnel.digitalonline.co.il/funnels/two-page-funnel-new-2/two-page-funnel-new-2-1.html" target="_blank" rel="noopener">New 2 · קופי חדש (פאנל 10)</a></span></th>
+          <th scope="col" class="fcol-head f2"><span class="inner"><span class="dot" aria-hidden="true"></span> <a class="title-link" href="https://funnel.digitalonline.co.il/funnels/two-page-funnel-new-2-b/two-page-funnel-new-2-b-1.html" target="_blank" rel="noopener">Variant B (פאנל 16)</a></span></th>
+          <th scope="col" class="fcol-head f3"><span class="inner"><span class="dot" aria-hidden="true"></span> <a class="title-link" href="https://funnel.digitalonline.co.il/funnels/two-page-funnel-new-2-c/two-page-funnel-new-2-c-1.html" target="_blank" rel="noopener">Variant C (פאנל 17)</a></span></th>
         </tr>
       </thead>
       <tbody id="funnel_steps"></tbody>
       <tfoot id="funnel_winners">
         <tr>
           <th scope="row" class="fwinner-lbl">המרה סופית</th>
-          <td class="fwinner-cell" id="fw_twopage">
+          <td class="fwinner-cell" id="fw_tpfn2b">
             <div class="fwinner-trophy" aria-hidden="true"></div>
             <div class="fwinner-rate mono">0.0%</div>
-            <div class="fwinner-name"><a class="title-link" href="https://funnel.digitalonline.co.il/funnels/two-page-funnel/two-page-funnel-1.html" target="_blank" rel="noopener">Two-Page Funnel</a><span class="sr-only fw-winner-tag"></span></div>
+            <div class="fwinner-name"><a class="title-link" href="https://funnel.digitalonline.co.il/funnels/two-page-funnel-new-2-b/two-page-funnel-new-2-b-1.html" target="_blank" rel="noopener">Variant B</a><span class="sr-only fw-winner-tag"></span></div>
           </td>
-          <td class="fwinner-cell" id="fw_dv2">
+          <td class="fwinner-cell" id="fw_tpfn2c">
             <div class="fwinner-trophy" aria-hidden="true"></div>
             <div class="fwinner-rate mono">0.0%</div>
-            <div class="fwinner-name"><a class="title-link" href="https://funnel.digitalonline.co.il/funnels/funnel-d-v2/funnel-d-v2-1.html" target="_blank" rel="noopener">Funnel D V2</a><span class="sr-only fw-winner-tag"></span></div>
-          </td>
-          <td class="fwinner-cell" id="fw_tpfn1">
-            <div class="fwinner-trophy" aria-hidden="true"></div>
-            <div class="fwinner-rate mono">0.0%</div>
-            <div class="fwinner-name"><a class="title-link" href="https://funnel.digitalonline.co.il/funnels/two-page-funnel-new-1/two-page-funnel-new-1-1.html" target="_blank" rel="noopener">New 1</a><span class="sr-only fw-winner-tag"></span></div>
-          </td>
-          <td class="fwinner-cell" id="fw_tpfn2">
-            <div class="fwinner-trophy" aria-hidden="true"></div>
-            <div class="fwinner-rate mono">0.0%</div>
-            <div class="fwinner-name"><a class="title-link" href="https://funnel.digitalonline.co.il/funnels/two-page-funnel-new-2/two-page-funnel-new-2-1.html" target="_blank" rel="noopener">New 2</a><span class="sr-only fw-winner-tag"></span></div>
+            <div class="fwinner-name"><a class="title-link" href="https://funnel.digitalonline.co.il/funnels/two-page-funnel-new-2-c/two-page-funnel-new-2-c-1.html" target="_blank" rel="noopener">Variant C</a><span class="sr-only fw-winner-tag"></span></div>
           </td>
         </tr>
       </tfoot>
     </table>
   </div>
 
+  <div id="fw_gate_note" class="fw-gate-note" style="display:none;"></div>
 
   <div class="section-head">
     <h2>
-      <span class="sicn" style="background:var(--bad-bg);color:var(--bad);">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      <span class="sicn" style="background:var(--pb-soft);color:var(--pb);">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
       </span>
-      אחוז סגירת עסקה · לפי שלב הנטישה במשפך
+      עמוד בונוס · סרטון נוסף + הצטרפות לוואטסאפ (signup-video.html)
     </h2>
-    <span class="meta">מבוסס על סטטוס "טופל-נסגרה עסקה" ב-LeadManager, מוצלב מול השלב האחרון שהליד הגיע אליו במעקב שלנו</span>
+    <span class="meta">כל אחד מ-6 המשפכים הפעילים מפנה לעמוד המשותף הזה מיד אחרי השארת פרטים (עמוד 2) -- מודד כמה מהלידים צפו בסרטון הבונוס וכמה מהם הצטרפו לקבוצת הוואטסאפ</span>
   </div>
 
-  <div class="close-stage-wrap">
-    <div class="close-stage-note">
-      ⚠️ המעקב הפנימי (Lead Journey) פעיל כ-11 יום בלבד, כך שזו תמונה ראשונית — עסקאות רבות עדיין "בדרך" ולא נסגרו. הנתון מתעדכן <strong>אחת לשבוע</strong> מול LeadManager, כדי לשקף גם עסקאות שנסגרות בפיגור אחרי הכניסה לליד.
-    </div>
-    <table class="close-stage-table" id="close_stage_table" aria-label="אחוז סגירה לפי שלב נטישה">
+  <div class="panel-registry-wrap">
+    <table class="panel-registry-table" aria-label="עמוד בונוס לפי משפך">
       <thead>
         <tr>
-          <th scope="col">היכן הליד נטש</th>
-          <th scope="col">סה"כ לידים</th>
-          <th scope="col">מהם נסגרה עסקה</th>
-          <th scope="col">אחוז סגירה</th>
+          <th scope="col">משפך</th>
+          <th scope="col">הגיעו לעמוד הבונוס</th>
+          <th scope="col">הצטרפו לוואטסאפ</th>
+          <th scope="col">אחוז הצטרפות</th>
         </tr>
       </thead>
-      <tbody id="close_stage_body"></tbody>
+      <tbody id="bonus_page_body"></tbody>
     </table>
-    <div class="close-stage-updated" id="close_stage_updated"></div>
   </div>
+
+  <div class="section-head">
+    <h2>
+      <span class="sicn" style="background:var(--pb-soft, #e0f2fe);color:var(--pb, #0369a1);">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </span>
+      זמן צפייה ממוצע בסרטון לפני נטישה
+    </h2>
+    <span class="meta">לכל כניסה לסרטון נשלחת נקודת מדידה אחת: זמן הצפייה המלא אם הסרטון הושלם, או המיקום האחרון שנצפה אם הדף ננטש קודם — הממוצע כאן הוא סך השניות חלקי מספר הדגימות</span>
+  </div>
+
+  <div class="watchtime-grid" id="watchtime_grid"></div>
 
   <div class="section-head">
     <h2>
@@ -693,6 +820,18 @@
 
   <div class="section-head">
     <h2>
+      <span class="sicn" style="background:#000;color:#fff;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
+      </span>
+      <a class="title-link" href="https://funnel.digitalonline.co.il/landing-pages/landing_tiktok.html" target="_blank" rel="noopener">TikTok · דף נחיתה (פאנל 8)</a>
+    </h2>
+    <span class="meta">landing_tiktok.html · יעד קמפיין הלידים בטיקטוק (marketer=yahav)</span>
+  </div>
+
+  <div class="lp-stats-card" id="tiktok_stats_card"></div>
+
+  <div class="section-head">
+    <h2>
       <span class="sicn green">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
       </span>
@@ -708,6 +847,17 @@
     יוצגו כאן אוטומטית ברגע שיהיה להם מקור נתונים אמיתי.
   </p>
 
+  <details class="history-block">
+    <summary class="history-summary">
+      <span class="sicn" style="background:var(--pa-soft);color:var(--pa);">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+      </span>
+      היסטוריית גרסאות דפי נחיתה · מבחנים שהוחלפו (לחצו להרחבה)
+    </summary>
+    <p class="meta" style="margin:8px 0 12px;">שום נתון לא נמחק -- אלו מבחנים שהיו פעילים בעבר ואינם מקבלים תנועה חדשה כרגע, מוצגים כאן להשוואה היסטורית בלבד.</p>
+    <div class="ab-grid" id="ab_grid_history"></div>
+  </details>
+
   <div class="section-head">
     <h2>
       <span class="sicn" style="background:var(--pa-soft);color:var(--pa);">
@@ -719,6 +869,36 @@
   </div>
 
   <div class="vv-grid" id="video_versions_grid"></div>
+
+  <div class="section-head">
+    <h2>
+      <span class="sicn" style="background:var(--bad-bg);color:var(--bad);">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </span>
+      אחוז סגירת עסקה · לפי שלב הנטישה במשפך
+    </h2>
+    <span class="meta">מבוסס על סטטוס "טופל-נסגרה עסקה" ב-LeadManager, מוצלב מול השלב האחרון שהליד הגיע אליו במעקב שלנו</span>
+  </div>
+
+  <div class="close-stage-wrap">
+    <div class="close-stage-note">
+      ⚠️ המעקב הפנימי (Lead Journey) פעיל כ-11 יום בלבד, כך שזו תמונה ראשונית — עסקאות רבות עדיין "בדרך" ולא נסגרו. הנתון מתעדכן <strong>אחת לשבוע</strong> מול LeadManager, כדי לשקף גם עסקאות שנסגרות בפיגור אחרי הכניסה לליד.
+    </div>
+    <div class="close-stage-scroll">
+    <table class="close-stage-table" id="close_stage_table" aria-label="אחוז סגירה לפי שלב נטישה">
+      <thead>
+        <tr>
+          <th scope="col">היכן הליד נטש</th>
+          <th scope="col">סה"כ לידים</th>
+          <th scope="col">מהם נסגרה עסקה</th>
+          <th scope="col">אחוז סגירה</th>
+        </tr>
+      </thead>
+      <tbody id="close_stage_body"></tbody>
+    </table>
+    </div>
+    <div class="close-stage-updated" id="close_stage_updated"></div>
+  </div>
 
 </main>
 
@@ -749,11 +929,57 @@ const SHEET_TAB = 'Dashboard';             // ← tab name (default 'Dashboard')
    "0". */
 const HEAD_TO_HEAD_TESTS = [
   {
-    /* This card measures the landing page's OWN conversion -- entries (page
-       views) vs. actually submitting the lead form -- not the downstream
-       end-of-funnel conversion, which depends on the video funnel too and
-       would mix in noise unrelated to the landing page copy/design itself. */
-    title: 'דף נחיתה · OPTION2 מול OPTION2_V2', tag: 'landing', tagLabel: 'דף נחיתה',
+    /* Newest experiment: OPTION2 (proven baseline, no video) against two
+       new video-enabled variants built from the same winning copy/design --
+       each embeds one of the two YouTube explainer videos near the top of
+       the page, plus a set of independent CRO tweaks (trust line above the
+       countdown, 2-minute countdown instead of 1, CTA arrow + stronger
+       pre-button copy, popping CTA button) so the two variants can also be
+       compared against each other, not just against the baseline. Same
+       conversionKey as the other landing-page cards: entries vs. actually
+       submitting the lead form. This is the only ACTIVE landing-page test --
+       everything else that used to live here (OPTION2_V2, Option 26071/26072,
+       the original Option 1-4 test) has been moved down into
+       HEAD_TO_HEAD_HISTORY so this section only shows what's live today. */
+    title: 'דף נחיתה · OPTION2 מול Video 1 מול Video 2', tag: 'landing', tagLabel: 'דף נחיתה · מבחן וידאו',
+    conversionLabel: 'שלחו פרטים', conversionKey: 'landing',
+    variants: [
+      { name: 'OPTION2', desc: 'הגרסה המקורית (ללא וידאו)', panel: 2 },
+      { name: 'Video 1', desc: 'עם סרטון 1 + שעון 2 דק׳ + חץ ל-CTA', panel: 14 },
+      { name: 'Video 2', desc: 'עם סרטון 2 + שעון 2 דק׳ + חץ ל-CTA', panel: 15 }
+    ]
+  },
+  {
+    /* Active funnel experiment: New 2 (baseline design/videos, panel 10)
+       against two brand-new cosmetic + copy duplicates of it -- Variant B
+       (panel 16) and Variant C (panel 17). Same two videos as New 2 in all
+       three arms; only the on-page design and copy differ. All landing-page
+       traffic now routes 50/50 into panels 16/17 only (see the redirect
+       logic in landing-pages/*.html) -- New 2 itself (panel 10) no longer
+       receives new redirected traffic but stays listed here as the active
+       baseline it's measured against, not archived into history. The old
+       4-arm test (Two-Page Funnel / Funnel D V2 / New 1 / New 2) has been
+       moved into HEAD_TO_HEAD_HISTORY. */
+    title: 'משפך וידאו · New 2 מול Variant B מול Variant C', tag: 'funnel', tagLabel: 'משפך וידאו · מבחן פעיל',
+    conversionLabel: 'השאירו פרטים', conversionKey: 'webinar',
+    robustBase: true,
+    variants: [
+      { name: 'New 2', desc: 'הגרסה המקורית (סגול/ענבר)', panel: 10 },
+      { name: 'Variant B', desc: 'עיצוב + קופי חדשים (טורקיז), אותם סרטונים', panel: 16 },
+      { name: 'Variant C', desc: 'עיצוב + קופי חדשים (ורוד/אדום), אותם סרטונים', panel: 17 }
+    ]
+  }
+];
+
+/* HISTORY -- tests that were active in the past but are no longer receiving
+   new traffic today. Nothing here was deleted: all the underlying sheet
+   data is 100% intact, this array just controls what shows in the
+   collapsed "היסטוריית גרסאות דפי נחיתה" section instead of the main
+   active grid, so the dashboard's headline view only reflects what's
+   actually live right now. */
+const HEAD_TO_HEAD_HISTORY = [
+  {
+    title: 'דף נחיתה · OPTION2 מול OPTION2_V2', tag: 'landing', tagLabel: 'דף נחיתה · היסטורי',
     conversionLabel: 'שלחו פרטים', conversionKey: 'landing',
     variants: [
       { name: 'OPTION2', desc: 'הגרסה המקורית (זהב)', panel: 2 },
@@ -761,13 +987,7 @@ const HEAD_TO_HEAD_TESTS = [
     ]
   },
   {
-    /* Newest landing-page CTR experiment: OPTION2 (the current baseline)
-       against two brand-new cosmetic/copy variants built specifically to
-       push CTR higher -- Option 26071 (red/orange urgency framing, panel 8)
-       and Option 26072 (blue/cyan curiosity framing, panel 11). Same
-       conversionKey as the other landing-page cards: entries vs. actually
-       submitting the lead form. */
-    title: 'דף נחיתה · OPTION2 מול Option 26071 מול Option 26072', tag: 'landing', tagLabel: 'דף נחיתה · מבחן CTR חדש',
+    title: 'דף נחיתה · OPTION2 מול Option 26071 מול Option 26072', tag: 'landing', tagLabel: 'דף נחיתה · היסטורי',
     conversionLabel: 'שלחו פרטים', conversionKey: 'landing',
     variants: [
       { name: 'OPTION2', desc: 'הגרסה המקורית (זהב)', panel: 2 },
@@ -776,18 +996,7 @@ const HEAD_TO_HEAD_TESTS = [
     ]
   },
   {
-    /* The original 4-arm landing-page test, before OPTION2_V2 existed:
-       four different landing-page designs (option1-4.html), each with its
-       own panel ID (1-4), splitting incoming traffic and each tracking its
-       own entry → form-submission conversion. This card was dropped from
-       the dashboard when the OPTION2 vs OPTION2_V2 test replaced it as the
-       active landing-page experiment, but the historical data itself was
-       never deleted from the sheet -- restoring it here just brings that
-       real data back into view alongside everything else. Panels 3 and 4
-       have little/no recorded traffic (they were effectively retired early
-       on), so they'll correctly show as "אוסף דגימות"/no data rather than
-       a fake rate. */
-    title: 'דף נחיתה · Option 1 מול Option 2 מול Option 3 מול Option 4', tag: 'landing', tagLabel: 'דף נחיתה · מבחן היסטורי',
+    title: 'דף נחיתה · Option 1 מול Option 2 מול Option 3 מול Option 4', tag: 'landing', tagLabel: 'דף נחיתה · היסטורי',
     conversionLabel: 'שלחו פרטים', conversionKey: 'landing',
     variants: [
       { name: 'Option 1', desc: 'גרסת נחיתה מקורית 1', panel: 1 },
@@ -797,21 +1006,13 @@ const HEAD_TO_HEAD_TESTS = [
     ]
   },
   {
-    /* Every landing page now splits visitors 25/25/25/25 between all FOUR
-       panels (6, 7, 9, 10) right before entering the video funnel -- see the
-       redirect logic in landing-pages/*.html. This card shows all four arms
-       side by side (renderHeadToHeadCard() loops generically over
-       test.variants, no longer limited to a hardcoded "VS" pair), matching
-       the full 4-way breakdown in the funnel-steps table below. */
-    title: 'השוואת 4 הזרועות · Two-Page Funnel · Funnel D V2 · New 1 · New 2', tag: 'funnel', tagLabel: 'משפך וידאו',
+    title: 'השוואת 4 הזרועות · Two-Page Funnel · Funnel D V2 · New 1 · New 2', tag: 'funnel', tagLabel: 'משפך וידאו · היסטורי',
     conversionLabel: 'השאירו פרטים', conversionKey: 'webinar',
-    // 'entry' undercounts here (see groupBase() comment) -- fall back to
-    // max(entry, video_1) so this card's rate matches the funnel table above.
     robustBase: true,
     variants: [
       { name: 'Two-Page Funnel', desc: 'משפך דו-שלבי מקוצר (פאנל 6)', panel: 6 },
       { name: 'Funnel D V2', desc: 'עיצוב סקרנות (סגול/ציאן) + קופי חדש (פאנל 7)', panel: 7 },
-      { name: 'New 1', desc: 'משפך דו-שלבי · קופי חדש (פאנל 9) · ⚪ הוסר מהפיצול, ללא תנועה', panel: 9 },
+      { name: 'New 1', desc: 'משפך דו-שלבי · קופי חדש (פאנל 9) · וידאו 1 הוחלף', panel: 9 },
       { name: 'New 2', desc: 'משפך דו-שלבי · קופי חדש (פאנל 10)', panel: 10 }
     ]
   }
@@ -823,20 +1024,15 @@ const HEAD_TO_HEAD_TESTS = [
 const HEAD_TO_HEAD = HEAD_TO_HEAD_TESTS[0];
 
 /* The funnel STEP TABLE below tracks the split test that's actually live
-   right now: every landing page sends 50/50 traffic into panel 6
-   (Two-Page Funnel) or panel 7 (Funnel D V2), independent of which landing
-   page sent the visitor -- see the redirect logic in landing-pages/*.html.
-   This replaced the old Funnel D vs Funnel D V2 comparison (panel 6 used to
-   be Funnel D original), which stopped receiving traffic once panel 6 was
-   repointed at the new Two-Page Funnel. Two-Page Funnel only has 2 video
-   steps, so its `steps` whitelist below tells renderFunnelComparison() to
-   render a "—" placeholder instead of a misleading 0%/dropoff for the
-   video_3/video_4 rows that funnel just doesn't have. */
+   right now: every landing page sends 50/50 traffic into panel 16
+   (Variant B) or panel 17 (Variant C) only -- see the redirect logic in
+   landing-pages/*.html. New 2 (panel 10) no longer receives new traffic and
+   has been dropped from this table entirely per request; its historical
+   data is still intact in the sheet and still shown in the head-to-head
+   card above. */
 const FUNNEL_GROUPS = [
-  { id: 'twopage', key: 'twopage', label: 'Two-Page Funnel (פאנל 6)', cls: 'f1', panels: ['6'], steps: ['entry', 'landing', 'video_1', 'video_2', 'webinar'] },
-  { id: 'dv2', key: 'dv2', label: 'Funnel D V2 · עיצוב חדש (פאנל 7)', cls: 'f2', panels: ['7'] },
-  { id: 'tpfn1', key: 'tpfn1', label: 'Two-Page Funnel New 1 (פאנל 9)', cls: 'f3', panels: ['9'], steps: ['entry', 'landing', 'video_1', 'video_2', 'webinar'] },
-  { id: 'tpfn2', key: 'tpfn2', label: 'Two-Page Funnel New 2 (פאנל 10)', cls: 'f4', panels: ['10'], steps: ['entry', 'landing', 'video_1', 'video_2', 'webinar'] }
+  { id: 'tpfn2b', key: 'tpfn2b', label: 'Variant B (פאנל 16)', cls: 'f2', panels: ['16'], steps: ['entry', 'landing', 'video_1', 'video_2', 'webinar'] },
+  { id: 'tpfn2c', key: 'tpfn2c', label: 'Variant C (פאנל 17)', cls: 'f3', panels: ['17'], steps: ['entry', 'landing', 'video_1', 'video_2', 'webinar'] }
 ];
 
 /* VIDEO VERSION HISTORY -- per-panel log of video swaps for the 4 panels
@@ -866,9 +1062,17 @@ const FUNNEL_GROUPS = [
    to date) -- this matches reality, since no swap has happened yet. */
 const VIDEO_VERSIONS = {
   6:  [ { version: 1, label: 'וידאו מקורי', since: null, snapshot: null } ],
-  7:  [ { version: 1, label: 'וידאו מקורי', since: null, snapshot: null } ],
-  9:  [ { version: 1, label: 'וידאו מקורי (טרם הוחלף)', since: null, snapshot: null } ],
-  10: [ { version: 1, label: 'וידאו מקורי', since: null, snapshot: null } ]
+  7:  [
+        { version: 1, label: 'וידאו מקורי', since: null, snapshot: null },
+        { version: 2, label: 'וידאו 1 הוחלף לסרטון YouTube חדש', since: '2026-07-30', snapshot: { entry: 76, video_1: 108, video_2: 33, webinar: 16 } }
+      ],
+  9:  [
+        { version: 1, label: 'וידאו מקורי', since: null, snapshot: null },
+        { version: 2, label: 'וידאו חדש - האוטומט השקט', since: '2026-07-28', snapshot: { entry: 22, video_1: 31, video_2: 4, webinar: 2 } }
+      ],
+  10: [ { version: 1, label: 'וידאו מקורי', since: null, snapshot: null } ],
+  16: [ { version: 1, label: 'וידאו מקורי (זהה ל-New 2)', since: null, snapshot: null } ],
+  17: [ { version: 1, label: 'וידאו מקורי (זהה ל-New 2)', since: null, snapshot: null } ]
 };
 
 const FUNNEL_STEPS = [
@@ -1018,12 +1222,17 @@ function render() {
   }
 
   renderFunnelComparison();
+  renderBonusPage();
   renderCloseStage();
   renderEmailPerf();
   renderVideoRetention();
   renderLpStats();
+  renderTikTokStats();
   renderHeadToHead();
+  renderHeadToHeadHistory();
   renderVideoVersions();
+  renderWatchTime();
+  renderPanelRegistry();
 }
 
 /* ============================================================================
@@ -1109,6 +1318,38 @@ function renderLpStats() {
 }
 
 /* ============================================================================
+   TIKTOK LANDING STATS · landing_tiktok.html (panel 8)
+      Standalone landing page for the TikTok lead-gen campaign. The page only
+         fires two tracking events -- 'entry' on load and 'landing' on form submit
+            (no video/wa/ig steps like the WhatsApp page) -- so this is a flat 2-stat
+               grid, same visual pattern as renderLpStats() above.
+                  ============================================================================ */
+  
+  const TIKTOK_PANEL = 8;
+  
+  function renderTikTokStats() {
+      const el = document.getElementById('tiktok_stats_card');
+      if (!el) return;
+    
+      const entry = m(`f${TIKTOK_PANEL}_entry`);
+      const landing = m(`f${TIKTOK_PANEL}_landing`);
+    
+      const rate = v => entry > 0 ? `<div class="lp-stat-rate">${fmtPct(pct(v, entry))} מהכניסות</div>` : '';
+    
+      const stats = [
+        { cls: 'entry', lbl: 'כניסות לדף', val: entry, extra: '' },
+        { cls: '', lbl: 'שלחו פרטים (ליד)', val: landing, extra: rate(landing) }
+          ];
+    
+      el.innerHTML = `<div class="lp-stats-grid">${stats.map(s => `
+          <div class="lp-stat ${s.cls}">
+                <div class="lp-stat-val mono">${fmt(s.val)}</div>
+                      <div class="lp-stat-lbl">${s.lbl}</div>
+                            ${s.extra}
+                                </div>`).join('')}</div>`;
+  }
+  
+  /* ============================================================================
    PANEL LEGEND · static reference table, panel ID -> live URL
    Landing pages are direct entry points (safe to share as marketing links).
    Funnel arms are internal redirect targets a visitor only reaches AFTER
@@ -1132,7 +1373,11 @@ const PANEL_LEGEND = [
   { panel: 10, name: 'Two-Page Funnel New 2 · שלב 1', type: 'funnel', path: 'funnels/two-page-funnel-new-2/two-page-funnel-new-2-1.html' },
   { panel: 11, name: 'Option 26072',        type: 'landing', path: 'landing-pages/landing_option_26072.html' },
   { panel: 12, name: 'חמש דקות ביום (WhatsApp)', type: 'landing', path: 'extra/whatsapp.html' },
-  { panel: 13, name: 'Option 26071',        type: 'landing', path: 'landing-pages/landing_option_26071.html' }
+  { panel: 13, name: 'Option 26071',        type: 'landing', path: 'landing-pages/landing_option_26071.html' },
+  { panel: 14, name: 'Option 2 · Video 1',  type: 'landing', path: 'landing-pages/landing_option2_video1.html' },
+  { panel: 15, name: 'Option 2 · Video 2',  type: 'landing', path: 'landing-pages/landing_option2_video2.html' },
+  { panel: 16, name: 'New 2 · Variant B',   type: 'funnel',  path: 'funnels/two-page-funnel-new-2-b/two-page-funnel-new-2-b-1.html' },
+  { panel: 17, name: 'New 2 · Variant C',   type: 'funnel',  path: 'funnels/two-page-funnel-new-2-c/two-page-funnel-new-2-c-1.html' }
 ];
 
 // Looks up a panel's live URL from PANEL_LEGEND -- used to turn every
@@ -1142,6 +1387,51 @@ const PANEL_LEGEND = [
 function panelUrl(panelNum) {
   const p = PANEL_LEGEND.find(x => x.panel === Number(panelNum));
   return p ? SITE_BASE + p.path : '#';
+}
+
+// Master "is this panel currently wired into a live redirect / ad
+// destination" set, used to gray out retired panels in the full registry
+// table below without deleting their historical data. Determined from the
+// actual current redirect logic in the 3 active landing pages (all of which
+// route into 16/17 only) plus the standalone TikTok/WhatsApp pages, which
+// are not A/B'd against anything so they don't appear in HEAD_TO_HEAD_TESTS
+// but are still live traffic destinations.
+const ACTIVE_PANELS = new Set([2, 8, 12, 14, 15, 16, 17]);
+
+// Renders every panel ever created (from PANEL_LEGEND, which is never
+// pruned) into two flat tables split by type (landing pages / funnels),
+// active or not -- so nothing the site has ever run is hidden. Inactive
+// rows are visually muted (.pr-inactive) and carry an explicit "not
+// receiving traffic" pill rather than being dropped or tucked into a
+// collapsed section.
+function renderPanelRegistryRow(p) {
+  const isActive = ACTIVE_PANELS.has(p.panel);
+  const entries = Math.max(m(`f${p.panel}_entry`), m(`f${p.panel}_video_1`));
+  const conv = p.type === 'funnel' ? m(`f${p.panel}_webinar`) : m(`f${p.panel}_landing`);
+  const rate = pct(conv, entries);
+  const statusPill = isActive
+    ? '<span class="pr-pill pr-live">🟢 פעיל · מקבל תנועה</span>'
+    : '<span class="pr-pill pr-off">⚪ לא פעיל · לא מוזרמת תנועה</span>';
+  return `
+    <tr class="${isActive ? '' : 'pr-inactive'}">
+      <td class="pr-num mono">${p.panel}</td>
+      <td><a class="title-link" href="${SITE_BASE + p.path}" target="_blank" rel="noopener">${p.name}</a></td>
+      <td>${statusPill}</td>
+      <td class="mono">${fmt(entries)}</td>
+      <td class="mono">${fmt(conv)}</td>
+      <td class="mono">${fmtPct(rate)}</td>
+    </tr>`;
+}
+
+function renderPanelRegistry() {
+  const landingBody = document.getElementById('panel_registry_landing_body');
+  const funnelBody = document.getElementById('panel_registry_funnel_body');
+  if (landingBody) {
+    landingBody.innerHTML = PANEL_LEGEND.filter(p => p.type === 'landing').map(renderPanelRegistryRow).join('');
+  }
+  if (funnelBody) {
+    funnelBody.innerHTML = PANEL_LEGEND.filter(p => p.type === 'funnel').map(renderPanelRegistryRow).join('');
+  }
 }
 
 /* ============================================================================
@@ -1335,29 +1625,140 @@ function renderFunnelComparison() {
   container.innerHTML = html;
 
   let bestRate = -1, bestGroup = null;
+  let topRate = -1, topGroup = null;
   FUNNEL_GROUPS.forEach(group => {
     const entry = groupBase(group);
     const web = groupSum(group, 'webinar');
     const r = pct(web, entry);
+    if (r > topRate) { topRate = r; topGroup = group; }
     if (entry >= 10 && r > bestRate) { bestRate = r; bestGroup = group.key; }
   });
+  const gateNoteEl = document.getElementById('fw_gate_note');
+  if (gateNoteEl) {
+    if (bestGroup && topGroup && topGroup.key !== bestGroup && groupBase(topGroup) < 10) {
+      const bestLabel = FUNNEL_GROUPS.find(g => g.key === bestGroup).label;
+      gateNoteEl.innerHTML = '⚠️ שימו לב: ל<b>' + topGroup.label + '</b> יש כרגע אחוז המרה גבוה יותר (' + fmtPct(topRate) + '), אבל המדגם שלו קטן מדי (' + fmt(groupBase(topGroup)) + ' כניסות בלבד) כדי להכריז עליו כמנצח באמינות. לכן <b>' + bestLabel + '</b> עדיין מוצג כמוביל \u2014 יש לו מדגם גדול מספיק (10+ כניסות) להשוואה יציבה. ברגע ש' + topGroup.label + ' יצבור 10+ כניסות, ההשוואה תתעדכן אוטומטית.';
+      gateNoteEl.style.display = 'block';
+    } else {
+      gateNoteEl.style.display = 'none';
+      gateNoteEl.innerHTML = '';
+    }
+  }
 
   FUNNEL_GROUPS.forEach(group => {
     const el = document.getElementById('fw_' + group.key);
     if (!el) return;
     const isWinner = bestGroup === group.key;
-    const rate = pct(groupSum(group, 'webinar'), groupBase(group));
+    const entryN = groupBase(group);
+    const rate = pct(groupSum(group, 'webinar'), entryN);
+    const smallSample = entryN < 10;
     el.querySelector('.fwinner-rate').textContent = fmtPct(rate);
     el.querySelector('.fwinner-trophy').textContent = isWinner ? '🏆' : '';
     el.querySelector('.fw-winner-tag').textContent = isWinner ? ' — המנצח' : '';
     el.classList.toggle('is-winner', isWinner);
+    let noteEl = el.querySelector('.small-n-note');
+    if (!noteEl) {
+      noteEl = document.createElement('div');
+      noteEl.className = 'small-n-note';
+      el.querySelector('.fwinner-name').appendChild(noteEl);
+    }
+    noteEl.textContent = smallSample ? `מדגם קטן (${fmt(entryN)} כניסות) — עוד מוקדם להסיק` : '';
+    const headInner = document.querySelector('.fcol-head.' + group.cls + ' .inner');
+    if (headInner) {
+      let hNote = headInner.querySelector('.small-n-note');
+      if (!hNote) {
+        hNote = document.createElement('span');
+        hNote.className = 'small-n-note head';
+        headInner.appendChild(hNote);
+      }
+      hNote.textContent = smallSample ? ' · מדגם קטן' : '';
+      hNote.title = smallSample ? 'פחות מ-10 כניסות עד כה - האחוזים בעמודה הזו עלולים להשתנות משמעותית עם כל מבקר חדש' : '';
+    }
   });
+}
+
+const BONUS_PAGE_PANELS = [
+  { panel: '6',  name: 'Two-Page Funnel' },
+  { panel: '7',  name: 'Funnel D V2' },
+  { panel: '9',  name: 'New 1' },
+  { panel: '10', name: 'New 2' },
+  { panel: '16', name: 'Variant B' },
+  { panel: '17', name: 'Variant C' }
+];
+
+function renderBonusPage() {
+  const body = document.getElementById('bonus_page_body');
+  if (!body) return;
+  let html = '';
+  BONUS_PAGE_PANELS.forEach(p => {
+    const views = m(`f${p.panel}_bonus_view`);
+    const joins = m(`f${p.panel}_whatsapp_join`);
+    const rate = pct(joins, views);
+    html += `<tr><td>${p.name} (פאנל ${p.panel})</td><td class="mono">${fmt(views)}</td><td class="mono">${fmt(joins)}</td><td class="mono">${fmtPct(rate)}</td></tr>`;
+  });
+  body.innerHTML = html;
+}
+
+// Average seconds watched before abandonment/completion, per funnel
+// variant panel and video step. Backed by f{panel}_{video_1|video_2}_watchsec_sum
+// / _watchsec_count cells, fed by a single watch-time ping per page-view
+// (sent on 'ended' with the full duration, or as a beforeunload fallback
+// with the last known playback position if the visitor left first) --
+// see the funnel pages' TRACK_HOOK wiring for wmetric/wsec/panel.
+function avgWatchSec(panel, videoKey) {
+  const sum = m(`f${panel}_${videoKey}_watchsec_sum`);
+  const count = m(`f${panel}_${videoKey}_watchsec_count`);
+  return count > 0 ? sum / count : null;
+}
+
+function fmtSec(s) {
+  if (s == null) return '—';
+  const r = Math.round(s);
+  const mm = Math.floor(r / 60), ss = r % 60;
+  return mm > 0 ? `${mm}:${String(ss).padStart(2, '0')}` : `${ss} שנ'`;
+}
+
+function renderWatchTime() {
+  const container = document.getElementById('watchtime_grid');
+  if (!container) return;
+  container.innerHTML = FUNNEL_GROUPS.map(group => {
+    const panel = group.panels[0];
+    const v1 = avgWatchSec(panel, 'video_1');
+    const v1n = m(`f${panel}_video_1_watchsec_count`);
+    const v2 = avgWatchSec(panel, 'video_2');
+    const v2n = m(`f${panel}_video_2_watchsec_count`);
+    return `
+      <div class="lp-stats-card">
+        <div class="watchtime-card-title">${group.label}</div>
+        <div class="lp-stats-grid">
+          <div class="lp-stat">
+            <div class="lp-stat-val mono">${fmtSec(v1)}</div>
+            <div class="lp-stat-lbl">זמן צפייה ממוצע · סרטון 1</div>
+            <div class="lp-stat-rate">${fmt(v1n)} דגימות</div>
+          </div>
+          <div class="lp-stat">
+            <div class="lp-stat-val mono">${fmtSec(v2)}</div>
+            <div class="lp-stat-lbl">זמן צפייה ממוצע · סרטון 2</div>
+            <div class="lp-stat-rate">${fmt(v2n)} דגימות</div>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
 }
 
 function renderHeadToHead() {
   const container = document.getElementById('ab_grid');
   if (!container) return;
   container.innerHTML = HEAD_TO_HEAD_TESTS.map(renderHeadToHeadCard).join('');
+}
+
+// Same rendering logic, just pointed at the collapsed history section and
+// the HEAD_TO_HEAD_HISTORY array instead -- keeps retired tests visible for
+// reference without cluttering the main active-tests view above.
+function renderHeadToHeadHistory() {
+  const container = document.getElementById('ab_grid_history');
+  if (!container) return;
+  container.innerHTML = HEAD_TO_HEAD_HISTORY.map(renderHeadToHeadCard).join('');
 }
 
 // Builds one head-to-head "ab-card" for a single test definition. Pulled out
