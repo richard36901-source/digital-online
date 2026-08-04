@@ -42,7 +42,6 @@ function trackWaJoin() {
       }).catch(function(){});
     }
   } catch(e) {}
-  try { fetch(TRACK_HOOK, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ metric: 'whatsapp_join', panel: panel }), keepalive: true }).catch(function(){}); } catch(e) {}
 }
 </script>
 
@@ -438,15 +437,27 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
 
 const PAGE='signup-video';
 const WEBHOOK='https://hook.eu1.make.com/ylf5uesfcqpyaxaxtvayjx08h9rrwqr2';
+/* Minute-by-minute retention tracking -- separate from the WEBHOOK above.
+   Sends generic counter events (panel+metric) to the existing "tracking events"
+   route on the main integration scenario, which auto-creates/increments a
+   f{panel}_{metric} row in the Dashboard sheet for each unique metric name.
+   No Make.com changes needed -- that route already handles arbitrary metrics. */
+const TRACK_WEBHOOK='https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q';
+const VIDEO_PANEL='svid';
+function trackMetric(metric){
+  try{
+    fetch(TRACK_WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({panel:VIDEO_PANEL,metric:metric,page:PAGE}),
+      keepalive:true
+    }).catch(function(){});
+  }catch(e){}
+}
 window.dataLayer=window.dataLayer||[];
 const P=new URLSearchParams(location.search);
 const variant=P.get('variant')||'',sup=P.get('lm_supplier')||P.get('supplier')||'',src=P.get('utm_source')||'';
 const phone=P.get('phone')||'',email=P.get('email')||'',name=P.get('name')||'',panel=P.get('panel')||'';
 dataLayer.push({event:'page_view',page:PAGE,source_variant:variant,supplier:sup,utm_source:src});
 if(typeof fbq!=='undefined')fbq('track','PageView');
-
-const TRACK_HOOK = 'https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q';
-try { fetch(TRACK_HOOK, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ metric: 'bonus_view', panel: panel }), keepalive: true }).catch(function(){}); } catch(e) {}
 
 const sd={};[25,50,75,100].forEach(function(d){sd[d]=0;});
 window.addEventListener('scroll',function(){
@@ -460,6 +471,7 @@ window.addEventListener('scroll',function(){
 const t0=Date.now();
 const vm={};[25,50,75,100].forEach(function(m){vm[m]=0;});
 let lastPos=0,lastPct=0;
+let minutesReached=0,startedSent=false;
 
 const thumb=document.getElementById('vidThumb');
 
@@ -478,6 +490,14 @@ window.onYouTubeIframeAPIReady=function(){
               lastPos=cur;lastPct=Math.round(cur/dur*100);
               var pct=cur/dur*100;
               [25,50,75,100].forEach(function(m){if(!vm[m]&&pct>=m){vm[m]=1;dataLayer.push({event:'video_progress',milestone:m+'%',time:Math.round(cur),page:PAGE});}});
+              /* Minute-by-minute retention: fire once per whole minute reached
+                 (capped at 60 as a sanity guard), so the dashboard can show
+                 what % of viewers reached minute 1, 2, 3... of the video. */
+              while(minutesReached<60 && cur>=(minutesReached+1)*60){
+                minutesReached++;
+                dataLayer.push({event:'video_minute',minute:minutesReached,page:PAGE});
+                trackMetric('min_'+minutesReached);
+              }
             }
           }catch(err){}
         },1000);
@@ -486,6 +506,7 @@ window.onYouTubeIframeAPIReady=function(){
         if(e.data===YT.PlayerState.PLAYING){
           thumb.classList.add('gone');
           dataLayer.push({event:'video_play',page:PAGE});
+          if(!startedSent){startedSent=true;trackMetric('started');}
         }
         if(e.data===YT.PlayerState.PAUSED){
           var pos=Math.round(e.target.getCurrentTime()),pct=Math.round(e.target.getCurrentTime()/e.target.getDuration()*100);
