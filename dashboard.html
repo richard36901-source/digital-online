@@ -1556,8 +1556,8 @@ function renderVideoRetention() {
   const lastPoint = points[points.length - 1];
 
   // ---- SVG geometry ----
-  const W = 680, H = 260;
-  const padL = 14, padR = 14, padT = 16, padB = 34;
+  const W = 680, H = 280;
+  const padL = 16, padR = 34, padT = 34, padB = 42;
   const plotL = padL, plotR = W - padR, plotT = padT, plotB = H - padB;
   const n = points.length;
   // Time flows right -> left to match the page's RTL reading direction
@@ -1569,21 +1569,31 @@ function renderVideoRetention() {
   const linePath = coords.map((c, i) => `${i === 0 ? 'M' : 'L'} ${c.x.toFixed(1)} ${c.y.toFixed(1)}`).join(' ');
   const areaPath = `${linePath} L ${coords[coords.length - 1].x.toFixed(1)} ${plotB} L ${coords[0].x.toFixed(1)} ${plotB} Z`;
 
-  const gridLines = [0, 25, 50, 75, 100].map(pct => {
-    const y = yAt(pct);
+  // Only label the middle gridlines -- 0%/100% sit right where the curve's
+  // start/end points usually land too, and a numeric axis label there
+  // collides with the point's own value label. The gridline itself (with
+  // no text) is enough of a visual reference at the top/bottom edges.
+  const gridLines = [0, 25, 50, 75, 100].map(gp => {
+    const y = yAt(gp);
+    const showLabel = gp !== 0 && gp !== 100;
     return `
       <line class="vr-gridline" x1="${plotL}" y1="${y}" x2="${plotR}" y2="${y}"/>
-      <text class="vr-gridlabel" x="${plotR + 6}" y="${y + 3}" text-anchor="start">${pct}%</text>`;
+      ${showLabel ? `<text class="vr-gridlabel" x="${plotR + 8}" y="${y + 3}" text-anchor="start">${gp}%</text>` : ''}`;
   }).join('');
+
+  // With many tracked minutes the x-axis would get crowded, so thin out
+  // which minute NUMBERS are printed (every point still gets its dot and
+  // its own % value above it) -- always keep the first (start) and last.
+  const labelStep = n > 9 ? Math.ceil(n / 8) : 1;
 
   const dots = coords.map((c, i) => {
     const isDrop = i === maxDropIdx;
-    const labelAbove = c.y > plotT + 24;
-    const labelY = labelAbove ? c.y - 12 : c.y + 20;
+    const labelY = Math.max(12, c.y - 14);
+    const showAxisLabel = i === 0 || i === n - 1 || i % labelStep === 0;
     return `
       <circle class="vr-dot${isDrop ? ' vr-drop' : ''}" cx="${c.x}" cy="${c.y}" r="4.5"/>
       <text class="vr-pctlabel" x="${c.x}" y="${labelY}" text-anchor="middle">${Math.round(c.p)}%</text>
-      <text class="vr-axislabel" x="${c.x}" y="${plotB + 20}" text-anchor="middle">${c.minute === 0 ? 'התחלה' : 'דקה ' + c.minute}</text>`;
+      ${showAxisLabel ? `<text class="vr-axislabel" x="${c.x}" y="${plotB + 22}" text-anchor="middle">${c.minute === 0 ? 'התחלה' : 'דקה ' + c.minute}</text>` : ''}`;
   }).join('');
 
   const svg = `
