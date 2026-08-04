@@ -443,14 +443,29 @@
     background: var(--card); border: 1px solid var(--border);
     border-radius: 14px; padding: 20px 22px; box-shadow: var(--shadow-sm);
   }
-  .video-retention-total { font-size: 12px; color: var(--text-2); margin-bottom: 16px; }
-  .video-retention-total b { color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 15px; }
-  .video-retention-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-  .video-retention-row:last-child { margin-bottom: 0; }
-  .video-retention-label { width: 56px; flex-shrink: 0; font-size: 11px; color: var(--text-3); font-weight: 600; }
-  .video-retention-bar { flex: 1; height: 14px; border-radius: 999px; background: var(--card-soft); overflow: hidden; }
-  .video-retention-fill { height: 100%; background: linear-gradient(90deg, var(--gold) 0%, var(--pa) 100%); border-radius: 999px; transition: width .6s ease; }
-  .video-retention-pct { width: 54px; flex-shrink: 0; text-align: left; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--text); }
+  .video-retention-stats {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+    margin-bottom: 20px;
+  }
+  .video-retention-stat {
+    background: var(--card-soft); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px 14px;
+  }
+  .video-retention-stat-lbl { font-size: 10.5px; color: var(--text-3); margin-bottom: 4px; line-height: 1.4; }
+  .video-retention-stat-val { font-family: 'JetBrains Mono', monospace; font-size: 17px; font-weight: 700; color: var(--text); }
+  .video-retention-stat-val.warn { color: var(--warn); }
+  .video-retention-stat-val.good { color: var(--good); }
+  .video-retention-stat-sub { font-size: 10.5px; color: var(--text-3); margin-top: 2px; }
+  .video-retention-chart-wrap { width: 100%; }
+  .video-retention-chart-wrap svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .vr-gridline { stroke: var(--border); stroke-width: 1; }
+  .vr-gridlabel { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--text-3); }
+  .vr-axislabel { font-family: 'Heebo', sans-serif; font-size: 10.5px; fill: var(--text-3); font-weight: 600; }
+  .vr-area { fill: url(#vrGradient); opacity: 0.5; }
+  .vr-line { fill: none; stroke: var(--pa); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+  .vr-dot { fill: var(--card); stroke: var(--pa); stroke-width: 2.5; }
+  .vr-dot.vr-drop { stroke: var(--bad); }
+  .vr-pctlabel { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; fill: var(--text); }
   .video-retention-empty { text-align: center; color: var(--text-3); font-size: 12px; padding: 20px 0; }
 
   .lp-stats-card {
@@ -1519,18 +1534,90 @@ function renderVideoRetention() {
     return;
   }
 
-  const rows = minuteIds.map(n => {
-    const reached = m(`fsvid_min_${n}`);
-    const p = pct(reached, total);
+  // Points along the retention curve, starting at minute 0 = 100% (everyone
+  // who pressed play), then one point per whole minute actually reached.
+  // This is what makes the curve read as "% of starters still watching",
+  // the same convention YouTube/Wistia retention graphs use, so it's a
+  // reliable at-a-glance quality signal before/after swapping the video.
+  const points = [{ minute: 0, p: 100 }].concat(
+    minuteIds.map(n => ({ minute: n, p: pct(m(`fsvid_min_${n}`), total) }))
+  );
+
+  // Biggest single-step drop -- the most actionable line in this chart:
+  // it tells you exactly which minute of the video is losing people fastest,
+  // which is exactly what you need to know before re-cutting/testing it.
+  let maxDrop = -1, maxDropIdx = 1;
+  for (let i = 1; i < points.length; i++) {
+    const drop = points[i - 1].p - points[i].p;
+    if (drop > maxDrop) { maxDrop = drop; maxDropIdx = i; }
+  }
+  const dropFrom = points[maxDropIdx - 1].minute;
+  const dropTo = points[maxDropIdx].minute;
+  const lastPoint = points[points.length - 1];
+
+  // ---- SVG geometry ----
+  const W = 680, H = 260;
+  const padL = 14, padR = 14, padT = 16, padB = 34;
+  const plotL = padL, plotR = W - padR, plotT = padT, plotB = H - padB;
+  const n = points.length;
+  // Time flows right -> left to match the page's RTL reading direction
+  // (minute 0 sits at the right edge, the latest minute at the left edge).
+  const xAt = i => plotL + (plotR - plotL) * (1 - (n === 1 ? 0 : i / (n - 1)));
+  const yAt = p => plotT + (plotB - plotT) * (1 - p / 100);
+
+  const coords = points.map((pt, i) => ({ x: xAt(i), y: yAt(pt.p), ...pt }));
+  const linePath = coords.map((c, i) => `${i === 0 ? 'M' : 'L'} ${c.x.toFixed(1)} ${c.y.toFixed(1)}`).join(' ');
+  const areaPath = `${linePath} L ${coords[coords.length - 1].x.toFixed(1)} ${plotB} L ${coords[0].x.toFixed(1)} ${plotB} Z`;
+
+  const gridLines = [0, 25, 50, 75, 100].map(pct => {
+    const y = yAt(pct);
     return `
-      <div class="video-retention-row">
-        <div class="video-retention-label">דקה ${n}</div>
-        <div class="video-retention-bar"><div class="video-retention-fill" style="width:${Math.round(p)}%"></div></div>
-        <div class="video-retention-pct">${fmtPct(p)}</div>
-      </div>`;
+      <line class="vr-gridline" x1="${plotL}" y1="${y}" x2="${plotR}" y2="${y}"/>
+      <text class="vr-gridlabel" x="${plotR + 6}" y="${y + 3}" text-anchor="start">${pct}%</text>`;
   }).join('');
 
-  container.innerHTML = `<div class="video-retention-total">סה"כ צפיות שהתחילו: <b>${fmt(total)}</b></div>${rows}`;
+  const dots = coords.map((c, i) => {
+    const isDrop = i === maxDropIdx;
+    const labelAbove = c.y > plotT + 24;
+    const labelY = labelAbove ? c.y - 12 : c.y + 20;
+    return `
+      <circle class="vr-dot${isDrop ? ' vr-drop' : ''}" cx="${c.x}" cy="${c.y}" r="4.5"/>
+      <text class="vr-pctlabel" x="${c.x}" y="${labelY}" text-anchor="middle">${Math.round(c.p)}%</text>
+      <text class="vr-axislabel" x="${c.x}" y="${plotB + 20}" text-anchor="middle">${c.minute === 0 ? 'התחלה' : 'דקה ' + c.minute}</text>`;
+  }).join('');
+
+  const svg = `
+    <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="גרף אחוז הצופים שנשארו בכל דקה בסרטון">
+      <defs>
+        <linearGradient id="vrGradient" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" style="stop-color:var(--pa);stop-opacity:0.35"/>
+          <stop offset="100%" style="stop-color:var(--pa);stop-opacity:0"/>
+        </linearGradient>
+      </defs>
+      ${gridLines}
+      <path class="vr-area" d="${areaPath}"/>
+      <path class="vr-line" d="${linePath}"/>
+      ${dots}
+    </svg>`;
+
+  const stats = `
+    <div class="video-retention-stats">
+      <div class="video-retention-stat">
+        <div class="video-retention-stat-lbl">סה"כ צפיות שהתחילו</div>
+        <div class="video-retention-stat-val">${fmt(total)}</div>
+      </div>
+      <div class="video-retention-stat">
+        <div class="video-retention-stat-lbl">הנטישה החדה ביותר</div>
+        <div class="video-retention-stat-val warn">-${Math.round(maxDrop)}%</div>
+        <div class="video-retention-stat-sub">${dropFrom === 0 ? 'בין ההתחלה' : 'בין דקה ' + dropFrom} לדקה ${dropTo}</div>
+      </div>
+      <div class="video-retention-stat">
+        <div class="video-retention-stat-lbl">נשארו עד דקה ${lastPoint.minute} (אחרונה שנמדדה)</div>
+        <div class="video-retention-stat-val good">${fmtPct(lastPoint.p)}</div>
+      </div>
+    </div>`;
+
+  container.innerHTML = stats + `<div class="video-retention-chart-wrap">${svg}</div>`;
 }
 
 // Sums a metric ID across every panel that feeds a given funnel group,
