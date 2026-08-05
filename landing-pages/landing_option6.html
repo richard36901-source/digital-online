@@ -96,6 +96,9 @@
   .t-box .num{font-family:'Frank Ruhl Libre',serif;font-size:26px;font-weight:700;color:#F3EDDD;line-height:1;font-variant-numeric:tabular-nums;}
   .t-box .cap{font-size:10px;color:#C9A227;margin-top:4px;letter-spacing:.4px;}
   .t-sep{font-size:20px;font-weight:900;color:#C9A227;}
+  @keyframes critPulse{0%,100%{box-shadow:0 8px 20px rgba(178,59,59,.35);}50%{box-shadow:0 8px 32px rgba(178,59,59,.75);}}
+  .timer.cc-critical .t-box{border-color:#B23B3B;animation:critPulse 1s ease-in-out infinite;}
+  .timer.cc-critical .num{color:#FF9E9E;}
 
   .below-timer{font-size:14.5px;line-height:1.75;color:#5B5140;margin-bottom:14px;}
   .above-btn{font-size:13.5px;line-height:1.65;color:#7A7057;margin-bottom:22px;}
@@ -216,15 +219,24 @@
 </div>
 
 <script>
+  // Countdown -- 1 minute cycle, matches landing_option2.html behavior
   (function(){
-    var total = 14*60+59;
+    var DURATION_MS = 60000;
+    var CRITICAL_MS = 10000;
     var mm=document.getElementById('mm'), ss=document.getElementById('ss');
+    var timerBox=document.querySelector('.timer');
+    var deadline = Date.now() + DURATION_MS;
     function tick(){
-      if(total<=0){total=14*60+59;}
-      var m=Math.floor(total/60), s=total%60;
+      var diff = deadline - Date.now();
+      if(diff <= 0){
+        deadline = Date.now() + DURATION_MS;
+        diff = DURATION_MS;
+      }
+      var m = Math.floor(diff/60000);
+      var s = Math.floor((diff%60000)/1000);
       mm.textContent=String(m).padStart(2,'0');
       ss.textContent=String(s).padStart(2,'0');
-      total--;
+      if(timerBox) timerBox.classList.toggle('cc-critical', diff<=CRITICAL_MS);
     }
     tick();
     setInterval(tick,1000);

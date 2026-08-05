@@ -107,6 +107,9 @@
   .t-box .num{font-size:26px;font-weight:900;color:#fff;line-height:1;font-variant-numeric:tabular-nums;}
   .t-box .cap{font-size:10.5px;color:#8B86BE;margin-top:4px;letter-spacing:.3px;}
   .t-sep{font-size:22px;font-weight:900;color:#7C5CFC;}
+  @keyframes critPulse{0%,100%{box-shadow:0 0 24px rgba(255,77,109,.5);}50%{box-shadow:0 0 40px rgba(255,77,109,.9);}}
+  .timer.cc-critical .t-box{border-color:#FF4D6D;animation:critPulse 1s ease-in-out infinite;}
+  .timer.cc-critical .num{color:#FF8FA3;}
 
   .below-timer{font-size:14.5px;line-height:1.7;color:#C9C6E8;margin-bottom:14px;}
   .above-btn{font-size:14px;line-height:1.6;color:#A8A3D6;margin-bottom:20px;}
@@ -228,16 +231,24 @@
 </div>
 
 <script>
-  // Countdown
+  // Countdown -- 1 minute cycle, matches landing_option2.html behavior
   (function(){
-    var total = 14*60+59;
+    var DURATION_MS = 60000;
+    var CRITICAL_MS = 10000;
     var mm=document.getElementById('mm'), ss=document.getElementById('ss');
+    var timerBox=document.querySelector('.timer');
+    var deadline = Date.now() + DURATION_MS;
     function tick(){
-      if(total<=0){total=14*60+59;}
-      var m=Math.floor(total/60), s=total%60;
+      var diff = deadline - Date.now();
+      if(diff <= 0){
+        deadline = Date.now() + DURATION_MS;
+        diff = DURATION_MS;
+      }
+      var m = Math.floor(diff/60000);
+      var s = Math.floor((diff%60000)/1000);
       mm.textContent=String(m).padStart(2,'0');
       ss.textContent=String(s).padStart(2,'0');
-      total--;
+      if(timerBox) timerBox.classList.toggle('cc-critical', diff<=CRITICAL_MS);
     }
     tick();
     setInterval(tick,1000);
