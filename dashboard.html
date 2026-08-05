@@ -1404,7 +1404,9 @@ const PANEL_LEGEND = [
   { panel: 14, name: 'Option 2 · Video 1',  type: 'landing', path: 'landing-pages/landing_option2_video1.html' },
   { panel: 15, name: 'Option 2 · Video 2',  type: 'landing', path: 'landing-pages/landing_option2_video2.html' },
   { panel: 16, name: 'New 2 · Variant B',   type: 'funnel',  path: 'funnels/two-page-funnel-new-2-b/two-page-funnel-new-2-b-1.html' },
-  { panel: 17, name: 'New 2 · Variant C',   type: 'funnel',  path: 'funnels/two-page-funnel-new-2-c/two-page-funnel-new-2-c-1.html' }
+  { panel: 17, name: 'New 2 · Variant C',   type: 'funnel',  path: 'funnels/two-page-funnel-new-2-c/two-page-funnel-new-2-c-1.html' },
+  { panel: 18, name: 'Option 5',            type: 'landing', path: 'landing-pages/landing_option5.html' },
+  { panel: 19, name: 'Option 6',            type: 'landing', path: 'landing-pages/landing_option6.html' }
 ];
 
 // Looks up a panel's live URL from PANEL_LEGEND -- used to turn every
@@ -1423,7 +1425,7 @@ function panelUrl(panelNum) {
 // route into 16/17 only) plus the standalone TikTok/WhatsApp pages, which
 // are not A/B'd against anything so they don't appear in HEAD_TO_HEAD_TESTS
 // but are still live traffic destinations.
-const ACTIVE_PANELS = new Set([2, 8, 12, 14, 15, 16, 17]);
+const ACTIVE_PANELS = new Set([2, 8, 12, 14, 15, 16, 17, 18, 19]);
 
 // Renders every panel ever created (from PANEL_LEGEND, which is never
 // pruned) into two flat tables split by type (landing pages / funnels),
