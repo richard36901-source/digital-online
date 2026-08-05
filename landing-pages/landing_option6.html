@@ -6,215 +6,129 @@
 <title>דיגיטל אונליין | כללים שכבר השתנו</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;800;900&family=Assistant:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-  html{-webkit-text-size-adjust:100%}
-  body{
-    font-family:'Heebo',sans-serif;
-    direction:rtl;
-    overflow-x:hidden;
-    min-height:100svh;
-    color:#EDEBFF;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    position:relative;
-    background-color:#080814;
-    background-image:
-      radial-gradient(ellipse 70% 45% at 20% -5%, rgba(124,92,252,.35) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 40% at 90% 10%, rgba(34,211,238,.22) 0%, transparent 60%),
-      radial-gradient(ellipse 55% 40% at 50% 100%, rgba(124,92,252,.20) 0%, transparent 60%);
-  }
-  canvas#particles{position:fixed;inset:0;z-index:0;pointer-events:none;}
-  .page-wrap{position:relative;z-index:2;width:100%;max-width:480px;padding:32px 16px 90px;display:flex;flex-direction:column;align-items:center;}
-
-  @keyframes fadeDown{from{opacity:0;transform:translateY(-14px);}to{opacity:1;transform:translateY(0);}}
-  @keyframes fadeUp{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:translateY(0);}}
-  @keyframes btnPulse{
-    0%,100%{box-shadow:0 0 0 0 rgba(124,92,252,.55),0 8px 30px rgba(34,211,238,.35);}
-    50%{box-shadow:0 0 0 14px rgba(124,92,252,0),0 8px 40px rgba(34,211,238,.55);}
-  }
-  @keyframes glowSpin{
-    0%{filter:hue-rotate(0deg);}
-    100%{filter:hue-rotate(20deg);}
-  }
-
-  .card{
-    position:relative;
-    width:100%;
-    background:linear-gradient(180deg, rgba(20,18,46,.92) 0%, rgba(10,9,26,.96) 100%);
-    border:1px solid rgba(124,92,252,.35);
-    border-radius:24px;
-    padding:34px 26px 30px;
-    box-shadow:0 0 0 1px rgba(255,255,255,.02) inset, 0 20px 60px rgba(0,0,0,.55), 0 0 60px rgba(124,92,252,.12);
-    text-align:center;
-    animation:fadeDown .7s ease both;
-  }
-
-  h1{
-    font-size:26px;line-height:1.35;font-weight:900;
-    background:linear-gradient(90deg,#B9A6FF 0%,#7C5CFC 45%,#22D3EE 100%);
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-    margin-bottom:16px;
-  }
-
-  .subhead{
-    font-size:15.5px;line-height:1.75;color:#C9C6E8;
-    margin-bottom:22px;
-  }
-
-  .above-icons{
-    font-size:14.5px;color:#9C97C9;margin-bottom:16px;font-weight:500;
-  }
-
-  .icons-row{
-    display:flex;justify-content:center;gap:12px;margin-bottom:26px;flex-wrap:wrap;
-  }
-  .icon-box{
-    flex:1 1 0;min-width:96px;max-width:130px;
-    background:rgba(124,92,252,.08);
-    border:1px solid rgba(124,92,252,.28);
-    border-radius:14px;padding:14px 8px;
-  }
-  .icon-box .ic{
-    width:34px;height:34px;margin:0 auto 8px;
-    display:flex;align-items:center;justify-content:center;
-    border-radius:10px;background:rgba(34,211,238,.14);
-    color:#22D3EE;font-size:17px;
-  }
-  .icon-box .lbl{font-size:12.5px;color:#DCD9F5;font-weight:700;}
-
-  .above-timer{font-size:14px;color:#9C97C9;margin-bottom:12px;font-weight:600;}
-
-  .timer{
-    display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:24px;
-  }
-  .t-box{
-    background:#0B0A1E;border:1px solid rgba(124,92,252,.45);
-    border-radius:12px;padding:10px 16px;min-width:64px;
-    box-shadow:0 0 24px rgba(124,92,252,.35), inset 0 0 12px rgba(34,211,238,.08);
-  }
-  .t-box .num{font-size:26px;font-weight:900;color:#fff;line-height:1;font-variant-numeric:tabular-nums;}
-  .t-box .cap{font-size:10.5px;color:#8B86BE;margin-top:4px;letter-spacing:.3px;}
-  .t-sep{font-size:22px;font-weight:900;color:#7C5CFC;}
-  @keyframes critPulse{0%,100%{box-shadow:0 0 24px rgba(255,77,109,.5);}50%{box-shadow:0 0 40px rgba(255,77,109,.9);}}
-  .timer.cc-critical .t-box{border-color:#FF4D6D;animation:critPulse 1s ease-in-out infinite;}
-  .timer.cc-critical .num{color:#FF8FA3;}
-
-  .below-timer{font-size:14.5px;line-height:1.7;color:#C9C6E8;margin-bottom:14px;}
-  .above-btn{font-size:14px;line-height:1.6;color:#A8A3D6;margin-bottom:20px;}
-
-  .cta-btn{
-    display:block;width:100%;text-decoration:none;cursor:pointer;
-    background:linear-gradient(90deg,#7C5CFC 0%,#22D3EE 100%);
-    color:#080814;font-weight:900;font-size:17px;
-    border:none;border-radius:14px;padding:17px 18px;
-    animation:btnPulse 2.4s ease-in-out infinite;
-    transition:transform .15s ease;
-  }
-  .cta-btn:active{transform:scale(.98);}
-
-  .trust{
-    margin-top:14px;font-size:12.5px;color:#8B86BE;display:flex;
-    align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;
-  }
-
-  footer{
-    position:relative;z-index:2;text-align:center;color:#69669A;
-    font-size:11.5px;line-height:1.8;padding:24px 16px 30px;max-width:480px;
-  }
-  footer a{color:#9C97C9;text-decoration:none;}
-
-  /* Modal */
-  .overlay{
-    position:fixed;inset:0;background:rgba(3,2,12,.78);backdrop-filter:blur(4px);
-    display:none;align-items:center;justify-content:center;z-index:50;padding:16px;
-  }
-  .overlay.show{display:flex;}
-  .modal{
-    width:100%;max-width:380px;background:#100E24;border:1px solid rgba(124,92,252,.4);
-    border-radius:20px;padding:26px 22px;position:relative;
-    box-shadow:0 20px 60px rgba(0,0,0,.6),0 0 50px rgba(124,92,252,.25);
-    animation:fadeUp .35s ease both;
-  }
-  .modal h3{font-size:19px;font-weight:800;color:#fff;margin-bottom:6px;text-align:center;}
-  .modal p.hint{font-size:12.5px;color:#9C97C9;text-align:center;margin-bottom:18px;}
-  .modal input{
-    width:100%;background:#0B0A1E;border:1px solid rgba(255,255,255,.12);
-    border-radius:10px;padding:13px 14px;color:#fff;font-size:14.5px;margin-bottom:10px;font-family:inherit;
-  }
-  .modal input::placeholder{color:#6E6A99;}
-  .modal .err{color:#FF6B8B;font-size:11.5px;margin:-4px 0 8px;display:none;}
-  .modal button.submit{
-    width:100%;background:linear-gradient(90deg,#7C5CFC 0%,#22D3EE 100%);
-    color:#080814;font-weight:900;font-size:15.5px;border:none;border-radius:10px;
-    padding:14px;margin-top:6px;cursor:pointer;
-  }
-  .modal .legal{font-size:10.5px;color:#6E6A99;text-align:center;margin-top:10px;line-height:1.6;}
-  .modal .close{position:absolute;top:14px;left:16px;color:#8B86BE;font-size:20px;cursor:pointer;background:none;border:none;}
-  .success{display:none;text-align:center;padding:10px 0;}
-  .success .check{font-size:42px;margin-bottom:10px;}
-  .success h3{margin-bottom:8px;}
-  .success p{color:#9C97C9;font-size:13.5px;line-height:1.7;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:'Heebo',sans-serif;direction:rtl;overflow-x:hidden;min-height:100svh;color:#fff;display:flex;flex-direction:column;align-items:center;position:relative;background-color:#0A0F1C;background-image:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(212,168,67,.18) 0%,transparent 65%),radial-gradient(ellipse 50% 35% at 10% 90%,rgba(100,80,10,.25) 0%,transparent 55%);}
+canvas#particles{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.page-wrap{position:relative;z-index:2;width:100%;max-width:480px;padding:24px 16px 40px;display:flex;flex-direction:column;align-items:center;}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-12px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+@keyframes btnPulse{0%,100%{box-shadow:0 6px 30px rgba(212,168,67,.5),0 0 0 0 rgba(212,168,67,0);}50%{box-shadow:0 8px 40px rgba(212,168,67,.75),0 0 0 8px rgba(212,168,67,.08);}}
+@keyframes btnShimmer{0%{background-position:200% center;}100%{background-position:0% center;}}
+@keyframes shine{0%{left:-120%}100%{left:160%}}
+@keyframes btnWiggle{0%,100%{transform:translateY(0);}20%{transform:translateY(-5px);}40%{transform:translateY(0);}60%{transform:translateY(-3px);}80%{transform:translateY(0);}}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+@keyframes iconPop{0%,100%{transform:scale(1);}50%{transform:scale(1.18);}}
+@keyframes flicker{0%,100%{opacity:1;}45%{opacity:.65;}50%{opacity:1;}55%{opacity:.55;}60%{opacity:1;}}
+@keyframes slideInRight{from{opacity:0;transform:translateX(24px);}to{opacity:1;transform:translateX(0);}}
+@keyframes badgeGlow{0%,100%{box-shadow:0 0 8px rgba(212,168,67,.2);}50%{box-shadow:0 0 22px rgba(212,168,67,.55);}}
+.card{width:100%;border-radius:16px;padding:28px 20px 24px;margin-bottom:20px;position:relative;overflow:hidden;animation:fadeUp .6s .1s ease both;background:linear-gradient(145deg,rgba(15,12,2,.95),rgba(25,20,3,.98));border:1.5px solid rgba(212,168,67,.35);box-shadow:0 0 40px rgba(212,168,67,.12),0 20px 60px rgba(0,0,0,.8);}
+.card-headline{font-family:'Heebo',sans-serif;font-size:clamp(26px,7vw,34px);font-weight:900;text-align:center;line-height:1.3;margin-bottom:14px;background:linear-gradient(160deg,#fff8cc 0%,#f5c842 30%,#d4920a 60%,#fff0a0 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 2px 20px rgba(212,168,67,.6));}
+.card-sub{font-size:clamp(14px,3.8vw,16px);color:rgba(255,255,255,.65);text-align:center;line-height:1.75;margin-bottom:16px;}
+.tension-line{font-family:'Heebo',sans-serif;font-size:15px;font-weight:800;text-align:center;margin-bottom:18px;color:rgba(255,220,80,.85);animation:flicker 5s 2s ease-in-out infinite;}
+.above-timer{font-size:13px;font-weight:700;text-align:center;margin-bottom:14px;color:rgba(255,220,80,.7);}
+.icon-row{display:flex;justify-content:center;gap:16px;margin-bottom:20px;}
+.icon-item{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;font-weight:700;color:rgba(255,255,255,.7);text-align:center;background:rgba(255,255,255,.05);border:1px solid rgba(212,168,67,.2);border-radius:10px;padding:10px 12px;min-width:76px;}
+.icon-item:nth-child(1){animation:float 3s .2s ease-in-out infinite;}
+.icon-item:nth-child(2){animation:float 3s .7s ease-in-out infinite;}
+.icon-item:nth-child(3){animation:float 3s 1.2s ease-in-out infinite;}
+.icon-item .ico{font-size:22px;display:inline-block;animation:iconPop 2s ease-in-out infinite;}
+.btn-main{display:flex;width:100%;height:60px;background:linear-gradient(135deg,#b8860a,#f5c842,#d4920a);background-size:200% auto;color:#000;font-family:'Heebo',sans-serif;font-size:21px;font-weight:900;border:none;border-radius:10px;cursor:pointer;pointer-events:auto;align-items:center;justify-content:center;letter-spacing:.3px;position:relative;overflow:hidden;margin-bottom:8px;box-shadow:0 6px 30px rgba(212,168,67,.5);animation:btnPulse 2.5s ease-in-out infinite,btnShimmer 3s linear infinite,btnWiggle 4s 2s ease-in-out infinite;transition:transform .2s,box-shadow .2s;}
+.btn-main:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 10px 50px rgba(212,168,67,.7);}
+.btn-main::after{content:'';position:absolute;top:0;left:-120%;width:45%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);animation:shine 2s ease-in-out infinite;}
+.micro-copy{font-size:12px;color:rgba(255,255,255,.4);text-align:center;margin-bottom:0;}
+.countdown-clock{display:flex;width:fit-content;flex-direction:column;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(229,57,53,.14),rgba(0,0,0,.55));border:1.5px solid rgba(229,57,53,.55);border-radius:14px;padding:14px 22px;margin:2px auto 16px;position:relative;animation:ccPulse 1.8s ease-in-out infinite;}
+@keyframes ccPulse{0%,100%{box-shadow:0 0 0 0 rgba(229,57,53,.35)}50%{box-shadow:0 0 24px 4px rgba(229,57,53,.5)}}
+.countdown-clock .cc-digits{display:flex;align-items:center;gap:7px;}
+.countdown-clock .cc-box{background:#050505;border:1px solid rgba(229,57,53,.45);border-radius:9px;padding:7px 12px;min-width:56px;text-align:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.06);}
+.countdown-clock .cc-num{font-size:30px;font-weight:900;color:#fff;line-height:1;font-variant-numeric:tabular-nums;text-shadow:0 0 12px rgba(229,57,53,.65);display:block;}
+.countdown-clock .cc-unit{font-size:9.5px;color:rgba(255,255,255,.5);letter-spacing:.5px;margin-top:4px;display:block;}
+.countdown-clock .cc-sep{font-size:26px;font-weight:900;color:#ff5252;animation:ccBlink 1s steps(1) infinite;}
+@keyframes ccBlink{0%,49%{opacity:1}50%,100%{opacity:.25}}
+.countdown-clock.cc-critical{animation:ccPulseFast .5s ease-in-out infinite;}
+.countdown-clock.cc-critical .cc-box{border-color:#ff2b2b;}
+.countdown-clock.cc-critical .cc-num{color:#ff5252;}
+@keyframes ccPulseFast{0%,100%{box-shadow:0 0 0 0 rgba(255,0,0,.45);transform:scale(1)}50%{box-shadow:0 0 30px 6px rgba(255,0,0,.65);transform:scale(1.035)}}
+.popup-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px);}
+.popup-overlay.open{display:flex;}
+@keyframes popIn{from{opacity:0;transform:scale(.85);}to{opacity:1;transform:scale(1);}}
+.popup-card{width:100%;max-width:420px;border-radius:16px;padding:28px 22px 24px;position:relative;animation:popIn .35s cubic-bezier(.34,1.56,.64,1) both;background:linear-gradient(145deg,#0d0a01,#1a1400);border:1.5px solid rgba(212,168,67,.4);box-shadow:0 20px 60px rgba(0,0,0,.9);}
+.popup-close{position:absolute;top:14px;left:14px;width:30px;height:30px;background:rgba(255,255,255,.1);border:none;border-radius:50%;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.popup-title{font-size:clamp(20px,5.5vw,26px);font-weight:900;text-align:center;margin-bottom:6px;background:linear-gradient(135deg,#fff8cc,#f5c842,#d4920a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.popup-sub{font-size:13px;color:rgba(255,255,255,.5);text-align:center;margin-bottom:18px;}
+.field{width:100%;height:50px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:#fff;font-family:'Heebo',sans-serif;font-size:15px;padding:0 14px;margin-bottom:10px;outline:none;direction:rtl;-webkit-appearance:none;transition:border .2s;}
+.field::placeholder{color:rgba(255,255,255,.3);}
+.field:focus{border-color:rgba(212,168,67,.5);background:rgba(255,255,255,.1);}
+.btn-popup{display:flex;width:100%;height:54px;background:linear-gradient(135deg,#b8860a,#f5c842,#d4920a);color:#000;font-family:'Heebo',sans-serif;font-size:19px;font-weight:900;border:none;border-radius:8px;cursor:pointer;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(212,168,67,.4);transition:transform .2s;margin-bottom:10px;}
+.btn-popup:hover{transform:translateY(-1px);}
+.err{font-size:12px;color:#ff7070;margin:-6px 0 8px 2px;display:none;}
+.err.show{display:block;}
+.legal{font-size:11px;color:rgba(255,255,255,.3);text-align:center;line-height:1.6;margin-bottom:8px;}
+.success-msg{display:none;text-align:center;padding:16px 0;}
+.success-msg.show{display:block;}
+.s-icon{font-size:44px;margin-bottom:10px;}
+.s-title{font-size:22px;font-weight:900;color:#4ade80;margin-bottom:6px;}
+.s-sub{font-size:14px;color:rgba(255,255,255,.6);line-height:1.6;}
+footer{position:relative;z-index:2;width:100%;border-top:1px solid rgba(255,255,255,.06);padding:14px 20px;text-align:center;font-family:'Assistant',sans-serif;font-size:11px;color:rgba(255,255,255,.18);line-height:2;}
+footer a{color:rgba(255,255,255,.22);text-decoration:none;}
+footer .sep{margin:0 6px;color:rgba(255,255,255,.08);}
 </style>
 </head>
 <body>
 <canvas id="particles"></canvas>
+
 <div class="page-wrap">
   <div class="card">
-    <h1>יש סיכוי שאתה עובד קשה… ועדיין משחק לפי כללים שכבר השתנו.</h1>
-
-    <p class="subhead">לא מדובר בכישרון.<br>לא במזל.<br>ולא בעוד "שיטה".<br>פשוט יש אנשים שהבינו משהו שרוב האנשים עדיין מפספסים.</p>
-
-    <p class="above-icons">בעוד כמה דקות תבין למה בעידן ה-AI יותר ויותר אנשים משנים את הדרך שבה הם מסתכלים על עבודה, זמן והזדמנויות</p>
-
-    <div class="icons-row">
-      <div class="icon-box"><div class="ic">🔒</div><div class="lbl">גישה מאובטחת</div></div>
-      <div class="icon-box"><div class="ic">▶️</div><div class="lbl">הסבר ברור</div></div>
-      <div class="icon-box"><div class="ic">⏱</div><div class="lbl">5 דקות</div></div>
+    <h1 class="card-headline">יש סיכוי שאתה עובד קשה… ועדיין משחק לפי כללים שכבר השתנו.</h1>
+    <div class="card-sub">לא מדובר בכישרון.<br>לא במזל.<br>ולא בעוד "שיטה".<br>פשוט יש אנשים שהבינו משהו שרוב האנשים עדיין מפספסים.</div>
+    <p class="tension-line">בעוד כמה דקות תבין למה בעידן ה-AI יותר ויותר אנשים משנים את הדרך שבה הם מסתכלים על עבודה, זמן והזדמנויות</p>
+    <div class="icon-row">
+      <div class="icon-item"><span class="ico">⏱</span>5 דקות</div>
+      <div class="icon-item"><span class="ico">▶️</span>הסבר ברור</div>
+      <div class="icon-item"><span class="ico">🔒</span>גישה מאובטחת</div>
     </div>
-
     <p class="above-timer">הגישה לצפייה נשמרת לעוד:</p>
-    <div class="timer">
-      <div class="t-box"><div class="num" id="mm">14</div><div class="cap">דקות</div></div>
-      <div class="t-sep">:</div>
-      <div class="t-box"><div class="num" id="ss">59</div><div class="cap">שניות</div></div>
+    <div class="countdown-clock" id="clock">
+      <div class="cc-digits">
+        <div class="cc-box"><span class="cc-num" id="ss">59</span><span class="cc-unit">שניות</span></div>
+        <div class="cc-sep">:</div>
+        <div class="cc-box"><span class="cc-num" id="mm">00</span><span class="cc-unit">דקות</span></div>
+      </div>
     </div>
-
-    <p class="below-timer">מה שתראה בעוד רגע יסביר למה יש אנשים שמתקדמים מהר יותר, למרות שהם לא עובדים יותר שעות.</p>
-    <p class="above-btn">עוד כמה שניות ותבין למה יותר ויותר אנשים משנים את הדרך שבה הם מסתכלים על עבודה והכנסה.</p>
-
-    <button class="cta-btn" id="openModal">תן לי גישה עכשיו</button>
-    <div class="trust">🔒 גישה מיידית • ללא התחייבות • צפייה של כ-5 דקות</div>
+    <p class="tension-line" style="margin-bottom:14px;">מה שתראה בעוד רגע יסביר למה יש אנשים שמתקדמים מהר יותר, למרות שהם לא עובדים יותר שעות.</p>
+    <p class="card-sub" style="margin-bottom:16px;">עוד כמה שניות ותבין למה יותר ויותר אנשים משנים את הדרך שבה הם מסתכלים על עבודה והכנסה.</p>
+    <button class="btn-main" id="openModal">תן לי גישה עכשיו</button>
+    <p class="micro-copy">🔒 גישה מיידית • ללא התחייבות • צפייה של כ-5 דקות</p>
   </div>
 </div>
 
 <footer>
   דיגיטל אונליין מבית או די מסחר אונליין בע"מ<br>
   <a href="mailto:support@digitalonline.co.il">support@digitalonline.co.il</a><br>
-  <a href="#">מדיניות פרטיות</a> | <a href="#">תנאי שימוש</a>
+  <a href="#">מדיניות פרטיות</a><span class="sep">|</span><a href="#">תנאי שימוש</a>
 </footer>
 
-<div class="overlay" id="overlay">
-  <div class="modal">
-    <button class="close" id="closeModal">✕</button>
+<div class="popup-overlay" id="overlay">
+  <div class="popup-card">
+    <button class="popup-close" id="closeModal">✕</button>
     <div id="formView">
-      <h3>לאן לשלוח לך את זה?</h3>
-      <p class="hint">הגישה מוגבלת בזמן — נא למלא ולשלוח</p>
-      <input type="text" id="fname" placeholder="שם מלא">
+      <p class="popup-title">לאן לשלוח לך את זה?</p>
+      <p class="popup-sub">הגישה מוגבלת בזמן — נא למלא ולשלוח</p>
+      <input class="field" type="text" id="fname" placeholder="שם מלא">
       <div class="err" id="err-fname">נא להזין שם מלא</div>
-      <input type="tel" id="fphone" placeholder="מספר טלפון" dir="ltr" style="text-align:right">
+      <input class="field" type="tel" id="fphone" placeholder="מספר טלפון" dir="ltr" style="text-align:right">
       <div class="err" id="err-fphone">נא להזין מספר טלפון</div>
-      <input type="email" id="femail" placeholder="אימייל">
+      <input class="field" type="email" id="femail" placeholder="אימייל">
       <div class="err" id="err-femail">נא להזין אימייל תקין</div>
-      <button class="submit" id="submitBtn">שלח לי עכשיו</button>
+      <button class="btn-popup" id="submitBtn">שלח לי עכשיו</button>
       <p class="legal">אני מאשר/ת יצירת קשר ותוכן שיווקי במייל, בטלפון ובוואטסאפ. אפשר להסיר בכל שלב שתרצה.</p>
     </div>
-    <div class="success" id="successView">
-      <div class="check">✅</div>
-      <h3>נשלח בהצלחה!</h3>
-      <p>ניצור איתך קשר בהקדם. תודה!</p>
+    <div class="success-msg" id="successView">
+      <div class="s-icon">✅</div>
+      <div class="s-title">נשלח בהצלחה!</div>
+      <div class="s-sub">ניצור איתך קשר בהקדם.<br>תודה!</div>
     </div>
   </div>
 </div>
@@ -225,7 +139,7 @@
     var DURATION_MS = 60000;
     var CRITICAL_MS = 10000;
     var mm=document.getElementById('mm'), ss=document.getElementById('ss');
-    var timerBox=document.querySelector('.timer');
+    var clockBox=document.getElementById('clock');
     var deadline = Date.now() + DURATION_MS;
     function tick(){
       var diff = deadline - Date.now();
@@ -237,30 +151,34 @@
       var s = Math.floor((diff%60000)/1000);
       mm.textContent=String(m).padStart(2,'0');
       ss.textContent=String(s).padStart(2,'0');
-      if(timerBox) timerBox.classList.toggle('cc-critical', diff<=CRITICAL_MS);
+      if(clockBox) clockBox.classList.toggle('cc-critical', diff<=CRITICAL_MS);
     }
     tick();
     setInterval(tick,1000);
   })();
 
-  // Particles
-  (function(){
-    var c=document.getElementById('particles'), ctx=c.getContext('2d');
-    var w,h,pts=[];
-    function resize(){w=c.width=window.innerWidth;h=c.height=window.innerHeight;}
-    resize(); window.addEventListener('resize',resize);
-    for(var i=0;i<60;i++){
-      pts.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.4+.3,vy:Math.random()*.25+.05,o:Math.random()*.5+.2});
-    }
-    function draw(){
-      ctx.clearRect(0,0,w,h);
-      pts.forEach(function(p){
-        ctx.beginPath();
-        ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-        ctx.fillStyle='rgba(160,140,255,'+p.o+')';
+  // Particles (gold, matches landing_option2.html)
+  (function() {
+    var c = document.getElementById('particles');
+    var ctx = c.getContext('2d');
+    var W, H, pts = [];
+    function rsz() { W = c.width = window.innerWidth; H = c.height = window.innerHeight; }
+    rsz(); window.addEventListener('resize', rsz);
+    function rnd(a,b) { return Math.random()*(b-a)+a; }
+    function mk() { return {x:rnd(0,W),y:rnd(H*.05,H),r:rnd(.3,2),dx:rnd(-.3,.3),dy:rnd(-.9,-.1),o:rnd(.4,1),fade:rnd(.002,.007),gold:Math.random()>.3,ph:rnd(0,6.28)}; }
+    for(var i=0;i<120;i++) pts.push(mk());
+    var fr = 0;
+    function draw() {
+      ctx.clearRect(0,0,W,H); fr++;
+      for(var i=0;i<pts.length;i++) {
+        var p = pts[i];
+        var a = p.o*(.6+.4*Math.sin(fr*.04+p.ph));
+        ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.fillStyle = p.gold ? 'rgba(212,168,67,'+a+')' : 'rgba(255,220,80,'+a+')';
         ctx.fill();
-        p.y-=p.vy; if(p.y<0){p.y=h;p.x=Math.random()*w;}
-      });
+        p.x+=p.dx; p.y+=p.dy; p.o-=p.fade;
+        if(p.o<=0||p.y<-10) pts[i]=mk();
+      }
       requestAnimationFrame(draw);
     }
     draw();
@@ -268,26 +186,26 @@
 
   // Modal logic
   var overlay=document.getElementById('overlay');
-  document.getElementById('openModal').addEventListener('click',function(){overlay.classList.add('show');});
-  document.getElementById('closeModal').addEventListener('click',function(){overlay.classList.remove('show');});
-  overlay.addEventListener('click',function(e){if(e.target===overlay)overlay.classList.remove('show');});
+  document.getElementById('openModal').addEventListener('click',function(){overlay.classList.add('open');});
+  document.getElementById('closeModal').addEventListener('click',function(){overlay.classList.remove('open');});
+  overlay.addEventListener('click',function(e){if(e.target===overlay)overlay.classList.remove('open');});
 
   document.getElementById('submitBtn').addEventListener('click',function(){
     var fname=document.getElementById('fname'), fphone=document.getElementById('fphone'), femail=document.getElementById('femail');
     var ok=true;
-    document.getElementById('err-fname').style.display='none';
-    document.getElementById('err-fphone').style.display='none';
-    document.getElementById('err-femail').style.display='none';
-    if(!fname.value.trim()){document.getElementById('err-fname').style.display='block';ok=false;}
-    if(!fphone.value.trim() || fphone.value.trim().length<9){document.getElementById('err-fphone').style.display='block';ok=false;}
+    document.getElementById('err-fname').classList.remove('show');
+    document.getElementById('err-fphone').classList.remove('show');
+    document.getElementById('err-femail').classList.remove('show');
+    if(!fname.value.trim()){document.getElementById('err-fname').classList.add('show');ok=false;}
+    if(!fphone.value.trim() || fphone.value.trim().length<9){document.getElementById('err-fphone').classList.add('show');ok=false;}
     var emailOk=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(femail.value.trim());
-    if(!emailOk){document.getElementById('err-femail').style.display='block';ok=false;}
+    if(!emailOk){document.getElementById('err-femail').classList.add('show');ok=false;}
     if(!ok)return;
     document.getElementById('formView').style.display='none';
-    document.getElementById('successView').style.display='block';
-    setTimeout(function(){overlay.classList.remove('show');
+    document.getElementById('successView').classList.add('show');
+    setTimeout(function(){overlay.classList.remove('open');
       document.getElementById('formView').style.display='block';
-      document.getElementById('successView').style.display='none';
+      document.getElementById('successView').classList.remove('show');
     },2500);
   });
 </script>
