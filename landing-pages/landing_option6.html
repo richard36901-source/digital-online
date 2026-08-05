@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>דיגיטל אונליין | כללים שכבר השתנו</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700;900&family=Heebo:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    font-family:'Heebo',sans-serif;
+    direction:rtl;
+    overflow-x:hidden;
+    min-height:100svh;
+    color:#2B2418;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    position:relative;
+    background-color:#FAF5EA;
+    background-image:
+      radial-gradient(ellipse 60% 40% at 15% 0%, rgba(20,92,67,.10) 0%, transparent 60%),
+      radial-gradient(ellipse 55% 40% at 100% 100%, rgba(201,162,39,.16) 0%, transparent 60%);
+  }
+  .page-wrap{position:relative;z-index:2;width:100%;max-width:480px;padding:36px 16px 90px;display:flex;flex-direction:column;align-items:center;}
+
+  @keyframes fadeDown{from{opacity:0;transform:translateY(-14px);}to{opacity:1;transform:translateY(0);}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:translateY(0);}}
+  @keyframes btnGlow{
+    0%,100%{box-shadow:0 6px 22px rgba(20,92,67,.28);}
+    50%{box-shadow:0 10px 32px rgba(201,162,39,.45);}
+  }
+
+  .card{
+    position:relative;width:100%;
+    background:#FFFDF7;
+    border:1px solid rgba(20,92,67,.18);
+    border-radius:18px;
+    padding:38px 28px 32px;
+    box-shadow:0 2px 4px rgba(43,36,24,.04), 0 24px 50px rgba(43,36,24,.10);
+    text-align:center;
+    animation:fadeDown .7s ease both;
+  }
+  .card::before{
+    content:"";position:absolute;top:10px;left:10px;right:10px;bottom:10px;
+    border:1px solid rgba(201,162,39,.35);border-radius:12px;pointer-events:none;
+  }
+
+  .kicker{
+    display:inline-block;font-size:12px;font-weight:700;letter-spacing:1.5px;
+    color:#145C43;text-transform:uppercase;margin-bottom:16px;
+    border-bottom:2px solid #C9A227;padding-bottom:6px;
+  }
+
+  h1{
+    font-family:'Frank Ruhl Libre',serif;
+    font-size:27px;line-height:1.42;font-weight:700;
+    color:#17301F;margin-bottom:18px;
+  }
+
+  .subhead{
+    font-size:15px;line-height:1.85;color:#5B5140;margin-bottom:24px;
+  }
+
+  .above-icons{
+    font-size:14.5px;color:#3F5B4C;margin-bottom:16px;font-weight:600;line-height:1.6;
+  }
+
+  .icons-row{
+    display:flex;justify-content:center;gap:12px;margin-bottom:26px;flex-wrap:wrap;
+  }
+  .icon-box{
+    flex:1 1 0;min-width:96px;max-width:130px;
+    background:#F3EDDD;
+    border:1px solid rgba(20,92,67,.18);
+    border-radius:12px;padding:14px 8px;
+  }
+  .icon-box .ic{
+    width:34px;height:34px;margin:0 auto 8px;
+    display:flex;align-items:center;justify-content:center;
+    border-radius:50%;background:#145C43;color:#F3EDDD;font-size:16px;
+  }
+  .icon-box .lbl{font-size:12.5px;color:#3B3323;font-weight:700;}
+
+  .above-timer{font-size:13.5px;color:#6B6046;margin-bottom:12px;font-weight:600;letter-spacing:.3px;}
+
+  .timer{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:24px;}
+  .t-box{
+    background:#17301F;border:1px solid #145C43;
+    border-radius:10px;padding:10px 18px;min-width:64px;
+    box-shadow:0 8px 20px rgba(23,48,31,.25);
+  }
+  .t-box .num{font-family:'Frank Ruhl Libre',serif;font-size:26px;font-weight:700;color:#F3EDDD;line-height:1;font-variant-numeric:tabular-nums;}
+  .t-box .cap{font-size:10px;color:#C9A227;margin-top:4px;letter-spacing:.4px;}
+  .t-sep{font-size:20px;font-weight:900;color:#C9A227;}
+
+  .below-timer{font-size:14.5px;line-height:1.75;color:#5B5140;margin-bottom:14px;}
+  .above-btn{font-size:13.5px;line-height:1.65;color:#7A7057;margin-bottom:22px;}
+
+  .cta-btn{
+    display:block;width:100%;text-decoration:none;cursor:pointer;
+    background:#145C43;
+    color:#FBF6EC;font-weight:800;font-size:17px;font-family:'Heebo',sans-serif;
+    border:1px solid #0F4633;border-radius:10px;padding:17px 18px;
+    animation:btnGlow 2.8s ease-in-out infinite;
+    transition:transform .15s ease;
+  }
+  .cta-btn:active{transform:scale(.98);}
+
+  .trust{
+    margin-top:14px;font-size:12px;color:#8A8064;display:flex;
+    align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;
+  }
+
+  footer{
+    position:relative;z-index:2;text-align:center;color:#8A8064;
+    font-size:11.5px;line-height:1.8;padding:26px 16px 30px;max-width:480px;
+  }
+  footer a{color:#145C43;text-decoration:none;}
+
+  /* Modal */
+  .overlay{
+    position:fixed;inset:0;background:rgba(23,20,12,.55);backdrop-filter:blur(3px);
+    display:none;align-items:center;justify-content:center;z-index:50;padding:16px;
+  }
+  .overlay.show{display:flex;}
+  .modal{
+    width:100%;max-width:380px;background:#FFFDF7;border:1px solid rgba(20,92,67,.25);
+    border-radius:16px;padding:28px 24px;position:relative;
+    box-shadow:0 24px 60px rgba(23,20,12,.35);
+    animation:fadeUp .35s ease both;
+  }
+  .modal h3{font-family:'Frank Ruhl Libre',serif;font-size:20px;font-weight:700;color:#17301F;margin-bottom:6px;text-align:center;}
+  .modal p.hint{font-size:12.5px;color:#7A7057;text-align:center;margin-bottom:18px;}
+  .modal input{
+    width:100%;background:#F3EDDD;border:1px solid rgba(20,92,67,.2);
+    border-radius:8px;padding:13px 14px;color:#2B2418;font-size:14.5px;margin-bottom:10px;font-family:inherit;
+  }
+  .modal input::placeholder{color:#9A9174;}
+  .modal .err{color:#B23B3B;font-size:11.5px;margin:-4px 0 8px;display:none;}
+  .modal button.submit{
+    width:100%;background:#145C43;
+    color:#FBF6EC;font-weight:800;font-size:15.5px;border:none;border-radius:8px;
+    padding:14px;margin-top:6px;cursor:pointer;
+  }
+  .modal .legal{font-size:10.5px;color:#9A9174;text-align:center;margin-top:10px;line-height:1.6;}
+  .modal .close{position:absolute;top:14px;left:16px;color:#8A8064;font-size:20px;cursor:pointer;background:none;border:none;}
+  .success{display:none;text-align:center;padding:10px 0;}
+  .success .check{font-size:42px;margin-bottom:10px;}
+  .success h3{font-family:'Frank Ruhl Libre',serif;margin-bottom:8px;color:#17301F;}
+  .success p{color:#7A7057;font-size:13.5px;line-height:1.7;}
+</style>
+</head>
+<body>
+<div class="page-wrap">
+  <div class="card">
+    <div class="kicker">משהו כאן שווה 5 דקות</div>
+
+    <h1>יש סיכוי שאתה עובד קשה… ועדיין משחק לפי כללים שכבר השתנו.</h1>
+
+    <p class="subhead">לא מדובר בכישרון.<br>לא במזל.<br>ולא בעוד "שיטה".<br>פשוט יש אנשים שהבינו משהו שרוב האנשים עדיין מפספסים.</p>
+
+    <p class="above-icons">בעוד כמה דקות תבין למה בעידן ה-AI יותר ויותר אנשים משנים את הדרך שבה הם מסתכלים על עבודה, זמן והזדמנויות</p>
+
+    <div class="icons-row">
+      <div class="icon-box"><div class="ic">🔒</div><div class="lbl">גישה מאובטחת</div></div>
+      <div class="icon-box"><div class="ic">▶️</div><div class="lbl">הסבר ברור</div></div>
+      <div class="icon-box"><div class="ic">⏱</div><div class="lbl">5 דקות</div></div>
+    </div>
+
+    <p class="above-timer">הגישה לצפייה נשמרת לעוד:</p>
+    <div class="timer">
+      <div class="t-box"><div class="num" id="mm">14</div><div class="cap">דקות</div></div>
+      <div class="t-sep">:</div>
+      <div class="t-box"><div class="num" id="ss">59</div><div class="cap">שניות</div></div>
+    </div>
+
+    <p class="below-timer">מה שתראה בעוד רגע יסביר למה יש אנשים שמתקדמים מהר יותר, למרות שהם לא עובדים יותר שעות.</p>
+    <p class="above-btn">עוד כמה שניות ותבין למה יותר ויותר אנשים משנים את הדרך שבה הם מסתכלים על עבודה והכנסה.</p>
+
+    <button class="cta-btn" id="openModal">תן לי גישה עכשיו</button>
+    <div class="trust">🔒 גישה מיידית • ללא התחייבות • צפייה של כ-5 דקות</div>
+  </div>
+</div>
+
+<footer>
+  דיגיטל אונליין מבית או די מסחר אונליין בע"מ<br>
+  <a href="mailto:support@digitalonline.co.il">support@digitalonline.co.il</a><br>
+  <a href="#">מדיניות פרטיות</a> | <a href="#">תנאי שימוש</a>
+</footer>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <button class="close" id="closeModal">✕</button>
+    <div id="formView">
+      <h3>לאן לשלוח לך את זה?</h3>
+      <p class="hint">הגישה מוגבלת בזמן — נא למלא ולשלוח</p>
+      <input type="text" id="fname" placeholder="שם מלא">
+      <div class="err" id="err-fname">נא להזין שם מלא</div>
+      <input type="tel" id="fphone" placeholder="מספר טלפון">
+      <div class="err" id="err-fphone">נא להזין מספר טלפון</div>
+      <input type="email" id="femail" placeholder="אימייל">
+      <div class="err" id="err-femail">נא להזין אימייל תקין</div>
+      <button class="submit" id="submitBtn">שלח לי עכשיו</button>
+      <p class="legal">אני מאשר/ת יצירת קשר ותוכן שיווקי במייל, בטלפון ובוואטסאפ. אפשר להסיר בכל שלב שתרצה.</p>
+    </div>
+    <div class="success" id="successView">
+      <div class="check">✅</div>
+      <h3>נשלח בהצלחה!</h3>
+      <p>ניצור איתך קשר בהקדם. תודה!</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function(){
+    var total = 14*60+59;
+    var mm=document.getElementById('mm'), ss=document.getElementById('ss');
+    function tick(){
+      if(total<=0){total=14*60+59;}
+      var m=Math.floor(total/60), s=total%60;
+      mm.textContent=String(m).padStart(2,'0');
+      ss.textContent=String(s).padStart(2,'0');
+      total--;
+    }
+    tick();
+    setInterval(tick,1000);
+  })();
+
+  var overlay=document.getElementById('overlay');
+  document.getElementById('openModal').addEventListener('click',function(){overlay.classList.add('show');});
+  document.getElementById('closeModal').addEventListener('click',function(){overlay.classList.remove('show');});
+  overlay.addEventListener('click',function(e){if(e.target===overlay)overlay.classList.remove('show');});
+
+  document.getElementById('submitBtn').addEventListener('click',function(){
+    var fname=document.getElementById('fname'), fphone=document.getElementById('fphone'), femail=document.getElementById('femail');
+    var ok=true;
+    document.getElementById('err-fname').style.display='none';
+    document.getElementById('err-fphone').style.display='none';
+    document.getElementById('err-femail').style.display='none';
+    if(!fname.value.trim()){document.getElementById('err-fname').style.display='block';ok=false;}
+    if(!fphone.value.trim() || fphone.value.trim().length<9){document.getElementById('err-fphone').style.display='block';ok=false;}
+    var emailOk=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(femail.value.trim());
+    if(!emailOk){document.getElementById('err-femail').style.display='block';ok=false;}
+    if(!ok)return;
+    document.getElementById('formView').style.display='none';
+    document.getElementById('successView').style.display='block';
+    setTimeout(function(){overlay.classList.remove('show');
+      document.getElementById('formView').style.display='block';
+      document.getElementById('successView').style.display='none';
+    },2500);
+  });
+</script>
+</body>
+</html>
