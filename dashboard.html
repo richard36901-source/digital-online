@@ -374,6 +374,12 @@
     box-shadow: var(--shadow-md);
     display: inline-flex; align-items: center; gap: 4px;
   }
+  .ab-no-traffic-badge {
+    display: inline-flex; align-items: center; vertical-align: middle;
+    font-size: 9px; font-weight: 700; letter-spacing: 0.02em;
+    background: var(--card-soft); color: var(--text-3); border: 1px solid var(--border);
+    border-radius: 6px; padding: 2px 7px; margin-right: 6px;
+  }
 
   /* VIDEO VERSION HISTORY (per panel 6/7/9/10). Each card lists every video
      "version" that has ever run in that panel's video_1 slot, oldest first,
@@ -944,7 +950,7 @@ const SHEET_TAB = 'Dashboard';             // ← tab name (default 'Dashboard')
    "0". */
 const HEAD_TO_HEAD_TESTS = [
   {
-    /* Newest experiment: OPTION2 (proven baseline, no video) against two
+    /* Newest experiment: OPTION2 (former baseline, no video) against two
        new video-enabled variants built from the same winning copy/design --
        each embeds one of the two YouTube explainer videos near the top of
        the page, plus a set of independent CRO tweaks (trust line above the
@@ -955,11 +961,17 @@ const HEAD_TO_HEAD_TESTS = [
        submitting the lead form. This is the only ACTIVE landing-page test --
        everything else that used to live here (OPTION2_V2, Option 26071/26072,
        the original Option 1-4 test) has been moved down into
-       HEAD_TO_HEAD_HISTORY so this section only shows what's live today. */
+       HEAD_TO_HEAD_HISTORY so this section only shows what's live today.
+       OPTION2 itself stopped getting new traffic (ad spend moved to Video 1
+       / Video 2) -- it's kept here as a historical reference point (its old
+       numbers are still real), flagged noTraffic so it's visually marked
+       and excluded from the winner/sample-status calculation instead of
+       silently competing against two variants that ARE still collecting
+       data. */
     title: 'דף נחיתה · OPTION2 מול Video 1 מול Video 2', tag: 'landing', tagLabel: 'דף נחיתה · מבחן וידאו',
     conversionLabel: 'שלחו פרטים', conversionKey: 'landing',
     variants: [
-      { name: 'OPTION2', desc: 'הגרסה המקורית (ללא וידאו)', panel: 2 },
+      { name: 'OPTION2', desc: 'הגרסה המקורית (ללא וידאו) · אינה מקבלת תנועה יותר', panel: 2, noTraffic: true },
       { name: 'Video 1', desc: 'עם סרטון 1 + שעון 2 דק׳ + חץ ל-CTA', panel: 14 },
       { name: 'Video 2', desc: 'עם סרטון 2 + שעון 2 דק׳ + חץ ל-CTA', panel: 15 }
     ]
@@ -1872,14 +1884,19 @@ function renderHeadToHeadCard(test) {
       ? Math.max(m(`f${v.panel}_entry`), m(`f${v.panel}_video_1`))
       : m(`f${v.panel}_entry`);
     const conv = m(`f${v.panel}_${convKey}`);
-    return Object.assign({}, v, { sent, conv, rate: pct(conv, sent), vClass: 'v' + (i + 1) });
+    return Object.assign({}, v, { sent, conv, rate: pct(conv, sent), vClass: 'v' + (i + 1), noTraffic: !!v.noTraffic });
   });
 
   // A variant only counts toward "winner" once it has enough traffic (>=10
   // entries) to say anything meaningful; the winner is whichever eligible
   // variant has the highest rate, by at least half a percentage point over
   // the next-best eligible variant (avoids crowning a "winner" on noise).
-  const eligible = variants.filter(v => v.sent >= 10);
+  // Variants flagged noTraffic (retired arms kept only for historical
+  // reference) never compete for the winner and are ignored when deciding
+  // the card's "פעיל / אוסף דגימות" status -- they no longer collect new
+  // data, so treating them like a live arm would be misleading either way.
+  const liveVariants = variants.filter(v => !v.noTraffic);
+  const eligible = liveVariants.filter(v => v.sent >= 10);
   let winnerPanel = null;
   if (eligible.length >= 2) {
     const sorted = eligible.slice().sort((a, b) => b.rate - a.rate);
@@ -1887,9 +1904,9 @@ function renderHeadToHeadCard(test) {
   }
 
   let statusText, statusClass;
-  if (!variants.some(v => v.sent > 0)) {
+  if (!liveVariants.some(v => v.sent > 0)) {
     statusText = 'מחכה לנתונים'; statusClass = 'waiting';
-  } else if (eligible.length < variants.length) {
+  } else if (eligible.length < liveVariants.length) {
     statusText = 'אוסף דגימות'; statusClass = 'pending';
   } else {
     statusText = 'פעיל'; statusClass = '';
@@ -1906,7 +1923,7 @@ function renderHeadToHeadCard(test) {
             ${isWinner ? '<div class="ab-winner-pill">🏆 מנצח</div>' : ''}
             <div class="ab-var-head">
               <div class="ab-var-badge">${v.panel}</div>
-              <div class="ab-var-name"><a class="title-link" href="${panelUrl(v.panel)}" target="_blank" rel="noopener">${v.name}</a></div>
+              <div class="ab-var-name"><a class="title-link" href="${panelUrl(v.panel)}" target="_blank" rel="noopener">${v.name}</a>${v.noTraffic ? ' <span class="ab-no-traffic-badge">ללא תנועה</span>' : ''}</div>
             </div>
             <div class="ab-var-desc">${v.desc || '&nbsp;'}</div>
             <div class="ab-body">
