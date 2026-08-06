@@ -415,6 +415,26 @@
   .vv-stat-val { display: block; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; color: var(--text); }
   .vv-stat-val.rate { color: var(--pa); }
 
+  /* Auto-generated "history" cards for landing pages / funnels that are
+     currently not in ACTIVE_PANELS. Same underlying data source as the
+     panel-registry table above, just surfaced as its own visual section
+     instead of a muted row, so retired pages/funnels don't just fade into
+     a long flat table -- their numbers stay front and center. */
+  .ph-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 4px; }
+  .ph-card {
+    background: var(--card-soft); border: 1px solid var(--border-2);
+    border-radius: 12px; padding: 14px 16px;
+  }
+  .ph-card-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .ph-card-head .pr-num { font-size: 11px; }
+  .ph-card-head .title-link { font-size: 13.5px; font-weight: 700; }
+  .ph-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .ph-stat-lbl { display: block; font-size: 9px; color: var(--text-3); margin-bottom: 2px; }
+  .ph-stat-val { display: block; font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; color: var(--text); }
+  .ph-stat-val.rate { color: var(--pa); }
+  .ph-empty { font-size: 12.5px; color: var(--text-3); padding: 6px 2px; grid-column: 1 / -1; }
+
+
   .email-perf-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; }
   .email-card {
     background: var(--card); border: 1px solid var(--border);
@@ -579,6 +599,8 @@
     .ab-var-desc { min-height: 0; }
 
     .vv-stats { grid-template-columns: repeat(2, 1fr); }
+    .ph-grid { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+
     .email-stats-row { grid-template-columns: 1fr 1fr; }
 
     .toast { top: auto; bottom: 20px; left: 12px; right: 12px; transform: none; text-align: center; justify-content: center; }
@@ -921,6 +943,31 @@
     <div class="close-stage-updated" id="close_stage_updated"></div>
   </div>
 
+  <div class="section-head">
+    <h2>
+      <span class="sicn" style="background:var(--card-soft);color:var(--text-3);">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+      </span>
+      היסטוריה · דפי נחיתה
+    </h2>
+    <span class="meta">כל דפי הנחיתה שאינם פעילים כרגע ("לא פעיל" בטבלת הרישום למעלה), עם כל הנתונים שנאספו עבורם -- שום דבר לא נמחק</span>
+  </div>
+
+  <div class="ph-grid" id="ph_landing_grid"></div>
+
+  <div class="section-head">
+    <h2>
+      <span class="sicn" style="background:var(--card-soft);color:var(--text-3);">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
+      </span>
+      היסטוריה · משפכים (פאנלים)
+    </h2>
+    <span class="meta">כל המשפכים שאינם פעילים כרגע ("לא פעיל" בטבלת הרישום למעלה), עם כל הנתונים שנאספו עבורם -- שום דבר לא נמחק</span>
+  </div>
+
+  <div class="ph-grid" id="ph_funnel_grid"></div>
+
+
 </main>
 
 <div class="toast" id="toast" role="status" aria-live="polite">הנתונים עודכנו</div>
@@ -1260,6 +1307,8 @@ function render() {
   renderVideoVersions();
   renderWatchTime();
   renderPanelRegistry();
+  renderPanelHistory();
+
 }
 
 /* ============================================================================
@@ -1462,6 +1511,50 @@ function renderPanelRegistry() {
     funnelBody.innerHTML = PANEL_LEGEND.filter(p => p.type === 'funnel').map(renderPanelRegistryRow).join('');
   }
 }
+
+// One card per retired panel -- same entries/conversions/rate math as
+// renderPanelRegistryRow, just rendered as a standalone visual card instead
+// of a muted table row, so the "היסטוריה" sections below stay legible even
+// as more pages/funnels get retired over time.
+function renderPanelHistoryCard(p) {
+  const entries = Math.max(m(`f${p.panel}_entry`), m(`f${p.panel}_video_1`));
+  const conv = p.type === 'funnel' ? m(`f${p.panel}_webinar`) : m(`f${p.panel}_landing`);
+  const rate = pct(conv, entries);
+  return `
+    <div class="ph-card">
+      <div class="ph-card-head">
+        <span class="pr-num mono">${p.panel}</span>
+        <a class="title-link" href="${SITE_BASE + p.path}" target="_blank" rel="noopener">${p.name}</a>
+      </div>
+      <div class="ph-stats">
+        <div><span class="ph-stat-lbl">כניסות</span><span class="ph-stat-val">${fmt(entries)}</span></div>
+        <div><span class="ph-stat-lbl">המרות</span><span class="ph-stat-val">${fmt(conv)}</span></div>
+        <div><span class="ph-stat-lbl">אחוז המרה</span><span class="ph-stat-val rate">${fmtPct(rate)}</span></div>
+      </div>
+    </div>`;
+}
+
+// Auto-derives its list straight from PANEL_LEGEND + ACTIVE_PANELS (the same
+// source of truth the registry table above uses) -- no separate curated
+// array to keep in sync, so any panel that goes inactive shows up here
+// automatically the next time this runs.
+function renderPanelHistory() {
+  const landingGrid = document.getElementById('ph_landing_grid');
+  const funnelGrid = document.getElementById('ph_funnel_grid');
+  const inactiveLanding = PANEL_LEGEND.filter(p => p.type === 'landing' && !ACTIVE_PANELS.has(p.panel));
+  const inactiveFunnel = PANEL_LEGEND.filter(p => p.type === 'funnel' && !ACTIVE_PANELS.has(p.panel));
+  if (landingGrid) {
+    landingGrid.innerHTML = inactiveLanding.length
+      ? inactiveLanding.map(renderPanelHistoryCard).join('')
+      : '<p class="ph-empty">אין כרגע דפי נחיתה לא פעילים.</p>';
+  }
+  if (funnelGrid) {
+    funnelGrid.innerHTML = inactiveFunnel.length
+      ? inactiveFunnel.map(renderPanelHistoryCard).join('')
+      : '<p class="ph-empty">אין כרגע משפכים לא פעילים.</p>';
+  }
+}
+
 
 /* ============================================================================
    EMAIL SEQUENCE PERFORMANCE (opens / clicks) · RavMessage A/B/C automation
