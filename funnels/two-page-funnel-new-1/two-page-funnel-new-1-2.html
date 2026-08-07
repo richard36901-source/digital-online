@@ -327,7 +327,12 @@ function submitFullTraining(){
   setTimeout(function(){
     var q=new URLSearchParams(location.search);
     q.set('name',name);q.set('phone',wphone);q.set('email',wemail);
-    window.location.href='../../extra/signup-video.html?'+q.toString();
+    /* 50/50 A/B split: half of leads go to signup-video.html, half to signup-video2.html (video 6Alv2IfmgTU).
+   Sticky per browser via localStorage so the same visitor always lands on the same variant. */
+var AB_KEY='do_signup_video_variant';
+var abVariant=localStorage.getItem(AB_KEY);
+if(!abVariant){abVariant=(Math.random()<0.5)?'signup-video':'signup-video2';localStorage.setItem(AB_KEY,abVariant);}
+window.location.href='../../extra/'+abVariant+'.html?'+q.toString();
   },400);
 }
 
