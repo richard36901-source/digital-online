@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>god_manager - דשבורד קמפיינים</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f4f5f7;
+    color: #1c1e21;
+    margin: 0;
+    padding: 24px;
+  }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .subtitle { color: #65676b; font-size: 13px; margin-bottom: 20px; }
+  .summary-bar {
+    display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap;
+  }
+  .summary-item {
+    background: #fff; border-radius: 10px; padding: 14px 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08); min-width: 140px;
+  }
+  .summary-item .value { font-size: 22px; font-weight: 700; }
+  .summary-item .label { font-size: 12px; color: #65676b; }
+  .client-cards {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px; margin-bottom: 24px;
+  }
+  .client-card {
+    background: #fff; border-radius: 10px; padding: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .client-card-name { font-weight: 700; font-size: 15px; margin-bottom: 10px; }
+  .client-card-metrics {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+  }
+  .client-card-metrics .metric-value { display: block; font-size: 16px; font-weight: 700; }
+  .client-card-metrics .metric-label { display: block; font-size: 11px; color: #65676b; }
+  .filters { margin-bottom: 12px; }
+  .filter-btn {
+    background: #fff; border: 1px solid #dadde1; border-radius: 16px;
+    padding: 6px 14px; margin-inline-end: 6px; font-size: 13px; cursor: pointer;
+  }
+  .filter-btn.active { background: #1877f2; color: #fff; border-color: #1877f2; }
+  table {
+    width: 100%; border-collapse: collapse; background: #fff;
+    border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  th, td { padding: 10px 12px; text-align: right; font-size: 13px; }
+  th {
+    background: #f0f2f5; font-weight: 600; color: #444; position: sticky; top: 0;
+  }
+  tr:not(:last-child) td { border-bottom: 1px solid #eee; }
+  .badge {
+    padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;
+  }
+  .status-active { background: #e3f5e6; color: #2a8a3e; }
+  .status-paused { background: #fdf0d5; color: #9a6a00; }
+  .status-archived { background: #eee; color: #777; }
+  .status-issue { background: #fde2e1; color: #c0392b; }
+  .error-box {
+    background: #fde2e1; color: #7a2019; border-radius: 8px; padding: 12px 16px;
+    margin-bottom: 16px; font-size: 13px;
+  }
+  .error-box ul { margin: 6px 0 0; padding-inline-start: 20px; }
+  footer { margin-top: 20px; font-size: 12px; color: #999; text-align: center; }
+</style>
+</head>
+<body>
+  <h1>🎯 god_manager</h1>
+  <div class="subtitle">דשבורד קמפיינים - כל החשבונות המנוהלים · עודכן לאחרונה: 08/08/2026 13:34 · טווח נתונים: 7 ימים אחרונים</div>
+
+  
+
+  <div class="summary-bar">
+    <div class="summary-item"><div class="value">₪1,805.48</div><div class="label">סה"כ הוצאה</div></div>
+    <div class="summary-item"><div class="value">114</div><div class="label">סה"כ לידים</div></div>
+    <div class="summary-item"><div class="value">21</div><div class="label">קמפיינים פעילים</div></div>
+    <div class="summary-item"><div class="value">4</div><div class="label">חשבונות מנוהלים</div></div>
+  </div>
+
+  <div class="client-cards">
+    
+        <div class="client-card">
+          <div class="client-card-name">גל</div>
+          <div class="client-card-metrics">
+            <div><span class="metric-value">₪209.07</span><span class="metric-label">הוצאה (7 ימים)</span></div>
+            <div><span class="metric-value">0</span><span class="metric-label">לידים</span></div>
+            <div><span class="metric-value">—</span><span class="metric-label">עלות לליד</span></div>
+            <div><span class="metric-value">7</span><span class="metric-label">קמפיינים פעילים</span></div>
+          </div>
+        </div>
+        <div class="client-card">
+          <div class="client-card-name">טל</div>
+          <div class="client-card-metrics">
+            <div><span class="metric-value">₪121.43</span><span class="metric-label">הוצאה (7 ימים)</span></div>
+            <div><span class="metric-value">0</span><span class="metric-label">לידים</span></div>
+            <div><span class="metric-value">—</span><span class="metric-label">עלות לליד</span></div>
+            <div><span class="metric-value">3</span><span class="metric-label">קמפיינים פעילים</span></div>
+          </div>
+        </div>
+        <div class="client-card">
+          <div class="client-card-name">רחל</div>
+          <div class="client-card-metrics">
+            <div><span class="metric-value">₪362.85</span><span class="metric-label">הוצאה (7 ימים)</span></div>
+            <div><span class="metric-value">0</span><span class="metric-label">לידים</span></div>
+            <div><span class="metric-value">—</span><span class="metric-label">עלות לליד</span></div>
+            <div><span class="metric-value">10</span><span class="metric-label">קמפיינים פעילים</span></div>
+          </div>
+        </div>
+        <div class="client-card">
+          <div class="client-card-name">שלי (naan1930store)</div>
+          <div class="client-card-metrics">
+            <div><span class="metric-value">₪1,112.13</span><span class="metric-label">הוצאה (7 ימים)</span></div>
+            <div><span class="metric-value">114</span><span class="metric-label">לידים</span></div>
+            <div><span class="metric-value">₪9.76</span><span class="metric-label">עלות לליד</span></div>
+            <div><span class="metric-value">1</span><span class="metric-label">קמפיינים פעילים</span></div>
+          </div>
+        </div>
+  </div>
+
+  <div class="filters">
+    <button class="filter-btn active" data-filter="all">הכל</button>
+    <button class="filter-btn" data-filter="גל">גל</button><button class="filter-btn" data-filter="טל">טל</button><button class="filter-btn" data-filter="רחל">רחל</button><button class="filter-btn" data-filter="שלי (naan1930store)">שלי (naan1930store)</button>
+  </div>
+
+  <table id="campaignsTable">
+    <thead>
+      <tr>
+        <th>לקוח</th>
+        <th>קמפיין</th>
+        <th>סטטוס</th>
+        <th>הוצאה</th>
+        <th>לידים</th>
+        <th>עלות לליד</th>
+        <th>ROAS</th>
+        <th>חשיפות</th>
+        <th>קליקים</th>
+      </tr>
+    </thead>
+    <tbody>
+      
+        <tr data-client="גל">
+          <td>גל</td>
+          <td>לידים - משפך 4 סרטונים</td>
+          <td><span class="badge status-active">פעיל</span></td>
+          <td>₪209.07</td>
+          <td>0</td>
+          <td>—</td>
+          <td>—</td>
+          <td>1,777</td>
+          <td>102</td>
+        </tr>
+        <tr data-client="גל">
+          <td>גל</td>
+          <td>קמפיין עבודה מהבית | 26/5/26</td>
+          <td><span class="badge status-active">פעיל</span></td>
+          <td>₪0.00</td>
+          <td>0</td>
+          <td>—</td>
+          <td>—</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr data-client="גל">
+          <td>גל</td>
+          <td>קמפין לידים מכללה 16.3.26</td>
+          <td><span class="badge status-active">פעיל</span></td>
+          <td>₪0.00</td>
+          <td>0</td>
+          <td>—</td>
+          <td>—</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr data-client="גל">
+          <td>גל</td>
+          <td>פרסום: ‏"‏בי פולן אשר בא ישר מהכוורת העוזר במיוחד לצומות...‏"‏</td>
+          <td><span class="badge status-active">פעיל</span></td>
+          <td>₪0.00</td>
+          <td>0</td>
+          <td>—</td>
+          <td>—</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr data-client="גל">
+          <td>גל</td>
+          <td>קמפיין חדש לידים מכללה | 22/1/26</td>
+          <td><span class="badge status-active">פעיל</span></td>
+          <td>₪0.00</td>
+          <td>0</td>
+          <td>—</td>
+          <td>—</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr data-client="גל">
+          <td>גל</td>
+          <td>קמפיין לידים מכללה  חדש | 13/1/26</td>
+          <td><span class="badge status-active">פעיל</span></td>
+          <td>₪0.00</td>
+          <td>0</td>
+          <td>—</td>
+          <td>—</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr data-client="גל">
+          <td>גל</td>
+          <td>קמפיין לידים חדש 1 | 4/1/26</td>
+          <td><span class="badge status-active">פעיל</span></td>
+          <td>₪0.00</td>
+          <td>0</td>
+          <td>—</td>
+          <td>—</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr data-client="טל">
+          <td>טל</td>
+          <td>קמפיין לידים חדש</td>
+          <td><span class="badge status-active">פעיל</span></td>
+          <td>₪121.43</td>
+          <td>0</td>
+          <td>—</td>
+          <td>—</td>
+          <td>906</td>
+          <td>54</td>
+        </tr>
+        <tr data-client="טל">
+          <td>טל</td>
+          <td>קמפיין לידים הכנסה עובד 19/5</td>
+          <td><span class="badge status-active">פעיל</span></td>
+          <td>₪0.00</td>
+          <td>0</td>
+          <td>—</td>
+          <td>—</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr data-client="טל">
+          <td>טל</td>
+          <td>קמפיין עבודה מהבית 11/5/26</td>
+          <td><span class="badge status-paused">מושהה</span></td>
+          <td>₪0.00</td>
+          <td>0</td>
+          <td>—</td>
+          <td>—</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr data-client="טל">
+          <td>טל</td>
+          <td>קמפיין לידים לבד 4/5/26</td>
+          <td><span class="badge status-paused">מושהה</span></td>
+          <td>₪0.00</td>
+          <td>0</td>
+          <td>—</td>
+          <td>—</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr data-client="טל">
+          <td>טל</td>
+          <td>קמפיין לידים מכללה | 19/4/26</td>
+          <td><span class="badge status-active">פעיל</span></td>
+          <td>₪0.00</td>
+          <td>0</td>
+          <td>—</td>
+          <td>—</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr data-client="רחל">
+          <td>רחל</td>
+          <td>לידים - משפך 4 סרטונים</td>
+          <td><span class="badge status-active">פעיל</span></td>
+          <td>₪362.85</td>
+          <td>0</td>
+          <td>—</td>
+          <td>—</td>
+          <td>1,751</td>
+          <td>63</td>
+        </tr>
+        <tr data-client="רחל">
+          <td>רחל</td>
+          <td>קמפיין לידים הכנסה | 15/7/26</td>
+          <td><span class="badge status-paused">מושהה</span></td>
+          <td>₪0.00</td>
+          <td>0</td>
+          <td>—</td>
+          <td>—</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr data-client="רחל">
+          <td>רחל</td>
+          <td>קמפיין עבודה מהבית | 1/7/26</td>
+          <td><span class="badge status-paused">מושהה</span></td>
+          <td>₪0.00</td>
+          <td>0</td>
+          <td>—</td>
+          <td>—</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr data-client="רחל">
+          <td>רחל</td>
+          <td>קמפיין הדיגיטל משתנה כל יום |  8/6/26</td>
+          <td><span class="badge status-active">פעיל</span></td>
+          <td>₪0.00</td>
+          <td>0</td>
+          <td>—</td>
+          <td>—</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr data-client="רחל">
+          <td>רחל</td>
+          <td>קמפיין עבודה מהבית 26.05</td>
+          <td><span class="badge status-paused">מושהה</span></td>
+          <td>₪0.00</td>
+          <td>0</td>
+          <td>—</td>
+          <td>—</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr data-client="רחל">
+          <td>רחל</td>
+          <td>‏קמפיין לידים בפגמה מהבית | 18/5- עותק</td>
+          <td><span class="badge status-active">פעיל</span></td>
+          <td>₪0.00</td>
+          <td>0</td>
+          <td>—</td>
+          <td>—</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr data-client="רחל">
+          <td>רחל</td>
+          <td>קמפיין לידים בפגמה מהבית |  7.5</td>
+          <td><span class="badge status-paused">מושהה</span></td>
+          <td>₪0.00</td>
+          <td>0</td>
+          <td>—</td>
+          <td>—</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr data-client="רחל">
+          <td>רחל</td>
+          <td>קמפיין לידים מכללה לינקים חדשים | 16/4/26</td>
+          <td><span class="badge status-paused">מושהה</span></td>
+          <td>₪0.00</td>
+          <td>0</td>
+          <td>—</td>
+          <td>—</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr data-client="רחל">
+          <td>רחל</td>
+          <td>קמפיין לידים מהבית בפיג׳מה 18.326</td>
+          <td><span class="badge status-paused">מושהה</span></td>
+          <td>₪0.00</td>
+          <td>0</td>
+          <td>—</td>
+          <td>—</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr data-client="רחל">
+          <td>רחל</td>
+          <td>קמפיין תנועה להיות משפיען | 10/3/26</td>
+          <td><span class="badge status-paused">מושהה</span></td>
+          <td>₪0.00</td>
+          <td>0</td>
+          <td>—</td>
+          <td>—</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr data-client="רחל">
+          <td>רחל</td>
+          <td>קמפיין מכללה לידים חדש | 26/2/26</td>
+          <td><span class="badge status-active">פעיל</span></td>
+          <td>₪0.00</td>
+          <td>0</td>
+          <td>—</td>
+          <td>—</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr data-client="רחל">
+          <td>רחל</td>
+          <td>חידוש קמפיין אבא ובן 12/2/26</td>
+          <td><span class="badge status-active">פעיל</span></td>
+          <td>₪0.00</td>
+          <td>0</td>
+          <td>—</td>
+          <td>—</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr data-client="רחל">
+          <td>רחל</td>
+          <td>קמפיין אבא ובן מכללה | 22/11/25 |</td>
+          <td><span class="badge status-paused">מושהה</span></td>
+          <td>₪0.00</td>
+          <td>0</td>
+          <td>—</td>
+          <td>—</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr data-client="רחל">
+          <td>רחל</td>
+          <td>קמפיין תנועה מכללה| 29/10/25</td>
+          <td><span class="badge status-paused">מושהה</span></td>
+          <td>₪0.00</td>
+          <td>0</td>
+          <td>—</td>
+          <td>—</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr data-client="רחל">
+          <td>רחל</td>
+          <td>קמפיין מכללה לידים צעירים | 28/8/25</td>
+          <td><span class="badge status-active">פעיל</span></td>
+          <td>₪0.00</td>
+          <td>0</td>
+          <td>—</td>
+          <td>—</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr data-client="רחל">
+          <td>רחל</td>
+          <td>קמפיין בגדי נשים 22/7/25</td>
+          <td><span class="badge status-active">פעיל</span></td>
+          <td>₪0.00</td>
+          <td>0</td>
+          <td>—</td>
+          <td>—</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr data-client="רחל">
+          <td>רחל</td>
+          <td>קמפיין מוצרי מטבח | 8/6/25</td>
+          <td><span class="badge status-active">פעיל</span></td>
+          <td>₪0.00</td>
+          <td>0</td>
+          <td>—</td>
+          <td>—</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr data-client="רחל">
+          <td>רחל</td>
+          <td>קמפיין צעירים מכללה | 22/5/25</td>
+          <td><span class="badge status-active">פעיל</span></td>
+          <td>₪0.00</td>
+          <td>0</td>
+          <td>—</td>
+          <td>—</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr data-client="רחל">
+          <td>רחל</td>
+          <td>קמפיין צעירים | 27/3/25</td>
+          <td><span class="badge status-active">פעיל</span></td>
+          <td>₪0.00</td>
+          <td>0</td>
+          <td>—</td>
+          <td>—</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr data-client="רחל">
+          <td>רחל</td>
+          <td>קמפיין לידים | שיווק שותפים | 20/3/25</td>
+          <td><span class="badge status-paused">מושהה</span></td>
+          <td>₪0.00</td>
+          <td>0</td>
+          <td>—</td>
+          <td>—</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr data-client="שלי (naan1930store)">
+          <td>שלי (naan1930store)</td>
+          <td>לידים - משפך 4 סרטונים - יוני 2026</td>
+          <td><span class="badge status-active">פעיל</span></td>
+          <td>₪1,112.13</td>
+          <td>114</td>
+          <td>₪9.76</td>
+          <td>—</td>
+          <td>10,260</td>
+          <td>436</td>
+        </tr>
+    </tbody>
+  </table>
+
+  <footer>נוצר אוטומטית ע"י meta_ads_automation · קריאה-בלבד, לא מבצע שינויים בחשבונות</footer>
+
+  <script>
+    const buttons = document.querySelectorAll('.filter-btn');
+    const rows = document.querySelectorAll('#campaignsTable tbody tr');
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        buttons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const filter = btn.dataset.filter;
+        rows.forEach(row => {
+          row.style.display = (filter === 'all' || row.dataset.client === filter) ? '' : 'none';
+        });
+      });
+    });
+  </script>
+</body>
+</html>
