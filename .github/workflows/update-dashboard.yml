@@ -33,8 +33,8 @@ jobs:
         run: |
           git config user.name "god_manager-bot"
           git config user.email "actions@users.noreply.github.com"
-          if ! git diff --quiet -- meta_ads_automation/god_manager.html; then
-            git add meta_ads_automation/god_manager.html
+          git add meta_ads_automation/god_manager.html
+          if ! git diff --cached --quiet; then
             git commit -m "Auto-update god_manager dashboard"
             git push
           else
