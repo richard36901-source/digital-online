@@ -281,11 +281,12 @@ TEMPLATE = """<!DOCTYPE html>
 
   .grid-2 {
     display: grid;
-    grid-template-columns: 1.1fr .9fr;
+    grid-template-columns: repeat(3, 1fr);
     gap: 16px;
     margin-bottom: 20px;
   }
-  @media (max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
+  @media (max-width: 1100px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
 
   .panel {
     background: var(--card); border-radius: var(--radius); border: 1px solid var(--border);
@@ -379,6 +380,10 @@ TEMPLATE = """<!DOCTYPE html>
       <h2>לידים לפי לקוח</h2>
       <div class="chart-wrap"><canvas id="leadsChart"></canvas></div>
     </div>
+    <div class="panel">
+      <h2>עלות לליד לפי לקוח</h2>
+      <div class="chart-wrap"><canvas id="cplChart"></canvas></div>
+    </div>
   </div>
 
   <div class="client-cards" id="clientCards"></div>
@@ -429,7 +434,7 @@ const fmtRoas = (v) => v === null || v === undefined ? "—" : (Number(v).toFixe
 let state = { preset: "last_7d", client: "all" };
 if (!PRESET_ORDER.includes(state.preset)) state.preset = PRESET_ORDER[0];
 
-let spendChart, leadsChart;
+let spendChart, leadsChart, cplChart;
 
 function buildErrorBox() {
   const box = document.getElementById("errorBox");
@@ -570,6 +575,26 @@ function renderCharts(rowsForChart) {
     type: "bar",
     data: { labels, datasets: [{ data: leadsData, backgroundColor: colors, borderRadius: 8, maxBarThickness: 46 }] },
     options: commonOptions,
+  });
+
+  const cplData = CLIENTS.map((c, i) => (leadsData[i] > 0 ? spendData[i] / leadsData[i] : 0));
+  const cplOptions = {
+    ...commonOptions,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: (ctx) => (ctx.parsed.y > 0 ? fmtMoney(ctx.parsed.y) : "אין לידים") } },
+    },
+    scales: {
+      x: commonOptions.scales.x,
+      y: { ...commonOptions.scales.y, ticks: { ...commonOptions.scales.y.ticks, callback: (v) => "₪" + v } },
+    },
+  };
+
+  if (cplChart) cplChart.destroy();
+  cplChart = new Chart(document.getElementById("cplChart"), {
+    type: "bar",
+    data: { labels, datasets: [{ data: cplData, backgroundColor: colors, borderRadius: 8, maxBarThickness: 46 }] },
+    options: cplOptions,
   });
 }
 
