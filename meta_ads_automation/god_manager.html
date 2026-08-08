@@ -114,11 +114,12 @@
 
   .grid-2 {
     display: grid;
-    grid-template-columns: 1.1fr .9fr;
+    grid-template-columns: repeat(3, 1fr);
     gap: 16px;
     margin-bottom: 20px;
   }
-  @media (max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
+  @media (max-width: 1100px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
 
   .panel {
     background: var(--card); border-radius: var(--radius); border: 1px solid var(--border);
@@ -188,7 +189,7 @@
       <div class="logo">GM</div>
       <div>
         <h1>god_manager</h1>
-        <p class="sub">דשבורד קמפיינים מאוחד · כל החשבונות המנוהלים · עודכן 08/08/2026 16:29</p>
+        <p class="sub">דשבורד קמפיינים מאוחד · כל החשבונות המנוהלים · עודכן 08/08/2026 17:03</p>
       </div>
     </div>
     <span class="live-pill"><span class="dot"></span> מתעדכן אוטומטית כל שעה</span>
@@ -211,6 +212,10 @@
     <div class="panel">
       <h2>לידים לפי לקוח</h2>
       <div class="chart-wrap"><canvas id="leadsChart"></canvas></div>
+    </div>
+    <div class="panel">
+      <h2>עלות לליד לפי לקוח</h2>
+      <div class="chart-wrap"><canvas id="cplChart"></canvas></div>
     </div>
   </div>
 
@@ -242,7 +247,7 @@
   <footer>נוצר אוטומטית ע"י meta_ads_automation · קריאה-בלבד, לא מבצע שינויים בחשבונות</footer>
 
 <script>
-const DASHBOARD_DATA = {"today": [{"client": "גל", "campaign_name": "לידים - משפך 4 סרטונים", "status": "ACTIVE", "status_label": "פעיל", "spend": 29.35, "leads": 0, "cost_per_lead": null, "roas": null, "impressions": 157, "clicks": 10}, {"client": "טל", "campaign_name": "קמפיין לידים חדש", "status": "ACTIVE", "status_label": "פעיל", "spend": 32.43, "leads": 0, "cost_per_lead": null, "roas": null, "impressions": 214, "clicks": 15}, {"client": "יהב", "campaign_name": "לידים - משפך 4 סרטונים - יוני 2026", "status": "ACTIVE", "status_label": "פעיל", "spend": 93.71, "leads": 6, "cost_per_lead": 15.62, "roas": null, "impressions": 975, "clicks": 64}, {"client": "רחל", "campaign_name": "לידים - משפך 4 סרטונים", "status": "ACTIVE", "status_label": "פעיל", "spend": 21.78, "leads": 0, "cost_per_lead": null, "roas": null, "impressions": 100, "clicks": 4}], "yesterday": [{"client": "גל", "campaign_name": "לידים - משפך 4 סרטונים", "status": "ACTIVE", "status_label": "פעיל", "spend": 13.4, "leads": 0, "cost_per_lead": null, "roas": null, "impressions": 170, "clicks": 13}, {"client": "טל", "campaign_name": "קמפיין לידים חדש", "status": "ACTIVE", "status_label": "פעיל", "spend": 17.51, "leads": 0, "cost_per_lead": null, "roas": null, "impressions": 127, "clicks": 12}, {"client": "יהב", "campaign_name": "לידים - משפך 4 סרטונים - יוני 2026", "status": "ACTIVE", "status_label": "פעיל", "spend": 168.93, "leads": 22, "cost_per_lead": 7.68, "roas": null, "impressions": 1649, "clicks": 89}, {"client": "רחל", "campaign_name": "לידים - משפך 4 סרטונים", "status": "ACTIVE", "status_label": "פעיל", "spend": 45.96, "leads": 0, "cost_per_lead": null, "roas": null, "impressions": 243, "clicks": 8}], "last_7d": [{"client": "גל", "campaign_name": "לידים - משפך 4 סרטונים", "status": "ACTIVE", "status_label": "פעיל", "spend": 209.07, "leads": 0, "cost_per_lead": null, "roas": null, "impressions": 1777, "clicks": 102}, {"client": "טל", "campaign_name": "קמפיין לידים חדש", "status": "ACTIVE", "status_label": "פעיל", "spend": 121.43, "leads": 0, "cost_per_lead": null, "roas": null, "impressions": 906, "clicks": 54}, {"client": "יהב", "campaign_name": "לידים - משפך 4 סרטונים - יוני 2026", "status": "ACTIVE", "status_label": "פעיל", "spend": 1112.13, "leads": 114, "cost_per_lead": 9.76, "roas": null, "impressions": 10260, "clicks": 436}, {"client": "רחל", "campaign_name": "לידים - משפך 4 סרטונים", "status": "ACTIVE", "status_label": "פעיל", "spend": 362.85, "leads": 0, "cost_per_lead": null, "roas": null, "impressions": 1751, "clicks": 63}], "last_14d": [{"client": "גל", "campaign_name": "לידים - משפך 4 סרטונים", "status": "ACTIVE", "status_label": "פעיל", "spend": 366.5, "leads": 0, "cost_per_lead": null, "roas": null, "impressions": 3039, "clicks": 158}, {"client": "טל", "campaign_name": "קמפיין לידים חדש", "status": "ACTIVE", "status_label": "פעיל", "spend": 121.43, "leads": 0, "cost_per_lead": null, "roas": null, "impressions": 906, "clicks": 54}, {"client": "יהב", "campaign_name": "לידים - משפך 4 סרטונים - יוני 2026", "status": "ACTIVE", "status_label": "פעיל", "spend": 1965.3, "leads": 188, "cost_per_lead": 10.45, "roas": null, "impressions": 20985, "clicks": 814}, {"client": "רחל", "campaign_name": "לידים - משפך 4 סרטונים", "status": "ACTIVE", "status_label": "פעיל", "spend": 572.8, "leads": 0, "cost_per_lead": null, "roas": null, "impressions": 3057, "clicks": 114}], "last_30d": [{"client": "גל", "campaign_name": "לידים - משפך 4 סרטונים", "status": "ACTIVE", "status_label": "פעיל", "spend": 389.9, "leads": 0, "cost_per_lead": null, "roas": null, "impressions": 3352, "clicks": 170}, {"client": "טל", "campaign_name": "קמפיין לידים חדש", "status": "ACTIVE", "status_label": "פעיל", "spend": 121.43, "leads": 0, "cost_per_lead": null, "roas": null, "impressions": 906, "clicks": 54}, {"client": "יהב", "campaign_name": "לידים - משפך 4 סרטונים - יוני 2026", "status": "ACTIVE", "status_label": "פעיל", "spend": 5306.49, "leads": 548, "cost_per_lead": 9.68, "roas": null, "impressions": 58671, "clicks": 2145}, {"client": "רחל", "campaign_name": "לידים - משפך 4 סרטונים", "status": "ACTIVE", "status_label": "פעיל", "spend": 711.85, "leads": 0, "cost_per_lead": null, "roas": null, "impressions": 3861, "clicks": 151}], "last_90d": [{"client": "גל", "campaign_name": "לידים - משפך 4 סרטונים", "status": "ACTIVE", "status_label": "פעיל", "spend": 389.9, "leads": 0, "cost_per_lead": null, "roas": null, "impressions": 3352, "clicks": 170}, {"client": "טל", "campaign_name": "קמפיין לידים חדש", "status": "ACTIVE", "status_label": "פעיל", "spend": 121.43, "leads": 0, "cost_per_lead": null, "roas": null, "impressions": 906, "clicks": 54}, {"client": "יהב", "campaign_name": "לידים - משפך 4 סרטונים - יוני 2026", "status": "ACTIVE", "status_label": "פעיל", "spend": 6163.57, "leads": 588, "cost_per_lead": 10.48, "roas": null, "impressions": 64561, "clicks": 2466}, {"client": "רחל", "campaign_name": "לידים - משפך 4 סרטונים", "status": "ACTIVE", "status_label": "פעיל", "spend": 711.85, "leads": 0, "cost_per_lead": null, "roas": null, "impressions": 3861, "clicks": 151}]};
+const DASHBOARD_DATA = {"today": [{"client": "גל", "campaign_name": "לידים - משפך 4 סרטונים", "status": "ACTIVE", "status_label": "פעיל", "spend": 29.35, "leads": 0, "cost_per_lead": null, "roas": null, "impressions": 157, "clicks": 10}, {"client": "טל", "campaign_name": "קמפיין לידים חדש", "status": "ACTIVE", "status_label": "פעיל", "spend": 32.84, "leads": 0, "cost_per_lead": null, "roas": null, "impressions": 220, "clicks": 16}, {"client": "יהב", "campaign_name": "לידים - משפך 4 סרטונים - יוני 2026", "status": "ACTIVE", "status_label": "פעיל", "spend": 95.68, "leads": 6, "cost_per_lead": 15.95, "roas": null, "impressions": 997, "clicks": 64}, {"client": "רחל", "campaign_name": "לידים - משפך 4 סרטונים", "status": "ACTIVE", "status_label": "פעיל", "spend": 30.05, "leads": 0, "cost_per_lead": null, "roas": null, "impressions": 239, "clicks": 7}], "yesterday": [{"client": "גל", "campaign_name": "לידים - משפך 4 סרטונים", "status": "ACTIVE", "status_label": "פעיל", "spend": 13.4, "leads": 0, "cost_per_lead": null, "roas": null, "impressions": 170, "clicks": 13}, {"client": "טל", "campaign_name": "קמפיין לידים חדש", "status": "ACTIVE", "status_label": "פעיל", "spend": 17.51, "leads": 0, "cost_per_lead": null, "roas": null, "impressions": 127, "clicks": 12}, {"client": "יהב", "campaign_name": "לידים - משפך 4 סרטונים - יוני 2026", "status": "ACTIVE", "status_label": "פעיל", "spend": 168.93, "leads": 22, "cost_per_lead": 7.68, "roas": null, "impressions": 1649, "clicks": 89}, {"client": "רחל", "campaign_name": "לידים - משפך 4 סרטונים", "status": "ACTIVE", "status_label": "פעיל", "spend": 45.96, "leads": 0, "cost_per_lead": null, "roas": null, "impressions": 243, "clicks": 8}], "last_7d": [{"client": "גל", "campaign_name": "לידים - משפך 4 סרטונים", "status": "ACTIVE", "status_label": "פעיל", "spend": 209.07, "leads": 0, "cost_per_lead": null, "roas": null, "impressions": 1777, "clicks": 102}, {"client": "טל", "campaign_name": "קמפיין לידים חדש", "status": "ACTIVE", "status_label": "פעיל", "spend": 121.43, "leads": 0, "cost_per_lead": null, "roas": null, "impressions": 906, "clicks": 54}, {"client": "יהב", "campaign_name": "לידים - משפך 4 סרטונים - יוני 2026", "status": "ACTIVE", "status_label": "פעיל", "spend": 1112.13, "leads": 114, "cost_per_lead": 9.76, "roas": null, "impressions": 10260, "clicks": 436}, {"client": "רחל", "campaign_name": "לידים - משפך 4 סרטונים", "status": "ACTIVE", "status_label": "פעיל", "spend": 362.85, "leads": 0, "cost_per_lead": null, "roas": null, "impressions": 1751, "clicks": 63}], "last_14d": [{"client": "גל", "campaign_name": "לידים - משפך 4 סרטונים", "status": "ACTIVE", "status_label": "פעיל", "spend": 366.5, "leads": 0, "cost_per_lead": null, "roas": null, "impressions": 3039, "clicks": 158}, {"client": "טל", "campaign_name": "קמפיין לידים חדש", "status": "ACTIVE", "status_label": "פעיל", "spend": 121.43, "leads": 0, "cost_per_lead": null, "roas": null, "impressions": 906, "clicks": 54}, {"client": "יהב", "campaign_name": "לידים - משפך 4 סרטונים - יוני 2026", "status": "ACTIVE", "status_label": "פעיל", "spend": 1965.3, "leads": 188, "cost_per_lead": 10.45, "roas": null, "impressions": 20985, "clicks": 814}, {"client": "רחל", "campaign_name": "לידים - משפך 4 סרטונים", "status": "ACTIVE", "status_label": "פעיל", "spend": 572.8, "leads": 0, "cost_per_lead": null, "roas": null, "impressions": 3057, "clicks": 114}], "last_30d": [{"client": "גל", "campaign_name": "לידים - משפך 4 סרטונים", "status": "ACTIVE", "status_label": "פעיל", "spend": 389.9, "leads": 0, "cost_per_lead": null, "roas": null, "impressions": 3352, "clicks": 170}, {"client": "טל", "campaign_name": "קמפיין לידים חדש", "status": "ACTIVE", "status_label": "פעיל", "spend": 121.43, "leads": 0, "cost_per_lead": null, "roas": null, "impressions": 906, "clicks": 54}, {"client": "יהב", "campaign_name": "לידים - משפך 4 סרטונים - יוני 2026", "status": "ACTIVE", "status_label": "פעיל", "spend": 5306.49, "leads": 548, "cost_per_lead": 9.68, "roas": null, "impressions": 58671, "clicks": 2145}, {"client": "רחל", "campaign_name": "לידים - משפך 4 סרטונים", "status": "ACTIVE", "status_label": "פעיל", "spend": 711.85, "leads": 0, "cost_per_lead": null, "roas": null, "impressions": 3861, "clicks": 151}], "last_90d": [{"client": "גל", "campaign_name": "לידים - משפך 4 סרטונים", "status": "ACTIVE", "status_label": "פעיל", "spend": 389.9, "leads": 0, "cost_per_lead": null, "roas": null, "impressions": 3352, "clicks": 170}, {"client": "טל", "campaign_name": "קמפיין לידים חדש", "status": "ACTIVE", "status_label": "פעיל", "spend": 121.43, "leads": 0, "cost_per_lead": null, "roas": null, "impressions": 906, "clicks": 54}, {"client": "יהב", "campaign_name": "לידים - משפך 4 סרטונים - יוני 2026", "status": "ACTIVE", "status_label": "פעיל", "spend": 6163.57, "leads": 588, "cost_per_lead": 10.48, "roas": null, "impressions": 64561, "clicks": 2466}, {"client": "רחל", "campaign_name": "לידים - משפך 4 סרטונים", "status": "ACTIVE", "status_label": "פעיל", "spend": 711.85, "leads": 0, "cost_per_lead": null, "roas": null, "impressions": 3861, "clicks": 151}]};
 const PRESET_LABELS = {"today": "היום", "yesterday": "אתמול", "last_7d": "7 ימים אחרונים", "last_14d": "14 ימים אחרונים", "last_30d": "30 ימים אחרונים", "last_90d": "90 ימים אחרונים"};
 const PRESET_ORDER = ["today", "yesterday", "last_7d", "last_14d", "last_30d", "last_90d"];
 const CLIENTS = ["רחל", "טל", "גל", "יהב"];
@@ -262,7 +267,7 @@ const fmtRoas = (v) => v === null || v === undefined ? "—" : (Number(v).toFixe
 let state = { preset: "last_7d", client: "all" };
 if (!PRESET_ORDER.includes(state.preset)) state.preset = PRESET_ORDER[0];
 
-let spendChart, leadsChart;
+let spendChart, leadsChart, cplChart;
 
 function buildErrorBox() {
   const box = document.getElementById("errorBox");
@@ -403,6 +408,26 @@ function renderCharts(rowsForChart) {
     type: "bar",
     data: { labels, datasets: [{ data: leadsData, backgroundColor: colors, borderRadius: 8, maxBarThickness: 46 }] },
     options: commonOptions,
+  });
+
+  const cplData = CLIENTS.map((c, i) => (leadsData[i] > 0 ? spendData[i] / leadsData[i] : 0));
+  const cplOptions = {
+    ...commonOptions,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: (ctx) => (ctx.parsed.y > 0 ? fmtMoney(ctx.parsed.y) : "אין לידים") } },
+    },
+    scales: {
+      x: commonOptions.scales.x,
+      y: { ...commonOptions.scales.y, ticks: { ...commonOptions.scales.y.ticks, callback: (v) => "₪" + v } },
+    },
+  };
+
+  if (cplChart) cplChart.destroy();
+  cplChart = new Chart(document.getElementById("cplChart"), {
+    type: "bar",
+    data: { labels, datasets: [{ data: cplData, backgroundColor: colors, borderRadius: 8, maxBarThickness: 46 }] },
+    options: cplOptions,
   });
 }
 
