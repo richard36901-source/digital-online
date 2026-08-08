@@ -1,0 +1,14 @@
+# אף פעם לא לדחוף את זה - טוקן API חי
+meta_api_credentials.txt
+.env
+
+# נוצר אוטומטית בזמן ריצה
+logs/
+rotation_state.json
+god_manager.html
+__pycache__/
+*.pyc
+venv/
+
+# קבצי מדיה של הקריאטיבים - כבדים מדי / לא שייכים לגיט
+creative_bank/*/images/
