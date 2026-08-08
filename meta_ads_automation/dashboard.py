@@ -176,30 +176,30 @@ TEMPLATE = """<!DOCTYPE html>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
   :root {
-    --bg: #f2f4f8;
-    --card: #ffffff;
-    --ink: #1b1f2a;
-    --muted: #6b7280;
-    --border: #e7e9ef;
-    --brand: #4f46e5;
-    --brand-2: #06b6d4;
-    --brand-soft: #eef0fe;
-    --green: #16a34a;
-    --green-soft: #e8f7ec;
-    --amber: #b45309;
-    --amber-soft: #fdf1de;
-    --red: #dc2626;
-    --red-soft: #fdeaea;
+    --bg: #0e1016;
+    --card: #171a23;
+    --ink: #e9ebf1;
+    --muted: #8c93a4;
+    --border: #262b38;
+    --brand: #6366f1;
+    --brand-2: #22d3ee;
+    --brand-soft: #1d2044;
+    --green: #34d399;
+    --green-soft: #113328;
+    --amber: #fbbf24;
+    --amber-soft: #3a2a0d;
+    --red: #f87171;
+    --red-soft: #3a1818;
     --radius: 16px;
-    --shadow: 0 1px 2px rgba(16,24,40,.04), 0 8px 24px -12px rgba(16,24,40,.10);
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.55);
   }
   * { box-sizing: border-box; }
   body {
     margin: 0;
     font-family: 'Heebo', 'Segoe UI', Arial, sans-serif;
     background:
-      radial-gradient(1200px 500px at 90% -10%, #eef2ff 0%, transparent 60%),
-      radial-gradient(900px 400px at -10% 0%, #ecfeff 0%, transparent 55%),
+      radial-gradient(1200px 500px at 90% -10%, rgba(99,102,241,.10) 0%, transparent 60%),
+      radial-gradient(900px 400px at -10% 0%, rgba(34,211,238,.08) 0%, transparent 55%),
       var(--bg);
     color: var(--ink);
     padding: 28px clamp(16px, 4vw, 48px) 60px;
@@ -319,27 +319,27 @@ TEMPLATE = """<!DOCTYPE html>
   .table-scroll { overflow-x: auto; }
   th, td { padding: 12px 16px; text-align: right; font-size: 13px; white-space: nowrap; }
   thead th {
-    background: #fafbfd; color: var(--muted); font-weight: 600; font-size: 12px;
+    background: #1b1f29; color: var(--muted); font-weight: 600; font-size: 12px;
     position: sticky; top: 0; border-bottom: 1px solid var(--border);
   }
   tbody tr { border-bottom: 1px solid var(--border); transition: background .1s ease; }
   tbody tr:last-child { border-bottom: none; }
-  tbody tr:hover { background: #fafbff; }
+  tbody tr:hover { background: rgba(255,255,255,.03); }
   .badge {
     display: inline-block; padding: 4px 11px; border-radius: 999px;
     font-size: 11.5px; font-weight: 700;
   }
   .badge.st-ACTIVE { background: var(--green-soft); color: var(--green); }
   .badge.st-PAUSED { background: var(--amber-soft); color: var(--amber); }
-  .badge.st-ARCHIVED, .badge.st-DELETED { background: #eef0f3; color: #6b7280; }
+  .badge.st-ARCHIVED, .badge.st-DELETED { background: #262b38; color: var(--muted); }
   .badge.st-WITH_ISSUES { background: var(--red-soft); color: var(--red); }
   .badge.st-IN_PROCESS { background: var(--brand-soft); color: var(--brand); }
   .cell-strong { font-weight: 700; }
   .empty-state { padding: 40px; text-align: center; color: var(--muted); font-size: 13.5px; }
 
   .error-box {
-    background: var(--red-soft); color: #8a2c22; border-radius: 12px; padding: 14px 18px;
-    margin-bottom: 18px; font-size: 13px; border: 1px solid rgba(220,38,38,.15);
+    background: var(--red-soft); color: #fca5a5; border-radius: 12px; padding: 14px 18px;
+    margin-bottom: 18px; font-size: 13px; border: 1px solid rgba(248,113,113,.2);
   }
   .error-box ul { margin: 6px 0 0; padding-inline-start: 20px; }
 
@@ -553,8 +553,8 @@ function renderCharts(rowsForChart) {
     maintainAspectRatio: false,
     plugins: { legend: { display: false } },
     scales: {
-      x: { grid: { display: false }, ticks: { font: { family: "Heebo" } } },
-      y: { grid: { color: "#eef0f3" }, ticks: { font: { family: "Heebo" } } },
+      x: { grid: { display: false }, ticks: { font: { family: "Heebo" }, color: "#8c93a4" } },
+      y: { grid: { color: "#262b38" }, ticks: { font: { family: "Heebo" }, color: "#8c93a4" } },
     },
   };
 
