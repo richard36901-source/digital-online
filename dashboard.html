@@ -1807,6 +1807,8 @@ function avgWatchSec(panel, videoKey) {
 
 function fmtSec(s) {
   if (s == null) return '—';
+  /* Sanity cap: a single corrupted-metadata video ping (browser reporting video.duration wrong for a malformed mp4) can send an absurd value like 4272s for what is really a short clip. Rather than show a misleading number, treat anything over 20 minutes as bad data and show em-dash, same as 'no samples yet'. */
+  if (s > 1200) return '—';
   const r = Math.round(s);
   const mm = Math.floor(r / 60), ss = r % 60;
   return mm > 0 ? `${mm}:${String(ss).padStart(2, '0')}` : `${ss} שנ'`;
