@@ -75,3 +75,27 @@ def swap_ad_creative(ad_id: str, new_creative_id: str) -> dict:
     if "error" in data:
         raise RuntimeError(f"נכשל בהחלפת קריאטיב למודעה {ad_id}: {data['error']}")
     return {"dry_run": False, "action": "swap_creative", "ad_id": ad_id, "result": data}
+
+
+def create_ad(ad_account_id: str, adset_id: str, name: str, creative_id: str, status: str = "ACTIVE") -> dict:
+    """
+    יוצר מודעה חדשה תחת אותו ad set, עם קריאטיב חדש - במקום להחליף קריאטיב במודעה קיימת
+    (swap_ad_creative), יוצרים מודעה נפרדת חדשה. משמש ע"י cpl_check.py: כשמודעה עוברת את
+    סף עלות-הליד (config.CPL_THRESHOLD), יוצרים איתה מודעה חדשה ואז משהים (pause_ad) את הישנה.
+    status: ברירת מחדל ACTIVE - המודעה החדשה ממשיכה להריץ במקום הישנה שהושהתה.
+    """
+    if config.DRY_RUN:
+        return {"dry_run": True, "action": "create_ad", "adset_id": adset_id, "creative_id": creative_id}
+
+    url = f"{config.GRAPH_URL}/act_{ad_account_id}/ads"
+    resp = requests.post(url, data={
+        "name": name,
+        "adset_id": adset_id,
+        "creative": '{"creative_id":"%s"}' % creative_id,
+        "status": status,
+        "access_token": config.ACCESS_TOKEN,
+    }, timeout=30)
+    data = resp.json()
+    if "error" in data:
+        raise RuntimeError(f"נכשל ביצירת מודעה חדשה תחת adset {adset_id}: {data['error']}")
+    return {"dry_run": False, "action": "create_ad", "ad_id": data.get("id"), "result": data}
