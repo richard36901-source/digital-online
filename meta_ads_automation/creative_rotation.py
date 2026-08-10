@@ -35,21 +35,29 @@ def _save_state(state: dict) -> None:
 
 
 def _client_bank_dir(client_name: str) -> Path:
-    return Path(config.CREATIVE_BANK_PATH) / client_name
+  return Path(config.CREATIVE_BANK_PATH) / client_name
 
+def _common_bank_dir() -> Path:
+  """בנק קריאטיבים משותף - נופל אליו כל לקוח שאין לו עדיין בנק ייעודי משלו."""
+  return Path(config.CREATIVE_BANK_PATH) / "_common"
 
 def get_available_images(client_name: str) -> list[Path]:
-    d = _client_bank_dir(client_name) / "images"
-    if not d.exists():
-        return []
-    return sorted([p for p in d.iterdir() if p.suffix.lower() in (".jpg", ".jpeg", ".png")])
-
+  d = _client_bank_dir(client_name) / "images"
+  images = sorted([p for p in d.iterdir() if p.suffix.lower() in (".jpg", ".jpeg", ".png")]) if d.exists() else []
+  if images:
+    return images
+  common_d = _common_bank_dir() / "images"
+  if not common_d.exists():
+    return []
+  return sorted([p for p in common_d.iterdir() if p.suffix.lower() in (".jpg", ".jpeg", ".png")])
 
 def get_copy_variants(client_name: str) -> list[dict]:
-    copy_file = _client_bank_dir(client_name) / "copy.json"
-    if not copy_file.exists():
-        return [{"message": "", "headline": "", "link": ""}]
-    return json.loads(copy_file.read_text(encoding="utf-8"))
+  copy_file = _client_bank_dir(client_name) / "copy.json"
+  if not copy_file.exists():
+    copy_file = _common_bank_dir() / "copy.json"
+  if not copy_file.exists():
+    return [{"message": "", "headline": "", "link": ""}]
+  return json.loads(copy_file.read_text(encoding="utf-8"))
 
 
 def pick_next_creative(client_name: str, ad_id: str) -> dict | None:
