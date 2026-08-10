@@ -1,0 +1,15 @@
+{
+  "synced_folder_ids": [
+    "1-QlGuu6sr9e1oMhPeQ44v4HzhuZThOnC",
+    "1CWG4CwciVDrelBQocgfH73I2peEL00NW",
+    "17yR5YUGPj-JgaKnbpQnTKt8gS6UnzHKl",
+    "1z64JiezNjlwnLDgZwDndcO_qBVGm6nxW",
+    "122UOPQVJTiLmP6ZK_YuVRCVqmbwNnmSk",
+    "1OFnGtQe9NgKkTctzViLjluYU9pmja-PA",
+    "1GJTMHYu9dZggzcqgGO8FkgFJNK0d7CeK",
+    "1Or-OmY-c4iE-ehgRWkei0GtXUoUA9R9M"
+  ],
+  "root_drive_folder_id": "1eyM_Q1eMVisWWjdYb0paGVSG6d_dSIzZ",
+  "last_synced": "2026-08-10",
+  "note": "Subfolder IDs under root_drive_folder_id already incorporated into creative_bank/_common (copy.json entries 1-8 + images/01..08). The weekly sync task should list subfolders of root_drive_folder_id, skip any ID already in this list, process new ones (extract Doc text as headline/message, download image, resize, append to copy.json and images/), then add the new folder ID here."
+}
