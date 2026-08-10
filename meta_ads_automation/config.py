@@ -37,6 +37,9 @@ ROAS_THRESHOLD = 1.5
 # כמה ימים מודעה צריכה לרוץ לפני שהיא מועמדת לרוטציית קריאטיב
 CREATIVE_ROTATION_DAYS = 3
 
+# סף עלות לליד (בשקלים) לבדיקה התלת-יומית - מעליו משהים את המודעה ומעלים חדשה מהבנק (ראו cpl_check.py)
+CPL_THRESHOLD = 15.0
+
 # חלון הנתונים לבדיקת ביצועים (Meta date_preset)
 DATE_PRESET = "last_7d"
 
