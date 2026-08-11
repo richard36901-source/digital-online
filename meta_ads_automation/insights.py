@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 משיכת נתוני ביצועים (Insights) מ-Meta Marketing API ברמת המודעה.
 """
