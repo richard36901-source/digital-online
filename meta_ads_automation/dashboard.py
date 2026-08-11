@@ -619,7 +619,7 @@ render();
 
 
 def render_html(data: dict, errors: list[str]) -> str:
-    now_str = datetime.now(ZoneInfo("Asia/Jerusalem")).astimezone().strftime("%d/%m/%Y %H:%M")
+    now_str = datetime.now(ZoneInfo("Asia/Jerusalem")).strftime("%d/%m/%Y %H:%M")
     clients = list(config.DASHBOARD_ACCOUNTS.keys())
     preset_order = [p for p in config.DASHBOARD_DATE_PRESETS if p in data]
 
