@@ -2,7 +2,8 @@ name: Update god_manager dashboard
 
 on:
   schedule:
-    - cron: "*/1 * * * *"  # כל דקה  workflow_dispatch: {}
+    - cron: "*/5 * * * *"
+  workflow_dispatch: {}
 
 permissions:
   contents: write
