@@ -753,7 +753,7 @@
   <div class="funnel-wrap">
     <div class="funnel-title-row">
       <h3 id="funnelCaption">משפך המרות · New 2 Variant D (עיצוב זהב/שחור)</h3>
-      <p>דף הנחיתה הפעיל (Option 26071 Curiosity) מפנה 100% מהלידים למשפך Variant D · פאנל 21 · האחוז בכל שורה = כמה מהכניסות הגיעו לשלב הזה</p>
+      <p>דף הנחיתה הפעיל (Option 2) מפנה 100% מהלידים למשפך Variant D · פאנל 21 · האחוז בכל שורה = כמה מהכניסות הגיעו לשלב הזה</p>
     </div>
 
     <table class="funnel-table" aria-labelledby="funnelCaption">
@@ -965,15 +965,16 @@ const SHEET_TAB = 'Dashboard';             // ← tab name (default 'Dashboard')
    "0". */
 const HEAD_TO_HEAD_TESTS = [
   {
-    /* Active landing-page test: Option 26071 Curiosity (פאנל 20) is now the
-       only landing page receiving new traffic -- the previous OPTION2/Video 1/
-       Video 2 test has been retired into HEAD_TO_HEAD_HISTORY below. Single
-       active variant, kept in the same card format as every other test so it
-       shows entries/conversion rate exactly like the rest of the dashboard. */
-    title: 'דף נחיתה · Option 26071 Curiosity (הגרסה הפעילה)', tag: 'landing', tagLabel: 'דף נחיתה · פעיל',
+    /* Active landing-page test: Option 2 (פאנל 2) is now the only landing
+       page receiving new traffic -- the previous Option 26071 Curiosity
+       single-variant test has been retired into HEAD_TO_HEAD_HISTORY below.
+       Single active variant, kept in the same card format as every other
+       test so it shows entries/conversion rate exactly like the rest of
+       the dashboard. */
+    title: 'דף נחיתה · Option 2 (הגרסה הפעילה)', tag: 'landing', tagLabel: 'דף נחיתה · פעיל',
     conversionLabel: 'שלחו פרטים', conversionKey: 'landing',
     variants: [
-      { name: 'Option 26071 Curiosity', desc: 'עיצוב אדום/כתום מקורי, קופי סקרנות/סוד', panel: 20 }
+      { name: 'Option 2', desc: 'הגרסה המקורית (זהב)', panel: 2 }
     ]
   },
   {
@@ -1080,6 +1081,14 @@ const HEAD_TO_HEAD_HISTORY = [
       { name: 'New 2', desc: 'הגרסה המקורית (סגול/ענבר)', panel: 10 },
       { name: 'Variant B', desc: 'עיצוב + קופי חדשים (טורקיז), אותם סרטונים', panel: 16 },
       { name: 'Variant C', desc: 'עיצוב + קופי חדשים (ורוד/אדום), אותם סרטונים', panel: 17 }
+    ]
+  }
+,
+  {
+    title: 'דף נחיתה · Option 26071 Curiosity', tag: 'landing', tagLabel: 'דף נחיתה · היסטורי',
+    conversionLabel: 'שלחו פרטים', conversionKey: 'landing',
+    variants: [
+      { name: 'Option 26071 Curiosity', desc: 'עיצוב אדום/כתום מקורי, קופי סקרנות/סוד', panel: 20 }
     ]
   }
 ];
@@ -1468,7 +1477,7 @@ function panelUrl(panelNum) {
 // route into 16/17 only) plus the standalone TikTok/WhatsApp pages, which
 // are not A/B'd against anything so they don't appear in HEAD_TO_HEAD_TESTS
 // but are still live traffic destinations.
-const ACTIVE_PANELS = new Set([8, 12, 20, 21]);
+const ACTIVE_PANELS = new Set([2, 8, 12, 21]);
 
 // Renders every panel ever created (from PANEL_LEGEND, which is never
 // pruned) into two flat tables split by type (landing pages / funnels),
