@@ -113,7 +113,7 @@ footer a:hover{color:#ff9466;}
 footer .sep{margin:0 6px;color:rgba(255,255,255,.08);}
 </style>
 <script>
-  var TRACK_HOOK = 'https://hook.eu1.make.com/j4ktylebkczp1tgvlj0h4tfbxb77q9b1';
+  var TRACK_HOOK = 'https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q';
   /* Panel 20: new "curiosity/secret" copy duplicate of Option 26071 (same
      red/orange design), built Aug 2026. Not linked from any live traffic
      source yet -- exists so it can be A/B tested against 26071 later. */
@@ -169,7 +169,7 @@ window.submitForm = async function submitForm() {
   // so a slow/failing call never delays or blocks the other -- in particular,
   // the "send email now" hook must fire immediately.
   await Promise.allSettled([
-    fetch('https://hook.eu1.make.com/j4ktylebkczp1tgvlj0h4tfbxb77q9b1', {
+    fetch('https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({ name: name, phone: phone, email: email, page: 'landing_option_26071_curiosity', metric: 'landing', panel: PANEL })
