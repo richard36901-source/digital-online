@@ -232,10 +232,7 @@ window.submitForm = async function submitForm() {
      (panel 10) no longer receives new redirected traffic but remains the
      active baseline it's compared against. The old 4-way split
      (Two-Page Funnel / Funnel D V2 / New 1 / New 2) has been retired. */
-  var r = Math.random();
-  var arm = r < 0.5
-    ? { path: '../funnels/two-page-funnel-new-2-d/two-page-funnel-new-2-d-1.html', panel: '21' }
-    : { path: '../funnels/two-page-funnel-new-2-c/two-page-funnel-new-2-c-1.html', panel: '17' };
+    var arm = { path: '../funnels/two-page-funnel-new-2-d/two-page-funnel-new-2-d-1.html', panel: '21' };
   try { fetch(TRACK_HOOK, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ metric: 'entry', panel: arm.panel }), keepalive: true }).catch(function(){}); } catch(e) {}
   /* Carry the lead's identity (and the LM form/key it was created under)
      forward into the funnel so each video-step page can push a "how far

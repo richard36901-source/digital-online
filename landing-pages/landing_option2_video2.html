@@ -215,10 +215,7 @@ All traffic now routes only into these two panels (16/17) so the
 head-to-head comparison in the dashboard stays clean; New 2 itself
 (panel 10) no longer receives new redirected traffic but remains the
 active baseline it's compared against. */
-var r = Math.random();
-var arm = r < 0.5
-? { path: '../funnels/two-page-funnel-new-2-d/two-page-funnel-new-2-d-1.html', panel: '21' }
-: { path: '../funnels/two-page-funnel-new-2-c/two-page-funnel-new-2-c-1.html', panel: '17' };
+var arm = { path: '../funnels/two-page-funnel-new-2-d/two-page-funnel-new-2-d-1.html', panel: '21' };
 try { fetch(TRACK_HOOK, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ metric: 'entry', panel: arm.panel }), keepalive: true }).catch(function(){}); } catch(e) {}
 window.location.href = arm.path + location.search + sep2 + 'panel=' + arm.panel + '&phone=' + encodeURIComponent(phone) + '&email=' + encodeURIComponent(email);
 }
