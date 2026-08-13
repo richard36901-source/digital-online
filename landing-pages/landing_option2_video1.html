@@ -206,15 +206,9 @@ keepalive: true
 } catch(e) {}
 
 var sep2 = location.search ? '&' : '?';
-/* 50/50 split test: Variant B / Variant C -- two cosmetic + copy
-duplicates of New 2 (panel 10), same 2 videos, different design/copy.
-All traffic now routes only into these two panels (16/17) so the
-head-to-head comparison in the dashboard stays clean; New 2 itself
-(panel 10) no longer receives new redirected traffic but remains the
-active baseline it's compared against. */
-var arm = { path: '../funnels/two-page-funnel-new-2-d/two-page-funnel-new-2-d-1.html', panel: '21' };
-try { fetch(TRACK_HOOK, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ metric: 'entry', panel: arm.panel }), keepalive: true }).catch(function(){}); } catch(e) {}
-window.location.href = arm.path + location.search + sep2 + 'panel=' + arm.panel + '&phone=' + encodeURIComponent(phone) + '&email=' + encodeURIComponent(email);
+var funnel_path = '../funnels/two-page-funnel-new-2/two-page-funnel-new-2-1.html'; var funnel_panel = '22';
+try { fetch(TRACK_HOOK, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ metric: 'entry', panel: funnel_panel }), keepalive: true }).catch(function(){}); } catch(e) {}
+window.location.href = funnel_path + location.search + sep2 + 'panel=' + funnel_panel + '&phone=' + encodeURIComponent(phone) + '&email=' + encodeURIComponent(email);
 }
 </script>
 </head>
