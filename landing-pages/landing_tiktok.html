@@ -259,19 +259,12 @@ async function handleSubmit(){
 
     setTimeout(function(){
           var sep = location.search ? '&' : '?';
-          /* 50/50 split test: Variant B / Variant C -- two cosmetic + copy
-             duplicates of New 2 (panel 10), same 2 videos, different design/copy.
-             All traffic now routes only into these two panels (16/17) so the
-             head-to-head comparison in the dashboard stays clean; New 2 itself
-             (panel 10) no longer receives new redirected traffic but remains the
-             active baseline it's compared against. The old 4-way split
-             (Two-Page Funnel / Funnel D V2 / New 1 / New 2) has been retired. */
-                    var arm = { path: '../funnels/two-page-funnel-new-2-d/two-page-funnel-new-2-d-1.html', panel: '21' };
-          try { fetch(TRACK_HOOK, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ metric: 'entry', panel: arm.panel }), keepalive: true }).catch(function(){}); } catch(e) {}
+          var funnel_path = '../funnels/two-page-funnel-new-2/two-page-funnel-new-2-1.html'; var funnel_panel = '22';
+          try { fetch(TRACK_HOOK, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ metric: 'entry', panel: funnel_panel }), keepalive: true }).catch(function(){}); } catch(e) {}
           /* Carry the lead's identity forward into the funnel so each video-step
                  page can push a "how far did they get" update to the SAME lead
                         record in LeadManager (fld_181980). */
-          window.location.href = arm.path + location.search + sep + 'panel=' + arm.panel + '&phone=' + encodeURIComponent(data.phone) + '&email=' + encodeURIComponent(data.email);
+          window.location.href = funnel_path + location.search + sep + 'panel=' + funnel_panel + '&phone=' + encodeURIComponent(data.phone) + '&email=' + encodeURIComponent(data.email);
     }, 1800);
 }
 
