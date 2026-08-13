@@ -228,19 +228,15 @@ window.submitForm = async function submitForm() {
   } catch(e) {}
 
   var sep71 = location.search ? '&' : '?';
-  /* Routes 100% into funnels/two-page-funnel-new-2-d (Variant D, panel 21,
-     gold/black design) -- this landing page and Variant D are the only
-     active landing page + funnel pair as of this rollout; the previous
-     50/50 split into Variant B (16) / Variant C (17) has been retired. */
-  var arm = { path: '../funnels/two-page-funnel-new-2-d/two-page-funnel-new-2-d-1.html', panel: '21' };
-  try { fetch(TRACK_HOOK, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ metric: 'entry', panel: arm.panel }), keepalive: true }).catch(function(){}); } catch(e) {}
+  var funnel_path = '../funnels/two-page-funnel-new-2/two-page-funnel-new-2-1.html'; var funnel_panel = '22';
+  try { fetch(TRACK_HOOK, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ metric: 'entry', panel: funnel_panel }), keepalive: true }).catch(function(){}); } catch(e) {}
   /* Carry the lead's identity (and the LM form/key it was created under)
      forward into the funnel so each video-step page can push a "how far
      did they get" update to the SAME lead record in LeadManager
      (fld_181980) -- lets the sales team prioritize leads who actually
      watched vs. those who only filled the form. Different landing pages
      submit to different LM forms, so lmf/lmk must travel with the lead. */
-  window.location.href = arm.path + location.search + sep71 + 'panel=' + arm.panel + '&phone=' + encodeURIComponent(phone) + '&email=' + encodeURIComponent(email);
+  window.location.href = funnel_path + location.search + sep71 + 'panel=' + funnel_panel + '&phone=' + encodeURIComponent(phone) + '&email=' + encodeURIComponent(email);
 }
 </script>
 </head>
