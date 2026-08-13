@@ -127,17 +127,14 @@ let formSt=0, dn=0;
 function acceptCookie(){localStorage.setItem('ck','1');document.getElementById('cookieBanner').style.display='none';}
 async function resolveSupplier(p) {
   if (p.supplier) return p.supplier;
-  // Default to the "yahav" marketer whenever the link carries no marketer
-  // param, or names one that isn't in marketers.json -- so a lead never
-  // ends up with an unassigned/unrecognized supplier in LeadManager.
   try {
     const res = await fetch('/marketers/marketers.json');
     const marketers = await res.json();
     const mk = (p.marketer && marketers[p.marketer]) ? p.marketer : 'yahav';
     const entry = marketers[mk];
-    return entry ? entry.lm_supplier : 35213; // yahav's lm_supplier, last-resort fallback
+    return entry ? entry.lm_supplier : 35213;
   } catch (e) {
-    return 35213; // marketers.json unreachable -- still default to yahav
+    return 35213;
   }
 }
 function openModal(){
@@ -202,9 +199,6 @@ async function handleSubmit(){
     landing_url: location.href
   };
 
-  /* Fire the confirmation-email hook and the tracking webhook in parallel
-     so a slow/failing call never blocks or delays the other -- in particular
-     the "send email now" hook must not wait on the tracking webhook. */
   await Promise.allSettled([
     fetch('https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q',{
       method:'POST',
@@ -218,7 +212,6 @@ async function handleSubmit(){
     })
   ]);
 
-  /* LeadManager */
   try {
     var lmP = new URLSearchParams();
     lmP.append('lm_form', '89907');
@@ -235,9 +228,6 @@ async function handleSubmit(){
     lmP.append('utm_medium', med || '');
     lmP.append('utm_campaign', camp || '');
     lmP.append('page', PAGE);
-    /* keepalive:true so this survives the redirect below even if the 1.8s
-       delay isn't long enough on a slow connection -- belt-and-suspenders
-       alongside the existing setTimeout. */
     fetch('https://hook.eu1.make.com/j4ktylebkczp1tgvlj0h4tfbxb77q9b1', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -246,10 +236,6 @@ async function handleSubmit(){
     }).catch(function(){});
   } catch(e) {}
 
-  /* Lead-journey stage tracking -- logs to a Make.com Data Store
-     (append-only, keyed by phone+stage) instead of LeadManager, since
-     LM's API cannot update an existing lead. See lead-journey.html for
-     the viewer. */
   try {
     fetch('https://hook.eu1.make.com/9nycxwodyby36g30ezp05idn0rqihnlh', {
       method: 'POST', headers: {'Content-Type':'application/json'},
@@ -275,22 +261,10 @@ async function handleSubmit(){
 
   setTimeout(function(){
     var sep = location.search ? '&' : '?';
-    /* 50/50 split test: Variant B / Variant C -- two cosmetic + copy
-       duplicates of New 2 (panel 10), same 2 videos, different design/copy.
-       All traffic now routes only into these two panels (16/17) so the
-       head-to-head comparison in the dashboard stays clean; New 2 itself
-       (panel 10) no longer receives new redirected traffic but remains the
-       active baseline it's compared against. The old 4-way split
-       (Two-Page Funnel / Funnel D V2 / New 1 / New 2) has been retired. */
-        var arm = { path: '../funnels/two-page-funnel-new-2-d/two-page-funnel-new-2-d-1.html', panel: '21' };
-    try { fetch(TRACK_HOOK, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ metric: 'entry', panel: arm.panel }), keepalive: true }).catch(function(){}); } catch(e) {}
-    /* Carry the lead's identity (and the LM form/key it was created under)
-       forward into the funnel so each video-step page can push a "how far
-       did they get" update to the SAME lead record in LeadManager
-       (fld_181980) -- lets the sales team prioritize leads who actually
-       watched vs. those who only filled the form. Different landing pages
-       submit to different LM forms, so lmf/lmk must travel with the lead. */
-    window.location.href = arm.path + location.search + sep + 'panel=' + arm.panel + '&phone=' + encodeURIComponent(data.phone) + '&email=' + encodeURIComponent(data.email);
+    var funnel_path = '../funnels/two-page-funnel-new-2/two-page-funnel-new-2-1.html';
+    var funnel_panel = '22';
+    try { fetch(TRACK_HOOK, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ metric: 'entry', panel: funnel_panel }), keepalive: true }).catch(function(){}); } catch(e) {}
+    window.location.href = funnel_path + location.search + sep + 'panel=' + funnel_panel + '&phone=' + encodeURIComponent(data.phone) + '&email=' + encodeURIComponent(data.email);
   }, 1800);
 }
 
