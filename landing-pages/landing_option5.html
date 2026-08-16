@@ -200,7 +200,7 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.08);}
     } catch(e) {}
 
     var sep5 = location.search ? '&' : '?';
-    var funnel_path = '../funnels/two-page-funnel-new-2/two-page-funnel-new-2-1.html'; var funnel_panel = '22';
+    var funnel_path = '../funnels/two-page-funnel-new-2/two-page-funnel-new-2-1.html'; var funnel_panel = '10';
     try { fetch(TRACK_HOOK, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ metric: 'entry', panel: funnel_panel }), keepalive: true }).catch(function(){}); } catch(e) {}
     window.location.href = funnel_path + location.search + sep5 + 'panel=' + funnel_panel + '&phone=' + encodeURIComponent(phone) + '&email=' + encodeURIComponent(email);
   }
