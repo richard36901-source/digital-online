@@ -259,7 +259,7 @@ async function handleSubmit(){
 
     setTimeout(function(){
           var sep = location.search ? '&' : '?';
-          var funnel_path = '../funnels/two-page-funnel-new-2/two-page-funnel-new-2-1.html'; var funnel_panel = '10';
+          var funnel_path = '../funnels/two-page-funnel-new-2-e/two-page-funnel-new-2-e-1.html'; var funnel_panel = '23';
           try { fetch(TRACK_HOOK, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ metric: 'entry', panel: funnel_panel }), keepalive: true }).catch(function(){}); } catch(e) {}
           /* Carry the lead's identity forward into the funnel so each video-step
                  page can push a "how far did they get" update to the SAME lead
