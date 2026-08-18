@@ -46,16 +46,20 @@ radial-gradient(ellipse 40% 30% at 92% 80%,rgba(217,20,90,.14) 0%,transparent 58
 .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:#ff4d2e;box-shadow:0 0 8px #ff4d2e;}
 .headline{
 font-family:'Heebo',sans-serif;
-font-size:clamp(23px,6.2vw,30px);font-weight:900;
 text-align:right;line-height:1.28;margin-bottom:10px;color:#fff;
+display:flex;flex-direction:column;gap:5px;
 }
+.headline-big{font-size:clamp(24px,6.8vw,32px);font-weight:900;}
+.headline-small{font-size:clamp(15px,4.3vw,18px);font-weight:600;color:rgba(255,255,255,.72);}
 .subline{
 font-family:'Assistant',sans-serif;
-font-size:clamp(13px,3.8vw,15px);color:rgba(255,255,255,.62);
-text-align:right;line-height:1.7;
+font-size:clamp(11.5px,3.3vw,13px);color:rgba(255,255,255,.55);
+text-align:right;line-height:1.65;
 }
 
-.watch-hint{display:flex;align-items:center;gap:8px;width:100%;background:rgba(255,138,0,.1);border:1px solid rgba(255,138,0,.28);border-radius:10px;padding:9px 12px;font-family:'Assistant',sans-serif;font-size:12.5px;font-weight:700;color:#ffb020;text-align:right;margin-bottom:14px;line-height:1.55;animation:fadeUp .4s .1s ease both;}
+.watch-hint{display:flex;align-items:center;gap:8px;width:100%;background:rgba(255,138,0,.1);border:1px solid rgba(255,138,0,.28);border-radius:10px;padding:7px 10px;font-family:'Assistant',sans-serif;font-size:11px;font-weight:700;color:#ffb020;text-align:right;margin-bottom:14px;line-height:1.5;animation:fadeUp .4s .22s ease both;}
+.next-eyebrow{display:flex;align-items:center;gap:6px;font-family:'Assistant',sans-serif;font-size:12px;font-weight:700;color:#ffb020;letter-spacing:.3px;margin-bottom:8px;}
+.next-eyebrow .next-dot{width:7px;height:7px;border-radius:50%;background:#ffb020;box-shadow:0 0 8px #ffb020;}
 
 .vid-outer{width:100%;margin-bottom:14px;border-radius:16px;position:relative;animation:fadeUp .5s .14s ease both, vidGlow 3.5s ease-in-out infinite;}
 @keyframes vidGlow{
@@ -161,11 +165,9 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.06);}
 
 <div class="hero-card">
 <div class="eyebrow"><span class="dot"></span> לפני שממשיכים הלאה</div>
-<h1 class="headline">למה כל כך הרבה אנשים עובדים קשה… ועדיין מרגישים שהם לא באמת מתקדמים?</h1>
+<h1 class="headline"><span class="headline-big">למה כל כך הרבה אנשים עובדים קשה…</span><span class="headline-small">ועדיין מרגישים שהם לא באמת מתקדמים?</span></h1>
 <p class="subline">אם גם אתם מרגישים שלמרות כל המאמץ, כל חודש מתחיל מחדש, הסרטון הזה יעזור לכם להבין מה באמת יוצר את התחושה הזו — ולמה היא עמוקה הרבה יותר ממה שנראה על פני השטח.</p>
 </div>
-
-<p class="watch-hint">🎥 צפו עד הסוף. הדקות האחרונות יחשפו את השאלה שיכולה לשנות את הדרך שבה אתם מסתכלים על התקדמות בעולם של היום.</p>
 
 <div class="vid-outer">
 <div class="vid-box">
@@ -184,7 +186,10 @@ style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">
 </div>
 </div>
 
+<p class="watch-hint">🎥 צפו עד הסוף. הדקות האחרונות יחשפו את השאלה שיכולה לשנות את הדרך שבה אתם מסתכלים על התקדמות בעולם של היום.</p>
+
 <div class="next-card">
+<div class="next-eyebrow"><span class="next-dot"></span> הבנו את הבעיה</div>
 <p class="next-title">אם הבנתם למה אתם מרגישים תקועים… עכשיו הגיע הזמן להבין מה אפשר לעשות אחרת.</p>
 <p class="next-body">בסרטון הזה זיהינו את הבעיה. ראינו שהכאב אינו רק כסף. אינו רק זמן. ואפילו לא רק עבודה קשה. הכאב האמיתי הוא להרגיש שכל יום מתחיל מחדש, בלי שמשהו באמת מצטבר לאורך הדרך. אבל כאן מתחילה השאלה החשובה באמת. אם זאת הבעיה... מהו המנגנון שיכול מינות אותה?</p>
 <p class="next-close">בסרטון הבא נגלה מדוע העולם של היום כבר לאותה מתגמל רק זמן ומאמץ, אלא בעיקר את היכולת ליצור ערך, לבנות תהליך שמצטבר וללמוד להשתפר לאורך זמן. לא נדבר על קיצורי דרך. לא על פתרונות קסם. אלא על דרך חשיבה שיכולה להסביר למה יש אנשים שמצליחים לבנות התקדמות שנמשכת גם אחרי שסיימו את יום העבודה שלהם.</p>
@@ -305,7 +310,7 @@ body:JSON.stringify({event:'video_completed',page:PAGE,pct_watched:100,supplier:
 watchsecSent=true;
 fetch(TRACK_HOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({wmetric:'video_1',wsec:Math.round(video.duration||0),panel:panel})}).catch(()=>{});
 btnNext.classList.add('unlocked');
-btnNext.innerHTML='&#9658;&nbsp; לעבור לשלב הבא &nbsp;<span class="btn-arrow">←</span>';
+btnNext.innerHTML='&#9668;&nbsp; לעבור לשלב הבא &nbsp;<span class="btn-arrow">←</span>';
 setTimeout(()=>{btnNext.scrollIntoView({behavior:'smooth',block:'center'});},300);
 });
 });
@@ -328,7 +333,7 @@ b.classList.remove('watching');
 b.classList.add('unlocked');
 b.style.cursor='pointer';
 b.style.pointerEvents='auto';
-b.innerHTML='&#9658;&nbsp; לעבור לשלב הבא &nbsp;<span class="btn-arrow">&#8592;</span>';
+b.innerHTML='&#9668;&nbsp; לעבור לשלב הבא &nbsp;<span class="btn-arrow">&#8592;</span>';
 setTimeout(function(){b.scrollIntoView({behavior:'smooth',block:'center'});},300);
 },60000);
 </script>
