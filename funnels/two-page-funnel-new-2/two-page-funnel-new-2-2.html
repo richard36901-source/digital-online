@@ -16,6 +16,12 @@ function playVideoNew2b(){
   if(window._vpNew2b)window._vpNew2b.play();
   else window._pending_vpNew2b=true;
 }
+
+function scrollToLeadForm(){
+var el=document.getElementById('wName');
+if(el){el.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(function(){try{el.focus({preventScroll:true});}catch(e){el.focus();}},450);}
+try{dataLayer.push({event:'quick_cta_click',page:'two_page_funnel_new_2_lead'});}catch(e){}
+}
 </script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -37,6 +43,15 @@ body{
 .vid-outer{animation:fadeUp .5s .2s ease both;}
 .btn-box{animation:fadeUp .5s .3s ease both;}
 
+.quick-cta{display:flex;align-items:center;gap:10px;width:100%;background:linear-gradient(135deg,rgba(180,83,9,.22),rgba(245,158,11,.14));border:1.5px solid rgba(245,158,11,.45);border-radius:14px;padding:12px 15px;margin-bottom:20px;text-decoration:none;cursor:pointer;animation:fadeUp .4s ease both,quickCtaPulse 3.2s ease-in-out infinite;transition:transform .25s;}
+.quick-cta:hover{transform:translateY(-2px);}
+.quick-cta:active{transform:translateY(0) scale(.98);}
+.quick-cta-icon{font-size:22px;flex-shrink:0;}
+.quick-cta-text{flex:1;font-family:'Assistant',sans-serif;font-size:12.5px;color:rgba(255,255,255,.72);line-height:1.5;text-align:right;}
+.quick-cta-text b{display:block;font-family:'Rubik',sans-serif;font-size:15px;font-weight:800;background:linear-gradient(160deg,#fef3c7 0%,#fcd34d 40%,#d97706 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-top:2px;}
+.quick-cta-arrow{font-size:19px;color:#f59e0b;animation:quickArrowBounce 1.4s ease-in-out infinite;flex-shrink:0;}
+@keyframes quickArrowBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(5px);}}
+@keyframes quickCtaPulse{0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,0);border-color:rgba(245,158,11,.45);}50%{box-shadow:0 0 20px 2px rgba(245,158,11,.35);border-color:rgba(252,211,77,.75);}}
 .circle-badge{
   display:flex;flex-direction:column;align-items:center;margin-bottom:22px;animation:fadeUp .4s ease both;
   gap:4px;
@@ -148,7 +163,12 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
 <div class="bg-bloom"></div>
 <canvas id="particles"></canvas>
 <div class="wrap">
-    <div class="circle-badge">
+    <a href="#wName" class="quick-cta" onclick="event.preventDefault();scrollToLeadForm();">
+<span class="quick-cta-icon">📝</span>
+<span class="quick-cta-text">רוצים לדלג ישר להרשמה?<b>השאירו פרטים וקבלו את ההדרכה המלאה</b></span>
+<span class="quick-cta-arrow">↓</span>
+</a>
+<div class="circle-badge">
     <div class="circle-num">2</div>
     <div class="circle-label">מתוך 2 שלבים</div>
   </div>
