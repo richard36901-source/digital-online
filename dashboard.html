@@ -745,15 +745,15 @@
       <span class="sicn">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
       </span>
-              השוואת משפכים · New 2 (הגרסה הפעילה היחידה)
+              השוואת משפכים · Two-Page Funnel (הגרסה הפעילה היחידה)
     </h2>
     <span class="meta">המרה לאורך מסע הווידאו · הפאנל היחיד שמקבל תנועה כרגע</span>
   </div>
 
   <div class="funnel-wrap">
     <div class="funnel-title-row">
-            <h3 id="funnelCaption">משפך המרות · New 2 (פאנל 23)</h3>
-            <p>דף הנחיתה הפעיל (Option 2) מפנה 100% מהלידים למשפך New 2 · פאנל 23 · האחוז בכל שורה = כמה מהכניסות הגיעו לשלב הזה</p>
+            <h3 id="funnelCaption">משפך המרות · Two-Page Funnel (פאנל 6)</h3>
+            <p>דף הנחיתה הפעיל (Option 2) מפנה 100% מהלידים למשפך Two-Page Funnel · פאנל 6 · האחוז בכל שורה = כמה מהכניסות הגיעו לשלב הזה</p>
     </div>
 
     <table class="funnel-table" aria-labelledby="funnelCaption">
@@ -764,7 +764,7 @@
       <thead>
         <tr>
           <th scope="col" class="fcol-head label">שלב</th>
-                                                  <th scope="col" class="fcol-head f1"><span class="inner"><span class="dot" aria-hidden="true"></span> <a class="title-link" href="https://funnel.digitalonline.co.il/funnels/two-page-funnel-new-2-e/two-page-funnel-new-2-e-1.html" target="_blank" rel="noopener">New 2 (פאנל 23)</a></span></th>
+                                                  <th scope="col" class="fcol-head f1"><span class="inner"><span class="dot" aria-hidden="true"></span> <a class="title-link" href="https://funnel.digitalonline.co.il/funnels/two-page-funnel/two-page-funnel-1.html" target="_blank" rel="noopener">Two-Page Funnel (פאנל 6)</a></span></th>
         </tr>
       </thead>
       <tbody id="funnel_steps"></tbody>
@@ -774,7 +774,7 @@
           <td class="fwinner-cell" id="fw_tpfn2d">
             <div class="fwinner-trophy" aria-hidden="true"></div>
             <div class="fwinner-rate mono">0.0%</div>
-                                <div class="fwinner-name"><a class="title-link" href="https://funnel.digitalonline.co.il/funnels/two-page-funnel-new-2/two-page-funnel-new-2-1.html" target="_blank" rel="noopener">New 2</a><span class="sr-only fw-winner-tag"></span></div>
+                                <div class="fwinner-name"><a class="title-link" href="https://funnel.digitalonline.co.il/funnels/two-page-funnel/two-page-funnel-1.html" target="_blank" rel="noopener">Two-Page Funnel</a><span class="sr-only fw-winner-tag"></span></div>
           </td>
         </tr>
       </tfoot>
@@ -979,11 +979,11 @@ const HEAD_TO_HEAD_TESTS = [
   },
   {
         /* Active funnel test: Two-Page Funnel New 2 (שלב 1, פאנל 10) is now the only funnel receiving new traffic -- the previous Variant D checkpoint (Panel 21) has been retired into HEAD_TO_HEAD_HISTORY below. */
-        title: 'משפך וידאו · New 2 (הגרסה הפעילה היחידה)', tag: 'funnel', tagLabel: 'משפך וידאו · פעיל',
+        title: 'משפך וידאו · Two-Page Funnel (הגרסה הפעילה היחידה)', tag: 'funnel', tagLabel: 'משפך וידאו · פעיל',
         conversionLabel: 'השאירו פרטים', conversionKey: 'webinar',
         robustBase: true,
         variants: [
-          { name: 'New 2', desc: 'דף נחיתה + 2 סרטונים + טופס השארת פרטים', panel: 23 }
+          { name: 'Two-Page Funnel', desc: 'דף נחיתה + 2 סרטונים + טופס השארת פרטים', panel: 6 }
               ]
   }
 ];
@@ -1122,7 +1122,7 @@ const HEAD_TO_HEAD = HEAD_TO_HEAD_TESTS[0];
    data is still intact in the sheet and still shown in the head-to-head
    card above. */
 const FUNNEL_GROUPS = [
-  { id: 'tpfn2d', key: 'tpfn2d', label: 'New 2 (פאנל 23)', cls: 'f1', panels: ['23'], steps: ['entry', 'landing', 'video_1', 'video_2', 'webinar'] }
+  { id: 'tpf1', key: 'tpf1', label: 'Two-Page Funnel (פאנל 6)', cls: 'f1', panels: ['6'], steps: ['entry', 'landing', 'video_1', 'video_2', 'webinar'] }
 ];
 
 /* VIDEO VERSION HISTORY -- per-panel log of video swaps for the 4 panels
@@ -1494,7 +1494,7 @@ function panelUrl(panelNum) {
 // route into 16/17 only) plus the standalone TikTok/WhatsApp pages, which
 // are not A/B'd against anything so they don't appear in HEAD_TO_HEAD_TESTS
 // but are still live traffic destinations.
-const ACTIVE_PANELS = new Set([2, 8, 12, 23]);
+const ACTIVE_PANELS = new Set([2, 6, 8, 12]);
 
 // Renders every panel ever created (from PANEL_LEGEND, which is never
 // pruned) into two flat tables split by type (landing pages / funnels),
