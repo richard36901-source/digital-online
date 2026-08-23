@@ -65,10 +65,16 @@ def extract_roas(insight_row: dict) -> float | None:
 
 
 def extract_leads(insight_row: dict) -> int:
-    """סופר תוצאות מסוג ליד (lead) מתוך שדה actions, כגיבוי לחשבונות בלי ROAS."""
+    """
+    סופר תוצאות מסוג ליד (lead) מתוך שדה actions, כגיבוי לחשבונות בלי ROAS.
+    כל דפי הנחיתה שלנו יורים אירוע פיקסל יחיד (fbq('track','Lead')) בלי טופס
+    Lead Ads נפרד באתר -- Meta מחזירה את אותה המרה גם תחת 'lead' וגם תחת
+    'offsite_conversion.fb_pixel_lead' באותה שורת actions, אז לספור את שניהם
+    סופר כל ליד פעמיים. סופרים רק את אחד מהם.
+    """
     actions = insight_row.get("actions") or []
     total = 0
     for a in actions:
-        if a.get("action_type") in ("lead", "offsite_conversion.fb_pixel_lead"):
+        if a.get("action_type") == "lead":
             total += int(float(a.get("value", 0)))
     return total
