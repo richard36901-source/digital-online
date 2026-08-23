@@ -112,7 +112,7 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.08);}
 </style>
 <script>
   var TRACK_HOOK = 'https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q';
-  var PANEL = '2';
+  var PANEL = '22'; // distinct from landing_option2.html's PANEL '2' -- avoids the tracking collision that class of page has hit before
   async function resolveSupplier(p) {
   if (p.supplier) return p.supplier;
   // Default to the "yahav" marketer whenever the link carries no marketer
@@ -223,7 +223,7 @@ window.submitForm = async function submitForm() {
   } catch(e) {}
 
   var sep2 = location.search ? '&' : '?';
-        var funnel_path = '../funnels/two-page-funnel-new-2-e/two-page-funnel-new-2-e-1.html'; var funnel_panel = '23';
+        var funnel_path = '../funnels/two-page-funnel/two-page-funnel-1.html'; var funnel_panel = '6';
   try { fetch(TRACK_HOOK, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ metric: 'entry', panel: funnel_panel }), keepalive: true }).catch(function(){}); } catch(e) {}
   /* Carry the lead's identity (and the LM form/key it was created under)
      forward into the funnel so each video-step page can push a "how far
