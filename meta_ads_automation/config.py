@@ -88,10 +88,3 @@ DASHBOARD_CAMPAIGN_ALLOWLIST = {
     "רמי ומירב": ["לידים - משפך 4 סרטונים"],
     "אמיר": ["לידים - משפך 4 סרטונים - יוני 2026"],
 }
-
-
-# ==== דשבורד חיצוני נפרד עבור קמפיין יהב-אליאס (לקוח צד ג של רחל) ====
-# דשבורד עצמאי, נפרד מ-god_manager, מציג רק קמפיין בודד אחד מתוך חשבון רחל.
-ELIYAS_AD_ACCOUNT_ID = AD_ACCOUNTS["רחל"]
-ELIYAS_CAMPAIGN_ID = "120250022352280245"  # קמפיין יהב-אליאס
-ELIYAS_DASHBOARD_FILE = "./eliyas_dashboard.html"
