@@ -1,14 +1,17 @@
 /* ============================================================================
-   Shared countdown clock, used by all 4 landing pages.
+   Shared countdown clock, used by the landing pages.
 
    How it works:
-   - Every time this page loads (first visit, refresh, or coming back later),
-     the clock always starts fresh at exactly 1 minute and counts down to 0.
-     There is no persistence across page loads -- so it's simple and always
-     predictable: land on the page, the clock says 01:00 / 00:00 and starts
-     ticking down.
-   - If it reaches 0, it simply restarts at 1 minute automatically, so it
-     never gets stuck.
+   - The deadline is stored in sessionStorage, so refreshing the page (or
+     coming back to it later in the same tab) does NOT reset the clock back
+     to 01:00 -- it keeps counting from where it really was. This matters
+     because visitors who reload or return (retargeting, checking a price
+     twice) would otherwise see an obviously-fake timer that always reads
+     ~1:00, which quietly kills trust right at the moment they're deciding
+     whether to leave their details. A brand new tab/session still starts
+     a fresh clock.
+   - If it reaches 0, it restarts at 1 minute automatically (and clears the
+     stored deadline so the new cycle is also fresh), so it never gets stuck.
    - Every element with class "cd-mins" / "cd-secs" on the page is kept in
      sync, once per second. Any ancestor/element with class "countdown-clock"
      gets a "cc-critical" class added in the final 30 seconds, so the visual
@@ -23,21 +26,34 @@
 (function () {
   var DURATION_MS = (window.COUNTDOWN_DURATION_MS || 60 * 1000);  // 1 minute default, overridable via window.COUNTDOWN_DURATION_MS
   var CRITICAL_MS = 30 * 1000;     // last 30 seconds = "critical" styling
+  var STORAGE_KEY = 'cd_deadline_' + location.pathname;
   var started = false;             // guard against double-starting the clock
 
   function pad(n) { return String(n).padStart(2, '0'); }
+
+  function readStoredDeadline() {
+    try {
+      var v = parseInt(sessionStorage.getItem(STORAGE_KEY), 10);
+      return (v && v > Date.now()) ? v : null;
+    } catch (e) { return null; }
+  }
+  function storeDeadline(deadline) {
+    try { sessionStorage.setItem(STORAGE_KEY, String(deadline)); } catch (e) {}
+  }
 
   window.initCountdown = function initCountdown() {
     if (started) return;           // already running -- don't stack intervals
     started = true;
 
-    var deadline = Date.now() + DURATION_MS;
+    var deadline = readStoredDeadline() || Date.now() + DURATION_MS;
+    storeDeadline(deadline);
 
     function tick() {
       var diff = deadline - Date.now();
       if (diff <= 0) {
         deadline = Date.now() + DURATION_MS;
         diff = DURATION_MS;
+        storeDeadline(deadline);
       }
       var m = Math.floor(diff / 60000);
       var s = Math.floor((diff % 60000) / 1000);

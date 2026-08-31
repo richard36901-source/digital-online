@@ -67,6 +67,10 @@ canvas#particles{position:fixed;inset:0;z-index:0;pointer-events:none;}
 .trigger-line{font-size:13px;font-weight:700;color:rgba(255,180,50,.8);}
 .trigger-line:nth-child(1){animation:triggerBlink 2.2s 1s ease-in-out infinite;}
 .trigger-line:nth-child(2){animation:triggerBlink 2.2s 1.6s ease-in-out infinite;}
+.proof-strip{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:16px;font-family:'Assistant',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,.75);background:rgba(212,168,67,.08);border:1px solid rgba(212,168,67,.25);border-radius:99px;padding:8px 16px;}
+.proof-strip .proof-avatars{display:flex;}
+.proof-strip .proof-avatars span{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#d4a843,#f0c060);border:2px solid #0A0F1C;margin-inline-start:-8px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:#000;}
+.proof-strip .proof-avatars span:first-child{margin-inline-start:0}
 .countdown-clock{display:flex;width:fit-content;flex-direction:column;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(229,57,53,.14),rgba(0,0,0,.55));border:1.5px solid rgba(229,57,53,.55);border-radius:14px;padding:14px 22px;margin:2px auto 16px;position:relative;animation:ccPulse 1.8s ease-in-out infinite;}
 @keyframes ccPulse{0%,100%{box-shadow:0 0 0 0 rgba(229,57,53,.35)}50%{box-shadow:0 0 24px 4px rgba(229,57,53,.5)}}
 .countdown-clock .cc-digits{display:flex;align-items:center;gap:7px;}
@@ -109,6 +113,9 @@ footer{position:relative;z-index:2;width:100%;border-top:1px solid rgba(255,255,
 footer a{color:rgba(255,255,255,.22);text-decoration:none;}
 footer a:hover{color:#d4a843;}
 footer .sep{margin:0 6px;color:rgba(255,255,255,.08);}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;}
+}
 </style>
 <script>
   var TRACK_HOOK = 'https://hook.eu1.make.com/4l5p9w6f2mwbk4zhdvovv1nmlha88w6q';
@@ -249,6 +256,10 @@ window.submitForm = async function submitForm() {
     <h1 class="card-headline">משהו קורה עכשיו —<br>ואנשים כבר מייצרים תוצאות.</h1>
     <div class="card-sub">זה לא כישרון<br>זה לא מזל<br>זה פשוט להבין איך זה עובד</div>
     <p class="tension-line">ורוב האנשים… עדיין לא ראו את זה</p>
+    <div class="proof-strip">
+      <span class="proof-avatars"><span>ר</span><span>מ</span><span>א</span></span>
+      <span>הצטרפו כבר <strong style="color:#f0c040">7,000+</strong> אנשים</span>
+    </div>
     <div class="icon-row">
       <div class="icon-item"><span class="ico">⏱</span>5 דקות</div>
       <div class="icon-item"><span class="ico">▶️</span>הסבר ברור</div>
@@ -280,7 +291,7 @@ window.submitForm = async function submitForm() {
     <div id="formFields">
       <input class="field" id="fName" type="text" placeholder="שם מלא" autocomplete="name"/>
       <div class="err" id="eName">נא להזין שם מלא</div>
-      <input class="field" id="fPhone" type="tel" placeholder="טלפון" autocomplete="tel" inputmode="numeric"/>
+      <input class="field" id="fPhone" type="tel" placeholder="טלפון (למשל 050-1234567)" autocomplete="tel" inputmode="numeric"/>
       <div class="err" id="ePhone">נא להזין מספר טלפון</div>
       <input class="field" id="fEmail" type="email" placeholder="אימייל" autocomplete="email"/>
       <div class="err" id="eEmail">נא להזין אימייל תקין</div>
@@ -292,7 +303,7 @@ window.submitForm = async function submitForm() {
         </label>
         <div class="err" id="eLegal" style="margin-top:4px;">יש לאשר את תנאי השימוש להמשך</div>
       </div>
-      <p class="reassure">הפרטים שלך מוגנים ולא מועברים לאף גורם</p>
+      <p class="reassure">🔒 הפרטים שלך מוצפנים ומוגנים, ולא מועברים לאף גורם שלישי</p>
     </div>
     <div class="success-msg" id="successMsg">
       <div class="s-icon">✅</div>
@@ -337,7 +348,17 @@ window.submitForm = async function submitForm() {
 
 
 window.addEventListener('scroll', function() {
-  document.getElementById('stickyCta').classList.toggle('visible', window.scrollY > 180);
+  var showSticky = window.scrollY > 180;
+  document.getElementById('stickyCta').classList.toggle('visible', showSticky);
+  /* The cookie banner and the sticky CTA both anchor to the bottom of the
+     screen. Once the visitor has scrolled far enough for the sticky CTA to
+     appear, hide any still-open cookie banner so it can never sit on top of
+     (and block taps on) the one button this whole page exists to get
+     clicked. */
+  if (showSticky) {
+    var cb = document.getElementById('cookieBanner');
+    if (cb) cb.style.display = 'none';
+  }
 }, {passive:true});
 document.addEventListener('DOMContentLoaded', () => {
     loadFacebookPixel();

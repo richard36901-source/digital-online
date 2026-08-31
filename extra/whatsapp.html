@@ -192,11 +192,13 @@ async function submitForm(){
     var name=nameEl.value.trim();
     var phone=phoneEl.value.trim();
     var email=emailEl.value.trim();
+    var consentEl=document.getElementById('fConsent');
     var ok=true;
-    ['eName','ePhone','eEmail'].forEach(function(id){var el=document.getElementById(id);if(el)el.classList.remove('show');});
+    ['eName','ePhone','eEmail','eConsent'].forEach(function(id){var el=document.getElementById(id);if(el)el.classList.remove('show');});
     if(!name){var en=document.getElementById('eName');if(en)en.classList.add('show');ok=false;}
     if(!phone){var ep=document.getElementById('ePhone');if(ep)ep.classList.add('show');ok=false;}
     if(!email||email.indexOf('@')<0){var ee=document.getElementById('eEmail');if(ee)ee.classList.add('show');ok=false;}
+    if(!consentEl||!consentEl.checked){var ec=document.getElementById('eConsent');if(ec)ec.classList.add('show');ok=false;}
     if(!ok)return;
     var btn=document.getElementById('submitBtn');
     if(btn){btn.disabled=true;btn.textContent='שולח…';}
@@ -319,6 +321,14 @@ body{font-family:'Assistant',sans-serif;direction:rtl;overflow-x:hidden;min-heig
 @keyframes shine{0%{left:-120%}100%{left:160%}}
 .err{font-size:12px;color:#ff7070;margin:-6px 0 8px 2px;display:none;}
 .err.show{display:block;}
+.proof-strip{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:16px;font-family:'Assistant',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,.8);background:rgba(255,255,255,.06);border:1px solid rgba(255,165,40,.3);border-radius:99px;padding:8px 16px;}
+.proof-strip .proof-avatars{display:flex;}
+.proof-strip .proof-avatars span{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#e52020,#ffaa30);border:2px solid #1a1208;margin-inline-start:-8px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:#fff;}
+.proof-strip .proof-avatars span:first-child{margin-inline-start:0}
+.consent-wrap{display:flex;align-items:flex-start;gap:10px;margin:2px 0 4px;}
+.consent-wrap input[type=checkbox]{width:18px;height:18px;margin-top:2px;flex-shrink:0;accent-color:#ffaa30;cursor:pointer;-webkit-appearance:auto;}
+.consent-wrap label{font-family:'Assistant',sans-serif;font-size:12px;color:rgba(255,255,255,.5);line-height:1.6;cursor:pointer}
+.form-notes{text-align:center;font-family:'Assistant',sans-serif;font-size:11px;color:rgba(255,255,255,.35);margin-top:10px;line-height:1.7}
 .success-msg{display:none;text-align:center;padding:24px 0 8px;}
 .success-msg.show{display:block;}
 .success-msg .s-icon{font-size:40px;margin-bottom:10px;}
@@ -407,17 +417,27 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.1);}
     עקבו באינסטגרם
   </a>
 
+  <div class="proof-strip">
+    <span class="proof-avatars"><span>ר</span><span>מ</span><span>א</span></span>
+    <span>הצטרפו כבר <strong style="color:#ffaa30">7,000+</strong> אנשים</span>
+  </div>
   <div class="form-wrap">
-    <p class="form-title">מעוניין במידע על הקהילה הסגורה שלנו?</p>
-    <p class="form-sub">מלא את הפרטים ואנחנו נשלח לך את כל המידע!</p>
+    <p class="form-title">רוצה גם גישה למדריכים והכלים המלאים?</p>
+    <p class="form-sub">השאירו פרטים ונשלח אליכם ישירות למייל ולוואטסאפ, בלי לפספס עדכון.</p>
     <div id="formFields">
       <input class="field" id="fName"  type="text"  placeholder="שם מלא"  autocomplete="name"/>
       <div class="err" id="eName">נא להזין שם מלא</div>
-      <input class="field" id="fPhone" type="tel"   placeholder="טלפון"   autocomplete="tel" inputmode="numeric"/>
+      <input class="field" id="fPhone" type="tel"   placeholder="טלפון (למשל 050-1234567)"   autocomplete="tel" inputmode="numeric"/>
       <div class="err" id="ePhone">נא להזין מספר טלפון</div>
       <input class="field" id="fEmail" type="email" placeholder="אימייל"  autocomplete="email"/>
       <div class="err" id="eEmail">נא להזין כתובת אימייל תקינה</div>
+      <div class="consent-wrap">
+        <input type="checkbox" id="fConsent"/>
+        <label for="fConsent">אני מאשר/ת יצירת קשר ותוכן שיווקי במייל, בטלפון ובוואטסאפ. אפשר להסיר בכל שלב שתרצה.</label>
+      </div>
+      <div class="err" id="eConsent">יש לאשר קבלת הודעות כדי להמשיך</div>
       <button class="btn-submit" id="submitBtn" onclick="submitForm()">לשליחת פרטים &gt;&gt;</button>
+      <p class="form-notes">🔒 הפרטים שלך מוצפנים ולא יועברו לגורם שלישי. אין ספאם, אפשר להסיר בכל עת.</p>
     </div>
     <div class="success-msg" id="successMsg">
       <div class="s-icon">✅</div>
