@@ -86,6 +86,12 @@ body{
 }
 .vid-thumb:hover .play-btn{transform:scale(1.1)!important;animation:none;}
 .watch-hint{font-family:'Assistant',sans-serif;font-size:12px;color:rgba(255,255,255,.35);text-align:center;margin-bottom:6px;line-height:1.6;}
+.sound-hint{font-family:'Assistant',sans-serif;font-size:12.5px;font-weight:700;color:#fde68a;text-align:center;margin-bottom:8px;}
+.proof-strip{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:16px;font-family:'Assistant',sans-serif;font-size:12.5px;font-weight:700;color:rgba(255,255,255,.85);background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:99px;padding:7px 14px;}
+.consent-wrap{display:flex;align-items:flex-start;gap:10px;margin:2px 0 10px;}
+.consent-wrap input[type=checkbox]{width:18px;height:18px;margin-top:2px;flex-shrink:0;accent-color:#f59e0b;cursor:pointer;-webkit-appearance:auto;}
+.consent-wrap label{font-family:'Assistant',sans-serif;font-size:12px;color:rgba(255,255,255,.5);line-height:1.6;cursor:pointer}
+.form-notes{text-align:center;font-family:'Assistant',sans-serif;font-size:11px;color:rgba(255,255,255,.35);margin-top:10px;line-height:1.7}
 .btn-box{
   width:100%;background:rgba(16,8,0,.93);border:1.5px solid rgba(180,83,9,.22);
   border-radius:16px;padding:16px 14px 18px;margin-bottom:14px;
@@ -154,6 +160,7 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
   <h1 class="headline">הבנת את ה"למה". עכשיו הגיע הזמן לראות את ה"איך".</h1>
   <p class="subline">בהדרכה המלאה אראה לך, בצורה מעשית, איך כל החלקים מתחברים למערכת אחת – מהחשיפה הראשונה ועד לתהליך שלם שנבנה, נמדד ומשתפר לאורך זמן.</p>
   <p class="watch-hint">רגע לפני שאתה לוחץ Play — זה הסרטון שבו הכל מתחבר</p>
+  <p class="sound-hint">🔊 לחצו על הסרטון כדי להפעיל אותו עם קול</p>
   <div class="vid-outer">
     <div class="vid-box">
       <div class="vid-ratio">
@@ -180,16 +187,23 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.07);}
     </ul>
     <p class="proposal-sub" style="margin-bottom:0;">השאר את פרטיך וקבל גישה להדרכה המלאה. הגיע הזמן לראות איך כל זה נראה בפועל.</p>
   </div>
+  <div class="proof-strip">✅ הצטרפו כבר <strong style="color:#fde68a">7,000+</strong> אנשים</div>
   <div class="btn-box">
     <input class="wfield" id="wName" type="text" placeholder="שם מלא" autocomplete="name"/>
     <div class="werr" id="eName">נא להזין שם מלא</div>
-    <input class="wfield" id="wPhone" type="tel" placeholder="טלפון" autocomplete="tel" inputmode="numeric"/>
+    <input class="wfield" id="wPhone" type="tel" placeholder="טלפון (למשל 050-1234567)" autocomplete="tel" inputmode="numeric"/>
     <div class="werr" id="ePhone">נא להזין מספר טלפון</div>
     <input class="wfield" id="wEmail" type="email" placeholder="מייל" autocomplete="email"/>
     <div class="werr" id="eEmail">נא להזין אימייל תקין</div>
+    <div class="consent-wrap">
+      <input type="checkbox" id="wConsent"/>
+      <label for="wConsent">אני מאשר/ת יצירת קשר ותוכן שיווקי במייל, בטלפון ובוואטסאפ. אפשר להסיר בכל שלב שתרצה.</label>
+    </div>
+    <div class="werr" id="eConsent">יש לאשר קבלת הודעות כדי להמשיך</div>
     <button class="btn-next unlocked" id="submitBtn" onclick="submitFullTraining()" style="width:100%;">
       📩&nbsp; שלחו לי את ההדרכה המלאה
     </button>
+    <p class="form-notes">🔒 הפרטים שלך מוצפנים ולא יועברו לגורם שלישי. אין ספאם, אפשר להסיר בכל עת.</p>
   </div>
 
 </div>
@@ -272,11 +286,13 @@ function submitFullTraining(){
   var name=document.getElementById('wName').value.trim();
   var wphone=document.getElementById('wPhone').value.trim();
   var wemail=document.getElementById('wEmail').value.trim();
+  var wconsent=document.getElementById('wConsent');
   var ok=true;
-  ['eName','ePhone','eEmail'].forEach(function(id){document.getElementById(id).classList.remove('show');});
+  ['eName','ePhone','eEmail','eConsent'].forEach(function(id){document.getElementById(id).classList.remove('show');});
   if(!name){document.getElementById('eName').classList.add('show');ok=false;}
   if(!wphone){document.getElementById('ePhone').classList.add('show');ok=false;}
   if(!wemail||wemail.indexOf('@')<0){document.getElementById('eEmail').classList.add('show');ok=false;}
+  if(!wconsent||!wconsent.checked){document.getElementById('eConsent').classList.add('show');ok=false;}
   if(!ok)return;
   var btn=document.getElementById('submitBtn');
   btn.disabled=true;btn.innerHTML='שולח…';
@@ -344,7 +360,10 @@ window.location.href='../../extra/'+abVariant+'.html?'+q.toString();
 window.addEventListener('load',()=>{
   const video=document.getElementById('vimeoPlayer');
   const thumb=document.getElementById('vidThumb');
-  thumb.onclick=function(){thumb.classList.add('gone');video.play();};
+  /* Same fix as step 1: unmute on the user's click (a real gesture, so this
+     is allowed) and restart from 0:00 instead of leaving them mid-scene
+     having heard nothing of the silent autoplay so far. */
+  thumb.onclick=function(){thumb.classList.add('gone');video.currentTime=0;video.muted=false;video.play();};
   video.addEventListener('play',()=>{
     thumb.classList.add('gone');
     dataLayer.push({event:'video_play',page:PAGE});
