@@ -1,0 +1,13 @@
+# אף פעם לא לדחוף - סודות/טוקנים חיים
+.env
+tiktok_tokens.json
+content_rotation_state.json
+
+# נוצר אוטומטית בזמן ריצה
+logs/
+__pycache__/
+*.pyc
+venv/
+
+# קבצי וידאו - כבדים מדי / לא שייכים לגיט
+content_bank/videos/
