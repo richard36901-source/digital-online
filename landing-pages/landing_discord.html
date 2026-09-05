@@ -71,11 +71,6 @@ h1 .accent{background:linear-gradient(135deg,#7289fa,#5865F2);-webkit-background
 .proof-shot img{width:100%;border-radius:14px;border:1px solid rgba(88,101,242,.3);display:block;}
 .proof-caption{font-size:12px;color:rgba(255,255,255,.5);text-align:center;margin-top:6px;}
 
-.why-list{display:flex;flex-direction:column;gap:10px;}
-.why-item{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:13px 14px;}
-.why-ico{width:34px;height:34px;flex-shrink:0;border-radius:50%;background:rgba(88,101,242,.15);border:1px solid rgba(88,101,242,.35);display:flex;align-items:center;justify-content:center;font-size:16px;}
-.why-text{font-size:14px;font-weight:700;color:rgba(255,255,255,.85);line-height:1.4;}
-
 .pull-quote{width:100%;text-align:center;padding:26px 18px;margin-top:18px;position:relative;}
 .pull-quote p{font-family:'Heebo',sans-serif;font-size:clamp(17px,4.6vw,21px);font-weight:900;line-height:1.5;background:linear-gradient(135deg,#c7cdff,#7289fa,#5865F2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 
@@ -216,36 +211,6 @@ function acceptCookie(){
   <p class="cta-note">אין לך Discord עדיין? אין בעיה — הלחיצה תוביל אותך לתהליך ההצטרפות.</p>
 
   <div class="card">
-    <p class="card-title">למה עברנו ל-Discord?</p>
-    <p class="card-text">Discord היא אפליקציה חינמית שמאפשרת לנו לבנות קהילה אמיתית ומסודרת — עם חדרים, דיונים ותוכן מחולק לפי נושאים.</p>
-    <div class="compare-row">
-      <div class="compare-item bad">
-        <span class="compare-icon">❌</span>
-        <div class="compare-name">WhatsApp</div>
-        <div class="compare-desc">הכול נעלם בתוך מאות הודעות</div>
-      </div>
-      <div class="compare-item good">
-        <span class="compare-icon">✅</span>
-        <div class="compare-name">Discord</div>
-        <div class="compare-desc">הידע נשאר מסודר ונגיש, תמיד</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <p class="card-title">מה תמצאו בפנים</p>
-    <div class="chip-row">
-      <span class="chip">📈 שוק ההון</span>
-      <span class="chip">₿ ביטקוין</span>
-      <span class="chip">💰 פיננסים</span>
-      <span class="chip">🤖 AI</span>
-      <span class="chip">🧠 תודעה</span>
-      <span class="chip">🎤 תקשורת והשפעה</span>
-      <span class="chip">🌱 התפתחות</span>
-    </div>
-  </div>
-
-  <div class="card">
     <p class="card-title">ככה זה נראה בפנים, ממש עכשיו</p>
     <p class="card-text">לא הדמיה — צילומי מסך אמיתיים מתוך הקהילה שלנו</p>
     <div class="proof-shots">
@@ -261,11 +226,28 @@ function acceptCookie(){
   </div>
 
   <div class="card">
-    <p class="card-title">למה דווקא Discord?</p>
-    <div class="why-list">
-      <div class="why-item"><span class="why-ico">🗂️</span><span class="why-text">כל נושא נמצא בחדר משלו</span></div>
-      <div class="why-item"><span class="why-ico">💬</span><span class="why-text">אפשר לשאול, להגיב, לשתף ולנהל דיונים אמיתיים</span></div>
-      <div class="why-item"><span class="why-ico">📌</span><span class="why-text">כל התוכן נשמר ומסודר — ולא הולך לאיבוד בתוך מאות הודעות</span></div>
+    <p class="card-title">למה לא עוד קבוצת ווטסאפ?</p>
+    <div class="compare-row">
+      <div class="compare-item bad">
+        <span class="compare-icon">❌</span>
+        <div class="compare-name">WhatsApp</div>
+        <div class="compare-desc">הכול נעלם בתוך מאות הודעות</div>
+      </div>
+      <div class="compare-item good">
+        <span class="compare-icon">✅</span>
+        <div class="compare-name">Discord</div>
+        <div class="compare-desc">הידע נשאר מסודר ונגיש, תמיד</div>
+      </div>
+    </div>
+    <p class="card-text" style="margin-top:16px;margin-bottom:8px;">מה תמצאו בפנים:</p>
+    <div class="chip-row">
+      <span class="chip">📈 שוק ההון</span>
+      <span class="chip">₿ ביטקוין</span>
+      <span class="chip">💰 פיננסים</span>
+      <span class="chip">🤖 AI</span>
+      <span class="chip">🧠 תודעה</span>
+      <span class="chip">🎤 תקשורת והשפעה</span>
+      <span class="chip">🌱 התפתחות</span>
     </div>
   </div>
 
