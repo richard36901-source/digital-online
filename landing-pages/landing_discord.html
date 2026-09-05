@@ -67,10 +67,9 @@ h1 .accent{background:linear-gradient(135deg,#7289fa,#5865F2);-webkit-background
 .chip-row{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;}
 .chip{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.05);border:1px solid rgba(88,101,242,.25);border-radius:99px;padding:7px 14px;font-size:12.5px;font-weight:700;color:rgba(255,255,255,.8);}
 
-.why-list{display:flex;flex-direction:column;gap:10px;}
-.why-item{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:13px 14px;}
-.why-ico{width:34px;height:34px;flex-shrink:0;border-radius:50%;background:rgba(88,101,242,.15);border:1px solid rgba(88,101,242,.35);display:flex;align-items:center;justify-content:center;font-size:16px;}
-.why-text{font-size:14px;font-weight:700;color:rgba(255,255,255,.85);line-height:1.4;}
+.proof-shots{display:flex;flex-direction:column;gap:14px;}
+.proof-shot img{width:100%;border-radius:14px;border:1px solid rgba(88,101,242,.3);display:block;}
+.proof-caption{font-size:12px;color:rgba(255,255,255,.5);text-align:center;margin-top:6px;}
 
 .pull-quote{width:100%;text-align:center;padding:26px 18px;margin-top:18px;position:relative;}
 .pull-quote p{font-family:'Heebo',sans-serif;font-size:clamp(17px,4.6vw,21px);font-weight:900;line-height:1.5;background:linear-gradient(135deg,#c7cdff,#7289fa,#5865F2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
@@ -212,8 +211,22 @@ function acceptCookie(){
   <p class="cta-note">אין לך Discord עדיין? אין בעיה — הלחיצה תוביל אותך לתהליך ההצטרפות.</p>
 
   <div class="card">
-    <p class="card-title">למה עברנו ל-Discord?</p>
-    <p class="card-text">Discord היא אפליקציה חינמית שמאפשרת לנו לבנות קהילה אמיתית ומסודרת — עם חדרים, דיונים ותוכן מחולק לפי נושאים.</p>
+    <p class="card-title">ככה זה נראה בפנים, ממש עכשיו</p>
+    <p class="card-text">לא הדמיה — צילומי מסך אמיתיים מתוך הקהילה שלנו</p>
+    <div class="proof-shots">
+      <div class="proof-shot">
+        <img src="../assets/discord-proof-channels.png" alt="רשימת החדרים האמיתית בקהילה ב-Discord" loading="lazy"/>
+        <p class="proof-caption">החדרים האמיתיים בקהילה, מחולקים לפי נושא</p>
+      </div>
+      <div class="proof-shot">
+        <img src="../assets/discord-proof-conversation.png" alt="דיון אמיתי בין חברי הקהילה" loading="lazy"/>
+        <p class="proof-caption">דיון אמיתי שקרה בקהילה השבוע</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="card-title">למה לא עוד קבוצת ווטסאפ?</p>
     <div class="compare-row">
       <div class="compare-item bad">
         <span class="compare-icon">❌</span>
@@ -226,10 +239,7 @@ function acceptCookie(){
         <div class="compare-desc">הידע נשאר מסודר ונגיש, תמיד</div>
       </div>
     </div>
-  </div>
-
-  <div class="card">
-    <p class="card-title">מה תמצאו בפנים</p>
+    <p class="card-text" style="margin-top:16px;margin-bottom:8px;">מה תמצאו בפנים:</p>
     <div class="chip-row">
       <span class="chip">📈 שוק ההון</span>
       <span class="chip">₿ ביטקוין</span>
@@ -238,15 +248,6 @@ function acceptCookie(){
       <span class="chip">🧠 תודעה</span>
       <span class="chip">🎤 תקשורת והשפעה</span>
       <span class="chip">🌱 התפתחות</span>
-    </div>
-  </div>
-
-  <div class="card">
-    <p class="card-title">למה דווקא Discord?</p>
-    <div class="why-list">
-      <div class="why-item"><span class="why-ico">🗂️</span><span class="why-text">כל נושא נמצא בחדר משלו</span></div>
-      <div class="why-item"><span class="why-ico">💬</span><span class="why-text">אפשר לשאול, להגיב, לשתף ולנהל דיונים אמיתיים</span></div>
-      <div class="why-item"><span class="why-ico">📌</span><span class="why-text">כל התוכן נשמר ומסודר — ולא הולך לאיבוד בתוך מאות הודעות</span></div>
     </div>
   </div>
 
@@ -275,8 +276,8 @@ function acceptCookie(){
   -->
 
   <div class="scarcity">
-    <p class="scarcity-num"><strong>500</strong> הראשונים נכנסים בחינם</p>
-    <p class="scarcity-text">אנחנו עכשיו בונים את הגרעין הראשון של הקהילה. מי שנכנס עכשיו לא רק מקבל גישה לתוכן — הוא נכנס מההתחלה, מכיר את האנשים הראשונים והופך לחלק מהקהילה כשהיא נבנית וצומחת.</p>
+    <p class="scarcity-num">כבר הצטרפו <strong>10</strong> אנשים לגרעין הראשון</p>
+    <p class="scarcity-text">אנחנו עדיין בשלב המוקדם — 500 המקומות הראשונים פתוחים בחינם. מי שנכנס עכשיו לא רק מקבל גישה לתוכן — הוא נכנס מההתחלה, מכיר את האנשים הראשונים והופך לחלק מהקהילה כשהיא נבנית וצומחת.</p>
     <p class="scarcity-warn">ברגע שנגיע ל-500 חברים — ההצטרפות החינמית נסגרת.</p>
     <p class="scarcity-warn" style="color:rgba(255,255,255,.55);font-weight:700;">אל תיתן לדקה של התקנה לגרום לך להישאר בחוץ.</p>
   </div>
