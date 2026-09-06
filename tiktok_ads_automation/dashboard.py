@@ -218,3 +218,8 @@ def generate_dashboard() -> str:
 
     Path(config.PERFORMANCE_DASHBOARD_FILE).write_text(html, encoding="utf-8")
     return config.PERFORMANCE_DASHBOARD_FILE
+
+
+if __name__ == "__main__":
+    path = generate_dashboard()
+    print(f"performance_dashboard.html נוצר: {path}")

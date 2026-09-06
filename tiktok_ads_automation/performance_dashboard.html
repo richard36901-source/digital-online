@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ביצועי קמפיין TikTok - קידום אינסטגרם</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e1016;
+    --card: #171a23;
+    --ink: #e9ebf1;
+    --muted: #8c93a4;
+    --border: #262b38;
+    --brand: #6366f1;
+    --brand-2: #22d3ee;
+    --green: #34d399;
+    --green-soft: #113328;
+    --red: #f87171;
+    --red-soft: #3a1818;
+    --radius: 16px;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.55);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Heebo', 'Segoe UI', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    padding: 28px clamp(16px, 4vw, 48px) 60px;
+  }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  .sub { color: var(--muted); font-size: 13px; margin: 0 0 24px; }
+  .kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+    margin-bottom: 26px;
+  }
+  .kpi {
+    background: var(--card); border-radius: var(--radius); border: 1px solid var(--border);
+    box-shadow: var(--shadow); padding: 16px 18px;
+  }
+  .kpi .value { font-size: 22px; font-weight: 800; }
+  .kpi .label { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  .card {
+    background: var(--card); border-radius: var(--radius); border: 1px solid var(--border);
+    box-shadow: var(--shadow); padding: 20px 22px; margin-bottom: 22px;
+  }
+  .card h2 { font-size: 15px; margin: 0 0 16px; }
+
+  .bar-row { margin-bottom: 14px; }
+  .bar-label { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; font-size: 13px; }
+  .bar-name { font-weight: 600; }
+  .bar-track { position: relative; height: 22px; background: #1b1f29; border-radius: 6px; overflow: visible; }
+  .bar-fill {
+    height: 100%; min-width: 3%; border-radius: 6px;
+    background: linear-gradient(90deg, var(--brand), var(--brand-2));
+  }
+  .bar-value {
+    position: absolute; top: 50%; transform: translateY(-50%); left: 8px;
+    font-size: 11.5px; font-weight: 700; color: var(--ink); white-space: nowrap;
+  }
+
+  .badge { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
+  .badge.st-win { background: var(--green-soft); color: var(--green); }
+  .badge.st-lose { background: var(--red-soft); color: var(--red); }
+  .badge.st-ENABLE { background: var(--green-soft); color: var(--green); }
+  .badge.st-other { background: #262b38; color: var(--muted); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th {
+    text-align: right; padding: 10px 8px; background: #1b1f29; color: var(--muted);
+    font-weight: 600; font-size: 12px; border-bottom: 1px solid var(--border);
+  }
+  tbody td { padding: 10px 8px; border-bottom: 1px solid var(--border); }
+  tbody tr:hover { background: rgba(255,255,255,.03); }
+
+  .empty { color: var(--muted); text-align: center; padding: 30px; }
+  footer { margin-top: 20px; font-size: 12px; color: var(--muted); text-align: center; }
+</style>
+</head>
+<body>
+
+<h1>ביצועי קמפיין TikTok - קידום אינסטגרם</h1>
+<p class="sub">עודכן לאחרונה: 06/09/2026 16:56 · חלון נתונים: 7 ימים אחרונים · יעד: https://www.instagram.com/ben_nahum_1/</p>
+
+<div class="kpis">
+  <div class="kpi"><div class="value">₪0.00</div><div class="label">הוצאה כוללת</div></div>
+  <div class="kpi"><div class="value">0</div><div class="label">חשיפות</div></div>
+  <div class="kpi"><div class="value">0</div><div class="label">קליקים</div></div>
+  <div class="kpi"><div class="value">0.00%</div><div class="label">CTR ממוצע</div></div>
+</div>
+
+<div class="card">
+  <h2>דירוג לפי CTR (הקלקות מתוך חשיפות) - מהמצטיינת לחלשה</h2>
+  <div class="empty">אין עדיין נתונים - הריצו את הקמפיין כמה ימים ואז רעננו את הדשבורד.</div>
+</div>
+
+<div class="card">
+  <h2>טבלה מלאה</h2>
+  <table>
+    <thead>
+      <tr><th>סרטון / מודעה</th><th>סטטוס</th><th>הוצאה</th><th>חשיפות</th><th>קליקים</th><th>CTR</th><th>עלות לקליק</th></tr>
+    </thead>
+    <tbody>
+      <tr><td colspan="7" class="empty">אין נתונים</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<footer>נוצר אוטומטית ע"י tiktok_ads_automation/dashboard.py - קריאה-בלבד, לא נוגע בשום מודעה.</footer>
+
+</body>
+</html>

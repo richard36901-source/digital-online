@@ -6,7 +6,6 @@ tiktok_ads_tokens.json
 # נוצר אוטומטית בזמן ריצה
 logs/
 rotation_state.json
-performance_dashboard.html
 __pycache__/
 *.pyc
 venv/

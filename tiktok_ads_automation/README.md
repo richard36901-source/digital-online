@@ -176,13 +176,24 @@ python main.py dashboard
   ו-"⚠️ חלשה ביותר" לנמוך ביותר
 - טבלה מלאה עם כל המדדים לכל סרטון (כולל עלות לקליק וסטטוס פעיל/מושהה)
 
-הקובץ **לא נשמר ב-git** (`.gitignore`) - הוא נתונים עדכניים לרגע ההרצה, ומכיוון שהריפו
-הזה הוא אתר ציבורי (GitHub Pages), לא רצינו לפרסם נתוני ביצועי קמפיין בטעות. אם
-תרצו דשבורד ציבורי כמו `god_manager.html` ב-`meta_ads_automation` (מתעדכן אוטומטית
-דרך GitHub Actions) - תגידו ונבנה את זה.
-
 הריצו את `python main.py dashboard` כמה שתרצו, כמה פעמים ביום - זו קריאה בלבד, לא
 משפיעה על שום מודעה.
+
+### מתעדכן אוטומטית (סטייל god_manager)
+
+בדיוק כמו `god_manager.html` ב-`meta_ads_automation`, יש workflow ב-
+`.github/workflows/update-tiktok-ads-dashboard.yml` שמריץ `python dashboard.py`
+אוטומטית כל 15 דקות (ניתן לשנות את תדירות ה-cron בקובץ), מחליט אם `performance_dashboard.html`
+השתנה, ואם כן - מבצע commit+push אוטומטי. הקובץ נשמר ב-git ומתפרסם עם שאר האתר
+(GitHub Pages), כלומר **הוא ציבורי** - כל מי שיש לו את הקישור לאתר יכול לראות את
+נתוני הביצועים (הוצאה, קליקים, CTR) של הקמפיין. אם זה לא רצוי, תגידו ונהפוך את זה
+לפרטי (או נסיר את ה-workflow ונחזור להרצה ידנית בלבד).
+
+**חובה כדי שזה יעבוד: secret בשם `TIKTOK_ADS_ACCESS_TOKEN` בהגדרות הריפו** -
+Settings → Secrets and variables → Actions → New repository secret, עם הטוקן
+שהתקבל מ-`python main.py authorize`. בלי זה ה-workflow ירוץ אבל ייכשל (אין טוקן
+תקף). שימו לב: זהו secret נפרד מ-`META_ACCESS_TOKEN` הקיים כבר בריפו עבור
+`meta_ads_automation`.
 
 ## הרצה אוטומטית יומית (cron)
 
