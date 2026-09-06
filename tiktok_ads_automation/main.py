@@ -38,8 +38,12 @@ def cmd_lookup_locations(query: str):
         print(locations.debug_dump())
         return
     for m in matches:
-        print(json.dumps(m, ensure_ascii=False))
-    print("\nמצאו את שדה ה-id בתוצאה למעלה, והעתיקו את הערך שלו ל-config.TARGETING_LOCATION_IDS.")
+        if "location_id" in m and "name" in m:
+            level = f" ({m['level']})" if "level" in m else ""
+            print(f"{m['location_id']}\t{m['name']}{level}")
+        else:
+            print(json.dumps(m, ensure_ascii=False))
+    print("\nהעתיקו את ה-location_id הרצוי (בד\"כ level=COUNTRY) ל-config.TARGETING_LOCATION_IDS.")
 
 
 def cmd_launch():

@@ -1,9 +1,10 @@
 """
 חיפוש location_id של TikTok (לא קוד מדינה רגיל) לצורך טירגוט גיאוגרפי ב-config.TARGETING_LOCATION_IDS.
 
-הערה: שמות השדות בתגובת /tool/region/ (region_code/region_name) נכתבו לפי תיעוד TikTok
-הפומבי בלי אפשרות לבדוק בפועל (הסביבה הזו חסומה רשתית מ-TikTok). אם ההרצה נכשלת עם
-KeyError - הדביקו את ה-JSON שחזר בפועל ותתוקן המיפוי.
+מאומת מול ריצה אמיתית: תגובת /tool/region/ מכילה רשימת dict-ים עם השדות location_id,
+name, level (למשל "COUNTRY"/"CITY"), region_code, parent_id, next_level_ids,
+area_type, support_below_18. search_locations לא נסמך על שמות שדות ספציפיים (סורק כל
+ערך טקסטואלי) כדי להישאר עמיד גם אם שדות ישתנו/יתווספו.
 """
 
 import json

@@ -62,9 +62,9 @@ DAILY_BUDGET_PER_VIDEO_ILS = 10
 # שם הקמפיין המשותף לכל קבוצות המודעות שנוצרות דרך campaign_launch.py.
 CAMPAIGN_NAME = "קידום אינסטגרם - ben_nahum_1"
 
-# מיקומי טירגוט (location_id של TikTok, לא קוד מדינה רגיל). יש למלא לפני הרצה אמיתית -
-# הריצו: python main.py lookup-locations "ישראל"  (אחרי שיש ACCESS_TOKEN תקף) ועדכנו כאן.
-TARGETING_LOCATION_IDS: list[str] = []
+# מיקומי טירגוט (location_id של TikTok, לא קוד מדינה רגיל). "294640" = ישראל ברמת מדינה
+# (אומת מול python main.py lookup-locations "Israel" - level=COUNTRY, region_code=IL).
+TARGETING_LOCATION_IDS: list[str] = ["294640"]
 
 # זהות המפרסם (Identity) שהמודעה מוצגת תחתיה - חובה ע"פ TikTok. מוצאים ב-Ads Manager
 # תחת Assets > Identities, או יוצרים "Custom identity" חדשה שם. יש למלא לפני הרצה אמיתית.
