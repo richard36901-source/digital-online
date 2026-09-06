@@ -1,0 +1,295 @@
+# -*- coding: utf-8 -*-
+"""
+לוח בקרה מקומי (localhost בלבד) - כיבוי/הדלקת מודעות ועדכון תקציב בלחיצת כפתור,
+בלי CMD. מריץ שרת אמיתי מול TikTok Marketing API, ולכן חייב לרוץ מקומית עם הטוקן -
+לא ניתן לפרסם את זה כדף ציבורי (בניגוד ל-performance_dashboard.html שהוא קריאה-בלבד).
+
+הרצה:
+  py webapp.py
+ואז פותחים בדפדפן: http://localhost:5000
+
+מכבד את config.DRY_RUN בדיוק כמו שאר האוטומציה - אם True, הלחיצות רק נרשמות
+ולא באמת משנות כלום ב-TikTok (יוצג באנר "מצב בדיקה" בראש הדף).
+"""
+
+from flask import Flask, jsonify, request
+
+import actions
+import config
+import insights
+from dashboard import _display_name
+
+app = Flask(__name__)
+
+
+def build_ads_view(advertiser_id: str) -> list[dict]:
+    perf = insights.fetch_traffic_performance(advertiser_id)
+    ad_ids = [r["ad_id"] for r in perf]
+    meta = insights.get_ads_meta(advertiser_id, ad_ids)
+
+    adgroup_ids = sorted({m["adgroup_id"] for m in meta.values() if m.get("adgroup_id")})
+    budgets = insights.get_adgroup_budgets(advertiser_id, adgroup_ids)
+
+    rows = []
+    for r in perf:
+        m = meta.get(r["ad_id"], {})
+        adgroup_id = m.get("adgroup_id")
+        rows.append({
+            "ad_id": r["ad_id"],
+            "ad_name": _display_name(r["ad_name"]),
+            "adgroup_id": adgroup_id,
+            "status": m.get("operation_status", "UNKNOWN"),
+            "budget": budgets.get(adgroup_id, {}).get("budget", 0),
+            "spend": r["spend"],
+            "clicks": r["clicks"],
+            "ctr": r["ctr"],
+        })
+    rows.sort(key=lambda r: r["ctr"], reverse=True)
+    return rows
+
+
+@app.route("/api/ads")
+def api_ads():
+    advertiser_id = next(iter(config.ADVERTISER_ACCOUNTS.values()))
+    try:
+        rows = build_ads_view(advertiser_id)
+        return jsonify({"dry_run": config.DRY_RUN, "ads": rows})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/ads/<ad_id>/toggle", methods=["POST"])
+def api_toggle(ad_id):
+    advertiser_id = next(iter(config.ADVERTISER_ACCOUNTS.values()))
+    enable = request.json.get("enable", False)
+    try:
+        result = actions.enable_ad(advertiser_id, ad_id) if enable else actions.pause_ad(advertiser_id, ad_id)
+        return jsonify({"ok": True, "status": "ENABLE" if enable else "DISABLE", "dry_run": config.DRY_RUN})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/ads/<ad_id>/budget", methods=["POST"])
+def api_budget(ad_id):
+    advertiser_id = next(iter(config.ADVERTISER_ACCOUNTS.values()))
+    body = request.json
+    adgroup_id = body.get("adgroup_id")
+    new_budget = body.get("budget")
+    if not adgroup_id or new_budget is None:
+        return jsonify({"ok": False, "error": "חסר adgroup_id או budget"}), 400
+    try:
+        actions.update_adgroup_budget(advertiser_id, adgroup_id, float(new_budget))
+        return jsonify({"ok": True, "budget": new_budget, "dry_run": config.DRY_RUN})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+PAGE = """<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>לוח בקרה - קמפיין TikTok</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e1016; --card: #171a23; --ink: #e9ebf1; --muted: #8c93a4; --border: #262b38;
+    --brand: #6366f1; --brand-2: #22d3ee;
+    --green: #34d399; --green-soft: #113328;
+    --red: #f87171; --red-soft: #3a1818;
+    --amber: #fbbf24; --amber-soft: #3a2a0d;
+    --radius: 16px; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.55);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: 'Heebo', 'Segoe UI', Arial, sans-serif;
+    background: var(--bg); color: var(--ink); padding: 28px clamp(16px, 4vw, 48px) 60px;
+  }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  .sub { color: var(--muted); font-size: 13px; margin: 0 0 20px; }
+  .banner {
+    background: var(--amber-soft); color: var(--amber); border: 1px solid rgba(251,191,36,.25);
+    border-radius: 12px; padding: 12px 16px; font-size: 13px; font-weight: 600; margin-bottom: 20px;
+    display: none;
+  }
+  .banner.show { display: block; }
+  .card {
+    background: var(--card); border-radius: var(--radius); border: 1px solid var(--border);
+    box-shadow: var(--shadow); overflow: hidden;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  thead th {
+    text-align: right; padding: 12px 14px; background: #1b1f29; color: var(--muted);
+    font-weight: 600; font-size: 12px; border-bottom: 1px solid var(--border);
+  }
+  tbody td { padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: rgba(255,255,255,.02); }
+
+  .status-badge { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 999px; }
+  .status-badge.on { background: var(--green-soft); color: var(--green); }
+  .status-badge.off { background: #262b38; color: var(--muted); }
+
+  .toggle-btn {
+    border: none; border-radius: 8px; padding: 7px 14px; font-family: inherit;
+    font-size: 12.5px; font-weight: 700; cursor: pointer; transition: opacity .15s;
+  }
+  .toggle-btn:hover { opacity: .85; }
+  .toggle-btn:disabled { opacity: .5; cursor: wait; }
+  .toggle-btn.pause { background: var(--red-soft); color: var(--red); }
+  .toggle-btn.enable { background: var(--green-soft); color: var(--green); }
+
+  .budget-form { display: flex; align-items: center; gap: 6px; }
+  .budget-form input {
+    width: 70px; background: #1b1f29; border: 1px solid var(--border); color: var(--ink);
+    border-radius: 8px; padding: 6px 8px; font-family: inherit; font-size: 13px; text-align: center;
+  }
+  .budget-form button {
+    border: none; border-radius: 8px; padding: 7px 12px; font-family: inherit; font-size: 12.5px;
+    font-weight: 700; cursor: pointer; background: linear-gradient(135deg, var(--brand), var(--brand-2)); color: white;
+  }
+  .budget-form button:hover { opacity: .9; }
+  .budget-form button:disabled { opacity: .5; cursor: wait; }
+  .saved-flash { color: var(--green); font-size: 11px; margin-right: 4px; opacity: 0; transition: opacity .3s; }
+  .saved-flash.show { opacity: 1; }
+
+  .muted { color: var(--muted); }
+  .empty { text-align: center; color: var(--muted); padding: 40px; }
+  .refresh-btn {
+    border: 1px solid var(--border); background: var(--card); color: var(--ink);
+    border-radius: 10px; padding: 8px 16px; font-family: inherit; font-size: 13px;
+    font-weight: 600; cursor: pointer; margin-bottom: 16px;
+  }
+  .refresh-btn:hover { border-color: var(--brand); }
+</style>
+</head>
+<body>
+
+<h1>לוח בקרה - קמפיין TikTok (קידום אינסטגרם)</h1>
+<p class="sub">כיבוי/הדלקת מודעות ועדכון תקציב יומי בלחיצת כפתור. פועל על החשבון המחובר מקומית בלבד.</p>
+
+<div id="dryRunBanner" class="banner">🧪 מצב בדיקה (DRY_RUN=True) - הלחיצות כאן <b>לא</b> משנות באמת כלום ב-TikTok. כדי לבצע שינויים אמיתיים, שנו DRY_RUN=False ב-config.py.</div>
+
+<button class="refresh-btn" onclick="loadAds()">🔄 רענן נתונים</button>
+
+<div class="card">
+  <table>
+    <thead>
+      <tr>
+        <th>סרטון</th>
+        <th>סטטוס</th>
+        <th>הפעלה/השהיה</th>
+        <th>תקציב יומי (₪)</th>
+        <th>הוצאה</th>
+        <th>קליקים</th>
+        <th>CTR</th>
+      </tr>
+    </thead>
+    <tbody id="adsBody">
+      <tr><td colspan="7" class="empty">טוען...</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+async function loadAds() {
+  const tbody = document.getElementById('adsBody');
+  tbody.innerHTML = '<tr><td colspan="7" class="empty">טוען...</td></tr>';
+  try {
+    const res = await fetch('/api/ads');
+    const data = await res.json();
+    if (data.error) {
+      tbody.innerHTML = `<tr><td colspan="7" class="empty">שגיאה: ${data.error}</td></tr>`;
+      return;
+    }
+    document.getElementById('dryRunBanner').classList.toggle('show', data.dry_run);
+
+    if (!data.ads.length) {
+      tbody.innerHTML = '<tr><td colspan="7" class="empty">אין עדיין מודעות - הריצו קודם python main.py launch</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = data.ads.map(ad => {
+      const isOn = ad.status === 'ENABLE';
+      return `
+        <tr data-ad-id="${ad.ad_id}" data-adgroup-id="${ad.adgroup_id || ''}">
+          <td>${ad.ad_name}</td>
+          <td><span class="status-badge ${isOn ? 'on' : 'off'}">${isOn ? 'פעילה' : 'מושהית'}</span></td>
+          <td>
+            <button class="toggle-btn ${isOn ? 'pause' : 'enable'}" onclick="toggleAd(this, '${ad.ad_id}', ${!isOn})">
+              ${isOn ? '⏸ השהה' : '▶ הפעל'}
+            </button>
+          </td>
+          <td>
+            <div class="budget-form">
+              <input type="number" min="1" step="1" value="${ad.budget}" id="budget-${ad.ad_id}">
+              <button onclick="saveBudget(this, '${ad.ad_id}', '${ad.adgroup_id || ''}')">שמור</button>
+              <span class="saved-flash" id="flash-${ad.ad_id}">✓ נשמר</span>
+            </div>
+          </td>
+          <td>₪${ad.spend.toFixed(2)}</td>
+          <td>${ad.clicks.toFixed(0)}</td>
+          <td>${ad.ctr.toFixed(2)}%</td>
+        </tr>`;
+    }).join('');
+  } catch (e) {
+    tbody.innerHTML = `<tr><td colspan="7" class="empty">שגיאת רשת: ${e}</td></tr>`;
+  }
+}
+
+async function toggleAd(btn, adId, enable) {
+  btn.disabled = true;
+  const original = btn.textContent;
+  btn.textContent = '...';
+  try {
+    const res = await fetch(`/api/ads/${adId}/toggle`, {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({enable}),
+    });
+    const data = await res.json();
+    if (!data.ok) { alert('שגיאה: ' + data.error); btn.disabled = false; btn.textContent = original; return; }
+    loadAds();
+  } catch (e) {
+    alert('שגיאת רשת: ' + e);
+    btn.disabled = false; btn.textContent = original;
+  }
+}
+
+async function saveBudget(btn, adId, adgroupId) {
+  const input = document.getElementById(`budget-${adId}`);
+  const value = parseFloat(input.value);
+  if (!value || value <= 0) { alert('תקציב לא תקין'); return; }
+  btn.disabled = true;
+  try {
+    const res = await fetch(`/api/ads/${adId}/budget`, {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({adgroup_id: adgroupId, budget: value}),
+    });
+    const data = await res.json();
+    btn.disabled = false;
+    if (!data.ok) { alert('שגיאה: ' + data.error); return; }
+    const flash = document.getElementById(`flash-${adId}`);
+    flash.classList.add('show');
+    setTimeout(() => flash.classList.remove('show'), 2000);
+  } catch (e) {
+    alert('שגיאת רשת: ' + e);
+    btn.disabled = false;
+  }
+}
+
+loadAds();
+</script>
+
+</body>
+</html>"""
+
+
+@app.route("/")
+def index():
+    return PAGE
+
+
+if __name__ == "__main__":
+    print("לוח הבקרה זמין ב: http://localhost:5000")
+    app.run(host="127.0.0.1", port=5000, debug=False)

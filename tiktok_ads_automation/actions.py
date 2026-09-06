@@ -3,10 +3,10 @@
 השהיית מודעה, החלפת קריאטיב.
 כל פעולה עוברת קודם דרך config.DRY_RUN - אם True, רק נרשם ללוג ולא מבוצע בפועל.
 
-הערה: קריאות היצירה (create_campaign/create_adgroup/create_ad) נכתבו לפי תיעוד
-TikTok Marketing API v1.3 הפומבי, בלי אפשרות לבדוק בפועל מול TikTok מתוך הסביבה הזו
-(חסומה רשתית). אם TikTok מחזיר שגיאת ולידציה על שם שדה/ערך - הדביקו את השגיאה המדויקת
-בשיחה ותתוקן בהתאם.
+הערה: כל הפעולות כאן נכתבו לפי תיעוד TikTok Marketing API v1.3 הפומבי. pause_ad
+ו-enable_ad (opt_status ENABLE/DISABLE) אומתו/דומות למבנה שכבר עבד בפועל (ad/status/update/).
+update_adgroup_budget (adgroup/update/) עדיין לא נבדק מול TikTok בפועל - אם מתקבלת שגיאת
+ולידציה, הדביקו אותה בשיחה ותתוקן בהתאם (בדיוק כמו שקרה עם /tool/region/).
 """
 
 import hashlib
@@ -39,6 +39,49 @@ def pause_ad(advertiser_id: str, ad_id: str) -> dict:
     if data.get("code") != 0:
         raise RuntimeError(f"נכשל בהשהיית מודעה {ad_id}: {data}")
     return {"dry_run": False, "action": "pause", "ad_id": ad_id, "result": data}
+
+
+def enable_ad(advertiser_id: str, ad_id: str) -> dict:
+    """מפעיל מודעה מושהית (opt_status=ENABLE) - ההפך מ-pause_ad."""
+    if config.DRY_RUN:
+        return {"dry_run": True, "action": "enable", "ad_id": ad_id}
+
+    resp = requests.post(
+        f"{config.API_BASE_URL}/ad/status/update/",
+        headers=HEADERS,
+        json={
+            "advertiser_id": advertiser_id,
+            "ad_ids": [ad_id],
+            "opt_status": "ENABLE",
+        },
+        timeout=30,
+    )
+    data = resp.json()
+    if data.get("code") != 0:
+        raise RuntimeError(f"נכשל בהפעלת מודעה {ad_id}: {data}")
+    return {"dry_run": False, "action": "enable", "ad_id": ad_id, "result": data}
+
+
+def update_adgroup_budget(advertiser_id: str, adgroup_id: str, new_budget: float) -> dict:
+    """מעדכן את התקציב היומי של קבוצת מודעות קיימת."""
+    if config.DRY_RUN:
+        return {"dry_run": True, "action": "update_budget", "adgroup_id": adgroup_id, "budget": new_budget}
+
+    resp = requests.post(
+        f"{config.API_BASE_URL}/adgroup/update/",
+        headers=HEADERS,
+        json={
+            "advertiser_id": advertiser_id,
+            "adgroup_id": adgroup_id,
+            "budget_mode": "BUDGET_MODE_DAY",
+            "budget": new_budget,
+        },
+        timeout=30,
+    )
+    data = resp.json()
+    if data.get("code") != 0:
+        raise RuntimeError(f"נכשל בעדכון תקציב לקבוצת מודעות {adgroup_id}: {data}")
+    return {"dry_run": False, "action": "update_budget", "adgroup_id": adgroup_id, "budget": new_budget, "result": data}
 
 
 def upload_video(advertiser_id: str, video_path: Path) -> str:

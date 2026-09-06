@@ -147,3 +147,49 @@ def get_ads_status(advertiser_id: str, ad_ids: list[str]) -> dict:
     if data.get("code") != 0:
         raise RuntimeError(f"נכשל בשליפת סטטוס מודעות: {data}")
     return {item["ad_id"]: item.get("operation_status", "UNKNOWN") for item in data["data"].get("list", [])}
+
+
+def get_ads_meta(advertiser_id: str, ad_ids: list[str]) -> dict:
+    """מחזיר {ad_id: {"adgroup_id", "operation_status"}} - לצורך webapp.py (לוח בקרה)."""
+    if not ad_ids:
+        return {}
+    resp = requests.get(
+        f"{config.API_BASE_URL}/ad/get/",
+        headers=HEADERS,
+        params={
+            "advertiser_id": advertiser_id,
+            "filtering": json.dumps({"ad_ids": ad_ids}),
+            "fields": '["ad_id", "adgroup_id", "operation_status"]',
+        },
+        timeout=30,
+    )
+    data = resp.json()
+    if data.get("code") != 0:
+        raise RuntimeError(f"נכשל בשליפת פרטי מודעות: {data}")
+    return {
+        item["ad_id"]: {"adgroup_id": item.get("adgroup_id"), "operation_status": item.get("operation_status", "UNKNOWN")}
+        for item in data["data"].get("list", [])
+    }
+
+
+def get_adgroup_budgets(advertiser_id: str, adgroup_ids: list[str]) -> dict:
+    """מחזיר {adgroup_id: {"budget", "budget_mode"}} - לצורך webapp.py (לוח בקרה)."""
+    if not adgroup_ids:
+        return {}
+    resp = requests.get(
+        f"{config.API_BASE_URL}/adgroup/get/",
+        headers=HEADERS,
+        params={
+            "advertiser_id": advertiser_id,
+            "filtering": json.dumps({"adgroup_ids": adgroup_ids}),
+            "fields": '["adgroup_id", "budget", "budget_mode"]',
+        },
+        timeout=30,
+    )
+    data = resp.json()
+    if data.get("code") != 0:
+        raise RuntimeError(f"נכשל בשליפת תקציבי קבוצות מודעות: {data}")
+    return {
+        item["adgroup_id"]: {"budget": float(item.get("budget", 0) or 0), "budget_mode": item.get("budget_mode")}
+        for item in data["data"].get("list", [])
+    }
