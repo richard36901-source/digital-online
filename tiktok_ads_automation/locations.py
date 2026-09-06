@@ -18,9 +18,10 @@ def search_locations(query: str) -> list[dict]:
         headers={"Access-Token": config.ACCESS_TOKEN},
         params={
             "advertiser_id": next(iter(config.ADVERTISER_ACCOUNTS.values())),
-            # נדרש ע"י ה-API (התגלה מריצה אמיתית - קוד 40002 בלעדיו): אילו placements
-            # רלוונטיים לרשימת המיקומים. TikTok Feed הוא הפלייסמנט הרגיל למודעות וידאו רגילות.
+            # שני הפרמטרים הבאים נדרשים ע"י ה-API (התגלה מריצות אמיתיות - קוד 40002
+            # בלעדיהם). objective_type תואם לברירת המחדל ב-actions.create_campaign.
             "placements": '["PLACEMENT_TIKTOK"]',
+            "objective_type": "TRAFFIC",
         },
         timeout=30,
     )
