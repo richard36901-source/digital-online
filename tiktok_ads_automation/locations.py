@@ -16,7 +16,12 @@ def search_locations(query: str) -> list[dict]:
     resp = requests.get(
         f"{config.API_BASE_URL}/tool/region/",
         headers={"Access-Token": config.ACCESS_TOKEN},
-        params={"advertiser_id": next(iter(config.ADVERTISER_ACCOUNTS.values()))},
+        params={
+            "advertiser_id": next(iter(config.ADVERTISER_ACCOUNTS.values())),
+            # נדרש ע"י ה-API (התגלה מריצה אמיתית - קוד 40002 בלעדיו): אילו placements
+            # רלוונטיים לרשימת המיקומים. TikTok Feed הוא הפלייסמנט הרגיל למודעות וידאו רגילות.
+            "placements": '["PLACEMENT_TIKTOK"]',
+        },
         timeout=30,
     )
     data = resp.json()
