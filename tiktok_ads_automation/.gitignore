@@ -1,0 +1,16 @@
+# אף פעם לא לדחוף - סודות/טוקנים חיים
+tiktok_ads_app_credentials.txt
+tiktok_ads_tokens.json
+.flask_secret_key
+.env
+
+# נוצר אוטומטית בזמן ריצה
+logs/
+rotation_state.json
+__pycache__/
+*.pyc
+venv/
+
+# קבצי מדיה של הקריאטיבים - כבדים מדי / לא שייכים לגיט
+creative_bank/*/videos/
+creative_bank/*/images/

@@ -1,0 +1,42 @@
+name: Update TikTok Ads performance dashboard
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  update-dashboard:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r tiktok_ads_automation/requirements.txt
+
+      - name: Generate performance_dashboard.html
+        working-directory: tiktok_ads_automation
+        env:
+          TIKTOK_ADS_ACCESS_TOKEN: ${{ secrets.TIKTOK_ADS_ACCESS_TOKEN }}
+        run: python dashboard.py
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "tiktok-dashboard-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add tiktok_ads_automation/performance_dashboard.html
+          if ! git diff --cached --quiet; then
+            git commit -m "Auto-update TikTok Ads performance dashboard"
+            git push
+          else
+            echo "No changes to the dashboard, skipping commit."
+          fi
