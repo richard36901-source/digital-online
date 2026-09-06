@@ -3,12 +3,28 @@
 תצורת אוטומציית ניהול הקמפיינים ב-TikTok Ads - ערוך את הקובץ הזה לפני ההרצה הראשונה.
 """
 
+import json
 import os
+from pathlib import Path
+
+
+def _load_saved_access_token() -> str | None:
+    """קורא את הטוקן מתוך tiktok_ads_tokens.json (נשמר שם ע"י auth.py ב-authorize) -
+    כדי שלא יהיה צורך להריץ 'set TIKTOK_ADS_ACCESS_TOKEN=...' בכל חלון טרמינל חדש."""
+    token_file = Path(__file__).parent / "tiktok_ads_tokens.json"
+    if not token_file.exists():
+        return None
+    try:
+        return json.loads(token_file.read_text(encoding="utf-8")).get("access_token")
+    except (json.JSONDecodeError, OSError):
+        return None
+
 
 # ==== גישה ל-TikTok Marketing API ====
 # הטוקן מתקבל דרך אישור OAuth חד-פעמי (ראו auth.py / README.md), לא סטטי כמו מפתח API.
-# עדיף להגדיר כמשתנה סביבה ולא לשים כאן בטקסט גלוי.
-ACCESS_TOKEN = os.environ.get("TIKTOK_ADS_ACCESS_TOKEN", "PASTE_YOUR_TOKEN_HERE")
+# סדר עדיפות: משתנה סביבה TIKTOK_ADS_ACCESS_TOKEN (אם הוגדר) -> tiktok_ads_tokens.json
+# שנשמר אוטומטית ע"י authorize -> placeholder.
+ACCESS_TOKEN = os.environ.get("TIKTOK_ADS_ACCESS_TOKEN") or _load_saved_access_token() or "PASTE_YOUR_TOKEN_HERE"
 
 # פרטי אפליקציית ה-Marketing API (מ-https://business-api.tiktok.com/portal - נפרד
 # מ-developers.tiktok.com ששימש את tiktok_automation לפרסום אורגני).

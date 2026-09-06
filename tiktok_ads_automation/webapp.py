@@ -291,5 +291,10 @@ def index():
 
 
 if __name__ == "__main__":
-    print("לוח הבקרה זמין ב: http://localhost:5000")
+    import threading
+    import webbrowser
+
+    url = "http://localhost:5000"
+    print(f"לוח הבקרה זמין ב: {url}")
+    threading.Timer(1.0, lambda: webbrowser.open(url)).start()
     app.run(host="127.0.0.1", port=5000, debug=False)
