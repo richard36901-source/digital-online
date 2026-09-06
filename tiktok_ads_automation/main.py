@@ -2,12 +2,14 @@
 נקודת הכניסה לאוטומציה.
 
 שימוש:
-  python main.py authorize   - שלב חד-פעמי: מדפיס קישור הרשאה, מבקש להדביק את ה-auth_code שחוזר
-  python main.py             - מריץ על כל חשבונות המפרסם ב-config.ADVERTISER_ACCOUNTS:
-                                  1. מושך ביצועים (insights)
-                                  2. מפעיל את מנוע הכללים (rules)
-                                  3. מבצע פעולות (pause / rotate_creative) - או רק רושם, אם DRY_RUN=True
-                                  4. רושם הכל ל-log
+  python main.py authorize          - שלב חד-פעמי: מדפיס קישור הרשאה, מבקש להדביק את ה-auth_code שחוזר
+  python main.py lookup-locations "ישראל"  - מחפש location_id לטירגוט (למילוי TARGETING_LOCATION_IDS)
+  python main.py launch             - יוצר קמפיין חדש מ-creative_bank/instagram_promo/ (ראו campaign_launch.py)
+  python main.py                    - מריץ על כל חשבונות המפרסם ב-config.ADVERTISER_ACCOUNTS:
+                                         1. מושך ביצועים (insights)
+                                         2. מפעיל את מנוע הכללים (rules)
+                                         3. מבצע פעולות (pause / rotate_creative) - או רק רושם, אם DRY_RUN=True
+                                         4. רושם הכל ל-log
 
 מומלץ להריץ קודם עם config.DRY_RUN=True, ורק אחרי בדיקה לעבור ל-DRY_RUN=False (ראו README.md).
 מומלץ להריץ דרך cron פעם ביום.
@@ -17,11 +19,31 @@ import sys
 
 import actions
 import auth
+import campaign_launch
 import config
 import creative_rotation
 import insights
+import locations
 import logger
 import rules
+
+
+def cmd_lookup_locations(query: str):
+    matches = locations.search_locations(query)
+    if not matches:
+        print(f"לא נמצאו מיקומים תואמים ל-'{query}'.")
+        return
+    for m in matches:
+        print(f"{m['location_id']}\t{m['name']}")
+    print("\nהעתיקו את ה-location_id הרצוי ל-config.TARGETING_LOCATION_IDS.")
+
+
+def cmd_launch():
+    if not config.ADVERTISER_ACCOUNTS:
+        print("שגיאה: אין חשבונות מפרסם ב-config.ADVERTISER_ACCOUNTS.")
+        sys.exit(1)
+    advertiser_id = next(iter(config.ADVERTISER_ACCOUNTS.values()))
+    campaign_launch.launch(advertiser_id)
 
 
 def cmd_authorize():
@@ -116,6 +138,17 @@ def process_account(client_name: str, advertiser_id: str) -> None:
 def main():
     if len(sys.argv) > 1 and sys.argv[1] == "authorize":
         cmd_authorize()
+        return
+
+    if len(sys.argv) > 1 and sys.argv[1] == "lookup-locations":
+        if len(sys.argv) < 3:
+            print('שימוש: python main.py lookup-locations "ישראל"')
+            sys.exit(1)
+        cmd_lookup_locations(sys.argv[2])
+        return
+
+    if len(sys.argv) > 1 and sys.argv[1] == "launch":
+        cmd_launch()
         return
 
     if config.ACCESS_TOKEN in ("PASTE_YOUR_TOKEN_HERE", "", None):

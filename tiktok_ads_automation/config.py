@@ -45,6 +45,32 @@ REPORT_LOOKBACK_DAYS = 7
 # תיקייה מקומית עם וידאו/תמונות + copy.json לטקסטים - מבנה מקביל ל-meta_ads_automation.
 CREATIVE_BANK_PATH = "./creative_bank"
 
+# ==== קמפיין השקה - קידום אינסטגרם (campaign_launch.py) ====
+# יוצר קמפיין חדש מאפס: קבוצת מודעות (ad group) נפרדת לכל סרטון, כל אחת בתקציב יומי
+# עצמאי, כדי שהשהיה/רוטציה של main.py יעבדו על כל סרטון בנפרד.
+
+# יעד הקליקים - לאן המודעות מפנות.
+DESTINATION_URL = "https://www.instagram.com/ben_nahum_1/"
+
+# תקציב יומי לכל קבוצת מודעות (סרטון) בש"ח.
+# אזהרה: TikTok אוכפת תקציב יומי מינימלי לכל ad group (בד"כ סביב $20/יום, ~74 ש"ח).
+# תקציב של 10 ש"ח נמוך מהמינימום הזה וסביר שה-API יחזיר שגיאת ולידציה בעת יצירת קבוצת
+# המודעות - הריצו קודם ב-DRY_RUN (שם רק נרשם מה היה קורה, בלי לבדוק מול TikTok בפועל),
+# ואם תקבלו שגיאת "budget too low" בהרצה האמיתית, יש להעלות את הערך כאן.
+DAILY_BUDGET_PER_VIDEO_ILS = 10
+
+# שם הקמפיין המשותף לכל קבוצות המודעות שנוצרות דרך campaign_launch.py.
+CAMPAIGN_NAME = "קידום אינסטגרם - ben_nahum_1"
+
+# מיקומי טירגוט (location_id של TikTok, לא קוד מדינה רגיל). יש למלא לפני הרצה אמיתית -
+# הריצו: python main.py lookup-locations "ישראל"  (אחרי שיש ACCESS_TOKEN תקף) ועדכנו כאן.
+TARGETING_LOCATION_IDS: list[str] = []
+
+# זהות המפרסם (Identity) שהמודעה מוצגת תחתיה - חובה ע"פ TikTok. מוצאים ב-Ads Manager
+# תחת Assets > Identities, או יוצרים "Custom identity" חדשה שם. יש למלא לפני הרצה אמיתית.
+IDENTITY_ID = os.environ.get("TIKTOK_ADS_IDENTITY_ID", "PASTE_IDENTITY_ID_HERE")
+IDENTITY_TYPE = "CUSTOMIZED_USER"  # לפי תיעוד TikTok - ערך אחר אפשרי אם ה-API מחזיר שגיאה
+
 # ==== מצב בטיחות ====
 # כשזה True, הסקריפט רק מדפיס/רושם מה הוא *היה* עושה, בלי לבצע שינויים אמיתיים.
 # יש להריץ כמה ימים במצב הזה ולוודא שההחלטות הגיוניות, ואז לשנות ל-False.
