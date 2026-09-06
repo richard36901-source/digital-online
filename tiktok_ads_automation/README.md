@@ -129,9 +129,18 @@ DRY_RUN = False
    ```
    והעתיקו את ה-`location_id` שמתקבל ל-`config.TARGETING_LOCATION_IDS`.
 
-3. **זהות מפרסם (IDENTITY_ID)** - חובה ע"פ TikTok לכל מודעה. ב-Ads Manager, תחת
-   Assets → Identities, בחרו/צרו זהות (Custom identity או חשבון TikTok מאומת),
-   והעתיקו את המזהה ל-`config.IDENTITY_ID` (או למשתנה סביבה `TIKTOK_ADS_IDENTITY_ID`).
+3. **זהות מפרסם (IDENTITY_ID)** - חובה ע"פ TikTok לכל מודעה. **אין בפועל עמוד UI ברור
+   לניהול Identities** ב-TikTok Ads Manager/Business Center (נבדק - Assets מכיל רק
+   Pixels/Catalogs/Audiences/Leads/Forms/Minis, בלי Identities) - אז שואלים ישירות
+   את ה-API:
+   ```bash
+   python main.py lookup-identities
+   ```
+   מציג את כל ה-Identities הקיימות לחשבון (אם יש). העתיקו את ה-`identity_id`
+   ל-`config.IDENTITY_ID`. אם הרשימה ריקה - כנראה צריך ליצור Identity תחילה; זה
+   בדרך כלל קורה אוטומטית באופן שקוף כשיוצרים מודעה ידנית ראשונה ב-Ads Manager
+   (המערכת מציעה ליצור זהות בזמן היצירה) - נסו ליצור טיוטת מודעה ידנית פעם אחת דרך
+   הממשק כדי "לזרוע" Identity, ואז הריצו את הפקודה שוב.
 
 ### הרצה
 
@@ -281,6 +290,7 @@ crontab -e
 - `webapp.py` - לוח בקרה מקומי עם כפתורים (`py webapp.py` -> http://localhost:5000)
 - `campaign_launch.py` - השקת קמפיין חדש מאפס מ-`creative_bank/instagram_promo/`
 - `locations.py` - חיפוש `location_id` לטירגוט גיאוגרפי
+- `identities.py` - רשימת Identities זמינות (`IDENTITY_ID`)
 - `dashboard.py` - בונה `performance_dashboard.html` (דירוג סרטונים לפי CTR, קריאה-בלבד)
 - `logger.py` - רישום ללוג
 - `main.py` - `authorize` (חד-פעמי) / `lookup-locations` / `launch` / `dashboard` / הרצה רגילה (cron)

@@ -4,6 +4,7 @@
 שימוש:
   python main.py authorize          - שלב חד-פעמי: מדפיס קישור הרשאה, מבקש להדביק את ה-auth_code שחוזר
   python main.py lookup-locations "ישראל"  - מחפש location_id לטירגוט (למילוי TARGETING_LOCATION_IDS)
+  python main.py lookup-identities  - מציג את כל ה-Identities הזמינות (למילוי IDENTITY_ID)
   python main.py launch             - יוצר קמפיין חדש מ-creative_bank/instagram_promo/ (ראו campaign_launch.py)
   python main.py dashboard          - מרענן דשבורד ביצועים (performance_dashboard.html) - אילו סרטונים מתבלטים
   python main.py                    - מריץ על כל חשבונות המפרסם ב-config.ADVERTISER_ACCOUNTS:
@@ -25,6 +26,7 @@ import campaign_launch
 import config
 import creative_rotation
 import dashboard
+import identities
 import insights
 import locations
 import logger
@@ -44,6 +46,17 @@ def cmd_lookup_locations(query: str):
         else:
             print(json.dumps(m, ensure_ascii=False))
     print("\nהעתיקו את ה-location_id הרצוי (בד\"כ level=COUNTRY) ל-config.TARGETING_LOCATION_IDS.")
+
+
+def cmd_lookup_identities():
+    items = identities.fetch_identities()
+    if not items:
+        print("לא נמצאו Identities בחשבון הזה. כנראה צריך ליצור אחת - ראו README.md.")
+        return
+    for item in items:
+        print(json.dumps(item, ensure_ascii=False))
+    print('\nחפשו שדה שנראה כמו "identity_id" (או דומה) בפלט למעלה, והעתיקו אותו ל-config.IDENTITY_ID.')
+    print('שימו לב גם לשדה "identity_type" המתאים - יכול לחייב לעדכן גם את config.IDENTITY_TYPE.')
 
 
 def cmd_launch():
@@ -161,6 +174,10 @@ def main():
             print('שימוש: python main.py lookup-locations "ישראל"')
             sys.exit(1)
         cmd_lookup_locations(sys.argv[2])
+        return
+
+    if len(sys.argv) > 1 and sys.argv[1] == "lookup-identities":
+        cmd_lookup_identities()
         return
 
     if len(sys.argv) > 1 and sys.argv[1] == "launch":
