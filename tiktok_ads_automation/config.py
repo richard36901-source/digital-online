@@ -78,3 +78,8 @@ DRY_RUN = True
 
 # ==== לוגים ====
 LOG_FILE = "./logs/automation_log.jsonl"
+
+# ==== דשבורד ביצועים (dashboard.py) ====
+# קובץ HTML קריאה-בלבד שנוצר מחדש בכל הרצת "python main.py dashboard" - משווה בין
+# הסרטונים (חשיפות/קליקים/CTR) כדי לזהות אילו מודעות "מתבלטות" ואילו כדאי לזנוח.
+PERFORMANCE_DASHBOARD_FILE = "./performance_dashboard.html"

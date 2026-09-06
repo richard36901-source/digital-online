@@ -5,6 +5,7 @@
   python main.py authorize          - שלב חד-פעמי: מדפיס קישור הרשאה, מבקש להדביק את ה-auth_code שחוזר
   python main.py lookup-locations "ישראל"  - מחפש location_id לטירגוט (למילוי TARGETING_LOCATION_IDS)
   python main.py launch             - יוצר קמפיין חדש מ-creative_bank/instagram_promo/ (ראו campaign_launch.py)
+  python main.py dashboard          - מרענן דשבורד ביצועים (performance_dashboard.html) - אילו סרטונים מתבלטים
   python main.py                    - מריץ על כל חשבונות המפרסם ב-config.ADVERTISER_ACCOUNTS:
                                          1. מושך ביצועים (insights)
                                          2. מפעיל את מנוע הכללים (rules)
@@ -22,6 +23,7 @@ import auth
 import campaign_launch
 import config
 import creative_rotation
+import dashboard
 import insights
 import locations
 import logger
@@ -44,6 +46,14 @@ def cmd_launch():
         sys.exit(1)
     advertiser_id = next(iter(config.ADVERTISER_ACCOUNTS.values()))
     campaign_launch.launch(advertiser_id)
+
+
+def cmd_dashboard():
+    if config.ACCESS_TOKEN in ("PASTE_YOUR_TOKEN_HERE", "", None):
+        print("שגיאה: לא הוגדר TIKTOK_ADS_ACCESS_TOKEN. הריצו קודם: python main.py authorize")
+        sys.exit(1)
+    path = dashboard.generate_dashboard()
+    print(f"הדשבורד עודכן: {path}\nפתחו את הקובץ בדפדפן כדי לראות אילו מודעות מתבלטות.")
 
 
 def cmd_authorize():
@@ -149,6 +159,10 @@ def main():
 
     if len(sys.argv) > 1 and sys.argv[1] == "launch":
         cmd_launch()
+        return
+
+    if len(sys.argv) > 1 and sys.argv[1] == "dashboard":
+        cmd_dashboard()
         return
 
     if config.ACCESS_TOKEN in ("PASTE_YOUR_TOKEN_HERE", "", None):
