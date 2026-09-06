@@ -1,0 +1,11 @@
+# אף פעם לא לדחוף את אלה - טוקנים/אישורים חיים
+credentials.json
+token.json
+.env
+
+# נוצר אוטומטית בזמן ריצה
+logs/
+downloaded_videos/
+__pycache__/
+*.pyc
+venv/
