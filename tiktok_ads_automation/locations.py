@@ -6,13 +6,15 @@
 KeyError - הדביקו את ה-JSON שחזר בפועל ותתוקן המיפוי.
 """
 
+import json
+
 import requests
 
 import config
 
 
-def search_locations(query: str) -> list[dict]:
-    """מחפש מיקומים לפי שם (למשל 'ישראל' או 'Israel'), מחזיר [{"location_id", "name"}, ...]."""
+def fetch_raw_regions() -> dict:
+    """קריאה גולמית ל-/tool/region/ - מוחזר כמו שהתקבל, בלי שום הנחה על שמות שדות."""
     resp = requests.get(
         f"{config.API_BASE_URL}/tool/region/",
         headers={"Access-Token": config.ACCESS_TOKEN},
@@ -28,11 +30,44 @@ def search_locations(query: str) -> list[dict]:
     data = resp.json()
     if data.get("code") != 0:
         raise RuntimeError(f"נכשל בשליפת רשימת מיקומים: {data}")
+    return data["data"]
+
+
+def _find_list(node, depth: int = 0) -> list:
+    """מוצא את הרשימה הראשונה של dict-ים בתוך התגובה (המבנה המדויק לא ידוע מראש)."""
+    if depth > 4:
+        return []
+    if isinstance(node, list) and node and isinstance(node[0], dict):
+        return node
+    if isinstance(node, dict):
+        for value in node.values():
+            found = _find_list(value, depth + 1)
+            if found:
+                return found
+    return []
+
+
+def search_locations(query: str) -> list[dict]:
+    """
+    מחפש מיקומים לפי שם (למשל 'ישראל' או 'Israel'), מחזיר [{"location_id", "name"}, ...].
+    לא מניח שם שדה קבוע ל-id/name - סורק את כל השדות בכל אובייקט ומחפש את המחרוזת בכל
+    ערך טקסטואלי, כדי לעבוד גם אם שמות השדות שונים ממה שציפינו.
+    """
+    raw = fetch_raw_regions()
+    items = _find_list(raw)
 
     query_lower = query.strip().lower()
-    matches = [
-        {"location_id": region["region_code"], "name": region["region_name"]}
-        for region in data["data"].get("region_info", [])
-        if query_lower in region.get("region_name", "").lower()
-    ]
+    matches = []
+    for item in items:
+        text_values = {k: v for k, v in item.items() if isinstance(v, str)}
+        if any(query_lower in v.lower() for v in text_values.values()):
+            matches.append(item)
     return matches
+
+
+def debug_dump(limit: int = 5) -> str:
+    """מדפיס את התגובה הגולמית (מקוצרת) - לשימוש כשלא נמצאות תוצאות, כדי לראות את המבנה האמיתי."""
+    raw = fetch_raw_regions()
+    items = _find_list(raw)
+    sample = items[:limit] if items else raw
+    return json.dumps(sample, ensure_ascii=False, indent=2)

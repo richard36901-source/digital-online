@@ -16,6 +16,7 @@
 מומלץ להריץ דרך cron פעם ביום.
 """
 
+import json
 import sys
 
 import actions
@@ -33,11 +34,12 @@ import rules
 def cmd_lookup_locations(query: str):
     matches = locations.search_locations(query)
     if not matches:
-        print(f"לא נמצאו מיקומים תואמים ל-'{query}'.")
+        print(f"לא נמצאו מיקומים תואמים ל-'{query}'. הנה דגימה גולמית מהתגובה של TikTok, כדי שנראה את המבנה האמיתי:\n")
+        print(locations.debug_dump())
         return
     for m in matches:
-        print(f"{m['location_id']}\t{m['name']}")
-    print("\nהעתיקו את ה-location_id הרצוי ל-config.TARGETING_LOCATION_IDS.")
+        print(json.dumps(m, ensure_ascii=False))
+    print("\nמצאו את שדה ה-id בתוצאה למעלה, והעתיקו את הערך שלו ל-config.TARGETING_LOCATION_IDS.")
 
 
 def cmd_launch():
