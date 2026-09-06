@@ -1,18 +1,29 @@
 # -*- coding: utf-8 -*-
 """
-לוח בקרה מקומי (localhost בלבד) - כיבוי/הדלקת מודעות ועדכון תקציב בלחיצת כפתור,
-בלי CMD. מריץ שרת אמיתי מול TikTok Marketing API, ולכן חייב לרוץ מקומית עם הטוקן -
-לא ניתן לפרסם את זה כדף ציבורי (בניגוד ל-performance_dashboard.html שהוא קריאה-בלבד).
+לוח בקרה - כיבוי/הדלקת מודעות ועדכון תקציב בלחיצת כפתור, בלי CMD. מריץ שרת אמיתי
+מול TikTok Marketing API, ולכן חייב לרוץ מקומית עם הטוקן - לא ניתן לפרסם את זה כדף
+ציבורי (בניגוד ל-performance_dashboard.html שהוא קריאה-בלבד).
+
+זמין גם ברשת ה-WiFi המקומית (לא רק במחשב עצמו) כדי לאפשר גישה מהאייפון - ולכן מוגן
+בסיסמה (config.PANEL_PASSWORD). שינוי סיסמת ברירת המחדל הוא חובה לפני הרצה - ראו
+בדיקת ה-startup למטה.
 
 הרצה:
   py webapp.py
-ואז פותחים בדפדפן: http://localhost:5000
+במחשב עצמו: http://localhost:5000
+מהטלפון (אותה רשת WiFi): הכתובת שתודפס בטרמינל, למשל http://192.168.1.50:5000
+באייפון: Safari -> שיתוף -> "הוסף למסך הבית" כדי שיהיה כמו אפליקציה עם אייקון.
 
 מכבד את config.DRY_RUN בדיוק כמו שאר האוטומציה - אם True, הלחיצות רק נרשמות
 ולא באמת משנות כלום ב-TikTok (יוצג באנר "מצב בדיקה" בראש הדף).
 """
 
-from flask import Flask, jsonify, request
+import secrets
+import socket
+import sys
+from pathlib import Path
+
+from flask import Flask, jsonify, redirect, request, session, url_for
 
 import actions
 import config
@@ -20,6 +31,96 @@ import insights
 from dashboard import _display_name
 
 app = Flask(__name__)
+
+_SECRET_KEY_FILE = Path(__file__).parent / ".flask_secret_key"
+if _SECRET_KEY_FILE.exists():
+    app.secret_key = _SECRET_KEY_FILE.read_text(encoding="utf-8").strip()
+else:
+    app.secret_key = secrets.token_hex(32)
+    _SECRET_KEY_FILE.write_text(app.secret_key, encoding="utf-8")
+
+
+@app.before_request
+def require_login():
+    if request.endpoint in ("login", "static"):
+        return
+    if not session.get("authed"):
+        if request.path.startswith("/api/"):
+            return jsonify({"error": "unauthorized"}), 401
+        return redirect(url_for("login"))
+
+
+LOGIN_PAGE = """<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>כניסה - לוח בקרה TikTok</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root { --bg: #0e1016; --card: #171a23; --ink: #e9ebf1; --muted: #8c93a4; --border: #262b38;
+    --brand: #6366f1; --brand-2: #22d3ee; --red: #f87171; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: 'Heebo', 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--ink);
+    min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;
+  }
+  form {
+    background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 32px;
+    width: 100%; max-width: 320px; box-shadow: 0 8px 24px -12px rgba(0,0,0,.6);
+  }
+  h1 { font-size: 17px; margin: 0 0 20px; text-align: center; }
+  input {
+    width: 100%; background: #1b1f29; border: 1px solid var(--border); color: var(--ink);
+    border-radius: 10px; padding: 12px 14px; font-family: inherit; font-size: 15px; margin-bottom: 14px;
+  }
+  button {
+    width: 100%; border: none; border-radius: 10px; padding: 12px; font-family: inherit;
+    font-size: 14px; font-weight: 700; cursor: pointer; color: white;
+    background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  }
+  .error { color: var(--red); font-size: 13px; text-align: center; margin: 0 0 14px; }
+</style>
+</head>
+<body>
+<form method="POST">
+  <h1>לוח בקרה - קמפיין TikTok</h1>
+  __ERROR__
+  <input type="password" name="password" placeholder="סיסמה" autofocus>
+  <button type="submit">כניסה</button>
+</form>
+</body>
+</html>"""
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    error = ""
+    if request.method == "POST":
+        if request.form.get("password") == config.PANEL_PASSWORD:
+            session.permanent = True
+            session["authed"] = True
+            return redirect(url_for("index"))
+        error = '<p class="error">סיסמה שגויה</p>'
+    return LOGIN_PAGE.replace("__ERROR__", error)
+
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("login"))
+
+
+def get_lan_ip() -> str:
+    """מזהה את כתובת ה-IP המקומית של המחשב ברשת (כדי להציג לחיבור מהאייפון)."""
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        s.connect(("8.8.8.8", 80))
+        return s.getsockname()[0]
+    except OSError:
+        return "127.0.0.1"
+    finally:
+        s.close()
 
 
 def build_ads_view(advertiser_id: str) -> list[dict]:
@@ -88,7 +189,11 @@ PAGE = """<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TikTok בקרה">
+<meta name="theme-color" content="#0e1016">
 <title>לוח בקרה - קמפיין TikTok</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -162,12 +267,41 @@ PAGE = """<!DOCTYPE html>
     font-weight: 600; cursor: pointer; margin-bottom: 16px;
   }
   .refresh-btn:hover { border-color: var(--brand); }
+  .header-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .logout-link { color: var(--muted); font-size: 12.5px; text-decoration: none; white-space: nowrap; padding-top: 4px; }
+  .logout-link:hover { color: var(--ink); }
+
+  /* מסך צר (אייפון) - הופך כל שורת טבלה לכרטיס מוערם במקום גלילה אופקית לא נוחה */
+  @media (max-width: 700px) {
+    body { padding: 16px 12px 40px; }
+    h1 { font-size: 17px; }
+    table, thead, tbody, tr, td { display: block; width: 100%; }
+    thead { display: none; }
+    tbody tr {
+      border: 1px solid var(--border); border-radius: 12px; padding: 4px 0; margin-bottom: 12px;
+    }
+    tbody tr:last-child { margin-bottom: 0; }
+    tbody td {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      padding: 10px 14px; border-bottom: 1px solid var(--border);
+    }
+    tbody td:last-child { border-bottom: none; }
+    tbody td::before { content: attr(data-label); font-size: 11.5px; font-weight: 600; color: var(--muted); flex-shrink: 0; }
+    tbody td[data-label="סרטון"] { font-weight: 700; font-size: 14.5px; }
+    tbody td[data-label="סרטון"]::before { display: none; }
+    .budget-form { flex: 1; justify-content: flex-end; }
+  }
 </style>
 </head>
 <body>
 
-<h1>לוח בקרה - קמפיין TikTok (קידום אינסטגרם)</h1>
-<p class="sub">כיבוי/הדלקת מודעות ועדכון תקציב יומי בלחיצת כפתור. פועל על החשבון המחובר מקומית בלבד.</p>
+<div class="header-row">
+  <div>
+    <h1>לוח בקרה - קמפיין TikTok (קידום אינסטגרם)</h1>
+    <p class="sub">כיבוי/הדלקת מודעות ועדכון תקציב יומי בלחיצת כפתור. פועל על החשבון המחובר מקומית בלבד.</p>
+  </div>
+  <a class="logout-link" href="/logout">התנתקות</a>
+</div>
 
 <div id="dryRunBanner" class="banner">🧪 מצב בדיקה (DRY_RUN=True) - הלחיצות כאן <b>לא</b> משנות באמת כלום ב-TikTok. כדי לבצע שינויים אמיתיים, שנו DRY_RUN=False ב-config.py.</div>
 
@@ -214,23 +348,23 @@ async function loadAds() {
       const isOn = ad.status === 'ENABLE';
       return `
         <tr data-ad-id="${ad.ad_id}" data-adgroup-id="${ad.adgroup_id || ''}">
-          <td>${ad.ad_name}</td>
-          <td><span class="status-badge ${isOn ? 'on' : 'off'}">${isOn ? 'פעילה' : 'מושהית'}</span></td>
-          <td>
+          <td data-label="סרטון">${ad.ad_name}</td>
+          <td data-label="סטטוס"><span class="status-badge ${isOn ? 'on' : 'off'}">${isOn ? 'פעילה' : 'מושהית'}</span></td>
+          <td data-label="הפעלה/השהיה">
             <button class="toggle-btn ${isOn ? 'pause' : 'enable'}" onclick="toggleAd(this, '${ad.ad_id}', ${!isOn})">
               ${isOn ? '⏸ השהה' : '▶ הפעל'}
             </button>
           </td>
-          <td>
+          <td data-label="תקציב יומי (₪)">
             <div class="budget-form">
               <input type="number" min="1" step="1" value="${ad.budget}" id="budget-${ad.ad_id}">
               <button onclick="saveBudget(this, '${ad.ad_id}', '${ad.adgroup_id || ''}')">שמור</button>
               <span class="saved-flash" id="flash-${ad.ad_id}">✓ נשמר</span>
             </div>
           </td>
-          <td>₪${ad.spend.toFixed(2)}</td>
-          <td>${ad.clicks.toFixed(0)}</td>
-          <td>${ad.ctr.toFixed(2)}%</td>
+          <td data-label="הוצאה">₪${ad.spend.toFixed(2)}</td>
+          <td data-label="קליקים">${ad.clicks.toFixed(0)}</td>
+          <td data-label="CTR">${ad.ctr.toFixed(2)}%</td>
         </tr>`;
     }).join('');
   } catch (e) {
@@ -294,7 +428,16 @@ if __name__ == "__main__":
     import threading
     import webbrowser
 
-    url = "http://localhost:5000"
-    print(f"לוח הבקרה זמין ב: {url}")
-    threading.Timer(1.0, lambda: webbrowser.open(url)).start()
-    app.run(host="127.0.0.1", port=5000, debug=False)
+    if config.PANEL_PASSWORD == "שנה_את_הסיסמה":
+        print("שגיאה: יש להגדיר סיסמה אמיתית לפני הפעלה - אחרת כל מכשיר ברשת ה-WiFi יוכל להיכנס.")
+        print('הריצו: set TIKTOK_PANEL_PASSWORD=משהו-סודי-שלכם   (ואז py webapp.py שוב)')
+        sys.exit(1)
+
+    lan_ip = get_lan_ip()
+    local_url = "http://localhost:5000"
+    lan_url = f"http://{lan_ip}:5000"
+    print(f"לוח הבקרה זמין במחשב הזה ב: {local_url}")
+    print(f"ומהאייפון/מכשיר אחר, כשהם על אותה רשת WiFi, ב: {lan_url}")
+    print("(באייפון: Safari -> כפתור השיתוף -> 'הוסף למסך הבית' כדי שיהיה כמו אפליקציה)")
+    threading.Timer(1.0, lambda: webbrowser.open(local_url)).start()
+    app.run(host="0.0.0.0", port=5000, debug=False)

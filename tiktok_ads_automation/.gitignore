@@ -1,6 +1,7 @@
 # אף פעם לא לדחוף - סודות/טוקנים חיים
 tiktok_ads_app_credentials.txt
 tiktok_ads_tokens.json
+.flask_secret_key
 .env
 
 # נוצר אוטומטית בזמן ריצה

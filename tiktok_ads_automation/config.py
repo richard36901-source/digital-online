@@ -99,3 +99,11 @@ LOG_FILE = "./logs/automation_log.jsonl"
 # קובץ HTML קריאה-בלבד שנוצר מחדש בכל הרצת "python main.py dashboard" - משווה בין
 # הסרטונים (חשיפות/קליקים/CTR) כדי לזהות אילו מודעות "מתבלטות" ואילו כדאי לזנוח.
 PERFORMANCE_DASHBOARD_FILE = "./performance_dashboard.html"
+
+# ==== לוח בקרה (webapp.py) - סיסמת כניסה ====
+# חובה לשנות לפני שמריצים ברשת הביתית (0.0.0.0) - אחרת כל מכשיר ברשת (גם אורחים/
+# מכשירי IoT) יוכל להיכנס וללחוץ על כפתורי כיבוי/הדלקה/תקציב. הריצו:
+#   set TIKTOK_PANEL_PASSWORD=משהו-שרק-אני-יודע     (או export ב-Mac/Linux)
+# או פשוט ערכו את השורה הבאה ישירות (הקובץ הזה לא ב-git עם הטוקן שלכם, אבל בכל
+# זאת עדיף משתנה סביבה אם אפשר).
+PANEL_PASSWORD = os.environ.get("TIKTOK_PANEL_PASSWORD", "שנה_את_הסיסמה")
