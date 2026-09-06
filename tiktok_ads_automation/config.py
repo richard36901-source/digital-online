@@ -108,3 +108,9 @@ PERFORMANCE_DASHBOARD_FILE = "./performance_dashboard.html"
 # או פשוט ערכו את השורה הבאה ישירות (הקובץ הזה לא ב-git עם הטוקן שלכם, אבל בכל
 # זאת עדיף משתנה סביבה אם אפשר).
 PANEL_PASSWORD = os.environ.get("TIKTOK_PANEL_PASSWORD", "שנה_את_הסיסמה")
+
+# ==== סנכרון וידאו מ-Google Drive (drive_sync.py) ====
+# תיקיית ה-Drive שממנה שואבים את הסרטונים לקמפיין (ראו README.md להגדרת OAuth).
+DRIVE_FOLDER_ID = "1SWAcj6fAOcLn2y4NMI8O_HQWJFBozmMV"
+DRIVE_CLIENT_SECRET_FILE = "./client_secret.json"  # מורד מ-Google Cloud Console, לא ב-git
+DRIVE_TOKEN_FILE = "./drive_token.json"  # נוצר אוטומטית אחרי authorize, לא ב-git

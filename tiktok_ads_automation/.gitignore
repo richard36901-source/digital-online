@@ -2,6 +2,8 @@
 tiktok_ads_app_credentials.txt
 tiktok_ads_tokens.json
 .flask_secret_key
+client_secret*.json
+drive_token.json
 .env
 
 # נוצר אוטומטית בזמן ריצה
