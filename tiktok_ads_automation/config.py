@@ -82,10 +82,11 @@ CAMPAIGN_NAME = "קידום אינסטגרם - ben_nahum_1"
 # (אומת מול python main.py lookup-locations "Israel" - level=COUNTRY, region_code=IL).
 TARGETING_LOCATION_IDS: list[str] = ["294640"]
 
-# זהות המפרסם (Identity) שהמודעה מוצגת תחתיה - חובה ע"פ TikTok. מוצאים ב-Ads Manager
-# תחת Assets > Identities, או יוצרים "Custom identity" חדשה שם. יש למלא לפני הרצה אמיתית.
-IDENTITY_ID = os.environ.get("TIKTOK_ADS_IDENTITY_ID", "PASTE_IDENTITY_ID_HERE")
-IDENTITY_TYPE = "CUSTOMIZED_USER"  # לפי תיעוד TikTok - ערך אחר אפשרי אם ה-API מחזיר שגיאה
+# זהות המפרסם (Identity) שהמודעה מוצגת תחתיה - חובה ע"פ TikTok. אומת מול
+# "python main.py lookup-identities" בפועל - זה חשבון ה-TikTok של ben_nahum_1 עצמו
+# (display_name: "ben_nahum_1", username: "ben_nahum_1"), לא זהות מותאמת אישית.
+IDENTITY_ID = os.environ.get("TIKTOK_ADS_IDENTITY_ID", "aef7deb3-5166-56cf-9a17-0eb0d51d5aba")
+IDENTITY_TYPE = "TT_USER"  # אומת בפועל - לא CUSTOMIZED_USER כפי שהונח קודם
 
 # ==== מצב בטיחות ====
 # כשזה True, הסקריפט רק מדפיס/רושם מה הוא *היה* עושה, בלי לבצע שינויים אמיתיים.
