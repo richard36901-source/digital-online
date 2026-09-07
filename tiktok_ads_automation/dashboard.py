@@ -117,7 +117,7 @@ def generate_dashboard() -> str:
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ביצועי קמפיין TikTok - קידום אינסטגרם</title>
+<title>ביצועי קמפיין TikTok</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -198,7 +198,7 @@ def generate_dashboard() -> str:
 </head>
 <body>
 
-<h1>ביצועי קמפיין TikTok - קידום אינסטגרם</h1>
+<h1>ביצועי קמפיין TikTok</h1>
 <p class="sub">עודכן לאחרונה: {now_str} · חלון נתונים: {config.REPORT_LOOKBACK_DAYS} ימים אחרונים · יעד: {config.DESTINATION_URL}</p>
 
 <div class="kpis">
