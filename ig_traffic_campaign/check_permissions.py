@@ -61,22 +61,25 @@ def check_ad_account_access() -> None:
 
 def list_pages_and_instagram_accounts() -> None:
     """
-    מציג כל דף פייסבוק שהטוקן יכול לנהל, וה-Instagram Business Account המחובר אליו (אם יש).
-    חפש בפלט את השורה שבה username == "ben_nahum_1", והעתק את ה-page id וה-instagram id
-    שלה ל-PAGE_ID ו-IG_ACTOR_ID ב-config.py.
-
-    לנוחותך, שני ה-page_id הבאים כבר נראו בקמפיינים קיימים בחשבון act_330184635273905
-    ונבדקים כאן ראשונים כמועמדים - אבל עדיין יש לוודא לפי ה-username בפלט, לא לנחש:
-      - 464521926734949
-      - 1067237409815794
+    מנסה כמה דרכים לאתר את ה-Instagram Actor ID של ben_nahum_1, כי יש שתי דרכים
+    שונות שחשבון אינסטגרם יכול להיות מחובר ב-Meta: (א) דרך דף פייסבוק מקושר
+    (הדרך הישנה), או (ב) הקצאה ישירה של חשבון האינסטגרם כנכס ב-Business Portfolio
+    (הדרך החדשה יותר - ככה זה מוגדר אצלנו, לפי מסך "ניהול הקצאות" שבדקתם ידנית).
+    מנסים את שתיהן ומדפיסים הכל - אתם מזהים לפי username == "ben_nahum_1".
     """
-    candidate_page_ids = ["464521926734949", "1067237409815794"]
+    print("--- דרך 1: חשבונות אינסטגרם המחוברים ישירות לחשבון המודעות (GET /act_<id>/instagram_accounts) ---")
+    _try_get(f"{config.GRAPH_URL}/act_{config.AD_ACCOUNT_ID}/instagram_accounts",
+             {"fields": "id,username", "access_token": config.ACCESS_TOKEN})
 
-    print("\n--- דפים ידועים מקמפיינים קיימים בחשבון (מועמדים) ---")
-    for page_id in candidate_page_ids:
+    print("\n--- דרך 2: חשבונות אינסטגרם שהוקצו ל-Business Portfolio (naan1930store) ---")
+    _try_get(f"{config.GRAPH_URL}/2504083516632376/instagram_accounts",
+             {"fields": "id,username", "access_token": config.ACCESS_TOKEN})
+
+    print("\n--- דרך 3: דפים ידועים מקמפיינים קיימים בחשבון (מועמדים לדרך הישנה) ---")
+    for page_id in ["464521926734949", "1067237409815794"]:
         _print_page_ig_info(page_id)
 
-    print("\n--- כל הדפים הזמינים לטוקן (GET /me/accounts) ---")
+    print("\n--- דרך 4: כל הדפים הזמינים לטוקן (GET /me/accounts) ---")
     url = f"{config.GRAPH_URL}/me/accounts"
     resp = requests.get(url, params={
         "fields": "id,name,instagram_business_account{id,username}",
@@ -85,14 +88,25 @@ def list_pages_and_instagram_accounts() -> None:
     }, timeout=30)
     data = resp.json()
     if "error" in data:
-        print(f"⚠️  לא ניתן היה לשלוף /me/accounts (ייתכן שזה תקין ל-System User, "
-              f"ואז יש להסתמך על הרשימה הידועה למעלה): {data['error']}")
+        print(f"⚠️  לא ניתן היה לשלוף /me/accounts: {data['error']}")
         return
-
     for page in data.get("data", []):
         ig = page.get("instagram_business_account")
         ig_str = f'{ig["username"]} (ig_actor_id={ig["id"]})' if ig else "אין חשבון אינסטגרם מחובר"
         print(f'  page_id={page["id"]}  name="{page["name"]}"  instagram: {ig_str}')
+
+
+def _try_get(url: str, params: dict) -> None:
+    resp = requests.get(url, params=params, timeout=30)
+    data = resp.json()
+    if "error" in data:
+        print(f"  ⚠️  {data['error'].get('message', data['error'])}")
+        return
+    rows = data.get("data", [data]) if isinstance(data.get("data", data), list) else [data]
+    if not rows:
+        print("  (ריק - שום דבר לא הוחזר)")
+    for row in rows:
+        print(f"  {row}")
 
 
 def _print_page_ig_info(page_id: str) -> None:

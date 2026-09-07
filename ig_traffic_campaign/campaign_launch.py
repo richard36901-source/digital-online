@@ -84,7 +84,6 @@ def create_ad_creative(name: str, video_id: str, thumbnail_url: str, message: st
         return f"DRY_RUN_CREATIVE_ID_{name}"
 
     object_story_spec = {
-        "page_id": config.PAGE_ID,
         "instagram_actor_id": config.IG_ACTOR_ID,
         "video_data": {
             "video_id": video_id,
@@ -93,6 +92,11 @@ def create_ad_creative(name: str, video_id: str, thumbnail_url: str, message: st
             "call_to_action": {"type": config.CTA_TYPE},
         },
     }
+    # page_id: לא תמיד נדרש כשחשבון האינסטגרם מוקצה ישירות ל-Business Portfolio
+    # (בניגוד לדף פייסבוק מקושר בדרך הישנה) - ראו check_permissions.py. כולל רק אם
+    # יש ערך אמיתי ב-config; אם ה-API בכל זאת דורש אותו, השגיאה תבהיר את זה.
+    if config.PAGE_ID and not config.PAGE_ID.startswith("PASTE_"):
+        object_story_spec["page_id"] = config.PAGE_ID
 
     url = f"{config.GRAPH_URL}/act_{config.AD_ACCOUNT_ID}/adcreatives"
     resp = requests.post(url, data={
@@ -133,10 +137,12 @@ def preflight_checks() -> None:
     if config.ACCESS_TOKEN in ("PASTE_YOUR_TOKEN_HERE", "", None):
         print("שגיאה: לא הוגדר META_ACCESS_TOKEN. ראה README.md.")
         sys.exit(1)
-    if config.PAGE_ID.startswith("PASTE_") or config.IG_ACTOR_ID.startswith("PASTE_"):
-        print("שגיאה: PAGE_ID / IG_ACTOR_ID לא מולאו ב-config.py. "
-              "הרץ קודם: python check_permissions.py")
+    if config.IG_ACTOR_ID.startswith("PASTE_"):
+        print("שגיאה: IG_ACTOR_ID לא מולא ב-config.py. הרץ קודם: python check_permissions.py")
         sys.exit(1)
+    if config.PAGE_ID.startswith("PASTE_"):
+        print("אזהרה: PAGE_ID לא מולא - ממשיך בלעדיו (ייתכן שלא נדרש כשהאינסטגרם "
+              "מוקצה ישירות ל-Business Portfolio). אם ה-API ידרוש אותו, תקבלו שגיאה ברורה.")
 
 
 def main():
