@@ -78,11 +78,16 @@ BID_AMOUNT_AGOROT = DAILY_BUDGET_AGOROT_PER_ADSET
 CTA_TYPE = "LEARN_MORE"
 
 # טירגוט: ישראל, קהל רחב, בלי הגבלת גיל/מגדר (18-65 זה טווח ברירת המחדל הרחב ביותר ב-API).
+# individual_setting נוסף כדי להתאים בדיוק למבנה שה-Ad Set המאומת ב-Ads Manager
+# יצר בפועל (debug_compare_campaigns.py) - עוד הבדל מבני אפשרי מול הפעם שנכשלה.
 TARGETING = {
     "geo_locations": {"countries": ["IL"]},
     "age_min": 18,
     "age_max": 65,
-    "targeting_automation": {"advantage_audience": 1},
+    "targeting_automation": {
+        "advantage_audience": 1,
+        "individual_setting": {"age": 1, "gender": 1},
+    },
 }
 
 # ==== סטטוס בעת יצירה ====

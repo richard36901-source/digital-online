@@ -4,6 +4,7 @@
 ואיתור תמונת תצוגה (thumbnail) לשימוש בקריאטיב.
 """
 
+import json
 import time
 from pathlib import Path
 
@@ -16,6 +17,25 @@ POLL_TIMEOUT_SECONDS = 600  # 10 דקות - וידאו קצר אמור לעבו�
 UPLOAD_MAX_ATTEMPTS = 3
 UPLOAD_RETRY_BACKOFF_SECONDS = 10
 CHUNK_SIZE_BYTES = 4 * 1024 * 1024  # 4MB - קטן מספיק שגם חיבור לא יציב יעמוד בזמן להעלות
+
+# מטמון מקומי: שם סרטון -> {"video_id", "thumbnail_url"} של סרטונים שכבר הועלו
+# בהצלחה ל-Meta. בלי זה, כל הרצה חוזרת אחרי כשל בשלב מאוחר יותר (כמו יצירת Ad Set)
+# מעלה מחדש את אותו קובץ 170MB ומחכה שוב 30+ שניות - בזבוז זמן מיותר לגמרי.
+CACHE_FILE = Path("./logs/video_upload_cache.json")
+
+
+def _load_upload_cache() -> dict:
+    if not CACHE_FILE.exists():
+        return {}
+    try:
+        return json.loads(CACHE_FILE.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return {}
+
+
+def _save_upload_cache(cache: dict) -> None:
+    CACHE_FILE.parent.mkdir(parents=True, exist_ok=True)
+    CACHE_FILE.write_text(json.dumps(cache, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
 def _post_with_retry(url: str, data: dict, files: dict = None, name: str = "") -> dict:
@@ -142,8 +162,33 @@ def get_thumbnail_url(video_id: str) -> str:
 
 
 def upload_and_prepare(local_path: Path, name: str) -> dict:
-    """זרימה מלאה: העלאה -> המתנה ל-ready -> thumbnail. מחזיר {'video_id', 'thumbnail_url'}."""
+    """
+    זרימה מלאה: העלאה -> המתנה ל-ready -> thumbnail. מחזיר {'video_id', 'thumbnail_url'}.
+
+    בודק קודם את CACHE_FILE לפי שם הסרטון - אם כבר הועלה בהרצה קודמת (למשל אחת
+    שנכשלה אח"כ ביצירת ה-Ad Set), ומאמת מול Meta שהוא עדיין "ready" בפועל, מדלג
+    לגמרי על ההעלאה מחדש.
+    """
+    if config.DRY_RUN:
+        video_id = upload_video(local_path, name)
+        wait_until_ready(video_id)
+        return {"video_id": video_id, "thumbnail_url": get_thumbnail_url(video_id)}
+
+    cache = _load_upload_cache()
+    cached = cache.get(name)
+    if cached:
+        print(f"  '{name}' כבר הועלה בהרצה קודמת (video_id={cached['video_id']}) - בודק שעדיין תקין...")
+        try:
+            wait_until_ready(cached["video_id"])
+            print("  תקין - מדלג על העלאה חוזרת.")
+            return cached
+        except RuntimeError as e:
+            print(f"  המטמון לא תקף (וידאו נמחק/פג אצל Meta?): {e} - מעלה מחדש.")
+
     video_id = upload_video(local_path, name)
     wait_until_ready(video_id)
-    thumbnail_url = get_thumbnail_url(video_id)
-    return {"video_id": video_id, "thumbnail_url": thumbnail_url}
+    result = {"video_id": video_id, "thumbnail_url": get_thumbnail_url(video_id)}
+
+    cache[name] = result
+    _save_upload_cache(cache)
+    return result

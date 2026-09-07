@@ -72,10 +72,11 @@ def create_ad_set(campaign_id: str, name: str) -> str:
     # שנבנתה ידנית ב-Ads Manager (ראו ההערה ב-config.py). זיהוי הפרופיל הספציפי
     # (ben_nahum_1) נעשה ברמת הקריאטיב (object_story_spec.instagram_actor_id),
     # לא כאן.
-    # LOWEST_COST_WITHOUT_CAP נדחה (אותה שגיאה שהאשימה optimization_goal - הודעה
-    # מטעה מ-Meta), והשמטת bid_strategy לגמרי גם נכשלה (Meta דרשה bid_amount
-    # מפורש). הפתרון שאומת בפועל: LOWEST_COST_WITH_BID_CAP + bid_amount (ראו הערה
-    # מפורטת ב-config.py).
+    # LOWEST_COST_WITHOUT_CAP וגם LOWEST_COST_WITH_BID_CAP+bid_amount נדחו עם אותה
+    # שגיאה שהאשימה optimization_goal (הודעה מטעה מ-Meta - כנראה לא bid_strategy
+    # באמת האשם). ה-promoted_object ב-Ad Set שהצליח כלל גם smart_pse_enabled:false
+    # לצד page_id - שדה שהיה חסר אצלנו עד עכשיו. מוסיפים אותו כדי להתאים בדיוק
+    # למבנה המאומת.
     url = f"{config.GRAPH_URL}/act_{config.AD_ACCOUNT_ID}/adsets"
     resp = requests.post(url, data={
         "name": f"{name} - Ad Set",
@@ -86,7 +87,7 @@ def create_ad_set(campaign_id: str, name: str) -> str:
         "bid_amount": config.BID_AMOUNT_AGOROT,
         "optimization_goal": config.OPTIMIZATION_GOAL,
         "destination_type": config.DESTINATION_TYPE,
-        "promoted_object": json.dumps({"page_id": config.PAGE_ID}),
+        "promoted_object": json.dumps({"page_id": config.PAGE_ID, "smart_pse_enabled": False}),
         "targeting": json.dumps(config.TARGETING),
         "status": config.CREATED_STATUS,
         "access_token": config.ACCESS_TOKEN,
