@@ -37,6 +37,10 @@ def create_campaign() -> str:
         "objective": config.CAMPAIGN_OBJECTIVE,
         "status": config.CREATED_STATUS,
         "special_ad_categories": json.dumps([]),
+        # אין תקציב ברמת הקמפיין (Advantage Campaign Budget) בכוונה - כל תקציב הוא
+        # ברמת ה-Ad Set (config.DAILY_BUDGET_AGOROT_PER_ADSET), כמו שביקשת. Meta
+        # דורשת לציין את זה במפורש, אחרת מחזירה שגיאה (is_adset_budget_sharing_enabled).
+        "is_adset_budget_sharing_enabled": "false",
         "access_token": config.ACCESS_TOKEN,
     }, timeout=30)
     data = resp.json()
