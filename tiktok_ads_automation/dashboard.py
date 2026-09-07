@@ -209,9 +209,15 @@ def generate_dashboard() -> str:
       </div>""" for r in all_rows)
 
     currency = config.currency_symbol()
+
+    def _name_cell(r: dict) -> str:
+        if r.get("video_url"):
+            return f'<a class="video-link" href="{r["video_url"]}" target="_blank" rel="noopener noreferrer">{r["ad_name"]} 🔗</a>'
+        return r["ad_name"]
+
     table_rows_html = "\n".join(f"""
         <tr>
-          <td>{r['ad_name']}</td>
+          <td>{_name_cell(r)}</td>
           <td><span class="badge st-{'ENABLE' if r['status'] == 'פעילה' else 'other'}">{r['status']}</span></td>
           <td>{currency}{r['spend']:.2f}</td>
           <td>{r['impressions']:,.0f}</td>
@@ -299,6 +305,8 @@ def generate_dashboard() -> str:
   }}
   tbody td {{ padding: 10px 8px; border-bottom: 1px solid var(--border); }}
   tbody tr:hover {{ background: rgba(255,255,255,.03); }}
+  .video-link {{ color: var(--brand-2); text-decoration: none; }}
+  .video-link:hover {{ text-decoration: underline; }}
 
   .empty {{ color: var(--muted); text-align: center; padding: 30px; }}
   footer {{ margin-top: 20px; font-size: 12px; color: var(--muted); text-align: center; }}
