@@ -162,6 +162,36 @@ def get_advertiser_currency(advertiser_id: str) -> str:
     return items[0]["currency"]
 
 
+def get_advertiser_balance(advertiser_id: str) -> float | None:
+    """
+    מחזיר את יתרת חשבון המפרסם (במטבע החשבון), אם אפשר לשלוף אותה - לצורך תצוגה
+    בדשבורד, כדי לדעת מראש מתי צריך לטעון כסף לפני שהקמפיינים נעצרים.
+
+    אותה בעיית scope בדיוק כמו get_advertiser_currency (/advertiser/info/, קוד 40001) -
+    כנראה תמיד תיכשל עם הטוקן הנוכחי. בניגוד ל-currency, אין כאן ערך קבוע ב-config
+    (יתרה משתנה כל הזמן, אי אפשר "לתקן" אותה ידנית פעם אחת) - אז נכשלת בשקט (None)
+    כדי לא להפיל את כל הדשבורד בגלל שדה תצוגה אחד. זה בדיוק הלקח מהתקלה שקרתה בפועל
+    היום עם השדה "creatives" - כשל בשליפת מטא-דאטה לא-קריטי לא צריך לעצור את כל היצירה.
+    """
+    try:
+        resp = requests.get(
+            f"{config.API_BASE_URL}/advertiser/info/",
+            headers={"Access-Token": config.ACCESS_TOKEN},
+            params={
+                "advertiser_ids": json.dumps([advertiser_id]),
+                "fields": json.dumps(["balance"]),
+            },
+            timeout=15,
+        )
+        data = resp.json()
+        if data.get("code") != 0:
+            return None
+        items = data["data"].get("list", [])
+        return float(items[0]["balance"]) if items and "balance" in items[0] else None
+    except Exception:
+        return None
+
+
 def convert_ils_to_currency(currency: str, ils_amount: float) -> float:
     """
     ממיר סכום מש"ח למטבע חשבון המפרסם, לפי שער חליפין עדכני (Frankfurter API -

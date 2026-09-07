@@ -12,6 +12,7 @@ from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
+import actions
 import config
 import drive_sync
 import insights
@@ -41,6 +42,28 @@ def _badge(rank: int, total: int) -> tuple[str, str]:
     if rank == total - 1:
         return "⚠️ חלשה ביותר", "st-lose"
     return "", ""
+
+
+def _review_status_label(secondary_status: str | None) -> tuple[str, str]:
+    """
+    מתרגם את secondary_status (סטטוס הבדיקה בפועל של TikTok - נדחתה/בבדיקה/מוצגת) לתווית
+    קריאה - לפי מילות מפתח בתוך הערך הגולמי, לא רשימת ערכים סגורה (לא אומתו כל הערכים
+    האפשריים בפועל), כדי להישאר עמיד גם אם השם המדויק שונה קצת ממה שציפינו. נוסף אחרי
+    שמודעה נדחתה בפועל (הפרת מדיניות פיננסית) בלי שום סימן על כך בדשבורד - עד שהמשתמש
+    בדק ידנית ב-Ads Manager.
+    """
+    if not secondary_status:
+        return "-", "other"
+    s = secondary_status.upper()
+    if "REJECT" in s or "DENY" in s:
+        return "❌ נדחתה", "st-lose"
+    if "AUDIT" in s or "REVIEW" in s:
+        return "🔍 בבדיקה", "st-review"
+    if "DELIVERY_OK" in s or ("DELIVER" in s and "OK" in s):
+        return "✅ מוצגת", "st-win"
+    if "DISABLE" in s:
+        return "מושהית", "other"
+    return secondary_status, "other"
 
 
 def _strip_campaign_prefix(ad_name: str) -> str:
@@ -89,11 +112,14 @@ def build_rows(advertiser_id: str) -> list[dict]:
         ad_name = meta.get(r["ad_id"], {}).get("ad_name") or r["ad_name"]
         filename = _strip_campaign_prefix(ad_name)
         video_url = _DRIVE_VIDEO_URL_BY_FILENAME.get(filename) or meta.get(r["ad_id"], {}).get("video_url")
+        review_label, review_class = _review_status_label(meta.get(r["ad_id"], {}).get("secondary_status"))
         rows.append({
             **r,
             "ad_name": _display_name(ad_name),
             "video_url": video_url,
             "status": STATUS_LABELS.get(statuses.get(r["ad_id"]), statuses.get(r["ad_id"], "-")),
+            "review_label": review_label,
+            "review_class": review_class,
             "bar_pct": round((r["ctr"] / max_ctr) * 100, 1),
             "badge_text": badge_text,
             "badge_class": badge_class,
@@ -199,6 +225,15 @@ def generate_dashboard() -> str:
     total_clicks = sum(r["clicks"] for r in all_rows)
     overall_ctr = (total_clicks / total_impressions * 100) if total_impressions else 0.0
 
+    # יתרת חשבון - כדי לדעת מראש מתי צריך לטעון כסף. עלול לחזור None (הטוקן חסר scope
+    # ל-/advertiser/info/ בפועל) - זה בסדר, פשוט לא מציגים את זה במקום להפיל את הדשבורד.
+    balances = [
+        actions.get_advertiser_balance(advertiser_id)
+        for advertiser_id in config.ADVERTISER_ACCOUNTS.values()
+    ]
+    known_balances = [b for b in balances if b is not None]
+    total_balance = sum(known_balances) if known_balances else None
+
     now_str = datetime.now(ZoneInfo("Asia/Jerusalem")).strftime("%d/%m/%Y %H:%M")
 
     # מגמה יומית - כרטיס sparkline לכל סרטון (CTR יום אחר יום), באותו סדר כמו הטבלה
@@ -235,12 +270,23 @@ def generate_dashboard() -> str:
         <tr>
           <td>{_name_cell(r)}</td>
           <td><span class="badge st-{'ENABLE' if r['status'] == 'פעילה' else 'other'}">{r['status']}</span></td>
+          <td><span class="badge st-{r['review_class']}">{r['review_label']}</span></td>
           <td>{currency}{r['spend']:.2f}</td>
           <td>{r['impressions']:,.0f}</td>
           <td>{r['clicks']:,.0f}</td>
           <td>{r['ctr']:.2f}%</td>
           <td>{currency}{r['cpc']:.2f}</td>
         </tr>""" for r in all_rows)
+
+    rejected_rows = [r for r in all_rows if r["review_class"] == "st-lose"]
+    rejected_banner_html = ""
+    if rejected_rows:
+        names = "".join(f"<li>{r['ad_name']}</li>" for r in rejected_rows)
+        rejected_banner_html = f"""
+<div class="alert-banner">⚠️ <b>{len(rejected_rows)} מודעות נדחו ע"י TikTok</b> (בדיקת מדיניות) - לא מוצגות בכלל:
+  <ul>{names}</ul>
+  בדקו את הסיבה המדויקת ב-TikTok Ads Manager (ליד כל מודעה נדחית).
+</div>"""
 
     html = f"""<!DOCTYPE html>
 <html lang="he" dir="rtl">
@@ -263,6 +309,8 @@ def generate_dashboard() -> str:
     --green-soft: #113328;
     --red: #f87171;
     --red-soft: #3a1818;
+    --amber: #fbbf24;
+    --amber-soft: #3a2a0d;
     --radius: 16px;
     --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.55);
   }}
@@ -313,6 +361,14 @@ def generate_dashboard() -> str:
   .badge.st-lose {{ background: var(--red-soft); color: var(--red); }}
   .badge.st-ENABLE {{ background: var(--green-soft); color: var(--green); }}
   .badge.st-other {{ background: #262b38; color: var(--muted); }}
+  .badge.st-review {{ background: var(--amber-soft); color: var(--amber); }}
+
+  .alert-banner {{
+    background: var(--red-soft); border: 1px solid rgba(248,113,113,.3); color: var(--red);
+    border-radius: var(--radius); padding: 14px 18px; margin-bottom: 20px; font-size: 13.5px;
+  }}
+  .alert-banner ul {{ margin: 8px 0 4px; padding-inline-start: 20px; }}
+  .kpi.balance-missing .value {{ color: var(--muted); font-size: 14px; }}
 
   table {{ width: 100%; border-collapse: collapse; font-size: 13px; }}
   thead th {{
@@ -352,11 +408,17 @@ def generate_dashboard() -> str:
 <h1>ביצועי קמפיין TikTok</h1>
 <p class="sub">עודכן לאחרונה: {now_str} · חלון נתונים: {config.REPORT_LOOKBACK_DAYS} ימים אחרונים · יעד: {config.DESTINATION_URL}</p>
 
+{rejected_banner_html}
+
 <div class="kpis">
   <div class="kpi"><div class="value">{currency}{total_spend:.2f}</div><div class="label">הוצאה כוללת</div></div>
   <div class="kpi"><div class="value">{total_impressions:,.0f}</div><div class="label">חשיפות</div></div>
   <div class="kpi"><div class="value">{total_clicks:,.0f}</div><div class="label">קליקים</div></div>
   <div class="kpi"><div class="value">{overall_ctr:.2f}%</div><div class="label">CTR ממוצע</div></div>
+  <div class="kpi{' balance-missing' if total_balance is None else ''}">
+    <div class="value">{f'{currency}{total_balance:.2f}' if total_balance is not None else 'לא זמין'}</div>
+    <div class="label">יתרת חשבון</div>
+  </div>
 </div>
 
 <div class="card">
@@ -375,10 +437,10 @@ def generate_dashboard() -> str:
   <h2>טבלה מלאה</h2>
   <table>
     <thead>
-      <tr><th>סרטון / מודעה</th><th>סטטוס</th><th>הוצאה</th><th>חשיפות</th><th>קליקים</th><th>CTR</th><th>עלות לקליק</th></tr>
+      <tr><th>סרטון / מודעה</th><th>סטטוס</th><th>בדיקת TikTok</th><th>הוצאה</th><th>חשיפות</th><th>קליקים</th><th>CTR</th><th>עלות לקליק</th></tr>
     </thead>
     <tbody>
-      {table_rows_html if all_rows else '<tr><td colspan="7" class="empty">אין נתונים</td></tr>'}
+      {table_rows_html if all_rows else '<tr><td colspan="8" class="empty">אין נתונים</td></tr>'}
     </tbody>
   </table>
 </div>

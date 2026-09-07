@@ -203,15 +203,16 @@ def get_ads_status(advertiser_id: str, ad_ids: list[str]) -> dict:
 
 
 def get_ads_meta(advertiser_id: str, ad_ids: list[str]) -> dict:
-    """מחזיר {ad_id: {"adgroup_id", "operation_status", "ad_name", "video_url"}} -
+    """מחזיר {ad_id: {"adgroup_id", "operation_status", "secondary_status", "ad_name", "video_url"}} -
     לצורך webapp.py (לוח בקרה) ו-dashboard.py. שם המודעה (ad_name) נשלף כאן מ-/ad/get/ -
     שדה קבוע על אובייקט המודעה עצמו - ולא מ-metrics.ad_name בדוח (report/integrated/get/),
     ששם השדה בפועל לא הוחזר כי לא נכלל ב-METRICS/TRAFFIC_METRICS, מה שגרם לדשבורד להציג
     מספרי ad_id גולמיים במקום שמות סרטונים.
     video_url מנסה לבנות קישור לצפייה בסרטון עצמו בטיקטוק (לא רק ב-Ads Manager), לפי
-    tiktok_item_id + display_name - שדות שטוחים תקינים ב-/ad/get/ (אומת בפועל: קוד
-    40002 חזר כששלחנו "creatives" בתור שם שדה - הרשימה המלאה של שדות תקינים בהודעת
-    השגיאה כללה tiktok_item_id/display_name כשדות עצמאיים, לא מקוננים)."""
+    tiktok_item_id + display_name - שדות שטוחים תקינים ב-/ad/get/.
+    כל השדות המבוקשים כאן (כולל secondary_status) אומתו בפועל מול רשימת השדות התקינים
+    שחזרה בהודעת שגיאה אמיתית (קוד 40002) כששלחנו "creatives" בטעות - לקח מפורש מהתקלה
+    הזו: לא מוסיפים שדה בלי לוודא שהוא ברשימה הזו."""
     if not ad_ids:
         return {}
     resp = requests.get(
@@ -220,7 +221,7 @@ def get_ads_meta(advertiser_id: str, ad_ids: list[str]) -> dict:
         params={
             "advertiser_id": advertiser_id,
             "filtering": json.dumps({"ad_ids": ad_ids}),
-            "fields": '["ad_id", "adgroup_id", "operation_status", "ad_name", "tiktok_item_id", "display_name"]',
+            "fields": '["ad_id", "adgroup_id", "operation_status", "secondary_status", "ad_name", "tiktok_item_id", "display_name"]',
             "page": 1,
             "page_size": 1000,
         },
@@ -239,6 +240,7 @@ def get_ads_meta(advertiser_id: str, ad_ids: list[str]) -> dict:
         item["ad_id"]: {
             "adgroup_id": item.get("adgroup_id"),
             "operation_status": item.get("operation_status", "UNKNOWN"),
+            "secondary_status": item.get("secondary_status"),
             "ad_name": item.get("ad_name"),
             "video_url": _video_url(item),
         }
