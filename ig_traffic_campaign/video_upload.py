@@ -13,21 +13,38 @@ import config
 
 POLL_INTERVAL_SECONDS = 5
 POLL_TIMEOUT_SECONDS = 600  # 10 דקות - וידאו קצר אמור לעבור עיבוד הרבה יותר מהר
+UPLOAD_MAX_ATTEMPTS = 3
+UPLOAD_RETRY_BACKOFF_SECONDS = 10
 
 
 def upload_video(local_path: Path, name: str) -> str:
-    """מעלה קובץ וידאו ומחזיר video_id. לא ממתין לסיום עיבוד (ראו wait_until_ready)."""
+    """
+    מעלה קובץ וידאו ומחזיר video_id. לא ממתין לסיום עיבוד (ראו wait_until_ready).
+    מנסה שוב עד UPLOAD_MAX_ATTEMPTS פעמים על תקלת רשת (timeout/ניתוק) - העלאת קובץ
+    וידאו גדול על חיבור ביתי רגיש לזה, וזה לא אומר שיש בעיה אמיתית בקוד/בחשבון.
+    """
     if config.DRY_RUN:
         return f"DRY_RUN_VIDEO_ID_{name}"
 
     url = f"{config.GRAPH_URL}/act_{config.AD_ACCOUNT_ID}/advideos"
-    with open(local_path, "rb") as f:
-        resp = requests.post(
-            url,
-            data={"access_token": config.ACCESS_TOKEN, "name": name},
-            files={"source": f},
-            timeout=300,
-        )
+    last_error = None
+    for attempt in range(1, UPLOAD_MAX_ATTEMPTS + 1):
+        try:
+            with open(local_path, "rb") as f:
+                resp = requests.post(
+                    url,
+                    data={"access_token": config.ACCESS_TOKEN, "name": name},
+                    files={"source": f},
+                    timeout=300,
+                )
+            break
+        except requests.exceptions.RequestException as e:
+            last_error = e
+            print(f"  תקלת רשת בהעלאת '{name}' (ניסיון {attempt}/{UPLOAD_MAX_ATTEMPTS}): {e}")
+            if attempt < UPLOAD_MAX_ATTEMPTS:
+                time.sleep(UPLOAD_RETRY_BACKOFF_SECONDS)
+    else:
+        raise RuntimeError(f"נכשל בהעלאת '{name}' אחרי {UPLOAD_MAX_ATTEMPTS} ניסיונות: {last_error}")
     data = resp.json()
     if "error" in data:
         raise RuntimeError(f"נכשל בהעלאת וידאו '{local_path.name}': {data['error']}")

@@ -22,14 +22,25 @@ import requests
 
 import config
 import drive_videos
+import insights
 import logger
 import video_upload
 
 
 def create_campaign() -> str:
+    """
+    יוצר את הקמפיין, אבל קודם בודק אם קמפיין בשם הזה כבר קיים (via insights.find_campaign)
+    ומשתמש בו במקום ליצור כפילות - חשוב כי העלאת 13 סרטונים לוקחת זמן ורגישה לניתוקי
+    רשת; בלי הבדיקה הזו, כל הרצה חוזרת אחרי כשל היתה יוצרת עוד קמפיין ריק.
+    """
     if config.DRY_RUN:
         logger.print_and_log({"level": "dry_run", "action": "create_campaign", "name": config.CAMPAIGN_NAME})
         return "DRY_RUN_CAMPAIGN_ID"
+
+    existing = insights.find_campaign()
+    if existing:
+        logger.print_and_log({"level": "info", "action": "reuse_campaign", "campaign_id": existing["id"]})
+        return existing["id"]
 
     url = f"{config.GRAPH_URL}/act_{config.AD_ACCOUNT_ID}/campaigns"
     resp = requests.post(url, data={
@@ -137,6 +148,19 @@ def create_ad(adset_id: str, name: str, creative_id: str) -> str:
     return ad_id
 
 
+def get_existing_adset_names(campaign_id: str) -> set:
+    """שמות כל ה-Ad Sets שכבר קיימים תחת הקמפיין - כדי לדלג עליהם בהרצה חוזרת אחרי כשל."""
+    url = f"{config.GRAPH_URL}/{campaign_id}"
+    resp = requests.get(url, params={
+        "fields": "adsets.limit(200){name}",
+        "access_token": config.ACCESS_TOKEN,
+    }, timeout=30)
+    data = resp.json()
+    if "error" in data:
+        raise RuntimeError(f"נכשל בשליפת סטים קיימים לקמפיין {campaign_id}: {data['error']}")
+    return {a["name"] for a in data.get("adsets", {}).get("data", [])}
+
+
 def preflight_checks() -> None:
     if config.ACCESS_TOKEN in ("PASTE_YOUR_TOKEN_HERE", "", None):
         print("שגיאה: לא הוגדר META_ACCESS_TOKEN. ראה README.md.")
@@ -164,10 +188,16 @@ def main():
     print("\n--- שלב 2: יצירת הקמפיין ---")
     campaign_id = create_campaign()
 
+    existing_adset_names = set() if config.DRY_RUN else get_existing_adset_names(campaign_id)
+
     print("\n--- שלב 3: לכל סרטון - Ad Set + קריאטיב + מודעה ---")
     created = []
     for video in config.VIDEOS:
         name = video["ad_set_name"]
+        if f"{name} - Ad Set" in existing_adset_names:
+            print(f"\n[{name}] - כבר קיים סט מודעות בשם הזה בקמפיין, מדלג (כנראה מהרצה קודמת).")
+            continue
+
         print(f"\n[{name}]")
         local_path = video_paths[name]
 
