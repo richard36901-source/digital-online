@@ -74,6 +74,14 @@ DESTINATION_URL = "https://www.instagram.com/ben_nahum_1/"
 # בחירה מודעת לראות את המינימום האמיתי מ-TikTok ולהחליט משם.
 DAILY_BUDGET_PER_VIDEO_ILS = 10
 
+# מטבע החיוב של חשבון המפרסם (לא בהכרח ILS!) - חובה לדעת אותו כדי להמיר נכון את
+# DAILY_BUDGET_PER_VIDEO_ILS לפני שליחה ל-API (אחרת "10" מתפרש כ-10 במטבע החשבון,
+# לא 10 ש"ח - זה בדיוק מה שקרה בפועל: קבוצות המודעות נוצרו ב-10 דולר, לא 10 שקל).
+# אושר ידנית מול TikTok Ads Manager (עמודת המטבע הציגה "USD") - אי אפשר לשלוף את זה
+# אוטומטית דרך /advertiser/info/ כי הטוקן הנוכחי חסר את ה-scope המתאים (קוד שגיאה
+# 40001 שהתקבל בפועל), וזה דורש re-authorization מלא מול TikTok כדי לתקן.
+ADVERTISER_CURRENCY = "USD"
+
 # שם הקמפיין המשותף לכל קבוצות המודעות שנוצרות דרך campaign_launch.py.
 CAMPAIGN_NAME = "קידום אינסטגרם - ben_nahum_1"
 

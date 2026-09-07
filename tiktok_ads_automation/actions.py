@@ -94,7 +94,15 @@ def get_advertiser_currency(advertiser_id: str) -> str:
     כל השדות המספריים (budget וכו') ב-API הם מספרים גולמיים במטבע הזה, בלי יחידה.
     התגלה בפועל: קבוצות מודעות נוצרו עם budget=10 מתוך כוונה ל-10 ש"ח, אבל
     החשבון במטבע USD - אז בפועל חויבו/יחויבו 10 דולר ליום, לא 10 שקל.
+
+    אם config.ADVERTISER_CURRENCY מוגדר, משתמשים בו ישירות בלי לפנות ל-API בכלל -
+    נדרש כי הטוקן הנוכחי חסר את ה-scope ל-/advertiser/info/ (קוד 40001 שהתקבל
+    בפועל: "Permission error... lacks the required scope"), ותיקון זה דורש
+    re-authorization מלא מול TikTok.
     """
+    if config.ADVERTISER_CURRENCY:
+        return config.ADVERTISER_CURRENCY
+
     resp = requests.get(
         f"{config.API_BASE_URL}/advertiser/info/",
         headers={"Access-Token": config.ACCESS_TOKEN},
