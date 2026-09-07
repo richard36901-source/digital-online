@@ -13,12 +13,22 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 import config
+import drive_sync
 import insights
 
 STATUS_LABELS = {
     "ENABLE": "פעילה",
     "DISABLE": "מושהית",
     "DELETE": "נמחקה",
+}
+
+# {שם קובץ מקומי (עם סיומת) -> קישור צפייה ב-Drive} - בנוי מ-KNOWN_FILE_MAP של
+# drive_sync.py. אמין יותר מ-tiktok_item_id (לא מתועד רשמית, ובפועל לא חזר מ-/ad/get/) -
+# כאן ה-file_id כבר ידוע ומאומת (אותו מיפוי ששימש בפועל להורדת הסרטונים), וה-Drive
+# תמיד פתוח לצפייה עבור הבעלים (benk9922@gmail.com) גם בלי שיתוף "לכל בעל קישור".
+_DRIVE_VIDEO_URL_BY_FILENAME = {
+    filename: f"https://drive.google.com/file/d/{file_id}/view"
+    for file_id, filename in drive_sync.KNOWN_FILE_MAP.items()
 }
 
 
@@ -33,15 +43,19 @@ def _badge(rank: int, total: int) -> tuple[str, str]:
     return "", ""
 
 
+def _strip_campaign_prefix(ad_name: str) -> str:
+    """מסיר את קידומת שם הקמפיין (f"{CAMPAIGN_NAME} - ", ראו campaign_launch.py) -
+    משאיר את שם הקובץ עם הסיומת, לצורך חיפוש ב-_DRIVE_VIDEO_URL_BY_FILENAME."""
+    prefix = f"{config.CAMPAIGN_NAME} - "
+    return ad_name[len(prefix):] if ad_name.startswith(prefix) else ad_name
+
+
 def _display_name(ad_name: str) -> str:
     """
-    הופך את שם המודעה בפועל (f"{CAMPAIGN_NAME} - {filename}", ראו campaign_launch.py)
-    לשם התואם בדיוק לקובץ בתיקיית ה-Drive: מסיר את קידומת שם הקמפיין, ואז את סיומת
-    קובץ הווידאו - מונע גם ערבוב RTL/LTR מכוער (עברית + '.mov').
+    הופך את שם המודעה בפועל לשם התואם בדיוק לקובץ בתיקיית ה-Drive, בלי הסיומת -
+    מונע ערבוב RTL/LTR מכוער (עברית + '.mov').
     """
-    prefix = f"{config.CAMPAIGN_NAME} - "
-    if ad_name.startswith(prefix):
-        ad_name = ad_name[len(prefix):]
+    ad_name = _strip_campaign_prefix(ad_name)
     for ext in (".mov", ".mp4", ".MOV", ".MP4"):
         if ad_name.endswith(ext):
             return ad_name[: -len(ext)]
@@ -73,10 +87,12 @@ def build_rows(advertiser_id: str) -> list[dict]:
     for i, r in enumerate(perf):
         badge_text, badge_class = _badge(i, len(perf))
         ad_name = meta.get(r["ad_id"], {}).get("ad_name") or r["ad_name"]
+        filename = _strip_campaign_prefix(ad_name)
+        video_url = _DRIVE_VIDEO_URL_BY_FILENAME.get(filename) or meta.get(r["ad_id"], {}).get("video_url")
         rows.append({
             **r,
             "ad_name": _display_name(ad_name),
-            "video_url": meta.get(r["ad_id"], {}).get("video_url"),
+            "video_url": video_url,
             "status": STATUS_LABELS.get(statuses.get(r["ad_id"]), statuses.get(r["ad_id"], "-")),
             "bar_pct": round((r["ctr"] / max_ctr) * 100, 1),
             "badge_text": badge_text,
