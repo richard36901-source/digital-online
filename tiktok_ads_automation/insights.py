@@ -193,3 +193,40 @@ def get_adgroup_budgets(advertiser_id: str, adgroup_ids: list[str]) -> dict:
         item["adgroup_id"]: {"budget": float(item.get("budget", 0) or 0), "budget_mode": item.get("budget_mode")}
         for item in data["data"].get("list", [])
     }
+
+
+def get_campaigns(advertiser_id: str) -> list[dict]:
+    """מחזיר את כל הקמפיינים בחשבון: [{"campaign_id", "campaign_name"}, ...] - לצורך
+    בדיקת אידמפוטנטיות ב-campaign_launch.py (לא ליצור קמפיין כפול בהרצה חוזרת)."""
+    resp = requests.get(
+        f"{config.API_BASE_URL}/campaign/get/",
+        headers=HEADERS,
+        params={
+            "advertiser_id": advertiser_id,
+            "fields": '["campaign_id", "campaign_name"]',
+        },
+        timeout=30,
+    )
+    data = resp.json()
+    if data.get("code") != 0:
+        raise RuntimeError(f"נכשל בשליפת רשימת קמפיינים: {data}")
+    return data["data"].get("list", [])
+
+
+def get_adgroups(advertiser_id: str, campaign_id: str) -> list[dict]:
+    """מחזיר את כל קבוצות המודעות תחת קמפיין נתון: [{"adgroup_id", "adgroup_name"}, ...] -
+    לצורך בדיקת אידמפוטנטיות (לא ליצור adgroup כפול לאותו סרטון בהרצה חוזרת)."""
+    resp = requests.get(
+        f"{config.API_BASE_URL}/adgroup/get/",
+        headers=HEADERS,
+        params={
+            "advertiser_id": advertiser_id,
+            "filtering": json.dumps({"campaign_ids": [campaign_id]}),
+            "fields": '["adgroup_id", "adgroup_name"]',
+        },
+        timeout=30,
+    )
+    data = resp.json()
+    if data.get("code") != 0:
+        raise RuntimeError(f"נכשל בשליפת קבוצות מודעות לקמפיין {campaign_id}: {data}")
+    return data["data"].get("list", [])

@@ -20,6 +20,7 @@ from pathlib import Path
 
 import actions
 import config
+import insights
 import logger
 
 MANIFEST_PATH = Path(config.CREATIVE_BANK_PATH) / "instagram_promo" / "videos.json"
@@ -40,14 +41,32 @@ def launch(advertiser_id: str) -> None:
             f"חסרים קובצי וידאו ב-{VIDEOS_DIR}: {missing} - הורידו אותם מ-Google Drive לפני ההרצה."
         )
 
-    campaign_id = actions.create_campaign(advertiser_id, config.CAMPAIGN_NAME)
-    logger.print_and_log({
-        "level": "action",
-        "action": "create_campaign",
-        "campaign_id": campaign_id,
-        "campaign_name": config.CAMPAIGN_NAME,
-        "dry_run": config.DRY_RUN,
-    })
+    # אידמפוטנטיות: אם קמפיין בשם הזה כבר קיים (למשל מהרצה קודמת שנכשלה באמצע) -
+    # משתמשים בו במקום ליצור כפול. חשוב במיוחד אחרי כשל חלקי (ראו את הבאג שתוקן
+    # ב-actions.create_adgroup - יצר קמפיין אמיתי, נכשל ביצירת ה-adgroup הראשון).
+    existing_campaigns = insights.get_campaigns(advertiser_id) if not config.DRY_RUN else []
+    existing_campaign = next((c for c in existing_campaigns if c.get("campaign_name") == config.CAMPAIGN_NAME), None)
+
+    if existing_campaign:
+        campaign_id = existing_campaign["campaign_id"]
+        logger.print_and_log({
+            "level": "info",
+            "message": f"קמפיין '{config.CAMPAIGN_NAME}' כבר קיים - משתמשים בו במקום ליצור כפול",
+            "campaign_id": campaign_id,
+        })
+    else:
+        campaign_id = actions.create_campaign(advertiser_id, config.CAMPAIGN_NAME)
+        logger.print_and_log({
+            "level": "action",
+            "action": "create_campaign",
+            "campaign_id": campaign_id,
+            "campaign_name": config.CAMPAIGN_NAME,
+            "dry_run": config.DRY_RUN,
+        })
+
+    existing_adgroup_names = set()
+    if not config.DRY_RUN:
+        existing_adgroup_names = {ag["adgroup_name"] for ag in insights.get_adgroups(advertiser_id, campaign_id)}
 
     for item in manifest:
         video_path = VIDEOS_DIR / item["file"]
@@ -57,6 +76,13 @@ def launch(advertiser_id: str) -> None:
             logger.print_and_log({
                 "level": "warning",
                 "message": f"קובץ וידאו חסר (מדלג, DRY_RUN בלבד): {video_path}",
+            })
+            continue
+
+        if adgroup_name in existing_adgroup_names:
+            logger.print_and_log({
+                "level": "info",
+                "message": f"קבוצת מודעות '{adgroup_name}' כבר קיימת - מדלגים (לא יוצרים כפול)",
             })
             continue
 

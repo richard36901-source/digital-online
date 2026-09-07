@@ -11,7 +11,9 @@ update_adgroup_budget (adgroup/update/) עדיין לא נבדק מול TikTok �
 
 import hashlib
 import mimetypes
+from datetime import datetime, timedelta
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 import requests
 
@@ -142,6 +144,11 @@ def create_adgroup(advertiser_id: str, campaign_id: str, adgroup_name: str, dail
             "config.TARGETING_LOCATION_IDS ריק - יש להריץ קודם 'python main.py lookup-locations \"ישראל\"' ולמלא."
         )
 
+    # נדרש בפועל ע"י ה-API גם עם schedule_type=SCHEDULE_FROM_NOW (קוד 40002 בלעדיו -
+    # התגלה מריצה אמיתית). באזור הזמן של חשבון המפרסם (Asia/Jerusalem), עם רווח קטן
+    # קדימה כדי להימנע מדחייה על "זמן עבר" בגלל פערי שעון.
+    schedule_start_time = (datetime.now(ZoneInfo("Asia/Jerusalem")) + timedelta(minutes=5)).strftime("%Y-%m-%d %H:%M:%S")
+
     resp = requests.post(
         f"{config.API_BASE_URL}/adgroup/create/",
         headers=HEADERS,
@@ -155,6 +162,7 @@ def create_adgroup(advertiser_id: str, campaign_id: str, adgroup_name: str, dail
             "budget_mode": "BUDGET_MODE_DAY",
             "budget": daily_budget,
             "schedule_type": "SCHEDULE_FROM_NOW",
+            "schedule_start_time": schedule_start_time,
             "optimization_goal": "CLICK",
             "billing_event": "CPC",
             "bid_type": "BID_TYPE_NO_BID",
