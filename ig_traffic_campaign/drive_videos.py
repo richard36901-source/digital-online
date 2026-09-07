@@ -46,6 +46,7 @@ def _get_drive_service():
 
 
 SHORTCUT_MIME_TYPE = "application/vnd.google-apps.shortcut"
+FOLDER_MIME_TYPE = "application/vnd.google-apps.folder"
 
 
 def list_folder_files(folder_id: str = None) -> list:
@@ -69,19 +70,34 @@ def list_folder_files(folder_id: str = None) -> list:
     return files
 
 
-def resolve_downloadable_id(drive_file: dict) -> str:
+def resolve_downloadable_file(drive_file: dict) -> dict:
     """
-    אם הקובץ הוא קיצור דרך (shortcut) לקובץ אמיתי במקום אחר בדרייב - כפי שהתברר שזה
-    המצב בתיקייה הזו (שגיאת 'fileNotDownloadable' בהרצה האמיתית) - מחזיר את ה-ID
-    של הקובץ המקורי (targetId) במקום ה-ID של הקיצור עצמו, שאין לו תוכן בינארי להוריד.
+    מחזיר את קובץ הווידאו האמיתי שאפשר להוריד, מטפל בשני מקרים לא-ישירים שהתגלו
+    בפועל בתיקייה הזו:
+      1. קיצור דרך (shortcut) - הקובץ האמיתי הוא shortcutDetails.targetId.
+      2. תת-תיקייה (המקרה האמיתי כאן - כל "וידאו" הוא בפועל תיקייה, והקובץ עצמו
+         נמצא בפנים) - יורדים רמה אחת ומאתרים את קובץ הווידאו שבתוכה.
     """
     if drive_file.get("mimeType") == SHORTCUT_MIME_TYPE:
         target_id = drive_file.get("shortcutDetails", {}).get("targetId")
         if not target_id:
             raise RuntimeError(f"'{drive_file['name']}' הוא קיצור דרך אבל אין לו targetId - "
                                 f"בדוק אותו ידנית בדרייב.")
-        return target_id
-    return drive_file["id"]
+        service = _get_drive_service()
+        return service.files().get(fileId=target_id, fields="id, name, mimeType").execute()
+
+    if drive_file.get("mimeType") == FOLDER_MIME_TYPE:
+        inner_files = list_folder_files(drive_file["id"])
+        video_files = [f for f in inner_files if f.get("mimeType", "").startswith("video/")]
+        candidates = video_files or inner_files  # fallback אם ל-Drive אין mimeType video/* מזוהה
+        if len(candidates) == 0:
+            raise RuntimeError(f"התיקייה '{drive_file['name']}' ריקה - אין בה קובץ להוריד.")
+        if len(candidates) > 1:
+            raise RuntimeError(f"נמצאו {len(candidates)} קבצים בתיקייה '{drive_file['name']}': "
+                                f"{[f['name'] for f in candidates]} - לא ברור איזה להוריד.")
+        return resolve_downloadable_file(candidates[0])  # רקורסיה - למקרה שגם הפנימי קיצור/תיקייה
+
+    return drive_file
 
 
 def find_file_by_hint(files: list, hint: str) -> dict:
@@ -125,12 +141,12 @@ def ensure_videos_downloaded() -> dict:
     result = {}
 
     for video in config.VIDEOS:
-        drive_file = find_file_by_hint(files, video["match"])
-        local_path = local_dir / drive_file["name"]
+        matched = find_file_by_hint(files, video["match"])
+        real_file = resolve_downloadable_file(matched)  # פותר תיקיות/קיצורי דרך לקובץ האמיתי
+        local_path = local_dir / real_file["name"]
         if not local_path.exists():
-            downloadable_id = resolve_downloadable_id(drive_file)
-            print(f"מוריד '{drive_file['name']}' (drive id={downloadable_id})...")
-            download_file(downloadable_id, local_path)
+            print(f"מוריד '{real_file['name']}' מתוך '{matched['name']}' (drive id={real_file['id']})...")
+            download_file(real_file["id"], local_path)
         else:
             print(f"'{local_path.name}' כבר קיים מקומית - מדלג על הורדה.")
         result[video["ad_set_name"]] = local_path
