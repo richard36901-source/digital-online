@@ -108,15 +108,16 @@ def generate_dashboard() -> str:
         </div>
       </div>""" for r in all_rows)
 
+    currency = config.currency_symbol()
     table_rows_html = "\n".join(f"""
         <tr>
           <td>{r['ad_name']}</td>
           <td><span class="badge st-{'ENABLE' if r['status'] == 'פעילה' else 'other'}">{r['status']}</span></td>
-          <td>₪{r['spend']:.2f}</td>
+          <td>{currency}{r['spend']:.2f}</td>
           <td>{r['impressions']:,.0f}</td>
           <td>{r['clicks']:,.0f}</td>
           <td>{r['ctr']:.2f}%</td>
-          <td>₪{r['cpc']:.2f}</td>
+          <td>{currency}{r['cpc']:.2f}</td>
         </tr>""" for r in all_rows)
 
     html = f"""<!DOCTYPE html>
@@ -209,7 +210,7 @@ def generate_dashboard() -> str:
 <p class="sub">עודכן לאחרונה: {now_str} · חלון נתונים: {config.REPORT_LOOKBACK_DAYS} ימים אחרונים · יעד: {config.DESTINATION_URL}</p>
 
 <div class="kpis">
-  <div class="kpi"><div class="value">₪{total_spend:.2f}</div><div class="label">הוצאה כוללת</div></div>
+  <div class="kpi"><div class="value">{currency}{total_spend:.2f}</div><div class="label">הוצאה כוללת</div></div>
   <div class="kpi"><div class="value">{total_impressions:,.0f}</div><div class="label">חשיפות</div></div>
   <div class="kpi"><div class="value">{total_clicks:,.0f}</div><div class="label">קליקים</div></div>
   <div class="kpi"><div class="value">{overall_ctr:.2f}%</div><div class="label">CTR ממוצע</div></div>

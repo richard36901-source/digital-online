@@ -607,7 +607,9 @@ loadAds();
 
 @app.route("/")
 def index():
-    return PAGE
+    # ה-"₪" ב-PAGE הוא placeholder קבוע - הכותרות/הוצאה שם הן בפועל במטבע חשבון
+    # המפרסם (config.ADVERTISER_CURRENCY, לאו דווקא ILS - ראו config.currency_symbol).
+    return PAGE.replace("₪", config.currency_symbol())
 
 
 if __name__ == "__main__":

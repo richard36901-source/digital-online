@@ -82,6 +82,15 @@ DAILY_BUDGET_PER_VIDEO_ILS = 10
 # 40001 שהתקבל בפועל), וזה דורש re-authorization מלא מול TikTok כדי לתקן.
 ADVERTISER_CURRENCY = "USD"
 
+# סימני מטבע לתצוגה בדשבורד/לוח הבקרה - הוצאה/CPC/תקציב שמוצגים שם מגיעים ישירות
+# מ-TikTok במטבע חשבון המפרסם (ADVERTISER_CURRENCY), לא ב-ILS בהכרח (בדיוק כמו
+# הבאג עם התקציב - התגלה בפועל שהדשבורד הציג "₪" על סכומים שהם בעצם ב-USD).
+CURRENCY_SYMBOLS = {"USD": "$", "ILS": "₪", "EUR": "€", "GBP": "£"}
+
+
+def currency_symbol() -> str:
+    return CURRENCY_SYMBOLS.get(ADVERTISER_CURRENCY, f"{ADVERTISER_CURRENCY} ")
+
 # שם הקמפיין המשותף לכל קבוצות המודעות שנוצרות דרך campaign_launch.py.
 CAMPAIGN_NAME = "קידום אינסטגרם - ben_nahum_1"
 
