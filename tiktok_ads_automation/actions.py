@@ -211,10 +211,60 @@ def create_adgroup(advertiser_id: str, campaign_id: str, adgroup_name: str, dail
     return data["data"]["adgroup_id"]
 
 
+def get_video_cover_image_id(advertiser_id: str, video_id: str) -> str:
+    """
+    מוצא את תמונת התצוגה (poster) שנוצרה אוטומטית לסרטון שכבר הועלה, ומעלה אותה
+    כתמונה נפרדת לספריית התמונות - TikTok דורש image_ids בכל מודעת SINGLE_VIDEO
+    בנוסף לוידאו עצמו (קוד 40002 "You must upload an image" בלעדיו, אומת בפועל).
+    מחזיר image_id. שמות השדות ב-/file/video/ad/search/ לא אומתו במלואם - סורק
+    באופן גמיש (אותה גישה שעבדה ב-locations.py).
+    """
+    from locations import _find_list
+
+    resp = requests.get(
+        f"{config.API_BASE_URL}/file/video/ad/search/",
+        headers={"Access-Token": config.ACCESS_TOKEN},
+        params={"advertiser_id": advertiser_id},
+        timeout=30,
+    )
+    data = resp.json()
+    if data.get("code") != 0:
+        raise RuntimeError(f"נכשל בחיפוש פרטי וידאו {video_id}: {data}")
+
+    poster_url = None
+    for item in _find_list(data["data"]):
+        if item.get("video_id") == video_id:
+            poster_url = item.get("poster_url") or item.get("video_cover_url")
+            break
+
+    if not poster_url:
+        raise RuntimeError(
+            f"לא נמצאה תמונת תצוגה (poster_url) לסרטון {video_id} ב-/file/video/ad/search/ - "
+            "יכול להיות ששם השדה שונה בפועל, יש לבדוק את התגובה המלאה ולעדכן."
+        )
+
+    resp = requests.post(
+        f"{config.API_BASE_URL}/file/image/ad/upload/",
+        headers=HEADERS,
+        json={
+            "advertiser_id": advertiser_id,
+            "upload_type": "UPLOAD_BY_URL",
+            "image_url": poster_url,
+        },
+        timeout=60,
+    )
+    data = resp.json()
+    if data.get("code") != 0:
+        raise RuntimeError(f"נכשל בהעלאת תמונת התצוגה לסרטון {video_id}: {data}")
+    return data["data"]["image_id"]
+
+
 def create_ad(advertiser_id: str, adgroup_id: str, ad_name: str, video_id: str, ad_text: str) -> str:
     """יוצר מודעה בודדת בתוך קבוצת מודעות קיימת, עם וידאו + טקסט + קישור יעד. מחזיר ad_id."""
     if config.DRY_RUN:
         return f"DRY_RUN_AD_ID_{ad_name}"
+
+    image_id = get_video_cover_image_id(advertiser_id, video_id)
 
     resp = requests.post(
         f"{config.API_BASE_URL}/ad/create/",
@@ -229,6 +279,7 @@ def create_ad(advertiser_id: str, adgroup_id: str, ad_name: str, video_id: str, 
                 "identity_type": config.IDENTITY_TYPE,
                 "identity_id": config.IDENTITY_ID,
                 "video_id": video_id,
+                "image_ids": [image_id],  # נדרש בפועל ע"פ ה-API - ראו get_video_cover_image_id
                 "landing_page_url": config.DESTINATION_URL,
                 "call_to_action": "LEARN_MORE",
             }],
