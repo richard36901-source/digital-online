@@ -59,13 +59,19 @@ CAMPAIGN_OBJECTIVE = "OUTCOME_ENGAGEMENT"
 DESTINATION_TYPE = "INSTAGRAM_PROFILE"
 OPTIMIZATION_GOAL = "PROFILE_AND_PAGE_ENGAGEMENT"
 BILLING_EVENT = "IMPRESSIONS"
-# לא נשלח יותר ל-create_ad_set בפועל (ראו הערה שם) - ה-Ad Set שהצליח ב-Ads Manager
-# לא הגדיר bid_strategy מפורש בכלל, ושליחתו במפורש גרמה לדחיית optimization_goal.
-# נשאר כאן לתיעוד בלבד של מה ש-Meta כנראה בוחרת כברירת מחדל.
-BID_STRATEGY = "LOWEST_COST_WITHOUT_CAP"
 
 # תקציב יומי לכל Ad Set בנפרד (לא לקמפיין!), באגורות. 10 ש"ח = 1000 אגורות.
 DAILY_BUDGET_AGOROT_PER_ADSET = 1000
+
+# אומת בפועל (7/9/2026): LOWEST_COST_WITHOUT_CAP נדחה (עם אותה שגיאה שהאשימה
+# optimization_goal, הודעה מטעה מ-Meta). השמטת bid_strategy לגמרי גם נכשלה - Meta
+# בוחרת ברירת מחדל שדורשת bid_amount מפורש (שגיאה: "נדרש סכום הצעת מחיר לאסטרטגיית
+# הצעת מחיר"). הפתרון: LOWEST_COST_WITH_BID_CAP עם bid_amount שווה לתקציב היומי
+# המלא - זה בפועל שקול ל"בלי תקציב אמיתי" (אירוע engagement בודד לא יעלה כמעט לעולם
+# תקציב יומי שלם), אבל מספק ערך מספרי כנדרש ע"י ה-API. אפשר/כדאי לכוונן ידנית
+# ב-Ads Manager לפני הפעלה בפועל.
+BID_STRATEGY = "LOWEST_COST_WITH_BID_CAP"
+BID_AMOUNT_AGOROT = DAILY_BUDGET_AGOROT_PER_ADSET
 
 # כפתור קריאה לפעולה על המודעה. לא בטוח שנדרש בכלל למודעות "ביקור בפרופיל" - לוודא
 # בהרצה הראשונה; אם ה-API דוחה את זה, אפשר לנסות בלי call_to_action כלל.
