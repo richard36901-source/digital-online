@@ -2,6 +2,7 @@
 credentials.json
 token.json
 .env
+meta_api_credentials.txt
 
 # נוצר אוטומטית בזמן ריצה
 logs/
