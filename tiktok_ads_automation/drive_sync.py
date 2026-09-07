@@ -91,8 +91,15 @@ def list_folder_files(service, folder_id: str) -> list[dict]:
 
 
 def _next_available_number() -> int:
-    existing = [int(p.stem) for p in VIDEOS_DIR.glob("*") if p.stem.isdigit()]
-    return max(existing, default=0) + 1
+    """
+    המספר הבא הפנוי לשם קובץ חדש (N.mov) - חייב להתחשב גם במספרים שכבר שמורים
+    ב-KNOWN_FILE_MAP (1-8, לקבצים ידועים ספציפיים), לא רק במה שכבר קיים בדיסק.
+    אחרת, אם קובץ לא-מוכר מעובד לפני שקובץ מוכר-אך-עדיין-לא-הורד באותה ריצה, הוא
+    עלול "לתפוס" מספר ששמור בפועל לקובץ אחר לגמרי.
+    """
+    on_disk = [int(p.stem) for p in VIDEOS_DIR.glob("*") if p.stem.isdigit()]
+    reserved = [int(Path(name).stem) for name in KNOWN_FILE_MAP.values() if Path(name).stem.isdigit()]
+    return max(on_disk + reserved, default=0) + 1
 
 
 def _load_manifest() -> list[dict]:

@@ -5,6 +5,8 @@
   python main.py authorize          - שלב חד-פעמי: מדפיס קישור הרשאה, מבקש להדביק את ה-auth_code שחוזר
   python main.py lookup-locations "ישראל"  - מחפש location_id לטירגוט (למילוי TARGETING_LOCATION_IDS)
   python main.py lookup-identities  - מציג את כל ה-Identities הזמינות (למילוי IDENTITY_ID)
+  python main.py drive-authorize    - שלב חד-פעמי: מאשר גישה ל-Google Drive (ראו drive_sync.py)
+  python main.py drive-sync         - מוריד סרטונים חדשים מ-Drive אוטומטית, בלי הורדה ידנית
   python main.py launch             - יוצר קמפיין חדש מ-creative_bank/instagram_promo/ (ראו campaign_launch.py)
   python main.py dashboard          - מרענן דשבורד ביצועים (performance_dashboard.html) - אילו סרטונים מתבלטים
   python main.py                    - מריץ על כל חשבונות המפרסם ב-config.ADVERTISER_ACCOUNTS:
@@ -26,6 +28,7 @@ import campaign_launch
 import config
 import creative_rotation
 import dashboard
+import drive_sync
 import identities
 import insights
 import locations
@@ -57,6 +60,15 @@ def cmd_lookup_identities():
         print(json.dumps(item, ensure_ascii=False))
     print('\nחפשו שדה שנראה כמו "identity_id" (או דומה) בפלט למעלה, והעתיקו אותו ל-config.IDENTITY_ID.')
     print('שימו לב גם לשדה "identity_type" המתאים - יכול לחייב לעדכן גם את config.IDENTITY_TYPE.')
+
+
+def cmd_drive_authorize():
+    drive_sync.get_drive_service()
+    print(f"הרשאה ל-Google Drive הושלמה בהצלחה - הטוקן נשמר ב-{config.DRIVE_TOKEN_FILE}")
+
+
+def cmd_drive_sync():
+    drive_sync.sync()
 
 
 def cmd_launch():
@@ -178,6 +190,14 @@ def main():
 
     if len(sys.argv) > 1 and sys.argv[1] == "lookup-identities":
         cmd_lookup_identities()
+        return
+
+    if len(sys.argv) > 1 and sys.argv[1] == "drive-authorize":
+        cmd_drive_authorize()
+        return
+
+    if len(sys.argv) > 1 and sys.argv[1] == "drive-sync":
+        cmd_drive_sync()
         return
 
     if len(sys.argv) > 1 and sys.argv[1] == "launch":

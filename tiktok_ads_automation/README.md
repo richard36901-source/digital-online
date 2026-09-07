@@ -115,12 +115,12 @@ DRY_RUN = False
 ### לפני הרצה אמיתית - שלושה דברים למלא
 
 1. **הורדת הסרטונים** - הקבצים ב-Google Drive לא נמצאים בגיט (כבדים מדי, וזה גם
-   הכוונה - ראו `.gitignore`). הורידו אותם ידנית ל-`creative_bank/instagram_promo/videos/`
-   כשהשם תואם למה שרשום ב-`creative_bank/instagram_promo/videos.json`:
-   - 5 הסרטונים הראשונים (עם שמות תוכן) - השם שכבר יש להם בדרייב.
-   - 8 סרטונים נוספים שנוספו בלי שם תוכן - שמרו/שנו את שמם ל-`1.mov` עד `8.mov`
-     (בכל סדר - הכיתוב זהה לכולם כרגע: "עוד תוכן שווה - עקבו אחרינו באינסטגרם".
-     עדכנו את `videos.json` עם כיתוב מותאם לכל אחד ברגע שתדעו על מה הוא).
+   הכוונה - ראו `.gitignore`). שתי אפשרויות:
+   - **אוטומטי (מומלץ)** - `python main.py drive-sync` מוריד הכל אוטומטית, ראו
+     "סנכרון אוטומטי מ-Google Drive" למטה להגדרה חד-פעמית.
+   - **ידני** - הורידו בעצמכם ל-`creative_bank/instagram_promo/videos/` כשהשם תואם
+     למה שרשום ב-`creative_bank/instagram_promo/videos.json`: 5 הסרטונים הראשונים
+     בשם התוכן שכבר יש להם בדרייב, ו-8 נוספים בשם `1.mov` עד `8.mov`.
 
 2. **טירגוט (TARGETING_LOCATION_IDS)** - ריק כברירת מחדל. אחרי שיש `ACCESS_TOKEN`
    תקף:
@@ -167,6 +167,44 @@ python main.py launch
 לבדוק בפועל** - הסביבה שבה זה נכתב חסומה רשתית מ-TikTok. יכול להיות ששם שדה או ערך
 enum ישתנה/יהיה שגוי. אם מתקבלת שגיאת ולידציה עם קוד/הודעה מ-TikTok - הדביקו אותה
 בשיחה עם Claude ותתוקן בקוד בהתאם למה ש-TikTok בפועל מצפה.
+
+## סנכרון אוטומטי מ-Google Drive (drive_sync.py)
+
+מוריד את סרטוני הקמפיין אוטומטית מתיקיית ה-Drive, במקום להוריד כל קובץ ידנית
+בדפדפן. שימושי גם להרצה חוזרת - כשמוסיפים סרטונים חדשים לתיקייה, `drive-sync`
+מזהה רק את החדשים ומוריד אותם (לא מוריד שוב קבצים שכבר קיימים אצלכם).
+
+### הגדרה חד-פעמית (Google Cloud Console)
+
+1. גשו ל-https://console.cloud.google.com/ (עם אותו חשבון Google שיש לו גישה
+   לתיקיית הסרטונים בדרייב - אם התיקייה שייכת לחשבון אחר, בקשו ממנו לשתף אותה
+   קודם עם החשבון שתשתמשו בו כאן).
+2. צרו פרויקט חדש (או בחרו קיים).
+3. חפשו **"Google Drive API"** ב-APIs & Services → Library, ולחצו **Enable**.
+4. עברו ל-**APIs & Services → OAuth consent screen**. בחרו "External", מלאו שם
+   אפליקציה (כל שם) ואימייל, שמרו. אם מוצג "Testing" - הוסיפו את כתובת המייל
+   שתתחברו איתה תחת "Test users".
+5. עברו ל-**APIs & Services → Credentials → Create Credentials → OAuth client ID**.
+   בחרו Application type: **Desktop app**. תנו שם, צרו.
+6. **הורידו את קובץ ה-JSON** של הפרטים שנוצרו, שמרו אותו בתיקיית
+   `tiktok_ads_automation/` בשם **`client_secret.json`** בדיוק (הקובץ הזה לא ב-git).
+
+### הרשאה והרצה
+
+```bash
+python main.py drive-authorize
+```
+
+ייפתח דפדפן לאישור גישה לחשבון ה-Google שלכם (קריאה-בלבד, `drive.readonly`).
+הטוקן יישמר ב-`drive_token.json` (לא ב-git) ומתחדש אוטומטית בפעם הבאה.
+
+```bash
+python main.py drive-sync
+```
+
+מוריד כל סרטון חדש בתיקייה ל-`creative_bank/instagram_promo/videos/`, ומעדכן
+את `videos.json` אוטומטית עם ערך ברירת מחדל לסרטונים חדשים (שם ממוספר + כיתוב
+גנרי) - ערכו את הכיתוב בעצמכם ברגע שתדעו על מה כל סרטון חדש.
 
 ## דשבורד ביצועים - אילו סרטונים מתבלטים (dashboard.py)
 
@@ -289,6 +327,7 @@ crontab -e
 - `creative_rotation.py` - בחירת הווידאו/קופי הבא בתור מהבנק (לניהול מודעות קיימות)
 - `webapp.py` - לוח בקרה מקומי עם כפתורים (`py webapp.py` -> http://localhost:5000)
 - `campaign_launch.py` - השקת קמפיין חדש מאפס מ-`creative_bank/instagram_promo/`
+- `drive_sync.py` - הורדת סרטונים אוטומטית מ-Google Drive (`drive-authorize`/`drive-sync`)
 - `locations.py` - חיפוש `location_id` לטירגוט גיאוגרפי
 - `identities.py` - רשימת Identities זמינות (`IDENTITY_ID`)
 - `dashboard.py` - בונה `performance_dashboard.html` (דירוג סרטונים לפי CTR, קריאה-בלבד)
