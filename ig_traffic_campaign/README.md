@@ -103,14 +103,22 @@ python campaign_launch.py
 **רק אחרי** ש-DRY RUN עבר בסדר, `check_permissions.py` אישר הרשאות תקינות, ו-Drive
 מוגדר:
 
-```python
-# ב-config.py
-DRY_RUN = False
+`DRY_RUN` נשלט ע"י משתנה סביבה (כמו `META_ACCESS_TOKEN`) - **אין צורך לערוך את
+`config.py`** בכל הרצה (זה בכוונה, כדי לא לגרום להתנגשויות חוזרות ב-`git pull` בגלל
+עריכה מקומית לא-מחויבת):
+
+```bash
+# Windows cmd:
+set DRY_RUN=false
+# macOS/Linux:
+export DRY_RUN=false
 ```
 
 ```bash
 python campaign_launch.py
 ```
+
+בלי `DRY_RUN=false` מוגדר, ברירת המחדל היא תמיד `True` (בטוח).
 
 שימו לב: **גם בהרצה אמיתית, הקמפיין וכל הסטים/מודעות נוצרים במצב `PAUSED`** (לא
 `ACTIVE`) - זו החלטת בטיחות מכוונת. שום דבר לא יתחיל להוציא כסף עד שתיכנסו ל-Ads
