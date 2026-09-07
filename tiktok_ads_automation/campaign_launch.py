@@ -26,6 +26,28 @@ import logger
 MANIFEST_PATH = Path(config.CREATIVE_BANK_PATH) / "instagram_promo" / "videos.json"
 VIDEOS_DIR = Path(config.CREATIVE_BANK_PATH) / "instagram_promo" / "videos"
 
+# המינימום היומי האמיתי של TikTok לכל ad group, לפי מטבע - אומת בפועל מול ה-API
+# (קוד 40002: "Your budget setting must not be less than $5.00." כשניסינו $3.32).
+# המשתמש בחר במפורש להשתמש במינימום הזה בדיוק (לא יותר).
+KNOWN_MIN_DAILY_BUDGET = {"USD": 5.0}
+
+
+def _resolve_daily_budget(advertiser_id: str) -> tuple[str, float]:
+    """
+    קובע את מטבע חשבון המפרסם ואת התקציב היומי בפועל לכל סרטון: ממיר את הכוונה
+    בש"ח (config.DAILY_BUDGET_PER_VIDEO_ILS) למטבע החשבון, ואז מוודא שלא נופל
+    מתחת למינימום האמיתי של TikTok (KNOWN_MIN_DAILY_BUDGET) - אם כן, מעלים בדיוק
+    למינימום (לא יותר).
+    """
+    currency = actions.get_advertiser_currency(advertiser_id)
+    daily_budget = actions.convert_ils_to_currency(currency, config.DAILY_BUDGET_PER_VIDEO_ILS)
+
+    minimum = KNOWN_MIN_DAILY_BUDGET.get(currency)
+    if minimum and daily_budget < minimum:
+        daily_budget = minimum
+
+    return currency, daily_budget
+
 
 def load_manifest() -> list[dict]:
     if not MANIFEST_PATH.exists():
@@ -80,12 +102,11 @@ def launch(advertiser_id: str) -> None:
         currency = "ILS"
         daily_budget = config.DAILY_BUDGET_PER_VIDEO_ILS
     else:
-        currency = actions.get_advertiser_currency(advertiser_id)
-        daily_budget = actions.convert_ils_to_currency(currency, config.DAILY_BUDGET_PER_VIDEO_ILS)
+        currency, daily_budget = _resolve_daily_budget(advertiser_id)
         logger.print_and_log({
             "level": "info",
-            "message": f"מטבע חשבון המפרסם: {currency}. תקציב יומי לכל סרטון: "
-                        f"{config.DAILY_BUDGET_PER_VIDEO_ILS} ILS ~= {daily_budget} {currency}",
+            "message": f"מטבע חשבון המפרסם: {currency}. תקציב יומי לכל סרטון: {daily_budget} {currency} "
+                        f"(כוונה מקורית: {config.DAILY_BUDGET_PER_VIDEO_ILS} ILS, הועלה למינימום האמיתי של TikTok אם היה נמוך ממנו)",
         })
 
     for item in manifest:
@@ -166,12 +187,11 @@ def fix_existing_budgets(advertiser_id: str) -> None:
         return
     campaign_id = campaign["campaign_id"]
 
-    currency = actions.get_advertiser_currency(advertiser_id)
-    correct_budget = actions.convert_ils_to_currency(currency, config.DAILY_BUDGET_PER_VIDEO_ILS)
+    currency, correct_budget = _resolve_daily_budget(advertiser_id)
     logger.print_and_log({
         "level": "info",
         "message": f"מטבע חשבון המפרסם: {currency}. מתקנים את כל קבוצות המודעות ל-"
-                    f"{correct_budget} {currency} ליום (= {config.DAILY_BUDGET_PER_VIDEO_ILS} ש\"ח).",
+                    f"{correct_budget} {currency} ליום (המינימום האמיתי של TikTok, לפי בחירת המשתמש).",
     })
 
     adgroups = insights.get_adgroups(advertiser_id, campaign_id)
