@@ -59,6 +59,9 @@ CAMPAIGN_OBJECTIVE = "OUTCOME_ENGAGEMENT"
 DESTINATION_TYPE = "INSTAGRAM_PROFILE"
 OPTIMIZATION_GOAL = "PROFILE_AND_PAGE_ENGAGEMENT"
 BILLING_EVENT = "IMPRESSIONS"
+# לא נשלח יותר ל-create_ad_set בפועל (ראו הערה שם) - ה-Ad Set שהצליח ב-Ads Manager
+# לא הגדיר bid_strategy מפורש בכלל, ושליחתו במפורש גרמה לדחיית optimization_goal.
+# נשאר כאן לתיעוד בלבד של מה ש-Meta כנראה בוחרת כברירת מחדל.
 BID_STRATEGY = "LOWEST_COST_WITHOUT_CAP"
 
 # תקציב יומי לכל Ad Set בנפרד (לא לקמפיין!), באגורות. 10 ש"ח = 1000 אגורות.

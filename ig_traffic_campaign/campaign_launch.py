@@ -72,13 +72,16 @@ def create_ad_set(campaign_id: str, name: str) -> str:
     # שנבנתה ידנית ב-Ads Manager (ראו ההערה ב-config.py). זיהוי הפרופיל הספציפי
     # (ben_nahum_1) נעשה ברמת הקריאטיב (object_story_spec.instagram_actor_id),
     # לא כאן.
+    # בכוונה בלי bid_strategy: השוואה מול אותה טיוטה (debug_compare_campaigns.py)
+    # הראתה שב-Ad Set שהצליח השדה הזה לא מוגדר בכלל (Meta לא החזירה אותו) - שליחת
+    # ערך מפורש (היה "LOWEST_COST_WITHOUT_CAP") היא ככל הנראה מה שגרם לדחיית
+    # optimization_goal עם קהל Advantage+ - עדיף להשאיר את זה ל-ברירת המחדל של Meta.
     url = f"{config.GRAPH_URL}/act_{config.AD_ACCOUNT_ID}/adsets"
     resp = requests.post(url, data={
         "name": f"{name} - Ad Set",
         "campaign_id": campaign_id,
         "daily_budget": config.DAILY_BUDGET_AGOROT_PER_ADSET,
         "billing_event": config.BILLING_EVENT,
-        "bid_strategy": config.BID_STRATEGY,
         "optimization_goal": config.OPTIMIZATION_GOAL,
         "destination_type": config.DESTINATION_TYPE,
         "promoted_object": json.dumps({"page_id": config.PAGE_ID}),
