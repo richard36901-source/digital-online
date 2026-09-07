@@ -25,8 +25,12 @@ AD_ACCOUNT_ID = "330184635273905"
 # IG_ACTOR_ID: המזהה המספרי (לא שם המשתמש!) של פרופיל האינסטגרם ben_nahum_1,
 #              כפי שמחובר לדף הפייסבוק דרך Instagram Business/Creator Account.
 # שניהם לא ידועים מראש - הרץ python check_permissions.py כדי לגלות אותם ולמלא כאן.
+# PAGE_ID לא ידוע/לא נדרש - חשבון האינסטגרם מוקצה ישירות ל-Business Portfolio
+# (naan1930store) בלי דף פייסבוק מקושר. campaign_launch.py כבר יודע להתמודד עם זה.
 PAGE_ID = "PASTE_PAGE_ID_HERE"
-IG_ACTOR_ID = "PASTE_IG_ACTOR_ID_HERE"
+# אותר דרך Business Settings -> Accounts -> Instagram accounts -> ben_nahum_1
+# (business_id=2504083516632376, selected_asset_id בכתובת ה-URL)
+IG_ACTOR_ID = "105029402244816"
 IG_USERNAME = "ben_nahum_1"  # לתיעוד/ולידציה בלבד - ה-API עובד לפי IG_ACTOR_ID
 
 # ==== הקמפיין ====
