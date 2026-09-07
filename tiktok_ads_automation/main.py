@@ -10,6 +10,9 @@
   python main.py launch             - יוצר קמפיין חדש מ-creative_bank/instagram_promo/ (ראו campaign_launch.py)
   python main.py fix-budgets        - תיקון חד-פעמי: מעדכן את תקציב קבוצות המודעות הקיימות
                                        למטבע הנכון של חשבון המפרסם (ראו get_advertiser_currency)
+  python main.py rename-videos      - תיקון חד-פעמי: משנה את שם 8 קבוצות המודעות/מודעות
+                                       הממוספרות (1.mov-8.mov) לשם התוכן האמיתי (ראו
+                                       campaign_launch.NUMBERED_VIDEO_RENAME_MAP)
   python main.py dashboard          - מרענן דשבורד ביצועים (performance_dashboard.html) - אילו סרטונים מתבלטים
   python main.py                    - מריץ על כל חשבונות המפרסם ב-config.ADVERTISER_ACCOUNTS:
                                          1. מושך ביצועים (insights)
@@ -87,6 +90,14 @@ def cmd_fix_budgets():
         sys.exit(1)
     advertiser_id = next(iter(config.ADVERTISER_ACCOUNTS.values()))
     campaign_launch.fix_existing_budgets(advertiser_id)
+
+
+def cmd_rename_videos():
+    if not config.ADVERTISER_ACCOUNTS:
+        print("שגיאה: אין חשבונות מפרסם ב-config.ADVERTISER_ACCOUNTS.")
+        sys.exit(1)
+    advertiser_id = next(iter(config.ADVERTISER_ACCOUNTS.values()))
+    campaign_launch.rename_numbered_videos(advertiser_id)
 
 
 def cmd_dashboard():
@@ -216,6 +227,10 @@ def main():
 
     if len(sys.argv) > 1 and sys.argv[1] == "fix-budgets":
         cmd_fix_budgets()
+        return
+
+    if len(sys.argv) > 1 and sys.argv[1] == "rename-videos":
+        cmd_rename_videos()
         return
 
     if len(sys.argv) > 1 and sys.argv[1] == "dashboard":

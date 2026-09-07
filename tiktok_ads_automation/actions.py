@@ -88,6 +88,47 @@ def update_adgroup_budget(advertiser_id: str, adgroup_id: str, new_budget: float
     return {"dry_run": False, "action": "update_budget", "adgroup_id": adgroup_id, "budget": new_budget, "result": data}
 
 
+def rename_adgroup(advertiser_id: str, adgroup_id: str, new_name: str) -> dict:
+    """משנה את שם קבוצת המודעות (adgroup_name) - שדה מתועד ב-AdgroupUpdateBody הרשמי
+    (adgroupName), לא נבדק בפועל מול ה-API - אם מתקבלת שגיאת ולידציה, הדביקו אותה."""
+    if config.DRY_RUN:
+        return {"dry_run": True, "action": "rename_adgroup", "adgroup_id": adgroup_id, "new_name": new_name}
+
+    resp = requests.post(
+        f"{config.API_BASE_URL}/adgroup/update/",
+        headers=HEADERS,
+        json={"advertiser_id": advertiser_id, "adgroup_id": adgroup_id, "adgroup_name": new_name},
+        timeout=30,
+    )
+    data = resp.json()
+    if data.get("code") != 0:
+        raise RuntimeError(f"נכשל בשינוי שם קבוצת מודעות {adgroup_id}: {data}")
+    return {"dry_run": False, "action": "rename_adgroup", "adgroup_id": adgroup_id, "new_name": new_name, "result": data}
+
+
+def rename_ad(advertiser_id: str, adgroup_id: str, ad_id: str, new_name: str) -> dict:
+    """משנה את שם המודעה (ad_name) - שדה מתועד ב-AdUpdateBody הרשמי (בתוך creatives[].adName,
+    עם patch_update=True לעדכון חלקי בלי לגעת בשאר שדות הקריאטיב), לא נבדק בפועל מול ה-API."""
+    if config.DRY_RUN:
+        return {"dry_run": True, "action": "rename_ad", "ad_id": ad_id, "new_name": new_name}
+
+    resp = requests.post(
+        f"{config.API_BASE_URL}/ad/update/",
+        headers=HEADERS,
+        json={
+            "advertiser_id": advertiser_id,
+            "adgroup_id": adgroup_id,
+            "creatives": [{"ad_id": ad_id, "ad_name": new_name}],
+            "patch_update": True,
+        },
+        timeout=30,
+    )
+    data = resp.json()
+    if data.get("code") != 0:
+        raise RuntimeError(f"נכשל בשינוי שם מודעה {ad_id}: {data}")
+    return {"dry_run": False, "action": "rename_ad", "ad_id": ad_id, "new_name": new_name, "result": data}
+
+
 def get_advertiser_currency(advertiser_id: str) -> str:
     """
     מחזיר את מטבע החיוב של חשבון המפרסם (למשל "USD", לא בהכרח "ILS") - קריטי כי

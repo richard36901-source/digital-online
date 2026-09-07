@@ -208,3 +208,76 @@ def fix_existing_budgets(advertiser_id: str) -> None:
         })
 
     print(f"\nתוקנו {len(adgroups)} קבוצות מודעות לתקציב {correct_budget} {currency} ליום.")
+
+
+# תיקון חד-פעמי: 8 הסרטונים האלה סונכרנו בהתחלה עם שמות גנריים (1.mov-8.mov) כי
+# עדיין לא היה שם תוכן ידוע ב-Drive - מאז המשתמש ארגן אותם ב-Drive בתיקיות-בת עם
+# שמות תוכן אמיתיים (ראו drive_sync.KNOWN_FILE_MAP המעודכן), וביקש שהשמות המוצגים
+# יתאמו. ממפה שם ישן (adgroup_name קיים ב-TikTok) לשם חדש.
+NUMBERED_VIDEO_RENAME_MAP = {
+    "1.mov": "3 שאלות משמעות.mov",
+    "2.mov": "תודעה הישרדותית תודעת הפסיכולוג תודעת מאסטר.mov",
+    "3.mov": "לבטל את ההתנגדות עוד לפני שהיא צפה.mov",
+    "4.mov": "שיחת מכירה זה לא חוקר ונחקר.mov",
+    "5.mov": "יהיו רק 21 מיליון.mov",
+    "6.mov": "גישת התלמיד.mov",
+    "7.mov": "החלטות ממקום רגשי - אישיות מקדמת.mov",
+    "8.mov": "פחד זה פיקציה.mov",
+}
+
+
+def rename_numbered_videos(advertiser_id: str) -> None:
+    """
+    מבצע את התיקון שמתואר ב-NUMBERED_VIDEO_RENAME_MAP: משנה בפועל ב-TikTok את שם
+    קבוצת המודעות והמודעה (adgroup_name/ad_name) מהשם הגנרי הישן לשם התוכן האמיתי,
+    ומעביר גם את הקובץ המקומי (אם קיים) לשם החדש.
+    """
+    if config.DRY_RUN:
+        raise RuntimeError("rename_numbered_videos דורש DRY_RUN=False - זו פעולה על נתונים אמיתיים ב-TikTok.")
+
+    existing_campaigns = insights.get_campaigns(advertiser_id)
+    campaign = next((c for c in existing_campaigns if c.get("campaign_name") == config.CAMPAIGN_NAME), None)
+    if not campaign:
+        print(f"לא נמצא קמפיין בשם '{config.CAMPAIGN_NAME}' - אין מה לשנות.")
+        return
+    campaign_id = campaign["campaign_id"]
+
+    adgroups_by_name = {ag["adgroup_name"]: ag["adgroup_id"] for ag in insights.get_adgroups(advertiser_id, campaign_id)}
+    ad_id_by_adgroup = {a["adgroup_id"]: a["ad_id"] for a in insights.get_ads_for_campaign(advertiser_id, campaign_id)}
+
+    renamed = 0
+    for old_file, new_file in NUMBERED_VIDEO_RENAME_MAP.items():
+        old_name = f"{config.CAMPAIGN_NAME} - {old_file}"
+        new_name = f"{config.CAMPAIGN_NAME} - {new_file}"
+
+        adgroup_id = adgroups_by_name.get(old_name)
+        if not adgroup_id:
+            logger.print_and_log({
+                "level": "warning",
+                "message": f"לא נמצאה קבוצת מודעות בשם '{old_name}' - מדלגים (אולי כבר שונתה)",
+            })
+            continue
+
+        result = actions.rename_adgroup(advertiser_id, adgroup_id, new_name)
+        logger.print_and_log({
+            "level": "action", "action": "rename_adgroup", "adgroup_id": adgroup_id,
+            "old_name": old_name, "new_name": new_name, "result": result,
+        })
+
+        ad_id = ad_id_by_adgroup.get(adgroup_id)
+        if ad_id:
+            result = actions.rename_ad(advertiser_id, adgroup_id, ad_id, new_name)
+            logger.print_and_log({
+                "level": "action", "action": "rename_ad", "ad_id": ad_id,
+                "old_name": old_name, "new_name": new_name, "result": result,
+            })
+
+        old_path = VIDEOS_DIR / old_file
+        new_path = VIDEOS_DIR / new_file
+        if old_path.exists() and not new_path.exists():
+            old_path.rename(new_path)
+            print(f"קובץ מקומי שונה: {old_file} -> {new_file}")
+
+        renamed += 1
+
+    print(f"\nשונו {renamed} שמות. רעננו את הדשבורד/הפאנל כדי לראות את השמות החדשים.")

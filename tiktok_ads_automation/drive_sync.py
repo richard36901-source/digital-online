@@ -23,22 +23,25 @@ import config
 VIDEOS_DIR = Path(config.CREATIVE_BANK_PATH) / "instagram_promo" / "videos"
 MANIFEST_PATH = Path(config.CREATIVE_BANK_PATH) / "instagram_promo" / "videos.json"
 
-# מיפוי קבוע של קבצים שכבר זוהו/נקראו ידנית (5 סרטונים עם שם תוכן + 8 ממוספרים) -
-# כדי לא "לגלות" אותם מחדש בכל סנכרון ולתת להם שם אחר בטעות.
+# מיפוי קבוע של קבצים שכבר זוהו/נקראו ידנית - כדי לא "לגלות" אותם מחדש בכל סנכרון
+# ולתת להם שם אחר בטעות. 8 מהם היו במקור ממוספרים (1.mov-8.mov) כי כשסונכרנו
+# לראשונה לא היה שם תוכן ידוע ב-Drive - מאז אורגנו ב-Drive בתיקיות-בת עם שמות
+# תוכן אמיתיים (ראו list_folder_files), ועודכנו כאן בהתאם (ראו גם
+# campaign_launch.rename_numbered_videos - משנה גם את השם בפועל ב-TikTok).
 KNOWN_FILE_MAP = {
     "1CAoFNxQ3zpEwHO64-DIee6hoeSecgzju": "אפקט הסוכר.mov",
     "1MZGCf4GZTzyW4K4YRV-6YYQzE-i939Xv": "מה זה ביטקוין.mov",
     "1oL498LSgCYNqWQW7vHyRMK3mzH7BOfSH": "בסוף אנשים קונים מחקרים.mov",
     "1Zi5CvI9CI_cPIl0AJHO8oLcX4inL1hh2": "שוק ההון או נדלן.mov",
     "1PzlFs9qaIbiqWF7-oug2di7R-3FuWEF9": "למה קהילה זה כזה חשוב.mov",
-    "1vd22L5n1GQZ5In6Fet5DeH4aLzbQWd6F": "1.mov",
-    "1DFjPZhCE9SXwhx7A_mOnE7JCQ82EVQS_": "2.mov",
-    "1psJ9zUgRXn83UmFUg_6wvVrjZVTlhyty": "3.mov",
-    "1iYQ4ULMybBrQjMZ6XeLq5kj0Kxu0-PPT": "4.mov",
-    "1cb92wcH47QziwuGefINqM261KwVgdSXJ": "5.mov",
-    "1JvSaB7F61VHLlcsQcg0MFDs5hszdT2q9": "6.mov",
-    "17WriEG6jwBb5m1epDwbQLNFwsWHhXeRT": "7.mov",
-    "1dZ5j1KPywcQ9r_vE--wzsDOalQ_YiSmo": "8.mov",
+    "1vd22L5n1GQZ5In6Fet5DeH4aLzbQWd6F": "3 שאלות משמעות.mov",
+    "1DFjPZhCE9SXwhx7A_mOnE7JCQ82EVQS_": "תודעה הישרדותית תודעת הפסיכולוג תודעת מאסטר.mov",
+    "1psJ9zUgRXn83UmFUg_6wvVrjZVTlhyty": "לבטל את ההתנגדות עוד לפני שהיא צפה.mov",
+    "1iYQ4ULMybBrQjMZ6XeLq5kj0Kxu0-PPT": "שיחת מכירה זה לא חוקר ונחקר.mov",
+    "1cb92wcH47QziwuGefINqM261KwVgdSXJ": "יהיו רק 21 מיליון.mov",
+    "1JvSaB7F61VHLlcsQcg0MFDs5hszdT2q9": "גישת התלמיד.mov",
+    "17WriEG6jwBb5m1epDwbQLNFwsWHhXeRT": "החלטות ממקום רגשי - אישיות מקדמת.mov",
+    "1dZ5j1KPywcQ9r_vE--wzsDOalQ_YiSmo": "פחד זה פיקציה.mov",
 }
 
 SCOPES = ["https://www.googleapis.com/auth/drive.readonly"]
@@ -74,12 +77,16 @@ def get_drive_service():
     return build("drive", "v3", credentials=creds)
 
 
-def list_folder_files(service, folder_id: str) -> list[dict]:
+FOLDER_MIME_TYPE = "application/vnd.google-apps.folder"
+
+
+def _list_children(service, folder_id: str, extra_query: str = "") -> list[dict]:
     files = []
     page_token = None
+    query = f"'{folder_id}' in parents and trashed = false" + extra_query
     while True:
         resp = service.files().list(
-            q=f"'{folder_id}' in parents and trashed = false",
+            q=query,
             fields="nextPageToken, files(id, name, mimeType)",
             pageToken=page_token,
         ).execute()
@@ -90,16 +97,35 @@ def list_folder_files(service, folder_id: str) -> list[dict]:
     return files
 
 
-def _next_available_number() -> int:
+def list_folder_files(service, folder_id: str) -> list[dict]:
     """
-    המספר הבא הפנוי לשם קובץ חדש (N.mov) - חייב להתחשב גם במספרים שכבר שמורים
-    ב-KNOWN_FILE_MAP (1-8, לקבצים ידועים ספציפיים), לא רק במה שכבר קיים בדיסק.
-    אחרת, אם קובץ לא-מוכר מעובד לפני שקובץ מוכר-אך-עדיין-לא-הורד באותה ריצה, הוא
-    עלול "לתפוס" מספר ששמור בפועל לקובץ אחר לגמרי.
+    מחזיר את קובצי הווידאו בתיקייה - כולל תמיכה במבנה "תיקיית-משנה לכל סרטון",
+    שהתגלה בפועל: המשתמש מארגן כל סרטון בתיקייה עם שם התוכן האמיתי (למשל
+    "יהיו רק 21 מיליון"), כשקובץ הווידאו עצמו בפנים בשם גנרי חסר משמעות (כמו
+    "copy_A78D3CA2....mov", ככה ש-Drive/האייפון שומר קבצים משותפים). במקרה כזה
+    שם התיקייה הוא שם התצוגה של הסרטון, לא שם הקובץ הפנימי.
     """
-    on_disk = [int(p.stem) for p in VIDEOS_DIR.glob("*") if p.stem.isdigit()]
-    reserved = [int(Path(name).stem) for name in KNOWN_FILE_MAP.values() if Path(name).stem.isdigit()]
-    return max(on_disk + reserved, default=0) + 1
+    entries = []
+    for item in _list_children(service, folder_id):
+        if item["mimeType"] == FOLDER_MIME_TYPE:
+            for video in _list_children(service, item["id"], " and mimeType contains 'video/'"):
+                entries.append({"id": video["id"], "name": item["name"].strip(), "mimeType": video["mimeType"]})
+        else:
+            entries.append(item)
+    return entries
+
+
+def _unique_local_name(candidate: str) -> str:
+    """אם השם כבר תפוס ע"י קובץ אחר (למשל שתי תיקיות-משנה עם אותו שם תוכן בטעות) -
+    מוסיף מספר סידורי כדי למנוע התנגשות בין שני סרטונים שונים."""
+    used_names = set(KNOWN_FILE_MAP.values())
+    if candidate not in used_names:
+        return candidate
+    stem, ext = Path(candidate).stem, Path(candidate).suffix
+    n = 2
+    while f"{stem} ({n}){ext}" in used_names:
+        n += 1
+    return f"{stem} ({n}){ext}"
 
 
 def _load_manifest() -> list[dict]:
@@ -132,8 +158,13 @@ def sync() -> None:
         if file_id in KNOWN_FILE_MAP:
             local_name = KNOWN_FILE_MAP[file_id]
         else:
+            # שם התצוגה האמיתי (שם התיקייה, אם מדובר במבנה תיקיית-משנה-לכל-סרטון -
+            # ראו list_folder_files) - לא ממספרים יותר קבצים לא-מוכרים באופן גנרי,
+            # כדי לא לחזור על הבאג שהתגלה בפועל (8 סרטונים שקיבלו שמות "1.mov"-"8.mov"
+            # בלי שום קשר לתוכן שלהם, כי בזמנו לא היה מבנה תיקיות עם שם משמעותי).
             ext = Path(drive_name).suffix or ".mov"
-            local_name = f"{_next_available_number()}{ext.lower()}"
+            base_name = drive_name if drive_name.lower().endswith(ext.lower()) else f"{drive_name}{ext.lower()}"
+            local_name = _unique_local_name(base_name)
             KNOWN_FILE_MAP[file_id] = local_name  # כדי לא להתנגש עם עצמו בתוך אותה ריצה
 
         local_path = VIDEOS_DIR / local_name
