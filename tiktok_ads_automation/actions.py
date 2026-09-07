@@ -86,6 +86,34 @@ def update_adgroup_budget(advertiser_id: str, adgroup_id: str, new_budget: float
     return {"dry_run": False, "action": "update_budget", "adgroup_id": adgroup_id, "budget": new_budget, "result": data}
 
 
+def find_video_id_by_filename(advertiser_id: str, filename: str) -> str | None:
+    """
+    מחפש בספריית הווידאו של חשבון המפרסם סרטון שכבר הועלה בשם קובץ נתון - לצורך
+    התאוששות מ-code 40911 "Duplicated material name" (הועלה בהצלחה בהרצה קודמת,
+    אבל יצירת המודעה נכשלה אחריו). לא בדוק במלואו מול המבנה האמיתי של /file/video/ad/search/
+    (בלי אפשרות לבדוק בפועל) - סורק את כל השדות הטקסטואליים בכל פריט, לא מסתמך על
+    שם שדה ספציפי (אותה גישה שעבדה ב-locations.py/identities.py).
+    """
+    from locations import _find_list
+
+    resp = requests.get(
+        f"{config.API_BASE_URL}/file/video/ad/search/",
+        headers={"Access-Token": config.ACCESS_TOKEN},
+        params={"advertiser_id": advertiser_id},
+        timeout=30,
+    )
+    data = resp.json()
+    if data.get("code") != 0:
+        return None
+
+    items = _find_list(data["data"])
+    for item in items:
+        text_values = {k: v for k, v in item.items() if isinstance(v, str)}
+        if any(v == filename for v in text_values.values()):
+            return item.get("video_id")
+    return None
+
+
 def upload_video(advertiser_id: str, video_path: Path) -> str:
     """מעלה קובץ וידאו לספריית המדיה של חשבון המפרסם, מחזיר video_id."""
     if config.DRY_RUN:
@@ -108,6 +136,12 @@ def upload_video(advertiser_id: str, video_path: Path) -> str:
     )
     data = resp.json()
     if data.get("code") != 0:
+        # קוד 40911 - הקובץ כבר הועלה בהרצה קודמת (נכשל אחרי ההעלאה, לפני יצירת
+        # המודעה) - מחפשים את ה-video_id הקיים במקום לזרוק שגיאה.
+        if data.get("code") == 40911:
+            existing_video_id = find_video_id_by_filename(advertiser_id, video_path.name)
+            if existing_video_id:
+                return existing_video_id
         raise RuntimeError(f"נכשל בהעלאת וידאו {video_path}: {data}")
     return data["data"][0]["video_id"]
 
