@@ -64,9 +64,15 @@ def launch(advertiser_id: str) -> None:
             "dry_run": config.DRY_RUN,
         })
 
-    existing_adgroup_names = set()
+    # שתי בדיקות אידמפוטנטיות נפרדות: אילו adgroup-ים כבר קיימים (לפי שם), ואילו
+    # מהם כבר יש להם מודעה בפועל. ההבדל חשוב - אם ריצה קודמת נכשלה אחרי יצירת
+    # ה-adgroup אבל לפני יצירת המודעה (בדיוק המצב שקרה בפועל), ה-adgroup קיים אבל
+    # "יתום" (בלי מודעה) - צריך להשלים אותו (להעלות וידאו + ליצור מודעה), לא לדלג.
+    existing_adgroups_by_name = {}
+    adgroup_ids_with_ads = set()
     if not config.DRY_RUN:
-        existing_adgroup_names = {ag["adgroup_name"] for ag in insights.get_adgroups(advertiser_id, campaign_id)}
+        existing_adgroups_by_name = {ag["adgroup_name"]: ag["adgroup_id"] for ag in insights.get_adgroups(advertiser_id, campaign_id)}
+        adgroup_ids_with_ads = insights.get_adgroup_ids_with_ads(advertiser_id, campaign_id)
 
     for item in manifest:
         video_path = VIDEOS_DIR / item["file"]
@@ -79,19 +85,30 @@ def launch(advertiser_id: str) -> None:
             })
             continue
 
-        if adgroup_name in existing_adgroup_names:
+        existing_adgroup_id = existing_adgroups_by_name.get(adgroup_name)
+
+        if existing_adgroup_id and existing_adgroup_id in adgroup_ids_with_ads:
             logger.print_and_log({
                 "level": "info",
-                "message": f"קבוצת מודעות '{adgroup_name}' כבר קיימת - מדלגים (לא יוצרים כפול)",
+                "message": f"'{adgroup_name}' כבר קיימת ויש לה מודעה - מדלגים (לא יוצרים כפול)",
             })
             continue
 
-        adgroup_id = actions.create_adgroup(
-            advertiser_id=advertiser_id,
-            campaign_id=campaign_id,
-            adgroup_name=adgroup_name,
-            daily_budget=config.DAILY_BUDGET_PER_VIDEO_ILS,
-        )
+        if existing_adgroup_id:
+            adgroup_id = existing_adgroup_id
+            logger.print_and_log({
+                "level": "info",
+                "message": f"'{adgroup_name}' קיימת אבל בלי מודעה (מריצה קודמת שנכשלה) - משלימים אותה",
+                "adgroup_id": adgroup_id,
+            })
+        else:
+            adgroup_id = actions.create_adgroup(
+                advertiser_id=advertiser_id,
+                campaign_id=campaign_id,
+                adgroup_name=adgroup_name,
+                daily_budget=config.DAILY_BUDGET_PER_VIDEO_ILS,
+            )
+
         video_id = actions.upload_video(advertiser_id, video_path)
         ad_id = actions.create_ad(
             advertiser_id=advertiser_id,

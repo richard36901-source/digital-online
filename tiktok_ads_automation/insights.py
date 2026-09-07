@@ -230,3 +230,23 @@ def get_adgroups(advertiser_id: str, campaign_id: str) -> list[dict]:
     if data.get("code") != 0:
         raise RuntimeError(f"נכשל בשליפת קבוצות מודעות לקמפיין {campaign_id}: {data}")
     return data["data"].get("list", [])
+
+
+def get_adgroup_ids_with_ads(advertiser_id: str, campaign_id: str) -> set:
+    """מחזיר את קבוצות ה-adgroup_id שכבר יש להן לפחות מודעה אחת תחת הקמפיין - לצורך
+    השלמת קבוצות מודעות "יתומות" (נוצרו בהרצה קודמת שנכשלה לפני שהמודעה נוצרה)
+    במקום לדלג עליהן לגמרי."""
+    resp = requests.get(
+        f"{config.API_BASE_URL}/ad/get/",
+        headers=HEADERS,
+        params={
+            "advertiser_id": advertiser_id,
+            "filtering": json.dumps({"campaign_ids": [campaign_id]}),
+            "fields": '["ad_id", "adgroup_id"]',
+        },
+        timeout=30,
+    )
+    data = resp.json()
+    if data.get("code") != 0:
+        raise RuntimeError(f"נכשל בשליפת מודעות לקמפיין {campaign_id}: {data}")
+    return {item["adgroup_id"] for item in data["data"].get("list", [])}

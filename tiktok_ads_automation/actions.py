@@ -190,6 +190,7 @@ def create_ad(advertiser_id: str, adgroup_id: str, ad_name: str, video_id: str, 
             "adgroup_id": adgroup_id,
             "creatives": [{
                 "ad_name": ad_name,
+                "ad_format": "SINGLE_VIDEO",  # נדרש בפועל ע"פ ה-API (קוד 40002 בלעדיו)
                 "ad_text": ad_text,
                 "identity_type": config.IDENTITY_TYPE,
                 "identity_id": config.IDENTITY_ID,
