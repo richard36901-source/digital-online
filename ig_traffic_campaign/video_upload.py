@@ -15,45 +15,80 @@ POLL_INTERVAL_SECONDS = 5
 POLL_TIMEOUT_SECONDS = 600  # 10 דקות - וידאו קצר אמור לעבור עיבוד הרבה יותר מהר
 UPLOAD_MAX_ATTEMPTS = 3
 UPLOAD_RETRY_BACKOFF_SECONDS = 10
+CHUNK_SIZE_BYTES = 4 * 1024 * 1024  # 4MB - קטן מספיק שגם חיבור לא יציב יעמוד בזמן להעלות
+
+
+def _post_with_retry(url: str, data: dict, files: dict = None, name: str = "") -> dict:
+    """
+    POST עם ניסיון חוזר (עד UPLOAD_MAX_ATTEMPTS) על תקלת רשת - כולל המקרה שהבקשה
+    "הצליחה" ברמת החיבור אבל חזרה עם גוף תשובה ריק/לא-JSON (ראו את שתי הפעמים שזה
+    קרה בפועל: write timeout, ואז 413 עם גוף ריק על אותה בקשה גדולה מדי).
+    """
+    last_error = None
+    for attempt in range(1, UPLOAD_MAX_ATTEMPTS + 1):
+        try:
+            resp = requests.post(url, data=data, files=files, timeout=120)
+            if not resp.text.strip():
+                raise RuntimeError(f"תשובה ריקה מה-API (status={resp.status_code})")
+            result = resp.json()
+            if "error" in result:
+                raise RuntimeError(f"שגיאת API: {result['error']}")
+            return result
+        except (requests.exceptions.RequestException, RuntimeError, ValueError) as e:
+            last_error = e
+            print(f"  תקלת רשת ({name}, ניסיון {attempt}/{UPLOAD_MAX_ATTEMPTS}): {e}")
+            if attempt < UPLOAD_MAX_ATTEMPTS:
+                time.sleep(UPLOAD_RETRY_BACKOFF_SECONDS)
+    raise RuntimeError(f"נכשל אחרי {UPLOAD_MAX_ATTEMPTS} ניסיונות ({name}): {last_error}")
 
 
 def upload_video(local_path: Path, name: str) -> str:
     """
-    מעלה קובץ וידאו ומחזיר video_id. לא ממתין לסיום עיבוד (ראו wait_until_ready).
-    מנסה שוב עד UPLOAD_MAX_ATTEMPTS פעמים על תקלת רשת (timeout/ניתוק) - העלאת קובץ
-    וידאו גדול על חיבור ביתי רגיש לזה, וזה לא אומר שיש בעיה אמיתית בקוד/בחשבון.
+    מעלה קובץ וידאו ומחזיר video_id, בפרוטוקול ה-Resumable Upload של Meta (start ->
+    transfer בחתיכות של CHUNK_SIZE_BYTES -> finish) במקום בקשה אחת גדולה - כי בקשה
+    אחת נכשלה בפועל עם 413 (Payload Too Large) על קבצי הווידאו האלה. חתיכות קטנות
+    גם עמידות יותר לניתוקי רשת - חתיכה שנכשלת מנוסה שוב בלי לאבד את כל ההעלאה.
+    לא ממתין לסיום עיבוד (ראו wait_until_ready).
     """
     if config.DRY_RUN:
         return f"DRY_RUN_VIDEO_ID_{name}"
 
     url = f"{config.GRAPH_URL}/act_{config.AD_ACCOUNT_ID}/advideos"
-    last_error = None
-    data = None
-    for attempt in range(1, UPLOAD_MAX_ATTEMPTS + 1):
-        try:
-            with open(local_path, "rb") as f:
-                resp = requests.post(
-                    url,
-                    data={"access_token": config.ACCESS_TOKEN, "name": name},
-                    files={"source": f},
-                    timeout=300,
-                )
-            # גם אם הבקשה "הצליחה" ברמת החיבור, גוף תשובה ריק/לא-JSON תקין הוא עדיין
-            # תקלת רשת (חיבור שנקטע/פרוקסי שהתערב) - צריך ניסיון חוזר, לא קריסה מיידית.
-            if not resp.text.strip():
-                raise RuntimeError(f"תשובה ריקה מה-API (status={resp.status_code})")
-            data = resp.json()
-            break
-        except (requests.exceptions.RequestException, RuntimeError, ValueError) as e:
-            last_error = e
-            print(f"  תקלת רשת בהעלאת '{name}' (ניסיון {attempt}/{UPLOAD_MAX_ATTEMPTS}): {e}")
-            if attempt < UPLOAD_MAX_ATTEMPTS:
-                time.sleep(UPLOAD_RETRY_BACKOFF_SECONDS)
-    if data is None:
-        raise RuntimeError(f"נכשל בהעלאת '{name}' אחרי {UPLOAD_MAX_ATTEMPTS} ניסיונות: {last_error}")
-    if "error" in data:
-        raise RuntimeError(f"נכשל בהעלאת וידאו '{local_path.name}': {data['error']}")
-    return data["id"]
+    file_size = local_path.stat().st_size
+
+    start = _post_with_retry(url, data={
+        "access_token": config.ACCESS_TOKEN,
+        "upload_phase": "start",
+        "file_size": file_size,
+        "name": name,
+    }, name=f"{name} - start")
+    upload_session_id = start["upload_session_id"]
+    video_id = start["video_id"]
+    start_offset = int(start["start_offset"])
+    end_offset = int(start["end_offset"])
+
+    with open(local_path, "rb") as f:
+        while start_offset < file_size:
+            f.seek(start_offset)
+            chunk = f.read(end_offset - start_offset)
+            print(f"  מעלה חתיכה {start_offset:,}-{end_offset:,} מתוך {file_size:,} בייט "
+                  f"({start_offset * 100 // file_size}%)...")
+            transfer = _post_with_retry(url, data={
+                "access_token": config.ACCESS_TOKEN,
+                "upload_phase": "transfer",
+                "upload_session_id": upload_session_id,
+                "start_offset": start_offset,
+            }, files={"video_file_chunk": chunk}, name=f"{name} - chunk {start_offset}")
+            start_offset = int(transfer["start_offset"])
+            end_offset = int(transfer["end_offset"])
+
+    _post_with_retry(url, data={
+        "access_token": config.ACCESS_TOKEN,
+        "upload_phase": "finish",
+        "upload_session_id": upload_session_id,
+    }, name=f"{name} - finish")
+
+    return video_id
 
 
 def wait_until_ready(video_id: str) -> None:
