@@ -45,8 +45,11 @@ def _get_drive_service():
     return build("drive", "v3", credentials=creds)
 
 
+SHORTCUT_MIME_TYPE = "application/vnd.google-apps.shortcut"
+
+
 def list_folder_files(folder_id: str = None) -> list:
-    """מחזיר [{'id', 'name', 'mimeType'}] לכל הקבצים בתיקייה (לא בתתי-תיקיות)."""
+    """מחזיר [{'id', 'name', 'mimeType', 'shortcutDetails'?}] לכל הקבצים בתיקייה (לא בתתי-תיקיות)."""
     folder_id = folder_id or config.DRIVE_FOLDER_ID
     service = _get_drive_service()
 
@@ -55,7 +58,7 @@ def list_folder_files(folder_id: str = None) -> list:
     while True:
         resp = service.files().list(
             q=f"'{folder_id}' in parents and trashed = false",
-            fields="nextPageToken, files(id, name, mimeType)",
+            fields="nextPageToken, files(id, name, mimeType, shortcutDetails)",
             pageSize=200,
             pageToken=page_token,
         ).execute()
@@ -64,6 +67,21 @@ def list_folder_files(folder_id: str = None) -> list:
         if not page_token:
             break
     return files
+
+
+def resolve_downloadable_id(drive_file: dict) -> str:
+    """
+    אם הקובץ הוא קיצור דרך (shortcut) לקובץ אמיתי במקום אחר בדרייב - כפי שהתברר שזה
+    המצב בתיקייה הזו (שגיאת 'fileNotDownloadable' בהרצה האמיתית) - מחזיר את ה-ID
+    של הקובץ המקורי (targetId) במקום ה-ID של הקיצור עצמו, שאין לו תוכן בינארי להוריד.
+    """
+    if drive_file.get("mimeType") == SHORTCUT_MIME_TYPE:
+        target_id = drive_file.get("shortcutDetails", {}).get("targetId")
+        if not target_id:
+            raise RuntimeError(f"'{drive_file['name']}' הוא קיצור דרך אבל אין לו targetId - "
+                                f"בדוק אותו ידנית בדרייב.")
+        return target_id
+    return drive_file["id"]
 
 
 def find_file_by_hint(files: list, hint: str) -> dict:
@@ -110,8 +128,9 @@ def ensure_videos_downloaded() -> dict:
         drive_file = find_file_by_hint(files, video["match"])
         local_path = local_dir / drive_file["name"]
         if not local_path.exists():
-            print(f"מוריד '{drive_file['name']}' (drive id={drive_file['id']})...")
-            download_file(drive_file["id"], local_path)
+            downloadable_id = resolve_downloadable_id(drive_file)
+            print(f"מוריד '{drive_file['name']}' (drive id={downloadable_id})...")
+            download_file(downloadable_id, local_path)
         else:
             print(f"'{local_path.name}' כבר קיים מקומית - מדלג על הורדה.")
         result[video["ad_set_name"]] = local_path
