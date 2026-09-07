@@ -34,7 +34,14 @@ def _badge(rank: int, total: int) -> tuple[str, str]:
 
 
 def _display_name(ad_name: str) -> str:
-    """מסיר סיומת קובץ וידאו מהשם לתצוגה - מונע ערבוב RTL/LTR מכוער (עברית + '.mov')."""
+    """
+    הופך את שם המודעה בפועל (f"{CAMPAIGN_NAME} - {filename}", ראו campaign_launch.py)
+    לשם התואם בדיוק לקובץ בתיקיית ה-Drive: מסיר את קידומת שם הקמפיין, ואז את סיומת
+    קובץ הווידאו - מונע גם ערבוב RTL/LTR מכוער (עברית + '.mov').
+    """
+    prefix = f"{config.CAMPAIGN_NAME} - "
+    if ad_name.startswith(prefix):
+        ad_name = ad_name[len(prefix):]
     for ext in (".mov", ".mp4", ".MOV", ".MP4"):
         if ad_name.endswith(ext):
             return ad_name[: -len(ext)]
