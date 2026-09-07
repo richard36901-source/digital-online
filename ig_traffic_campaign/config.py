@@ -104,3 +104,12 @@ DRY_RUN = True
 
 # ==== לוגים ====
 LOG_FILE = "./logs/campaign_launch_log.jsonl"
+
+# ==== דשבורד ביצועים (performance_dashboard.html) ====
+# מקביל בכוונה ל-tiktok_ads_automation/dashboard.py - קריאה-בלבד, לא נוגע בשום מודעה.
+# מציג רק מודעות מתוך הקמפיין הזה (CAMPAIGN_NAME) - לא כל מודעה אחרת בחשבון act_330184635273905.
+# חלון הנתונים - חייב להיות אחד מהערכים שה-API של Meta תומך בהם (לא מספר ימים חופשי):
+# today / yesterday / last_7d / last_14d / last_28d / last_30d / last_90d / this_month / last_month / this_quarter
+DATE_PRESET = "last_7d"
+PERFORMANCE_DASHBOARD_FILE = "./performance_dashboard.html"
+DESTINATION_URL = f"instagram.com/{IG_USERNAME}"

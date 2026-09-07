@@ -117,6 +117,32 @@ python campaign_launch.py
 Manager, תעברו ידנית על כל אחד מ-13 הסטים (טירגוט, תקציב, קריאייטיב), ותפעילו ידנית
 את מה שנראה תקין.
 
+## דשבורד ביצועים (performance_dashboard.html)
+
+מקביל בכוונה ל-`tiktok_ads_automation/performance_dashboard.html` - קריאה-בלבד, לא
+נוגע בשום מודעה. מדרג את 13 הסרטונים לפי CTR (קליקים על הלינק מתוך חשיפות), כדי לזהות
+אילו סרטונים "מתבלטים" ואילו "כושלים".
+
+```bash
+python dashboard.py
+```
+
+עובד רק אחרי שהקמפיין כבר קיים בפועל (אחרי `campaign_launch.py` עם `DRY_RUN=False`) -
+לפני זה יציג "אין עדיין נתונים".
+
+**פרסום אוטומטי:** יש GitHub Action (`.github/workflows/update-ig-traffic-dashboard.yml`,
+מקביל ל-`update-tiktok-ads-dashboard.yml`) שמריץ את זה כל 5 דקות ודוחף אם השתנה - **אבל
+זה רץ רק על branch `main`**, ולכן לא יתחיל לפעול עד שהברנץ' הזה ימוזג (ראו השיחה על
+תזמון המיזוג - רק אחרי הרצה אמיתית מוצלחת). שימוש באותו secret קיים
+(`META_ACCESS_TOKEN`) שכבר מוגדר ב-repo עבור `update-dashboard.yml` - אין צורך בהגדרה
+נוספת. לאחר המיזוג, הדשבורד יהיה זמין ב-
+`https://funnel.digitalonline.co.il/ig_traffic_campaign/performance_dashboard.html`
+(אותו דפוס בדיוק כמו כתובת ה-TikTok).
+
+**שים לב:** בכוונה לא בניתי כאן מקבילה ל-`tiktok_ads_automation/webapp.py` (לוח הבקרה
+האינטראקטיבי עם כפתורי השהיה/תקציב) - רק את חלק הדיווח הקריא-בלבד, לפי מה שביקשת.
+אם תרצה גם את זה בהמשך, תגיד.
+
 ## מבנה הקבצים
 
 - `config.py` - כל ההגדרות (טוקן, חשבון, יעד, סרטונים, תקציב)
@@ -124,8 +150,11 @@ Manager, תעברו ידנית על כל אחד מ-13 הסטים (טירגוט, 
 - `drive_videos.py` - הורדת הסרטונים מ-Google Drive
 - `video_upload.py` - העלאת וידאו ל-Meta + המתנה לעיבוד + thumbnail
 - `campaign_launch.py` - הלוגיקה המרכזית: קמפיין → (לכל סרטון) Ad Set → קריאטיב → מודעה
+- `insights.py` - משיכת ביצועים (Insights) מסונן לקמפיין הזה בלבד
+- `dashboard.py` - בונה את `performance_dashboard.html` (קריאה-בלבד)
 - `logger.py` - רישום ללוג (JSON Lines)
 - `logs/campaign_launch_log.jsonl` - נוצר אוטומטית בהרצה
+- `performance_dashboard.html` - נוצר אוטומטית ע"י `dashboard.py`
 
 ## אזהרות חשובות
 
