@@ -187,8 +187,8 @@ def main():
     print(f"מספר סרטונים/Ad Sets: {len(config.VIDEOS)} | תקציב יומי לכל סט: "
           f"{config.DAILY_BUDGET_AGOROT_PER_ADSET / 100:.2f} ש\"ח\n")
 
-    print("--- שלב 1: הורדת סרטונים מ-Google Drive ---")
-    video_paths = drive_videos.ensure_videos_downloaded()
+    print("--- שלב 1: הורדת סרטונים + טקסט מודעה מ-Google Drive ---")
+    videos_data = drive_videos.ensure_videos_downloaded()
 
     print("\n--- שלב 2: יצירת הקמפיין ---")
     campaign_id = create_campaign()
@@ -204,7 +204,8 @@ def main():
             continue
 
         print(f"\n[{name}]")
-        local_path = video_paths[name]
+        local_path = videos_data[name]["path"]
+        message = videos_data[name]["message"]
 
         print("  מעלה וידאו ל-Meta וממתין לעיבוד...")
         upload_result = video_upload.upload_and_prepare(local_path, name=name)
@@ -217,7 +218,7 @@ def main():
             name=name,
             video_id=upload_result["video_id"],
             thumbnail_url=upload_result["thumbnail_url"],
-            message=video["message"],
+            message=message,
         )
 
         print("  יוצר מודעה...")
