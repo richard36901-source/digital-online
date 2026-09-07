@@ -165,7 +165,17 @@ def get_lan_ip() -> str:
 
 
 def build_ads_view(advertiser_id: str) -> list[dict]:
+    """מציג רק מודעות מהקמפיין הנוכחי (config.CAMPAIGN_NAME) - לא כל מודעה בחשבון,
+    בדיוק כמו התיקון המקביל ב-dashboard.py (אחרת מודעות מקמפיינים ישנים/לא קשורים
+    מופיעות כאן ומבלבלות, ומודעות כאלה מקבלות כפתורי כיבוי/תקציב שלא רלוונטיים)."""
+    campaigns = insights.get_campaigns(advertiser_id)
+    campaign = next((c for c in campaigns if c.get("campaign_name") == config.CAMPAIGN_NAME), None)
+    if not campaign:
+        return []
+    campaign_ad_ids = {item["ad_id"] for item in insights.get_ads_for_campaign(advertiser_id, campaign["campaign_id"])}
+
     perf = insights.fetch_traffic_performance(advertiser_id)
+    perf = [r for r in perf if r["ad_id"] in campaign_ad_ids]
     ad_ids = [r["ad_id"] for r in perf]
     meta = insights.get_ads_meta(advertiser_id, ad_ids)
 
