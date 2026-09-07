@@ -18,19 +18,60 @@
 ולא באמת משנות כלום ב-TikTok (יוצג באנר "מצב בדיקה" בראש הדף).
 """
 
+import contextlib
+import io
 import secrets
 import socket
 import sys
+import threading
+import time
+import traceback
 from pathlib import Path
 
 from flask import Flask, jsonify, redirect, request, session, url_for
 
 import actions
+import campaign_launch
 import config
+import drive_sync
 import insights
 from dashboard import _display_name
 
 app = Flask(__name__)
+
+# ==== ג'ובים ברקע (drive-sync / launch) ====
+# שתי הפעולות האלה יכולות לקחת כמה דקות (הורדת/העלאת סרטונים) - רצות ב-thread נפרד
+# כדי שהבקשה מהדפדפן תחזור מיד, והדף עושה polling לסטטוס ולוג במקום לחכות לתגובה אחת.
+_jobs = {}
+_jobs_lock = threading.Lock()
+
+
+def _run_job(job_id: str, fn) -> None:
+    buf = io.StringIO()
+    try:
+        with contextlib.redirect_stdout(buf):
+            fn()
+        with _jobs_lock:
+            _jobs[job_id]["status"] = "done"
+    except Exception:
+        buf.write("\n\n--- שגיאה ---\n" + traceback.format_exc())
+        with _jobs_lock:
+            _jobs[job_id]["status"] = "error"
+    finally:
+        with _jobs_lock:
+            _jobs[job_id]["log"] = buf.getvalue()
+
+
+def _start_job(name: str, fn) -> str:
+    with _jobs_lock:
+        for job in _jobs.values():
+            if job["name"] == name and job["status"] == "running":
+                raise RuntimeError(f"{name} כבר רץ - חכו שיסתיים.")
+        job_id = f"{name}-{int(time.time() * 1000)}"
+        _jobs[job_id] = {"name": name, "status": "running", "log": ""}
+    thread = threading.Thread(target=_run_job, args=(job_id, fn), daemon=True)
+    thread.start()
+    return job_id
 
 _SECRET_KEY_FILE = Path(__file__).parent / ".flask_secret_key"
 if _SECRET_KEY_FILE.exists():
@@ -185,6 +226,34 @@ def api_budget(ad_id):
         return jsonify({"ok": False, "error": str(e)}), 500
 
 
+@app.route("/api/drive-sync", methods=["POST"])
+def api_drive_sync():
+    try:
+        job_id = _start_job("drive-sync", drive_sync.sync)
+        return jsonify({"ok": True, "job_id": job_id})
+    except RuntimeError as e:
+        return jsonify({"ok": False, "error": str(e)}), 409
+
+
+@app.route("/api/launch", methods=["POST"])
+def api_launch():
+    advertiser_id = next(iter(config.ADVERTISER_ACCOUNTS.values()))
+    try:
+        job_id = _start_job("launch", lambda: campaign_launch.launch(advertiser_id))
+        return jsonify({"ok": True, "job_id": job_id, "dry_run": config.DRY_RUN})
+    except RuntimeError as e:
+        return jsonify({"ok": False, "error": str(e)}), 409
+
+
+@app.route("/api/job/<job_id>")
+def api_job_status(job_id):
+    with _jobs_lock:
+        job = _jobs.get(job_id)
+        if not job:
+            return jsonify({"error": "not found"}), 404
+        return jsonify(dict(job))
+
+
 PAGE = """<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
@@ -267,6 +336,29 @@ PAGE = """<!DOCTYPE html>
     font-weight: 600; cursor: pointer; margin-bottom: 16px;
   }
   .refresh-btn:hover { border-color: var(--brand); }
+  .actions-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+  .action-btn {
+    border: none; border-radius: 10px; padding: 9px 16px; font-family: inherit; font-size: 13px;
+    font-weight: 700; cursor: pointer; color: white;
+    background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  }
+  .action-btn:hover { opacity: .9; }
+  .action-btn:disabled { opacity: .5; cursor: wait; }
+  .job-log {
+    display: none; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 16px 18px; margin-bottom: 20px; box-shadow: var(--shadow);
+  }
+  .job-log.show { display: block; }
+  .job-log .job-title { font-size: 13px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+  .job-log pre {
+    background: #0b0d13; border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px;
+    font-size: 12px; max-height: 220px; overflow-y: auto; white-space: pre-wrap; word-break: break-word;
+    color: var(--muted); margin: 0; direction: ltr; text-align: left;
+  }
+  .job-badge { font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 999px; }
+  .job-badge.running { background: var(--amber-soft); color: var(--amber); }
+  .job-badge.done { background: var(--green-soft); color: var(--green); }
+  .job-badge.error { background: var(--red-soft); color: var(--red); }
   .header-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
   .logout-link { color: var(--muted); font-size: 12.5px; text-decoration: none; white-space: nowrap; padding-top: 4px; }
   .logout-link:hover { color: var(--ink); }
@@ -305,7 +397,16 @@ PAGE = """<!DOCTYPE html>
 
 <div id="dryRunBanner" class="banner">🧪 מצב בדיקה (DRY_RUN=True) - הלחיצות כאן <b>לא</b> משנות באמת כלום ב-TikTok. כדי לבצע שינויים אמיתיים, שנו DRY_RUN=False ב-config.py.</div>
 
-<button class="refresh-btn" onclick="loadAds()">🔄 רענן נתונים</button>
+<div class="actions-row">
+  <button class="refresh-btn" onclick="loadAds()">🔄 רענן נתונים</button>
+  <button class="action-btn" id="syncBtn" onclick="runJob('drive-sync', 'סנכרון סרטונים מ-Drive')">☁️ סנכרן מ-Drive</button>
+  <button class="action-btn" id="launchBtn" onclick="confirmLaunch()">🚀 השק סרטונים חדשים</button>
+</div>
+
+<div class="job-log" id="jobLog">
+  <div class="job-title"><span id="jobTitle"></span> <span class="job-badge" id="jobBadge"></span></div>
+  <pre id="jobOutput"></pre>
+</div>
 
 <div class="card">
   <table>
@@ -409,6 +510,80 @@ async function saveBudget(btn, adId, adgroupId) {
   } catch (e) {
     alert('שגיאת רשת: ' + e);
     btn.disabled = false;
+  }
+}
+
+function confirmLaunch() {
+  const msg = 'זה יוצר קמפיין/קבוצות מודעות חדשות עבור כל סרטון חדש שעדיין לא הושק. ';
+  const extra = document.getElementById('dryRunBanner').classList.contains('show')
+    ? '(מצב בדיקה פעיל - לא יבוצע שינוי אמיתי)'
+    : '(DRY_RUN כבוי - זו פעולה אמיתית!)';
+  if (confirm(msg + extra + ' להמשיך?')) {
+    runJob('launch', 'השקת סרטונים חדשים');
+  }
+}
+
+async function runJob(kind, title) {
+  const syncBtn = document.getElementById('syncBtn');
+  const launchBtn = document.getElementById('launchBtn');
+  syncBtn.disabled = true;
+  launchBtn.disabled = true;
+
+  const jobLog = document.getElementById('jobLog');
+  const jobTitle = document.getElementById('jobTitle');
+  const jobBadge = document.getElementById('jobBadge');
+  const jobOutput = document.getElementById('jobOutput');
+
+  jobLog.classList.add('show');
+  jobTitle.textContent = title;
+  jobBadge.textContent = 'רץ...';
+  jobBadge.className = 'job-badge running';
+  jobOutput.textContent = 'מתחיל...';
+
+  try {
+    const res = await fetch(`/api/${kind}`, {method: 'POST'});
+    const data = await res.json();
+    if (!data.ok) {
+      jobBadge.textContent = 'שגיאה';
+      jobBadge.className = 'job-badge error';
+      jobOutput.textContent = data.error;
+      syncBtn.disabled = false;
+      launchBtn.disabled = false;
+      return;
+    }
+    pollJob(data.job_id, jobBadge, jobOutput, syncBtn, launchBtn);
+  } catch (e) {
+    jobBadge.textContent = 'שגיאה';
+    jobBadge.className = 'job-badge error';
+    jobOutput.textContent = 'שגיאת רשת: ' + e;
+    syncBtn.disabled = false;
+    launchBtn.disabled = false;
+  }
+}
+
+async function pollJob(jobId, jobBadge, jobOutput, syncBtn, launchBtn) {
+  try {
+    const res = await fetch(`/api/job/${jobId}`);
+    const job = await res.json();
+    jobOutput.textContent = job.log || 'מעבד...';
+    jobOutput.scrollTop = jobOutput.scrollHeight;
+
+    if (job.status === 'running') {
+      setTimeout(() => pollJob(jobId, jobBadge, jobOutput, syncBtn, launchBtn), 1500);
+      return;
+    }
+
+    jobBadge.textContent = job.status === 'done' ? 'הושלם' : 'שגיאה';
+    jobBadge.className = 'job-badge ' + (job.status === 'done' ? 'done' : 'error');
+    syncBtn.disabled = false;
+    launchBtn.disabled = false;
+    loadAds();
+  } catch (e) {
+    jobBadge.textContent = 'שגיאה';
+    jobBadge.className = 'job-badge error';
+    jobOutput.textContent = 'שגיאת רשת בבדיקת סטטוס: ' + e;
+    syncBtn.disabled = false;
+    launchBtn.disabled = false;
   }
 }
 
