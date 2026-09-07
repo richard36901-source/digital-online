@@ -74,6 +74,20 @@ def launch(advertiser_id: str) -> None:
         existing_adgroups_by_name = {ag["adgroup_name"]: ag["adgroup_id"] for ag in insights.get_adgroups(advertiser_id, campaign_id)}
         adgroup_ids_with_ads = insights.get_adgroup_ids_with_ads(advertiser_id, campaign_id)
 
+    # שדות ה-budget ב-API הם מספרים גולמיים במטבע חשבון המפרסם, לא בהכרח ILS - אם
+    # לא ממירים, "10" עלול להתפרש כ-10 דולר במקום 10 שקל (בדיוק מה שקרה בפועל).
+    if config.DRY_RUN:
+        currency = "ILS"
+        daily_budget = config.DAILY_BUDGET_PER_VIDEO_ILS
+    else:
+        currency = actions.get_advertiser_currency(advertiser_id)
+        daily_budget = actions.convert_ils_to_currency(currency, config.DAILY_BUDGET_PER_VIDEO_ILS)
+        logger.print_and_log({
+            "level": "info",
+            "message": f"מטבע חשבון המפרסם: {currency}. תקציב יומי לכל סרטון: "
+                        f"{config.DAILY_BUDGET_PER_VIDEO_ILS} ILS ~= {daily_budget} {currency}",
+        })
+
     for item in manifest:
         video_path = VIDEOS_DIR / item["file"]
         adgroup_name = f"{config.CAMPAIGN_NAME} - {item['file']}"
@@ -106,7 +120,7 @@ def launch(advertiser_id: str) -> None:
                 advertiser_id=advertiser_id,
                 campaign_id=campaign_id,
                 adgroup_name=adgroup_name,
-                daily_budget=config.DAILY_BUDGET_PER_VIDEO_ILS,
+                daily_budget=daily_budget,
             )
 
         video_id = actions.upload_video(advertiser_id, video_path)
@@ -125,9 +139,52 @@ def launch(advertiser_id: str) -> None:
             "adgroup_id": adgroup_id,
             "video_id": video_id,
             "ad_id": ad_id,
-            "daily_budget_ils": config.DAILY_BUDGET_PER_VIDEO_ILS,
+            "daily_budget": daily_budget,
+            "currency": currency,
+            "daily_budget_ils_intended": config.DAILY_BUDGET_PER_VIDEO_ILS,
             "destination_url": config.DESTINATION_URL,
             "dry_run": config.DRY_RUN,
         })
 
     print("\nהשקת הקמפיין הושלמה." + (" (DRY RUN - לא נוצר שום דבר אמיתי ב-TikTok)" if config.DRY_RUN else ""))
+
+
+def fix_existing_budgets(advertiser_id: str) -> None:
+    """
+    תיקון חד-פעמי: קבוצות המודעות שכבר נוצרו קיבלו budget=10 גולמי, אבל חשבון
+    המפרסם במטבע USD (לא ILS כפי שהונח) - אז בפועל הן מוגדרות ל-10 דולר ליום,
+    לא 10 שקל. מוצא את כל קבוצות המודעות תחת הקמפיין ומעדכן את התקציב שלהן
+    לערך הנכון (10 ש"ח מומר למטבע החשבון בשער חליפין עדכני).
+    """
+    if config.DRY_RUN:
+        raise RuntimeError("fix_existing_budgets דורש DRY_RUN=False - זו פעולה על נתונים אמיתיים ב-TikTok.")
+
+    existing_campaigns = insights.get_campaigns(advertiser_id)
+    campaign = next((c for c in existing_campaigns if c.get("campaign_name") == config.CAMPAIGN_NAME), None)
+    if not campaign:
+        print(f"לא נמצא קמפיין בשם '{config.CAMPAIGN_NAME}' - אין מה לתקן.")
+        return
+    campaign_id = campaign["campaign_id"]
+
+    currency = actions.get_advertiser_currency(advertiser_id)
+    correct_budget = actions.convert_ils_to_currency(currency, config.DAILY_BUDGET_PER_VIDEO_ILS)
+    logger.print_and_log({
+        "level": "info",
+        "message": f"מטבע חשבון המפרסם: {currency}. מתקנים את כל קבוצות המודעות ל-"
+                    f"{correct_budget} {currency} ליום (= {config.DAILY_BUDGET_PER_VIDEO_ILS} ש\"ח).",
+    })
+
+    adgroups = insights.get_adgroups(advertiser_id, campaign_id)
+    for ag in adgroups:
+        result = actions.update_adgroup_budget(advertiser_id, ag["adgroup_id"], correct_budget)
+        logger.print_and_log({
+            "level": "action",
+            "action": "fix_budget",
+            "adgroup_id": ag["adgroup_id"],
+            "adgroup_name": ag.get("adgroup_name"),
+            "new_budget": correct_budget,
+            "currency": currency,
+            "result": result,
+        })
+
+    print(f"\nתוקנו {len(adgroups)} קבוצות מודעות לתקציב {correct_budget} {currency} ליום.")

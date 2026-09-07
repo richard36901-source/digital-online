@@ -88,6 +88,55 @@ def update_adgroup_budget(advertiser_id: str, adgroup_id: str, new_budget: float
     return {"dry_run": False, "action": "update_budget", "adgroup_id": adgroup_id, "budget": new_budget, "result": data}
 
 
+def get_advertiser_currency(advertiser_id: str) -> str:
+    """
+    מחזיר את מטבע החיוב של חשבון המפרסם (למשל "USD", לא בהכרח "ILS") - קריטי כי
+    כל השדות המספריים (budget וכו') ב-API הם מספרים גולמיים במטבע הזה, בלי יחידה.
+    התגלה בפועל: קבוצות מודעות נוצרו עם budget=10 מתוך כוונה ל-10 ש"ח, אבל
+    החשבון במטבע USD - אז בפועל חויבו/יחויבו 10 דולר ליום, לא 10 שקל.
+    """
+    resp = requests.get(
+        f"{config.API_BASE_URL}/advertiser/info/",
+        headers={"Access-Token": config.ACCESS_TOKEN},
+        params={
+            "advertiser_ids": json.dumps([advertiser_id]),
+            "fields": json.dumps(["currency"]),
+        },
+        timeout=30,
+    )
+    data = resp.json()
+    if data.get("code") != 0:
+        raise RuntimeError(f"נכשל בשליפת מטבע חשבון המפרסם {advertiser_id}: {data}")
+    items = data["data"].get("list", [])
+    if not items or "currency" not in items[0]:
+        raise RuntimeError(f"לא נמצא שדה currency בתגובת /advertiser/info/ - תגובה מלאה: {data}")
+    return items[0]["currency"]
+
+
+def convert_ils_to_currency(currency: str, ils_amount: float) -> float:
+    """
+    ממיר סכום מש"ח למטבע חשבון המפרסם, לפי שער חליפין עדכני (Frankfurter API -
+    ריבית יחוס של הבנק המרכזי האירופי, ללא צורך במפתח API). אם החשבון כבר ב-ILS,
+    מחזיר את הסכום כמו שהוא בלי לפנות לשום API חיצוני.
+    """
+    if currency == "ILS":
+        return ils_amount
+
+    resp = requests.get(
+        "https://api.frankfurter.app/latest",
+        params={"from": "ILS", "to": currency},
+        timeout=15,
+    )
+    data = resp.json()
+    rate = data.get("rates", {}).get(currency)
+    if not rate:
+        raise RuntimeError(
+            f"נכשל בהמרת מטבע מ-ILS ל-{currency} דרך Frankfurter API - תגובה: {data}. "
+            "בלי המרה אמינה אסור להמשיך (עלול לגרום לחיוב בסכום שגוי)."
+        )
+    return round(ils_amount * rate, 2)
+
+
 def find_video_id_by_filename(advertiser_id: str, filename: str) -> str | None:
     """
     מחפש בספריית הווידאו של חשבון המפרסם סרטון שכבר הועלה בשם קובץ נתון - לצורך

@@ -8,6 +8,8 @@
   python main.py drive-authorize    - שלב חד-פעמי: מאשר גישה ל-Google Drive (ראו drive_sync.py)
   python main.py drive-sync         - מוריד סרטונים חדשים מ-Drive אוטומטית, בלי הורדה ידנית
   python main.py launch             - יוצר קמפיין חדש מ-creative_bank/instagram_promo/ (ראו campaign_launch.py)
+  python main.py fix-budgets        - תיקון חד-פעמי: מעדכן את תקציב קבוצות המודעות הקיימות
+                                       למטבע הנכון של חשבון המפרסם (ראו get_advertiser_currency)
   python main.py dashboard          - מרענן דשבורד ביצועים (performance_dashboard.html) - אילו סרטונים מתבלטים
   python main.py                    - מריץ על כל חשבונות המפרסם ב-config.ADVERTISER_ACCOUNTS:
                                          1. מושך ביצועים (insights)
@@ -77,6 +79,14 @@ def cmd_launch():
         sys.exit(1)
     advertiser_id = next(iter(config.ADVERTISER_ACCOUNTS.values()))
     campaign_launch.launch(advertiser_id)
+
+
+def cmd_fix_budgets():
+    if not config.ADVERTISER_ACCOUNTS:
+        print("שגיאה: אין חשבונות מפרסם ב-config.ADVERTISER_ACCOUNTS.")
+        sys.exit(1)
+    advertiser_id = next(iter(config.ADVERTISER_ACCOUNTS.values()))
+    campaign_launch.fix_existing_budgets(advertiser_id)
 
 
 def cmd_dashboard():
@@ -202,6 +212,10 @@ def main():
 
     if len(sys.argv) > 1 and sys.argv[1] == "launch":
         cmd_launch()
+        return
+
+    if len(sys.argv) > 1 and sys.argv[1] == "fix-budgets":
+        cmd_fix_budgets()
         return
 
     if len(sys.argv) > 1 and sys.argv[1] == "dashboard":
