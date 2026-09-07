@@ -42,7 +42,19 @@ def _display_name(ad_name: str) -> str:
 
 
 def build_rows(advertiser_id: str) -> list[dict]:
+    """
+    מחזיר שורות ביצועים רק עבור מודעות שנוצרו על ידי campaign_launch.py (קמפיין
+    config.CAMPAIGN_NAME) - לא כל המודעות בחשבון. בלי הסינון הזה הדשבורד הציג גם
+    מודעות מקמפיינים ישנים/לא קשורים שכבר היו בחשבון קודם, מה שהיה מבלבל בפועל.
+    """
+    campaigns = insights.get_campaigns(advertiser_id)
+    campaign = next((c for c in campaigns if c.get("campaign_name") == config.CAMPAIGN_NAME), None)
+    if not campaign:
+        return []
+    campaign_ad_ids = {item["ad_id"] for item in insights.get_ads_for_campaign(advertiser_id, campaign["campaign_id"])}
+
     perf = insights.fetch_traffic_performance(advertiser_id)
+    perf = [r for r in perf if r["ad_id"] in campaign_ad_ids]
     perf.sort(key=lambda r: r["ctr"], reverse=True)
 
     ad_ids = [r["ad_id"] for r in perf]

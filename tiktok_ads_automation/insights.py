@@ -250,7 +250,15 @@ def get_adgroup_ids_with_ads(advertiser_id: str, campaign_id: str) -> set:
     """מחזיר את קבוצות ה-adgroup_id שכבר יש להן לפחות מודעה אחת תחת הקמפיין - לצורך
     השלמת קבוצות מודעות "יתומות" (נוצרו בהרצה קודמת שנכשלה לפני שהמודעה נוצרה)
     במקום לדלג עליהן לגמרי."""
-    items = _fetch_all_pages(
+    items = get_ads_for_campaign(advertiser_id, campaign_id)
+    return {item["adgroup_id"] for item in items}
+
+
+def get_ads_for_campaign(advertiser_id: str, campaign_id: str) -> list[dict]:
+    """מחזיר את כל המודעות תחת קמפיין נתון: [{"ad_id", "adgroup_id"}, ...] - לצורך
+    סינון הדשבורד (dashboard.py) כך שיציג רק את המודעות של הקמפיין הזה, לא את כל
+    המודעות בחשבון (כולל קמפיינים ישנים/לא קשורים)."""
+    return _fetch_all_pages(
         f"{config.API_BASE_URL}/ad/get/",
         {
             "advertiser_id": advertiser_id,
@@ -258,4 +266,3 @@ def get_adgroup_ids_with_ads(advertiser_id: str, campaign_id: str) -> set:
             "fields": '["ad_id", "adgroup_id"]',
         },
     )
-    return {item["adgroup_id"] for item in items}
