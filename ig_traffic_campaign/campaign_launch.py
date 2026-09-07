@@ -67,6 +67,11 @@ def create_ad_set(campaign_id: str, name: str) -> str:
         logger.print_and_log({"level": "dry_run", "action": "create_ad_set", "name": name, "campaign_id": campaign_id})
         return f"DRY_RUN_ADSET_ID_{name}"
 
+    # promoted_object ברמת ה-Ad Set דורש page_id (לא instagram_actor_id!) עבור
+    # optimization_goal=PROFILE_AND_PAGE_ENGAGEMENT - אומת בפועל מול טיוטת קמפיין
+    # שנבנתה ידנית ב-Ads Manager (ראו ההערה ב-config.py). זיהוי הפרופיל הספציפי
+    # (ben_nahum_1) נעשה ברמת הקריאטיב (object_story_spec.instagram_actor_id),
+    # לא כאן.
     url = f"{config.GRAPH_URL}/act_{config.AD_ACCOUNT_ID}/adsets"
     resp = requests.post(url, data={
         "name": f"{name} - Ad Set",
@@ -76,7 +81,7 @@ def create_ad_set(campaign_id: str, name: str) -> str:
         "bid_strategy": config.BID_STRATEGY,
         "optimization_goal": config.OPTIMIZATION_GOAL,
         "destination_type": config.DESTINATION_TYPE,
-        "promoted_object": json.dumps({"instagram_actor_id": config.IG_ACTOR_ID}),
+        "promoted_object": json.dumps({"page_id": config.PAGE_ID}),
         "targeting": json.dumps(config.TARGETING),
         "status": config.CREATED_STATUS,
         "access_token": config.ACCESS_TOKEN,

@@ -25,9 +25,13 @@ AD_ACCOUNT_ID = "330184635273905"
 # IG_ACTOR_ID: המזהה המספרי (לא שם המשתמש!) של פרופיל האינסטגרם ben_nahum_1,
 #              כפי שמחובר לדף הפייסבוק דרך Instagram Business/Creator Account.
 # שניהם לא ידועים מראש - הרץ python check_permissions.py כדי לגלות אותם ולמלא כאן.
-# PAGE_ID לא ידוע/לא נדרש - חשבון האינסטגרם מוקצה ישירות ל-Business Portfolio
-# (naan1930store) בלי דף פייסבוק מקושר. campaign_launch.py כבר יודע להתמודד עם זה.
-PAGE_ID = "PASTE_PAGE_ID_HERE"
+# אומת בפועל (7/9/2026): על אף שחשבון האינסטגרם ben_nahum_1 מוקצה ישירות ל-
+# Business Portfolio בלי "דף פייסבוק מקושר" קלאסי, ה-promoted_object של ה-Ad Set
+# (ברמת ה-optimization_goal=PROFILE_AND_PAGE_ENGAGEMENT) עדיין דורש page_id תקין -
+# נמצא ע"י בניית טיוטת קמפיין ידנית ב-Ads Manager עם אותה מטרה/יעד ובדיקת השדות
+# האמיתיים שהיא יצרה (ראו debug_list_adsets.py). זהו דף שכבר משמש קמפיינים אחרים
+# באותו act_330184635273905 - כנראה "דף ברירת המחדל" של חשבון המודעות.
+PAGE_ID = "1067237409815794"
 # ה-ID שהופיע ב-URL של Business Settings (selected_asset_id=105029402244816) התברר
 # כלא-תקין ל-promoted_object[instagram_actor_id] (שגיאת API: "must be a valid
 # instagram actor id"). ה-ID הנכון נמצא בתוך עמוד הפרטים של ben_nahum_1 עצמו
@@ -48,15 +52,12 @@ CAMPAIGN_OBJECTIVE = "OUTCOME_ENGAGEMENT"
 # ילד "ביקורים בפרופיל אינסטגרם": destination_type + optimization_goal הבאים הם
 # ההשערה הכי טובה שלי נכון להיום (Ads Manager: "מיקום ההמרה" = "פרופיל אינסטגרם").
 # *** אם optimization_goal שגוי, ה-API יחזיר שגיאה עם רשימת הערכים התקינים - עדכן כאן ***
-# ניסיון ראשון "PROFILE_VISIT" נדחה בפועל ע"י ה-API (error_subcode 2490408,
-# "יעד הביצועים לא זמין עם מטרת הקמפיין") בלי לפרט את הערכים התקינים בהודעה עצמה.
-# בדקנו בפועל (debug_list_adsets.py) שאין בחשבון הזה שום קמפיין קיים שמכוון
-# לביקורים בפרופיל אינסטגרם להעתיק ממנו - אין דוגמה אמיתית לאמת מולה.
-# "VISIT_INSTAGRAM_PROFILE" הוא הניחוש הבא הכי סביר (תואם את דפוס השמות
-# action+object של שאר הערכים כמו PAGE_LIKES/LANDING_PAGE_VIEWS).
-# *** אם גם זה נדחה, ה-API אמור לפרט ערכים תקינים - עדכן כאן בהתאם ***
+# אומת בפועל (7/9/2026): שני ניחושים קודמים (PROFILE_VISIT, VISIT_INSTAGRAM_PROFILE)
+# נדחו ע"י ה-API בלי לפרט ערכים תקינים בהודעת השגיאה. PROFILE_AND_PAGE_ENGAGEMENT
+# הוא הערך האמיתי - נמצא ע"י בניית טיוטת קמפיין ידנית ב-Ads Manager (Engagement +
+# מיקום המרה "פרופיל אינסטגרם") ובדיקת השדות שהיא יצרה בפועל (debug_list_adsets.py).
 DESTINATION_TYPE = "INSTAGRAM_PROFILE"
-OPTIMIZATION_GOAL = "VISIT_INSTAGRAM_PROFILE"
+OPTIMIZATION_GOAL = "PROFILE_AND_PAGE_ENGAGEMENT"
 BILLING_EVENT = "IMPRESSIONS"
 BID_STRATEGY = "LOWEST_COST_WITHOUT_CAP"
 
