@@ -186,9 +186,10 @@ def build_ads_view(advertiser_id: str) -> list[dict]:
     for r in perf:
         m = meta.get(r["ad_id"], {})
         adgroup_id = m.get("adgroup_id")
+        ad_name = m.get("ad_name") or r["ad_name"]
         rows.append({
             "ad_id": r["ad_id"],
-            "ad_name": _display_name(r["ad_name"]),
+            "ad_name": _display_name(ad_name),
             "adgroup_id": adgroup_id,
             "status": m.get("operation_status", "UNKNOWN"),
             "budget": budgets.get(adgroup_id, {}).get("budget", 0),

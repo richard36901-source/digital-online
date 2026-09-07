@@ -152,7 +152,11 @@ def get_ads_status(advertiser_id: str, ad_ids: list[str]) -> dict:
 
 
 def get_ads_meta(advertiser_id: str, ad_ids: list[str]) -> dict:
-    """מחזיר {ad_id: {"adgroup_id", "operation_status"}} - לצורך webapp.py (לוח בקרה)."""
+    """מחזיר {ad_id: {"adgroup_id", "operation_status", "ad_name"}} - לצורך webapp.py
+    (לוח בקרה) ו-dashboard.py. שם המודעה (ad_name) נשלף כאן מ-/ad/get/ - שדה קבוע על
+    אובייקט המודעה עצמו - ולא מ-metrics.ad_name בדוח (report/integrated/get/), ששם
+    השדה בפועל לא הוחזר כי לא נכלל ב-METRICS/TRAFFIC_METRICS, מה שגרם לדשבורד להציג
+    מספרי ad_id גולמיים במקום שמות סרטונים."""
     if not ad_ids:
         return {}
     resp = requests.get(
@@ -161,7 +165,7 @@ def get_ads_meta(advertiser_id: str, ad_ids: list[str]) -> dict:
         params={
             "advertiser_id": advertiser_id,
             "filtering": json.dumps({"ad_ids": ad_ids}),
-            "fields": '["ad_id", "adgroup_id", "operation_status"]',
+            "fields": '["ad_id", "adgroup_id", "operation_status", "ad_name"]',
             "page": 1,
             "page_size": 1000,
         },
@@ -171,7 +175,11 @@ def get_ads_meta(advertiser_id: str, ad_ids: list[str]) -> dict:
     if data.get("code") != 0:
         raise RuntimeError(f"נכשל בשליפת פרטי מודעות: {data}")
     return {
-        item["ad_id"]: {"adgroup_id": item.get("adgroup_id"), "operation_status": item.get("operation_status", "UNKNOWN")}
+        item["ad_id"]: {
+            "adgroup_id": item.get("adgroup_id"),
+            "operation_status": item.get("operation_status", "UNKNOWN"),
+            "ad_name": item.get("ad_name"),
+        }
         for item in data["data"].get("list", [])
     }
 

@@ -59,14 +59,16 @@ def build_rows(advertiser_id: str) -> list[dict]:
 
     ad_ids = [r["ad_id"] for r in perf]
     statuses = insights.get_ads_status(advertiser_id, ad_ids)
+    meta = insights.get_ads_meta(advertiser_id, ad_ids)
 
     max_ctr = max((r["ctr"] for r in perf), default=0) or 1
     rows = []
     for i, r in enumerate(perf):
         badge_text, badge_class = _badge(i, len(perf))
+        ad_name = meta.get(r["ad_id"], {}).get("ad_name") or r["ad_name"]
         rows.append({
             **r,
-            "ad_name": _display_name(r["ad_name"]),
+            "ad_name": _display_name(ad_name),
             "status": STATUS_LABELS.get(statuses.get(r["ad_id"]), statuses.get(r["ad_id"], "-")),
             "bar_pct": round((r["ctr"] / max_ctr) * 100, 1),
             "badge_text": badge_text,
