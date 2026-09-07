@@ -28,6 +28,7 @@ def upload_video(local_path: Path, name: str) -> str:
 
     url = f"{config.GRAPH_URL}/act_{config.AD_ACCOUNT_ID}/advideos"
     last_error = None
+    data = None
     for attempt in range(1, UPLOAD_MAX_ATTEMPTS + 1):
         try:
             with open(local_path, "rb") as f:
@@ -37,15 +38,19 @@ def upload_video(local_path: Path, name: str) -> str:
                     files={"source": f},
                     timeout=300,
                 )
+            # גם אם הבקשה "הצליחה" ברמת החיבור, גוף תשובה ריק/לא-JSON תקין הוא עדיין
+            # תקלת רשת (חיבור שנקטע/פרוקסי שהתערב) - צריך ניסיון חוזר, לא קריסה מיידית.
+            if not resp.text.strip():
+                raise RuntimeError(f"תשובה ריקה מה-API (status={resp.status_code})")
+            data = resp.json()
             break
-        except requests.exceptions.RequestException as e:
+        except (requests.exceptions.RequestException, RuntimeError, ValueError) as e:
             last_error = e
             print(f"  תקלת רשת בהעלאת '{name}' (ניסיון {attempt}/{UPLOAD_MAX_ATTEMPTS}): {e}")
             if attempt < UPLOAD_MAX_ATTEMPTS:
                 time.sleep(UPLOAD_RETRY_BACKOFF_SECONDS)
-    else:
+    if data is None:
         raise RuntimeError(f"נכשל בהעלאת '{name}' אחרי {UPLOAD_MAX_ATTEMPTS} ניסיונות: {last_error}")
-    data = resp.json()
     if "error" in data:
         raise RuntimeError(f"נכשל בהעלאת וידאו '{local_path.name}': {data['error']}")
     return data["id"]
