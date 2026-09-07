@@ -48,8 +48,15 @@ CAMPAIGN_OBJECTIVE = "OUTCOME_ENGAGEMENT"
 # ילד "ביקורים בפרופיל אינסטגרם": destination_type + optimization_goal הבאים הם
 # ההשערה הכי טובה שלי נכון להיום (Ads Manager: "מיקום ההמרה" = "פרופיל אינסטגרם").
 # *** אם optimization_goal שגוי, ה-API יחזיר שגיאה עם רשימת הערכים התקינים - עדכן כאן ***
+# ניסיון ראשון "PROFILE_VISIT" נדחה בפועל ע"י ה-API (error_subcode 2490408,
+# "יעד הביצועים לא זמין עם מטרת הקמפיין") בלי לפרט את הערכים התקינים בהודעה עצמה.
+# בדקנו בפועל (debug_list_adsets.py) שאין בחשבון הזה שום קמפיין קיים שמכוון
+# לביקורים בפרופיל אינסטגרם להעתיק ממנו - אין דוגמה אמיתית לאמת מולה.
+# "VISIT_INSTAGRAM_PROFILE" הוא הניחוש הבא הכי סביר (תואם את דפוס השמות
+# action+object של שאר הערכים כמו PAGE_LIKES/LANDING_PAGE_VIEWS).
+# *** אם גם זה נדחה, ה-API אמור לפרט ערכים תקינים - עדכן כאן בהתאם ***
 DESTINATION_TYPE = "INSTAGRAM_PROFILE"
-OPTIMIZATION_GOAL = "PROFILE_VISIT"           # לוודא! (חלופה סבירה: LANDING_PAGE_VIEWS)
+OPTIMIZATION_GOAL = "VISIT_INSTAGRAM_PROFILE"
 BILLING_EVENT = "IMPRESSIONS"
 BID_STRATEGY = "LOWEST_COST_WITHOUT_CAP"
 
