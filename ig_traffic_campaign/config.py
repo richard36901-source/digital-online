@@ -28,9 +28,12 @@ AD_ACCOUNT_ID = "330184635273905"
 # PAGE_ID לא ידוע/לא נדרש - חשבון האינסטגרם מוקצה ישירות ל-Business Portfolio
 # (naan1930store) בלי דף פייסבוק מקושר. campaign_launch.py כבר יודע להתמודד עם זה.
 PAGE_ID = "PASTE_PAGE_ID_HERE"
-# אותר דרך Business Settings -> Accounts -> Instagram accounts -> ben_nahum_1
-# (business_id=2504083516632376, selected_asset_id בכתובת ה-URL)
-IG_ACTOR_ID = "105029402244816"
+# ה-ID שהופיע ב-URL של Business Settings (selected_asset_id=105029402244816) התברר
+# כלא-תקין ל-promoted_object[instagram_actor_id] (שגיאת API: "must be a valid
+# instagram actor id"). ה-ID הנכון נמצא בתוך עמוד הפרטים של ben_nahum_1 עצמו
+# (Business Settings -> Accounts -> Instagram accounts -> ben_nahum_1 -> מזהה),
+# ומאושש גם כי הוא כבר בשימוש בפועל בקמפיין קיים אחר על אותו act_330184635273905.
+IG_ACTOR_ID = "17841446812678634"
 IG_USERNAME = "ben_nahum_1"  # לתיעוד/ולידציה בלבד - ה-API עובד לפי IG_ACTOR_ID
 
 # ==== הקמפיין ====
