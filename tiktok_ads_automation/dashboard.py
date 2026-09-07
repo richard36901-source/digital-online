@@ -84,6 +84,94 @@ def build_rows(advertiser_id: str) -> list[dict]:
     return rows
 
 
+def build_daily_trends(advertiser_id: str) -> dict:
+    """
+    מחזיר {ad_id: [{"date","ctr","impressions","clicks","spend"}, ...]} ממוין לפי תאריך,
+    רק עבור מודעות קמפיין config.CAMPAIGN_NAME - לצורך גרף המגמה היומי בדשבורד (לראות
+    איך CTR משתנה יום אחר יום לכל סרטון, לא רק תמונת מצב מצטברת).
+    """
+    campaigns = insights.get_campaigns(advertiser_id)
+    campaign = next((c for c in campaigns if c.get("campaign_name") == config.CAMPAIGN_NAME), None)
+    if not campaign:
+        return {}
+    campaign_ad_ids = {item["ad_id"] for item in insights.get_ads_for_campaign(advertiser_id, campaign["campaign_id"])}
+
+    daily = insights.fetch_daily_traffic_performance(advertiser_id)
+    by_ad: dict[str, list[dict]] = {}
+    for r in daily:
+        if r["ad_id"] not in campaign_ad_ids or not r["date"]:
+            continue
+        by_ad.setdefault(r["ad_id"], []).append(r)
+    for ad_id in by_ad:
+        by_ad[ad_id].sort(key=lambda r: r["date"])
+    return by_ad
+
+
+def _sparkline_svg(points: list[dict], width: int = 220, height: int = 52) -> str:
+    """
+    קו מגמה קטן (sparkline) לסדרת CTR יומית - צבע יחיד (עקבי עם --brand בשאר
+    הדשבורד, אין צורך ב-legend כי זו סדרה בודדת), עם נקודת קצה לכל יום ו-<title>
+    כטולטיפ טבעי של הדפדפן (בלי JS נוסף).
+    """
+    pad = 8
+    n = len(points)
+    values = [p["ctr"] for p in points]
+    lo, hi = min(values), max(values)
+    span = (hi - lo) or 1.0
+
+    def x(i: int) -> float:
+        return pad + (i / (n - 1)) * (width - 2 * pad)
+
+    def y(v: float) -> float:
+        return height - pad - ((v - lo) / span) * (height - 2 * pad)
+
+    coords = [(x(i), y(p["ctr"])) for i, p in enumerate(points)]
+    path = " ".join(f"{px:.1f},{py:.1f}" for px, py in coords)
+
+    dots = "\n".join(
+        f'<circle cx="{px:.1f}" cy="{py:.1f}" r="4" fill="var(--brand)" stroke="var(--card)" stroke-width="2">'
+        f'<title>{p["date"]}: CTR {p["ctr"]:.2f}% · {p["clicks"]:,.0f} קליקים מתוך {p["impressions"]:,.0f} חשיפות</title>'
+        f'</circle>'
+        for (px, py), p in zip(coords, points)
+    )
+
+    return (
+        f'<svg viewBox="0 0 {width} {height}" width="{width}" height="{height}" class="spark">'
+        f'<polyline points="{path}" fill="none" stroke="var(--brand)" stroke-width="2" '
+        f'stroke-linejoin="round" stroke-linecap="round" />{dots}</svg>'
+    )
+
+
+def _fmt_date_short(d: str) -> str:
+    """"2026-09-07" -> "07/09" - פורמט קצר לתצוגה."""
+    parts = d.split("-")
+    return f"{parts[2]}/{parts[1]}" if len(parts) == 3 else d
+
+
+def _trend_card(ad_name: str, points: list[dict]) -> str:
+    if len(points) < 2:
+        return f"""
+    <div class="trend-card">
+      <div class="trend-name">{ad_name}</div>
+      <div class="trend-empty">עדיין רק יום אחד של נתונים - הגרף יופיע אחרי יומיים+</div>
+    </div>"""
+
+    current, first = points[-1]["ctr"], points[0]["ctr"]
+    delta = current - first
+    delta_class = "up" if delta > 0 else ("down" if delta < 0 else "flat")
+    delta_sign = "+" if delta > 0 else ""
+
+    # dir="ltr" מפורש - בלי זה, ערוץ תאריכים לועזיים בתוך פסקה בכיוון RTL מוצג
+    # בסדר הפוך (bidi) - התגלה בפועל, נבדק ותוקן עם screenshot.
+    return f"""
+    <div class="trend-card">
+      <div class="trend-name">{ad_name}</div>
+      <div class="trend-value">{current:.2f}% <span class="trend-delta {delta_class}">{delta_sign}{delta:.2f}%</span></div>
+      {_sparkline_svg(points)}
+      <div class="trend-range" dir="ltr">{_fmt_date_short(points[0]['date'])} → {_fmt_date_short(points[-1]['date'])}</div>
+    </div>"""
+
+
 def generate_dashboard() -> str:
     all_rows = []
     for client_name, advertiser_id in config.ADVERTISER_ACCOUNTS.items():
@@ -95,6 +183,17 @@ def generate_dashboard() -> str:
     overall_ctr = (total_clicks / total_impressions * 100) if total_impressions else 0.0
 
     now_str = datetime.now(ZoneInfo("Asia/Jerusalem")).strftime("%d/%m/%Y %H:%M")
+
+    # מגמה יומית - כרטיס sparkline לכל סרטון (CTR יום אחר יום), באותו סדר כמו הטבלה
+    # הראשית. עד שיצטברו לפחות יומיים של נתונים, כל כרטיס מציג הודעת "עדיין מוקדם".
+    id_to_name = {r["ad_id"]: r["ad_name"] for r in all_rows}
+    trend_by_ad: dict[str, list[dict]] = {}
+    for client_name, advertiser_id in config.ADVERTISER_ACCOUNTS.items():
+        trend_by_ad.update(build_daily_trends(advertiser_id))
+    trend_cards_html = "\n".join(
+        _trend_card(id_to_name.get(r["ad_id"], r["ad_id"]), trend_by_ad[r["ad_id"]])
+        for r in all_rows if r["ad_id"] in trend_by_ad
+    )
 
     bars_html = "\n".join(f"""
       <div class="bar-row">
@@ -202,6 +301,25 @@ def generate_dashboard() -> str:
 
   .empty {{ color: var(--muted); text-align: center; padding: 30px; }}
   footer {{ margin-top: 20px; font-size: 12px; color: var(--muted); text-align: center; }}
+
+  .trend-grid {{
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px;
+  }}
+  .trend-card {{
+    background: #1b1f29; border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px;
+  }}
+  .trend-name {{
+    font-size: 12.5px; font-weight: 600; margin-bottom: 6px; overflow: hidden;
+    text-overflow: ellipsis; white-space: nowrap;
+  }}
+  .trend-value {{ font-size: 18px; font-weight: 800; margin-bottom: 4px; }}
+  .trend-delta {{ font-size: 12px; font-weight: 700; }}
+  .trend-delta.up {{ color: var(--green); }}
+  .trend-delta.down {{ color: var(--red); }}
+  .trend-delta.flat {{ color: var(--muted); }}
+  .spark {{ display: block; margin: 4px 0; }}
+  .trend-empty {{ color: var(--muted); font-size: 12px; padding: 14px 0; }}
+  .trend-range {{ color: var(--muted); font-size: 11px; margin-top: 2px; }}
 </style>
 </head>
 <body>
@@ -219,6 +337,13 @@ def generate_dashboard() -> str:
 <div class="card">
   <h2>דירוג לפי CTR (הקלקות מתוך חשיפות) - מהמצטיינת לחלשה</h2>
   {bars_html if all_rows else '<div class="empty">אין עדיין נתונים - הריצו את הקמפיין כמה ימים ואז רעננו את הדשבורד.</div>'}
+</div>
+
+<div class="card">
+  <h2>מגמה יומית (CTR) - איך כל סרטון משתנה יום אחר יום</h2>
+  <div class="trend-grid">
+    {trend_cards_html if trend_cards_html else '<div class="empty">אין עדיין מספיק ימים של נתונים - חזרו לבדוק אחרי יומיים+.</div>'}
+  </div>
 </div>
 
 <div class="card">

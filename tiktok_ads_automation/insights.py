@@ -129,6 +129,57 @@ def fetch_traffic_performance(advertiser_id: str, lookback_days: int = None) -> 
     return rows
 
 
+def fetch_daily_traffic_performance(advertiser_id: str, lookback_days: int = 14) -> list[dict]:
+    """
+    מושך ביצועי תנועה ברמת מודעה, מפוצל ליום (dimension נוסף: stat_time_day) - לצורך
+    גרף מגמה בדשבורד (איך CTR/חשיפות/הוצאה משתנים יום אחר יום לכל סרטון, לא רק
+    תמונת מצב מצטברת). TikTok תומכת עד 30 יום כשמוסיפים stat_time_day לממדים
+    (אומת מול תיעוד ה-API - לא נבדק בפועל).
+    מחזיר רשימת dict-ים: {"ad_id", "date" ("YYYY-MM-DD"), "spend", "impressions", "clicks", "ctr"}.
+    """
+    end_date = date.today()
+    start_date = end_date - timedelta(days=lookback_days)
+
+    resp = requests.get(
+        f"{config.API_BASE_URL}/report/integrated/get/",
+        headers=HEADERS,
+        params={
+            "advertiser_id": advertiser_id,
+            "report_type": "BASIC",
+            "data_level": "AUCTION_AD",
+            "dimensions": '["ad_id", "stat_time_day"]',
+            "metrics": str(TRAFFIC_METRICS).replace("'", '"'),
+            "start_date": start_date.isoformat(),
+            "end_date": end_date.isoformat(),
+            "page": 1,
+            "page_size": 1000,
+        },
+        timeout=30,
+    )
+    data = resp.json()
+    if data.get("code") != 0:
+        raise RuntimeError(f"נכשל במשיכת נתוני מגמה יומית עבור advertiser_id={advertiser_id}: {data}")
+
+    rows = []
+    for item in data["data"].get("list", []):
+        dims = item.get("dimensions", {})
+        metrics = item.get("metrics", {})
+        clicks = float(metrics.get("clicks", 0) or 0)
+        impressions = float(metrics.get("impressions", 0) or 0)
+        # "stat_time_day" חוזר כ-"YYYY-MM-DD HH:MM:SS" (אותו פורמט כמו create_time
+        # במקומות אחרים ב-API) - חותכים לתאריך בלבד להצגה.
+        raw_date = dims.get("stat_time_day", "") or ""
+        rows.append({
+            "ad_id": dims.get("ad_id"),
+            "date": raw_date[:10],
+            "spend": float(metrics.get("spend", 0) or 0),
+            "impressions": impressions,
+            "clicks": clicks,
+            "ctr": (clicks / impressions * 100) if impressions else 0.0,
+        })
+    return rows
+
+
 def get_ads_status(advertiser_id: str, ad_ids: list[str]) -> dict:
     """מחזיר {ad_id: operation_status} עבור רשימת מודעות - לתצוגת "פעיל/מושהה" בדשבורד."""
     if not ad_ids:
