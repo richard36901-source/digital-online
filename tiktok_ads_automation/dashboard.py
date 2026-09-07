@@ -76,6 +76,7 @@ def build_rows(advertiser_id: str) -> list[dict]:
         rows.append({
             **r,
             "ad_name": _display_name(ad_name),
+            "video_url": meta.get(r["ad_id"], {}).get("video_url"),
             "status": STATUS_LABELS.get(statuses.get(r["ad_id"]), statuses.get(r["ad_id"], "-")),
             "bar_pct": round((r["ctr"] / max_ctr) * 100, 1),
             "badge_text": badge_text,

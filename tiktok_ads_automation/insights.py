@@ -203,11 +203,14 @@ def get_ads_status(advertiser_id: str, ad_ids: list[str]) -> dict:
 
 
 def get_ads_meta(advertiser_id: str, ad_ids: list[str]) -> dict:
-    """מחזיר {ad_id: {"adgroup_id", "operation_status", "ad_name"}} - לצורך webapp.py
-    (לוח בקרה) ו-dashboard.py. שם המודעה (ad_name) נשלף כאן מ-/ad/get/ - שדה קבוע על
-    אובייקט המודעה עצמו - ולא מ-metrics.ad_name בדוח (report/integrated/get/), ששם
-    השדה בפועל לא הוחזר כי לא נכלל ב-METRICS/TRAFFIC_METRICS, מה שגרם לדשבורד להציג
-    מספרי ad_id גולמיים במקום שמות סרטונים."""
+    """מחזיר {ad_id: {"adgroup_id", "operation_status", "ad_name", "video_url"}} -
+    לצורך webapp.py (לוח בקרה) ו-dashboard.py. שם המודעה (ad_name) נשלף כאן מ-/ad/get/ -
+    שדה קבוע על אובייקט המודעה עצמו - ולא מ-metrics.ad_name בדוח (report/integrated/get/),
+    ששם השדה בפועל לא הוחזר כי לא נכלל ב-METRICS/TRAFFIC_METRICS, מה שגרם לדשבורד להציג
+    מספרי ad_id גולמיים במקום שמות סרטונים.
+    video_url מנסה לבנות קישור לצפייה בסרטון עצמו בטיקטוק (לא רק ב-Ads Manager), לפי
+    tiktok_item_id + display_name שראינו בפועל בתוך creatives בתגובות create_ad/rename_ad -
+    לא נבדק אם /ad/get/ אכן מחזיר אותם (לא מתועד), אז fallback שקט ל-None אם חסר."""
     if not ad_ids:
         return {}
     resp = requests.get(
@@ -216,7 +219,7 @@ def get_ads_meta(advertiser_id: str, ad_ids: list[str]) -> dict:
         params={
             "advertiser_id": advertiser_id,
             "filtering": json.dumps({"ad_ids": ad_ids}),
-            "fields": '["ad_id", "adgroup_id", "operation_status", "ad_name"]',
+            "fields": '["ad_id", "adgroup_id", "operation_status", "ad_name", "creatives"]',
             "page": 1,
             "page_size": 1000,
         },
@@ -225,11 +228,20 @@ def get_ads_meta(advertiser_id: str, ad_ids: list[str]) -> dict:
     data = resp.json()
     if data.get("code") != 0:
         raise RuntimeError(f"נכשל בשליפת פרטי מודעות: {data}")
+
+    def _video_url(item: dict) -> str | None:
+        creatives = item.get("creatives") or []
+        creative = creatives[0] if creatives else {}
+        item_id = creative.get("tiktok_item_id")
+        username = creative.get("display_name")
+        return f"https://www.tiktok.com/@{username}/video/{item_id}" if item_id and username else None
+
     return {
         item["ad_id"]: {
             "adgroup_id": item.get("adgroup_id"),
             "operation_status": item.get("operation_status", "UNKNOWN"),
             "ad_name": item.get("ad_name"),
+            "video_url": _video_url(item),
         }
         for item in data["data"].get("list", [])
     }
