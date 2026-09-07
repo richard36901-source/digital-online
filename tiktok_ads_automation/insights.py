@@ -140,6 +140,8 @@ def get_ads_status(advertiser_id: str, ad_ids: list[str]) -> dict:
             "advertiser_id": advertiser_id,
             "filtering": json.dumps({"ad_ids": ad_ids}),
             "fields": '["ad_id", "operation_status"]',
+            "page": 1,
+            "page_size": 1000,
         },
         timeout=30,
     )
@@ -160,6 +162,8 @@ def get_ads_meta(advertiser_id: str, ad_ids: list[str]) -> dict:
             "advertiser_id": advertiser_id,
             "filtering": json.dumps({"ad_ids": ad_ids}),
             "fields": '["ad_id", "adgroup_id", "operation_status"]',
+            "page": 1,
+            "page_size": 1000,
         },
         timeout=30,
     )
@@ -183,6 +187,8 @@ def get_adgroup_budgets(advertiser_id: str, adgroup_ids: list[str]) -> dict:
             "advertiser_id": advertiser_id,
             "filtering": json.dumps({"adgroup_ids": adgroup_ids}),
             "fields": '["adgroup_id", "budget", "budget_mode"]',
+            "page": 1,
+            "page_size": 1000,
         },
         timeout=30,
     )
@@ -195,58 +201,61 @@ def get_adgroup_budgets(advertiser_id: str, adgroup_ids: list[str]) -> dict:
     }
 
 
+def _fetch_all_pages(url: str, params: dict) -> list[dict]:
+    """
+    שולף את כל הפריטים מ-endpoint מדופדף (page/page_info.total_page), לא מסתפקים
+    ב-page_size גדול בודד - זו הפעם השנייה בפועל שברירת מחדל/הנחה על מספר עמודים
+    גרמה לפספוס נתונים אמיתיים (קודם וידאו ב-/file/video/ad/search/, עכשיו
+    קבוצות מודעות ב-/adgroup/get/ - fix-budgets תיקן רק 10 מתוך 13 בגלל זה).
+    """
+    all_items = []
+    page = 1
+    while True:
+        resp = requests.get(url, headers=HEADERS, params={**params, "page": page, "page_size": 1000}, timeout=30)
+        data = resp.json()
+        if data.get("code") != 0:
+            raise RuntimeError(f"נכשל בשליפת נתונים מ-{url}: {data}")
+        page_data = data["data"]
+        all_items.extend(page_data.get("list", []))
+        total_page = page_data.get("page_info", {}).get("total_page", 1)
+        if page >= total_page:
+            break
+        page += 1
+    return all_items
+
+
 def get_campaigns(advertiser_id: str) -> list[dict]:
     """מחזיר את כל הקמפיינים בחשבון: [{"campaign_id", "campaign_name"}, ...] - לצורך
     בדיקת אידמפוטנטיות ב-campaign_launch.py (לא ליצור קמפיין כפול בהרצה חוזרת)."""
-    resp = requests.get(
+    return _fetch_all_pages(
         f"{config.API_BASE_URL}/campaign/get/",
-        headers=HEADERS,
-        params={
-            "advertiser_id": advertiser_id,
-            "fields": '["campaign_id", "campaign_name"]',
-        },
-        timeout=30,
+        {"advertiser_id": advertiser_id, "fields": '["campaign_id", "campaign_name"]'},
     )
-    data = resp.json()
-    if data.get("code") != 0:
-        raise RuntimeError(f"נכשל בשליפת רשימת קמפיינים: {data}")
-    return data["data"].get("list", [])
 
 
 def get_adgroups(advertiser_id: str, campaign_id: str) -> list[dict]:
     """מחזיר את כל קבוצות המודעות תחת קמפיין נתון: [{"adgroup_id", "adgroup_name"}, ...] -
     לצורך בדיקת אידמפוטנטיות (לא ליצור adgroup כפול לאותו סרטון בהרצה חוזרת)."""
-    resp = requests.get(
+    return _fetch_all_pages(
         f"{config.API_BASE_URL}/adgroup/get/",
-        headers=HEADERS,
-        params={
+        {
             "advertiser_id": advertiser_id,
             "filtering": json.dumps({"campaign_ids": [campaign_id]}),
             "fields": '["adgroup_id", "adgroup_name"]',
         },
-        timeout=30,
     )
-    data = resp.json()
-    if data.get("code") != 0:
-        raise RuntimeError(f"נכשל בשליפת קבוצות מודעות לקמפיין {campaign_id}: {data}")
-    return data["data"].get("list", [])
 
 
 def get_adgroup_ids_with_ads(advertiser_id: str, campaign_id: str) -> set:
     """מחזיר את קבוצות ה-adgroup_id שכבר יש להן לפחות מודעה אחת תחת הקמפיין - לצורך
     השלמת קבוצות מודעות "יתומות" (נוצרו בהרצה קודמת שנכשלה לפני שהמודעה נוצרה)
     במקום לדלג עליהן לגמרי."""
-    resp = requests.get(
+    items = _fetch_all_pages(
         f"{config.API_BASE_URL}/ad/get/",
-        headers=HEADERS,
-        params={
+        {
             "advertiser_id": advertiser_id,
             "filtering": json.dumps({"campaign_ids": [campaign_id]}),
             "fields": '["ad_id", "adgroup_id"]',
         },
-        timeout=30,
     )
-    data = resp.json()
-    if data.get("code") != 0:
-        raise RuntimeError(f"נכשל בשליפת מודעות לקמפיין {campaign_id}: {data}")
-    return {item["adgroup_id"] for item in data["data"].get("list", [])}
+    return {item["adgroup_id"] for item in items}
