@@ -10,7 +10,9 @@ update_adgroup_budget (adgroup/update/) עדיין לא נבדק מול TikTok �
 """
 
 import hashlib
+import json
 import mimetypes
+import time
 from datetime import datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -96,10 +98,14 @@ def find_video_id_by_filename(advertiser_id: str, filename: str) -> str | None:
     """
     from locations import _find_list
 
+    # אין אפשרות לסנן לפי שם קובץ (filtering תומך רק ב-video_ids/material_ids/מידות),
+    # אז סורקים את כל הספריה עם page_size מקסימלי (100) - חשוב לא להסתמך על ברירת
+    # המחדל (20), כפי שהתגלה בפועל ב-get_video_cover_image_id כשהיו כבר סרטונים/
+    # קמפיינים אחרים בחשבון.
     resp = requests.get(
         f"{config.API_BASE_URL}/file/video/ad/search/",
         headers={"Access-Token": config.ACCESS_TOKEN},
-        params={"advertiser_id": advertiser_id},
+        params={"advertiser_id": advertiser_id, "page": 1, "page_size": 100},
         timeout=30,
     )
     data = resp.json()
@@ -218,29 +224,46 @@ def get_video_cover_image_id(advertiser_id: str, video_id: str) -> str:
     בנוסף לוידאו עצמו (קוד 40002 "You must upload an image" בלעדיו, אומת בפועל).
     מחזיר image_id. שמות השדות ב-/file/video/ad/search/ לא אומתו במלואם - סורק
     באופן גמיש (אותה גישה שעבדה ב-locations.py).
+
+    מסננים עם filtering.video_ids (במקום להסתמך על ברירת המחדל page=1/page_size=20
+    ולקוות שהסרטון בעמוד הראשון) - קריטי כשבחשבון כבר יש קמפיינים/סרטונים אחרים
+    (כפי שהתגלה בפועל אחרי שהסרטון הראשון הצליח אבל השני נכשל - הסרטון השני כנראה
+    פשוט לא הופיע בעמוד הראשון של ספריית הווידאו).
     """
     from locations import _find_list
 
-    resp = requests.get(
-        f"{config.API_BASE_URL}/file/video/ad/search/",
-        headers={"Access-Token": config.ACCESS_TOKEN},
-        params={"advertiser_id": advertiser_id},
-        timeout=30,
-    )
-    data = resp.json()
-    if data.get("code") != 0:
-        raise RuntimeError(f"נכשל בחיפוש פרטי וידאו {video_id}: {data}")
-
     poster_url = None
-    for item in _find_list(data["data"]):
-        if item.get("video_id") == video_id:
-            poster_url = item.get("poster_url") or item.get("video_cover_url")
+    last_data = None
+    # ניסיונות חוזרים עם השהיה - יכול להיות שה-poster עוד לא נוצר מיד אחרי ההעלאה
+    # (עיבוד אסינכרוני ב-TikTok).
+    for attempt in range(5):
+        resp = requests.get(
+            f"{config.API_BASE_URL}/file/video/ad/search/",
+            headers={"Access-Token": config.ACCESS_TOKEN},
+            params={
+                "advertiser_id": advertiser_id,
+                "filtering": json.dumps({"video_ids": [video_id]}),
+            },
+            timeout=30,
+        )
+        data = resp.json()
+        if data.get("code") != 0:
+            raise RuntimeError(f"נכשל בחיפוש פרטי וידאו {video_id}: {data}")
+        last_data = data
+
+        for item in _find_list(data["data"]):
+            if item.get("video_id") == video_id:
+                poster_url = item.get("poster_url") or item.get("video_cover_url")
+                break
+
+        if poster_url:
             break
+        time.sleep(3)
 
     if not poster_url:
         raise RuntimeError(
-            f"לא נמצאה תמונת תצוגה (poster_url) לסרטון {video_id} ב-/file/video/ad/search/ - "
-            "יכול להיות ששם השדה שונה בפועל, יש לבדוק את התגובה המלאה ולעדכן."
+            f"לא נמצאה תמונת תצוגה (poster_url) לסרטון {video_id} ב-/file/video/ad/search/ "
+            f"אחרי 5 ניסיונות - יכול להיות ששם השדה שונה בפועל. תגובה מלאה: {last_data}"
         )
 
     resp = requests.post(
