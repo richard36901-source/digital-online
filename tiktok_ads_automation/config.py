@@ -90,7 +90,7 @@ IDENTITY_TYPE = "TT_USER"  # אומת בפועל - לא CUSTOMIZED_USER כפי �
 # ==== מצב בטיחות ====
 # כשזה True, הסקריפט רק מדפיס/רושם מה הוא *היה* עושה, בלי לבצע שינויים אמיתיים.
 # יש להריץ כמה ימים במצב הזה ולוודא שההחלטות הגיוניות, ואז לשנות ל-False.
-DRY_RUN = True
+DRY_RUN = False
 
 # ==== לוגים ====
 LOG_FILE = "./logs/automation_log.jsonl"
