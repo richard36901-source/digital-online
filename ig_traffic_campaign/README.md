@@ -48,6 +48,16 @@ python check_permissions.py
 
 הסרטונים נמצאים בתיקייה בבעלות `benk9922@gmail.com`. כדי להוריד אותם דרך ה-API:
 
+**לפני שיוצרים OAuth Client חדש - בדקו קודם אם כבר יש לכם אחד.** אם יש לכם פרויקט/
+אוטומציה אחרת (למשל בצד ה-TikTok, אם היא ניגשת לאותה תיקיית דרייב) עם `client_secret*.json`
+קיים שכבר מאושר לגשת לתיקייה `1SWAcj6fAOcLn2y4NMI8O_HQWJFBozmMV` - אפשר פשוט להעתיק
+אותו לכאן ולשנות את שמו ל-`credentials.json`, ולדלג על שלבים 1-4. **חיפשתי בריפו הזה
+(`digital-online-1`) ולא מצאתי שום `credentials.json`/`client_secret*.json`/`token.json`
+או קוד קיים שמשתמש ב-Google Drive API** - אם יש לכם קובץ כזה, הוא חי במקום אחר (פרויקט/
+מחשב נפרד) ולא משהו שאני יכול לאתר או להעביר מכאן.
+
+אם אין קובץ קיים - זה תהליך חד-פעמי:
+
 1. היכנסו ל-[Google Cloud Console](https://console.cloud.google.com/) עם המשתמש שלכם
    (`yahavmor77@gmail.com`), צרו פרויקט (או השתמשו בקיים).
 2. הפעילו את **Google Drive API** (APIs & Services → Enable APIs → Google Drive API).
