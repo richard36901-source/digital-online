@@ -10,3 +10,4 @@ downloaded_videos/
 __pycache__/
 *.pyc
 venv/
+.flask_secret_key
