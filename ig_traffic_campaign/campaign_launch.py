@@ -38,9 +38,19 @@ def create_campaign() -> str:
         return "DRY_RUN_CAMPAIGN_ID"
 
     existing = insights.find_campaign()
-    if existing:
+    if existing and existing.get("objective") == config.CAMPAIGN_OBJECTIVE:
         logger.print_and_log({"level": "info", "action": "reuse_campaign", "campaign_id": existing["id"]})
         return existing["id"]
+    if existing:
+        # קמפיין קיים באותו שם אבל עם objective ישן/שונה (למשל OUTCOME_ENGAGEMENT
+        # מניסיון קודם שננטש) - אי אפשר לשנות objective של קמפיין קיים, אז יוצרים
+        # קמפיין חדש (Meta מאפשרת שמות כפולים). הישן נשאר בחשבון, ריק, וניתן למחוק
+        # אותו ידנית מ-Ads Manager.
+        logger.print_and_log({
+            "level": "warning", "action": "campaign_objective_mismatch",
+            "existing_campaign_id": existing["id"], "existing_objective": existing.get("objective"),
+            "wanted_objective": config.CAMPAIGN_OBJECTIVE,
+        })
 
     url = f"{config.GRAPH_URL}/act_{config.AD_ACCOUNT_ID}/campaigns"
     resp = requests.post(url, data={
@@ -67,27 +77,17 @@ def create_ad_set(campaign_id: str, name: str) -> str:
         logger.print_and_log({"level": "dry_run", "action": "create_ad_set", "name": name, "campaign_id": campaign_id})
         return f"DRY_RUN_ADSET_ID_{name}"
 
-    # promoted_object ברמת ה-Ad Set דורש page_id (לא instagram_actor_id!) עבור
-    # optimization_goal=PROFILE_AND_PAGE_ENGAGEMENT - אומת בפועל מול טיוטת קמפיין
-    # שנבנתה ידנית ב-Ads Manager (ראו ההערה ב-config.py). זיהוי הפרופיל הספציפי
-    # (ben_nahum_1) נעשה ברמת הקריאטיב (object_story_spec.instagram_actor_id),
-    # לא כאן.
-    # LOWEST_COST_WITHOUT_CAP וגם LOWEST_COST_WITH_BID_CAP+bid_amount נדחו עם אותה
-    # שגיאה שהאשימה optimization_goal (הודעה מטעה מ-Meta - כנראה לא bid_strategy
-    # באמת האשם). ה-promoted_object ב-Ad Set שהצליח כלל גם smart_pse_enabled:false
-    # לצד page_id - שדה שהיה חסר אצלנו עד עכשיו. מוסיפים אותו כדי להתאים בדיוק
-    # למבנה המאומת.
+    # OUTCOME_TRAFFIC + LINK_CLICKS - אותו conceptual pattern המאומת כבר עובד בפועל
+    # בחשבון הזה (קמפיין הדיסקורד הפעיל). בלי destination_type/promoted_object -
+    # אלה לא נדרשים ליעד לינק חיצוני רגיל (בניגוד ל-INSTAGRAM_PROFILE הילידי שנכשל
+    # עקבית - ראו הערה מפורטת ב-config.py).
     url = f"{config.GRAPH_URL}/act_{config.AD_ACCOUNT_ID}/adsets"
     resp = requests.post(url, data={
         "name": f"{name} - Ad Set",
         "campaign_id": campaign_id,
         "daily_budget": config.DAILY_BUDGET_AGOROT_PER_ADSET,
         "billing_event": config.BILLING_EVENT,
-        "bid_strategy": config.BID_STRATEGY,
-        "bid_amount": config.BID_AMOUNT_AGOROT,
         "optimization_goal": config.OPTIMIZATION_GOAL,
-        "destination_type": config.DESTINATION_TYPE,
-        "promoted_object": json.dumps({"page_id": config.PAGE_ID, "smart_pse_enabled": False}),
         "targeting": json.dumps(config.TARGETING),
         "status": config.CREATED_STATUS,
         "access_token": config.ACCESS_TOKEN,
@@ -109,20 +109,23 @@ def create_ad_creative(name: str, video_id: str, thumbnail_url: str, message: st
         logger.print_and_log({"level": "dry_run", "action": "create_ad_creative", "name": name})
         return f"DRY_RUN_CREATIVE_ID_{name}"
 
+    # page_id הוא ה"actor" שמפרסם את המודעה - חובה למודעת LINK_CLICKS (בניגוד ליעד
+    # INSTAGRAM_PROFILE הילידי, כאן זו לא אופציה). instagram_actor_id נשאר בנוסף כדי
+    # שהמודעה תוכל להופיע גם כמגיעה מפרופיל ה-Instagram, אבל הלינק בפועל (call_to_action)
+    # הוא מה שמוביל לפרופיל - link_click, לא native profile-visit destination.
     object_story_spec = {
+        "page_id": config.PAGE_ID,
         "instagram_actor_id": config.IG_ACTOR_ID,
         "video_data": {
             "video_id": video_id,
             "image_url": thumbnail_url,
             "message": message,
-            "call_to_action": {"type": config.CTA_TYPE},
+            "call_to_action": {
+                "type": config.CTA_TYPE,
+                "value": {"link": config.DESTINATION_URL},
+            },
         },
     }
-    # page_id: לא תמיד נדרש כשחשבון האינסטגרם מוקצה ישירות ל-Business Portfolio
-    # (בניגוד לדף פייסבוק מקושר בדרך הישנה) - ראו check_permissions.py. כולל רק אם
-    # יש ערך אמיתי ב-config; אם ה-API בכל זאת דורש אותו, השגיאה תבהיר את זה.
-    if config.PAGE_ID and not config.PAGE_ID.startswith("PASTE_"):
-        object_story_spec["page_id"] = config.PAGE_ID
 
     url = f"{config.GRAPH_URL}/act_{config.AD_ACCOUNT_ID}/adcreatives"
     resp = requests.post(url, data={
@@ -180,8 +183,10 @@ def preflight_checks() -> None:
         print("שגיאה: IG_ACTOR_ID לא מולא ב-config.py. הרץ קודם: python check_permissions.py")
         sys.exit(1)
     if config.PAGE_ID.startswith("PASTE_"):
-        print("אזהרה: PAGE_ID לא מולא - ממשיך בלעדיו (ייתכן שלא נדרש כשהאינסטגרם "
-              "מוקצה ישירות ל-Business Portfolio). אם ה-API ידרוש אותו, תקבלו שגיאה ברורה.")
+        # PAGE_ID חובה עכשיו (LINK_CLICKS/object_story_spec) - לא אופציונלי יותר
+        # כמו בניסיון הקודם עם היעד הילידי INSTAGRAM_PROFILE.
+        print("שגיאה: PAGE_ID לא מולא ב-config.py - חובה ל-object_story_spec של הקריאטיב.")
+        sys.exit(1)
 
 
 def main():

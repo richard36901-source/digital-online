@@ -11,10 +11,10 @@ import config
 
 
 def find_campaign() -> dict | None:
-    """מחפש את הקמפיין לפי שם (config.CAMPAIGN_NAME) בחשבון. מחזיר {'id','name'} או None."""
+    """מחפש את הקמפיין לפי שם (config.CAMPAIGN_NAME) בחשבון. מחזיר {'id','name','objective'} או None."""
     url = f"{config.GRAPH_URL}/act_{config.AD_ACCOUNT_ID}"
     resp = requests.get(url, params={
-        "fields": "campaigns.limit(200){id,name}",
+        "fields": "campaigns.limit(200){id,name,objective}",
         "access_token": config.ACCESS_TOKEN,
     }, timeout=30)
     data = resp.json()

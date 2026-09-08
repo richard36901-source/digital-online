@@ -43,38 +43,29 @@ IG_USERNAME = "ben_nahum_1"  # לתיעוד/ולידציה בלבד - ה-API ע�
 # ==== הקמפיין ====
 CAMPAIGN_NAME = "תנועה לאינסטגרם - ben_nahum_1 - סדרת סרטונים"
 
-# Objective ברמת הקמפיין (ODAX). "ביקורים בפרופיל אינסטגרם" הוא conversion location
-# תחת Engagement. אם ה-API ידחה את זה, השגיאה תפרט את כל ה-objectives התקינים הקיימים כרגע.
-# *** לוודא לפני הרצה אמיתית (DRY_RUN=False) - ראו הערה ב-README ***
-CAMPAIGN_OBJECTIVE = "OUTCOME_ENGAGEMENT"
+# אומת בפועל (8/9/2026) אחרי ניפוי ארוך: OUTCOME_ENGAGEMENT + destination_type=
+# INSTAGRAM_PROFILE + optimization_goal=PROFILE_AND_PAGE_ENGAGEMENT (ה"ביקור בפרופיל
+# אינסטגרם" הילידי) נכשל עקבית ב-create_ad_set עם שגיאה שהאשימה optimization_goal -
+# גם עם כל שדה תואם בדיוק לדוגמה שהצליחה ידנית ב-Ads Manager (page_id, smart_pse_enabled,
+# individual_setting וכו'), גם עם קמפיין חדש לגמרי, גם עם טוקן משתמש אישי (לא System
+# User), וגם עם גרסת API חדשה (v25.0). כל המשתנים נשללו - כנראה שה-optimization_goal
+# הזה ניתן ליצירה רק דרך זרימת ה"guided creation" הפנימית של Ads Manager, לא דרך ה-API
+# הציבורי בשלושת השלבים (campaign->adset->creative). הוחלט לעבור ל-OUTCOME_TRAFFIC
+# עם LINK_CLICKS - בדיוק אותו conceptual pattern שכבר עובד בפועל על החשבון הזה (קמפיין
+# "הזרמת תנועה לדיסקורד"), רק עם לינק לפרופיל האינסטגרם במקום ל-Discord.
+CAMPAIGN_OBJECTIVE = "OUTCOME_TRAFFIC"
 
 # ==== הגדרות ברמת ה-Ad Set (זהות לכל הסטים, אחד לכל סרטון) ====
-# ילד "ביקורים בפרופיל אינסטגרם": destination_type + optimization_goal הבאים הם
-# ההשערה הכי טובה שלי נכון להיום (Ads Manager: "מיקום ההמרה" = "פרופיל אינסטגרם").
-# *** אם optimization_goal שגוי, ה-API יחזיר שגיאה עם רשימת הערכים התקינים - עדכן כאן ***
-# אומת בפועל (7/9/2026): שני ניחושים קודמים (PROFILE_VISIT, VISIT_INSTAGRAM_PROFILE)
-# נדחו ע"י ה-API בלי לפרט ערכים תקינים בהודעת השגיאה. PROFILE_AND_PAGE_ENGAGEMENT
-# הוא הערך האמיתי - נמצא ע"י בניית טיוטת קמפיין ידנית ב-Ads Manager (Engagement +
-# מיקום המרה "פרופיל אינסטגרם") ובדיקת השדות שהיא יצרה בפועל (debug_list_adsets.py).
-DESTINATION_TYPE = "INSTAGRAM_PROFILE"
-OPTIMIZATION_GOAL = "PROFILE_AND_PAGE_ENGAGEMENT"
+# LINK_CLICKS הוא optimization_goal סטנדרטי ומאומת (זהה לקמפיין הדיסקורד הפעיל
+# בחשבון הזה) - בלי destination_type/promoted_object מיוחדים, כי היעד הוא לינק חיצוני
+# רגיל (כתובת הפרופיל), לא "יעד" native כמו INSTAGRAM_PROFILE.
+OPTIMIZATION_GOAL = "LINK_CLICKS"
 BILLING_EVENT = "IMPRESSIONS"
 
 # תקציב יומי לכל Ad Set בנפרד (לא לקמפיין!), באגורות. 10 ש"ח = 1000 אגורות.
 DAILY_BUDGET_AGOROT_PER_ADSET = 1000
 
-# אומת בפועל (7/9/2026): LOWEST_COST_WITHOUT_CAP נדחה (עם אותה שגיאה שהאשימה
-# optimization_goal, הודעה מטעה מ-Meta). השמטת bid_strategy לגמרי גם נכשלה - Meta
-# בוחרת ברירת מחדל שדורשת bid_amount מפורש (שגיאה: "נדרש סכום הצעת מחיר לאסטרטגיית
-# הצעת מחיר"). הפתרון: LOWEST_COST_WITH_BID_CAP עם bid_amount שווה לתקציב היומי
-# המלא - זה בפועל שקול ל"בלי תקציב אמיתי" (אירוע engagement בודד לא יעלה כמעט לעולם
-# תקציב יומי שלם), אבל מספק ערך מספרי כנדרש ע"י ה-API. אפשר/כדאי לכוונן ידנית
-# ב-Ads Manager לפני הפעלה בפועל.
-BID_STRATEGY = "LOWEST_COST_WITH_BID_CAP"
-BID_AMOUNT_AGOROT = DAILY_BUDGET_AGOROT_PER_ADSET
-
-# כפתור קריאה לפעולה על המודעה. לא בטוח שנדרש בכלל למודעות "ביקור בפרופיל" - לוודא
-# בהרצה הראשונה; אם ה-API דוחה את זה, אפשר לנסות בלי call_to_action כלל.
+# כפתור קריאה לפעולה על המודעה - מוביל ל-DESTINATION_URL (כתובת הפרופיל).
 CTA_TYPE = "LEARN_MORE"
 
 # טירגוט: ישראל, קהל רחב, בלי הגבלת גיל/מגדר (18-65 זה טווח ברירת המחדל הרחב ביותר ב-API).
@@ -159,4 +150,6 @@ LOG_FILE = "./logs/campaign_launch_log.jsonl"
 # today / yesterday / last_7d / last_14d / last_28d / last_30d / last_90d / this_month / last_month / this_quarter
 DATE_PRESET = "last_7d"
 PERFORMANCE_DASHBOARD_FILE = "./performance_dashboard.html"
-DESTINATION_URL = f"instagram.com/{IG_USERNAME}"
+# כתובת מלאה עם scheme - נדרש ל-call_to_action.value.link בקריאטיב (LINK_CLICKS
+# דורש URL תקין ומוחלט, לא רק דומיין+נתיב).
+DESTINATION_URL = f"https://www.instagram.com/{IG_USERNAME}/"
