@@ -214,8 +214,13 @@ def set_deeplink_for_existing_ads(advertiser_id: str) -> None:
     """
     תיקון חד-פעמי: מוסיף deep link (config.DEEPLINK_URL) לכל המודעות הקיימות תחת
     הקמפיין, כדי שיפתחו את אפליקציית אינסטגרם ישירות במקום דף אינטרנט עם "קיר" חוסם
-    בדפדפן הפנימי של טיקטוק - ראו actions.update_ad_deeplink ודיון על הפער בין קליקים
-    בטיקטוק לביקורי פרופיל בפועל באינסטגרם.
+    בדפדפן הפנימי של טיקטוק - ראו דיון על הפער בין קליקים בטיקטוק לביקורי פרופיל
+    בפועל באינסטגרם.
+
+    /ad/update/ לא תומך ב-deeplink במצב Patch (אומת בפועל - הודעת השגיאה החזירה את
+    הרשימה המלאה של השדות הנתמכים שם, וdeeplink לא ביניהם), אז צריך לשלוח את כל
+    הקריאטיב הקיים מחדש (ראו actions.update_ad_full_creative_with_deeplink) - משחזרים
+    אותו קודם דרך insights.get_ads_full_creative כדי לא לאבד שדות קיימים.
     """
     if config.DRY_RUN:
         raise RuntimeError("set_deeplink_for_existing_ads דורש DRY_RUN=False - זו פעולה על נתונים אמיתיים ב-TikTok.")
@@ -231,8 +236,12 @@ def set_deeplink_for_existing_ads(advertiser_id: str) -> None:
     campaign_id = campaign["campaign_id"]
 
     ads = insights.get_ads_for_campaign(advertiser_id, campaign_id)
+    full_creatives = insights.get_ads_full_creative(advertiser_id, [ad["ad_id"] for ad in ads])
     for ad in ads:
-        result = actions.update_ad_deeplink(advertiser_id, ad["adgroup_id"], ad["ad_id"], config.DEEPLINK_URL)
+        existing_creative = full_creatives.get(ad["ad_id"], {})
+        result = actions.update_ad_full_creative_with_deeplink(
+            advertiser_id, ad["adgroup_id"], ad["ad_id"], existing_creative, config.DEEPLINK_URL
+        )
         logger.print_and_log({
             "level": "action",
             "action": "set_deeplink",

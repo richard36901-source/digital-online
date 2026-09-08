@@ -248,6 +248,51 @@ def get_ads_meta(advertiser_id: str, ad_ids: list[str]) -> dict:
     }
 
 
+def get_ads_full_creative(advertiser_id: str, ad_ids: list[str]) -> dict:
+    """מחזיר {ad_id: {"ad_name", "ad_text", "video_id", "image_ids", "identity_type",
+    "identity_id", "landing_page_url", "call_to_action"}} - כל השדות שצריך כדי לשחזר
+    קריאטיב קיים בשלמותו לפני שליחת /ad/update/ עם deeplink, כי /ad/update/ (בלי
+    patch_update, או עם patch_update אבל deeplink לא נתמך שם - ראו actions.
+    update_ad_full_creative_with_deeplink) דורש את כל שדות הקריאטיב, לא רק את מה
+    שמשתנה, אחרת מוחק את מה שלא נשלח. השדות כאן לא אומתו עדיין מול רשימת השדות
+    התקינים האמיתית של /ad/get/ - אם מתקבלת שגיאת 40002, ההודעה עצמה תכיל את הרשימה
+    התקינה המלאה (בדיוק כמו שקרה עם "creatives") ויש לתקן בהתאם."""
+    if not ad_ids:
+        return {}
+    resp = requests.get(
+        f"{config.API_BASE_URL}/ad/get/",
+        headers=HEADERS,
+        params={
+            "advertiser_id": advertiser_id,
+            "filtering": json.dumps({"ad_ids": ad_ids}),
+            "fields": json.dumps([
+                "ad_id", "ad_name", "ad_text", "video_id", "image_ids",
+                "identity_type", "identity_id", "landing_page_url", "call_to_action",
+            ]),
+            "page": 1,
+            "page_size": 1000,
+        },
+        timeout=30,
+    )
+    data = resp.json()
+    if data.get("code") != 0:
+        raise RuntimeError(f"נכשל בשליפת פרטי קריאטיב מלאים: {data}")
+
+    return {
+        item["ad_id"]: {
+            "ad_name": item.get("ad_name"),
+            "ad_text": item.get("ad_text"),
+            "video_id": item.get("video_id"),
+            "image_ids": item.get("image_ids"),
+            "identity_type": item.get("identity_type"),
+            "identity_id": item.get("identity_id"),
+            "landing_page_url": item.get("landing_page_url"),
+            "call_to_action": item.get("call_to_action"),
+        }
+        for item in data["data"].get("list", [])
+    }
+
+
 def get_adgroup_budgets(advertiser_id: str, adgroup_ids: list[str]) -> dict:
     """מחזיר {adgroup_id: {"budget", "budget_mode"}} - לצורך webapp.py (לוח בקרה)."""
     if not adgroup_ids:

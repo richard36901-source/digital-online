@@ -514,3 +514,35 @@ def update_ad_deeplink(advertiser_id: str, adgroup_id: str, ad_id: str, deeplink
     if data.get("code") != 0:
         raise RuntimeError(f"נכשל בעדכון deep link למודעה {ad_id}: {data}")
     return {"dry_run": False, "action": "update_deeplink", "ad_id": ad_id, "deeplink": deeplink, "result": data}
+
+
+def update_ad_full_creative_with_deeplink(advertiser_id: str, adgroup_id: str, ad_id: str, existing_creative: dict, deeplink: str) -> dict:
+    """מוסיף deep link למודעה קיימת ע"י שליחת הקריאטיב *כולו* מחדש (לא patch חלקי).
+
+    התברר בפועל (קריאה אמיתית ל-/ad/update/ עם patch_update=True) ש-deeplink/
+    deeplink_type/fallback_type בכלל לא נתמכים ב-Patch Update mode - הודעת השגיאה
+    עצמה החזירה את הרשימה המלאה של השדות הנתמכים שם (ad_name/ad_text/image_ids/
+    video_id/music_id/ad_id/identity_id/identity_type/...) וdeeplink לא ביניהם.
+    אז בלי patch_update, /ad/update/ מתייחס ל-creatives כהחלפה מלאה (כמו /ad/create/) -
+    צריך לשלוח את כל שדות הקריאטיב הקיימים (existing_creative, משוחזרים מ-
+    insights.get_ads_full_creative) יחד עם שדות ה-deep link החדשים, אחרת השדות שלא
+    נשלחים עלולים להימחק מהמודעה החיה."""
+    if config.DRY_RUN:
+        return {"dry_run": True, "action": "update_full_creative_deeplink", "ad_id": ad_id, "deeplink": deeplink}
+
+    creative = {**existing_creative, "ad_id": ad_id, "deeplink": deeplink, "deeplink_type": "NORMAL", "fallback_type": "WEBSITE"}
+    resp = requests.post(
+        f"{config.API_BASE_URL}/ad/update/",
+        headers=HEADERS,
+        json={
+            "advertiser_id": advertiser_id,
+            "adgroup_id": adgroup_id,
+            "ad_id": ad_id,
+            "creatives": [creative],
+        },
+        timeout=30,
+    )
+    data = resp.json()
+    if data.get("code") != 0:
+        raise RuntimeError(f"נכשל בעדכון קריאטיב מלא + deep link למודעה {ad_id}: {data}")
+    return {"dry_run": False, "action": "update_full_creative_deeplink", "ad_id": ad_id, "deeplink": deeplink, "result": data}
