@@ -63,6 +63,7 @@ body{
   font-size:clamp(13px,3.8vw,15px);color:#c4b5fd;
   text-align:center;line-height:1.7;margin-bottom:20px;max-width:340px;
 }
+.proof-strip{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:18px;font-family:'Assistant',sans-serif;font-size:12.5px;font-weight:700;color:rgba(255,255,255,.8);background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.3);border-radius:99px;padding:7px 14px;animation:fadeUp .4s .16s ease both;}
 .next-box{
   width:100%;background:linear-gradient(145deg,rgba(30,12,55,.75),rgba(20,8,40,.85));
   border:1.5px solid rgba(217,70,239,.35);border-radius:16px;padding:16px 16px 14px;
@@ -95,6 +96,7 @@ body{
 }
 .vid-thumb:hover .play-btn{transform:scale(1.1)!important;animation:none;}
 .closing-hint{font-family:'Assistant',sans-serif;font-size:13.5px;font-weight:700;color:#f0abfc;text-align:center;margin-bottom:14px;line-height:1.6;text-shadow:0 0 16px rgba(217,70,239,.3);animation:fadeUp .5s .22s ease both;}
+.sound-hint{font-family:'Assistant',sans-serif;font-size:12.5px;font-weight:700;color:#67e8f9;text-align:center;margin-bottom:10px;animation:fadeUp .4s .17s ease both;}
 
 .lock-hint{font-family:'Assistant',sans-serif;font-size:13px;color:rgba(217,70,239,.65);text-align:center;margin-bottom:10px;font-weight:700;letter-spacing:.3px;}
 .btn-box{
@@ -160,6 +162,7 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.06);}
   </div>
   <h1 class="headline">העולם השתנה. עכשיו הגיע הזמן להבין למה.</h1>
   <p class="subline">ב-15 הדקות הקרובות תגלה למה יותר ויותר אנשים מבינים שהחוקים הישנים כבר לא מספיקים, ואילו עקרונות חדשים מתחילים לעצב את הדרך שבה יוצרים ערך בעידן החדש.</p>
+  <div class="proof-strip">✅ הצטרפו כבר <strong style="color:#67e8f9">7,000+</strong> אנשים</div>
 
   <div class="next-box">
     <p class="next-title">בסרטון הבא תגלה:</p>
@@ -171,6 +174,7 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.06);}
     </ul>
   </div>
 
+  <p class="sound-hint">🔊 לחצו על הסרטון כדי להפעיל אותו עם קול</p>
   <div class="vid-outer">
     <div class="vid-box">
       <div class="vid-ratio">
@@ -191,7 +195,7 @@ footer .sep{margin:0 6px;color:rgba(255,255,255,.06);}
     <a class="btn-next" id="btnNext" data-text="לעבור לשלב הבא" href="two-page-funnel-2.html">
       🔒&nbsp; לעבור לשלב הבא &nbsp;<span class="btn-arrow">←</span>
     </a>
-    <p class="lock-hint" style="margin-top:10px;margin-bottom:0;">🔒 הכפתור ייפתח בסיום הסרטון</p>
+    <p class="lock-hint" id="lockHint" style="margin-top:10px;margin-bottom:0;">🔒 הכפתור ייפתח בסיום הסרטון</p>
     <div class="series-block">
       <p class="series-line">✅ סרטון 1 – למה העולם השתנה<br>⬜ סרטון 2 – איך זה נראה בפועל</p>
       <p class="importance-line">בסרטון הבא נראה איך כל מה שלמדת כאן הופך לתהליך אחד שעובד בפועל, מהחשיפה הראשונה ועד לתוצאה.</p>
@@ -279,7 +283,13 @@ window.addEventListener('load',()=>{
   const video=document.getElementById('vimeoPlayer');
   const thumb=document.getElementById('vidThumb');
   const btnNext=document.getElementById('btnNext');
-  thumb.onclick=function(){thumb.classList.add('gone');video.play();};
+  /* The video autoplays muted (required by every mobile browser's autoplay
+     policy), but nothing ever turned the sound back on -- visitors were
+     watching the entire sales video in total silence with no obvious way to
+     fix that. A click is a real user gesture, so it's safe here to unmute
+     and restart from 0:00 (rather than leaving them mid-scene, having heard
+     nothing so far). */
+  thumb.onclick=function(){thumb.classList.add('gone');video.currentTime=0;video.muted=false;video.play();};
   video.addEventListener('play',()=>{
     thumb.classList.add('gone');btnNext.classList.add('watching');
     dataLayer.push({event:'video_play',page:PAGE});
@@ -306,6 +316,7 @@ window.addEventListener('load',()=>{
     }).catch(()=>{});
     btnNext.classList.add('unlocked');
     btnNext.innerHTML='&#9658;&nbsp; לעבור לשלב הבא &nbsp;<span class="btn-arrow">←</span>';
+    unlockButtonUI();
     setTimeout(()=>{btnNext.scrollIntoView({behavior:'smooth',block:'center'});},300);
   });
 });
@@ -320,8 +331,20 @@ window.addEventListener('beforeunload',()=>{
 });
 </script>
 <script>
-setTimeout(function(){
+/* The "next" button is locked until the video ends, with a 60s safety-net
+   unlock in case autoplay fails or someone doesn't finish the video. That
+   safety net used to be invisible -- a visitor just saw a permanently
+   grayed-out lock icon with no sense of whether it would ever open, which
+   reads as a broken page and is a plausible reason people bail before ever
+   reaching the final page 2 / lead form. Surfacing a live countdown makes
+   clear the page isn't stuck. */
+var LOCK_FALLBACK_MS = 60000;
+var lockDeadline = Date.now() + LOCK_FALLBACK_MS;
+function unlockButtonUI(){
+  clearInterval(window._lockCountdownTimer);
   var b=document.getElementById('btnNext');
+  var hint=document.getElementById('lockHint');
+  if(hint) hint.style.display='none';
   if(!b||b.classList.contains('unlocked'))return;
   b.classList.remove('watching');
   b.classList.add('unlocked');
@@ -329,7 +352,15 @@ setTimeout(function(){
   b.style.pointerEvents='auto';
   b.innerHTML='&#9658;&nbsp; לעבור לשלב הבא &nbsp;<span class="btn-arrow">&#8592;</span>';
   setTimeout(function(){b.scrollIntoView({behavior:'smooth',block:'center'});},300);
-},60000);
+}
+window._lockCountdownTimer = setInterval(function(){
+  var hint=document.getElementById('lockHint');
+  var b=document.getElementById('btnNext');
+  if(!hint||!b||b.classList.contains('unlocked')){clearInterval(window._lockCountdownTimer);return;}
+  var remaining=Math.max(0,Math.ceil((lockDeadline-Date.now())/1000));
+  hint.textContent='🔒 הכפתור ייפתח בסיום הסרטון (או תוך '+remaining+' שנ\')';
+}, 1000);
+setTimeout(unlockButtonUI, LOCK_FALLBACK_MS);
 </script>
 </body>
 </html>

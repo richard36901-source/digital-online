@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ביצועי קמפיין TikTok</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e1016;
+    --card: #171a23;
+    --ink: #e9ebf1;
+    --muted: #8c93a4;
+    --border: #262b38;
+    --brand: #6366f1;
+    --brand-2: #22d3ee;
+    --green: #34d399;
+    --green-soft: #113328;
+    --red: #f87171;
+    --red-soft: #3a1818;
+    --amber: #fbbf24;
+    --amber-soft: #3a2a0d;
+    --radius: 16px;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.55);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Heebo', 'Segoe UI', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    padding: 28px clamp(16px, 4vw, 48px) 60px;
+  }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  .sub { color: var(--muted); font-size: 13px; margin: 0 0 24px; }
+  .kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+    margin-bottom: 26px;
+  }
+  .kpi {
+    background: var(--card); border-radius: var(--radius); border: 1px solid var(--border);
+    box-shadow: var(--shadow); padding: 16px 18px;
+  }
+  .kpi .value { font-size: 22px; font-weight: 800; }
+  .kpi .label { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  .card {
+    background: var(--card); border-radius: var(--radius); border: 1px solid var(--border);
+    box-shadow: var(--shadow); padding: 20px 22px; margin-bottom: 22px;
+  }
+  .card h2 { font-size: 15px; margin: 0 0 16px; }
+
+  .bar-row { margin-bottom: 14px; }
+  .bar-label { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; font-size: 13px; }
+  .bar-name { font-weight: 600; }
+  .bar-track { position: relative; height: 22px; background: #1b1f29; border-radius: 6px; overflow: visible; }
+  .bar-fill {
+    height: 100%; min-width: 3%; border-radius: 6px;
+    background: linear-gradient(90deg, var(--brand), var(--brand-2));
+  }
+  .bar-value {
+    position: absolute; top: 50%; transform: translateY(-50%); left: 8px;
+    font-size: 11.5px; font-weight: 700; color: var(--ink); white-space: nowrap;
+  }
+
+  .badge { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
+  .badge.st-win { background: var(--green-soft); color: var(--green); }
+  .badge.st-lose { background: var(--red-soft); color: var(--red); }
+  .badge.st-ENABLE { background: var(--green-soft); color: var(--green); }
+  .badge.st-other { background: #262b38; color: var(--muted); }
+  .badge.st-review { background: var(--amber-soft); color: var(--amber); }
+
+  .alert-banner {
+    background: var(--red-soft); border: 1px solid rgba(248,113,113,.3); color: var(--red);
+    border-radius: var(--radius); padding: 14px 18px; margin-bottom: 20px; font-size: 13.5px;
+  }
+  .alert-banner ul { margin: 8px 0 4px; padding-inline-start: 20px; }
+  .kpi.balance-missing .value { color: var(--muted); font-size: 14px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th {
+    text-align: right; padding: 10px 8px; background: #1b1f29; color: var(--muted);
+    font-weight: 600; font-size: 12px; border-bottom: 1px solid var(--border);
+  }
+  tbody td { padding: 10px 8px; border-bottom: 1px solid var(--border); }
+  tbody tr:hover { background: rgba(255,255,255,.03); }
+  .video-link { color: var(--brand-2); text-decoration: none; }
+  .video-link:hover { text-decoration: underline; }
+
+  .empty { color: var(--muted); text-align: center; padding: 30px; }
+  footer { margin-top: 20px; font-size: 12px; color: var(--muted); text-align: center; }
+
+  .trend-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px;
+  }
+  .trend-card {
+    background: #1b1f29; border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px;
+  }
+  .trend-name {
+    font-size: 12.5px; font-weight: 600; margin-bottom: 6px; overflow: hidden;
+    text-overflow: ellipsis; white-space: nowrap;
+  }
+  .trend-value { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+  .trend-delta { font-size: 12px; font-weight: 700; }
+  .trend-delta.up { color: var(--green); }
+  .trend-delta.down { color: var(--red); }
+  .trend-delta.flat { color: var(--muted); }
+  .spark { display: block; margin: 4px 0; }
+  .trend-empty { color: var(--muted); font-size: 12px; padding: 14px 0; }
+  .trend-range { color: var(--muted); font-size: 11px; margin-top: 2px; }
+</style>
+</head>
+<body>
+
+<h1>ביצועי קמפיין TikTok</h1>
+<p class="sub">עודכן לאחרונה: 08/09/2026 10:45 · חלון נתונים: 7 ימים אחרונים · יעד: https://www.instagram.com/ben_nahum_1/</p>
+
+
+
+<div class="kpis">
+  <div class="kpi"><div class="value">$68.73</div><div class="label">הוצאה כוללת</div></div>
+  <div class="kpi"><div class="value">35,818</div><div class="label">חשיפות</div></div>
+  <div class="kpi"><div class="value">8,258</div><div class="label">קליקים</div></div>
+  <div class="kpi"><div class="value">23.06%</div><div class="label">CTR ממוצע</div></div>
+  <div class="kpi balance-missing">
+    <div class="value">לא זמין</div>
+    <div class="label">יתרת חשבון</div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>דירוג לפי CTR (הקלקות מתוך חשיפות) - מהמצטיינת לחלשה</h2>
+  
+      <div class="bar-row">
+        <div class="bar-label">
+          <span class="bar-name">בסוף אנשים קונים מחקרים</span>
+          <span class="badge st-win">🏆 מצטיינת</span>
+        </div>
+        <div class="bar-track" title="בסוף אנשים קונים מחקרים: 746 קליקים מתוך 2,653 חשיפות (CTR 28.12%)">
+          <div class="bar-fill" style="width:100.0%"></div>
+          <span class="bar-value">28.12%</span>
+        </div>
+      </div>
+
+      <div class="bar-row">
+        <div class="bar-label">
+          <span class="bar-name">שוק ההון או נדלן</span>
+          
+        </div>
+        <div class="bar-track" title="שוק ההון או נדלן: 696 קליקים מתוך 2,576 חשיפות (CTR 27.02%)">
+          <div class="bar-fill" style="width:96.1%"></div>
+          <span class="bar-value">27.02%</span>
+        </div>
+      </div>
+
+      <div class="bar-row">
+        <div class="bar-label">
+          <span class="bar-name">תודעה הישרדותית תודעת הפסיכולוג תודעת מאסטר</span>
+          
+        </div>
+        <div class="bar-track" title="תודעה הישרדותית תודעת הפסיכולוג תודעת מאסטר: 766 קליקים מתוך 3,194 חשיפות (CTR 23.98%)">
+          <div class="bar-fill" style="width:85.3%"></div>
+          <span class="bar-value">23.98%</span>
+        </div>
+      </div>
+
+      <div class="bar-row">
+        <div class="bar-label">
+          <span class="bar-name">גישת התלמיד</span>
+          
+        </div>
+        <div class="bar-track" title="גישת התלמיד: 779 קליקים מתוך 3,284 חשיפות (CTR 23.72%)">
+          <div class="bar-fill" style="width:84.4%"></div>
+          <span class="bar-value">23.72%</span>
+        </div>
+      </div>
+
+      <div class="bar-row">
+        <div class="bar-label">
+          <span class="bar-name">שיחת מכירה זה לא חוקר ונחקר</span>
+          
+        </div>
+        <div class="bar-track" title="שיחת מכירה זה לא חוקר ונחקר: 738 קליקים מתוך 3,184 חשיפות (CTR 23.18%)">
+          <div class="bar-fill" style="width:82.4%"></div>
+          <span class="bar-value">23.18%</span>
+        </div>
+      </div>
+
+      <div class="bar-row">
+        <div class="bar-label">
+          <span class="bar-name">אפקט הסוכר</span>
+          
+        </div>
+        <div class="bar-track" title="אפקט הסוכר: 743 קליקים מתוך 3,214 חשיפות (CTR 23.12%)">
+          <div class="bar-fill" style="width:82.2%"></div>
+          <span class="bar-value">23.12%</span>
+        </div>
+      </div>
+
+      <div class="bar-row">
+        <div class="bar-label">
+          <span class="bar-name">החלטות ממקום רגשי - אישיות מקדמת</span>
+          
+        </div>
+        <div class="bar-track" title="החלטות ממקום רגשי - אישיות מקדמת: 757 קליקים מתוך 3,355 חשיפות (CTR 22.56%)">
+          <div class="bar-fill" style="width:80.2%"></div>
+          <span class="bar-value">22.56%</span>
+        </div>
+      </div>
+
+      <div class="bar-row">
+        <div class="bar-label">
+          <span class="bar-name">פחד זה פיקציה</span>
+          
+        </div>
+        <div class="bar-track" title="פחד זה פיקציה: 756 קליקים מתוך 3,397 חשיפות (CTR 22.25%)">
+          <div class="bar-fill" style="width:79.1%"></div>
+          <span class="bar-value">22.25%</span>
+        </div>
+      </div>
+
+      <div class="bar-row">
+        <div class="bar-label">
+          <span class="bar-name">לבטל את ההתנגדות עוד לפני שהיא צפה</span>
+          
+        </div>
+        <div class="bar-track" title="לבטל את ההתנגדות עוד לפני שהיא צפה: 791 קליקים מתוך 3,594 חשיפות (CTR 22.01%)">
+          <div class="bar-fill" style="width:78.3%"></div>
+          <span class="bar-value">22.01%</span>
+        </div>
+      </div>
+
+      <div class="bar-row">
+        <div class="bar-label">
+          <span class="bar-name">מה זה ביטקוין</span>
+          
+        </div>
+        <div class="bar-track" title="מה זה ביטקוין: 780 קליקים מתוך 3,685 חשיפות (CTR 21.17%)">
+          <div class="bar-fill" style="width:75.3%"></div>
+          <span class="bar-value">21.17%</span>
+        </div>
+      </div>
+
+      <div class="bar-row">
+        <div class="bar-label">
+          <span class="bar-name">3 שאלות משמעות</span>
+          
+        </div>
+        <div class="bar-track" title="3 שאלות משמעות: 706 קליקים מתוך 3,682 חשיפות (CTR 19.17%)">
+          <div class="bar-fill" style="width:68.2%"></div>
+          <span class="bar-value">19.17%</span>
+        </div>
+      </div>
+
+      <div class="bar-row">
+        <div class="bar-label">
+          <span class="bar-name">יהיו רק 21 מיליון</span>
+          
+        </div>
+        <div class="bar-track" title="יהיו רק 21 מיליון: 0 קליקים מתוך 0 חשיפות (CTR 0.00%)">
+          <div class="bar-fill" style="width:3%"></div>
+          <span class="bar-value">0.00%</span>
+        </div>
+      </div>
+
+      <div class="bar-row">
+        <div class="bar-label">
+          <span class="bar-name">למה קהילה זה כזה חשוב</span>
+          <span class="badge st-lose">⚠️ חלשה ביותר</span>
+        </div>
+        <div class="bar-track" title="למה קהילה זה כזה חשוב: 0 קליקים מתוך 0 חשיפות (CTR 0.00%)">
+          <div class="bar-fill" style="width:3%"></div>
+          <span class="bar-value">0.00%</span>
+        </div>
+      </div>
+</div>
+
+<div class="card">
+  <h2>מגמה יומית (CTR) - איך כל סרטון משתנה יום אחר יום</h2>
+  <div class="trend-grid">
+    
+    <div class="trend-card">
+      <div class="trend-name">בסוף אנשים קונים מחקרים</div>
+      <div class="trend-value">30.53% <span class="trend-delta up">+2.79%</span></div>
+      <svg viewBox="0 0 220 52" width="220" height="52" class="spark"><polyline points="8.0,44.0 212.0,8.0" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" /><circle cx="8.0" cy="44.0" r="4" fill="var(--brand)" stroke="var(--card)" stroke-width="2"><title>2026-09-07: CTR 27.74% · 637 קליקים מתוך 2,296 חשיפות</title></circle>
+<circle cx="212.0" cy="8.0" r="4" fill="var(--brand)" stroke="var(--card)" stroke-width="2"><title>2026-09-08: CTR 30.53% · 109 קליקים מתוך 357 חשיפות</title></circle></svg>
+      <div class="trend-range" dir="ltr">07/09 → 08/09</div>
+    </div>
+
+    <div class="trend-card">
+      <div class="trend-name">שוק ההון או נדלן</div>
+      <div class="trend-value">25.32% <span class="trend-delta down">-2.07%</span></div>
+      <svg viewBox="0 0 220 52" width="220" height="52" class="spark"><polyline points="8.0,8.0 212.0,44.0" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" /><circle cx="8.0" cy="8.0" r="4" fill="var(--brand)" stroke="var(--card)" stroke-width="2"><title>2026-09-07: CTR 27.39% · 578 קליקים מתוך 2,110 חשיפות</title></circle>
+<circle cx="212.0" cy="44.0" r="4" fill="var(--brand)" stroke="var(--card)" stroke-width="2"><title>2026-09-08: CTR 25.32% · 118 קליקים מתוך 466 חשיפות</title></circle></svg>
+      <div class="trend-range" dir="ltr">07/09 → 08/09</div>
+    </div>
+
+    <div class="trend-card">
+      <div class="trend-name">תודעה הישרדותית תודעת הפסיכולוג תודעת מאסטר</div>
+      <div class="trend-value">26.02% <span class="trend-delta up">+2.32%</span></div>
+      <svg viewBox="0 0 220 52" width="220" height="52" class="spark"><polyline points="8.0,44.0 212.0,8.0" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" /><circle cx="8.0" cy="44.0" r="4" fill="var(--brand)" stroke="var(--card)" stroke-width="2"><title>2026-09-07: CTR 23.70% · 664 קליקים מתוך 2,802 חשיפות</title></circle>
+<circle cx="212.0" cy="8.0" r="4" fill="var(--brand)" stroke="var(--card)" stroke-width="2"><title>2026-09-08: CTR 26.02% · 102 קליקים מתוך 392 חשיפות</title></circle></svg>
+      <div class="trend-range" dir="ltr">07/09 → 08/09</div>
+    </div>
+
+    <div class="trend-card">
+      <div class="trend-name">גישת התלמיד</div>
+      <div class="trend-value">25.32% <span class="trend-delta up">+1.92%</span></div>
+      <svg viewBox="0 0 220 52" width="220" height="52" class="spark"><polyline points="8.0,44.0 212.0,8.0" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" /><circle cx="8.0" cy="44.0" r="4" fill="var(--brand)" stroke="var(--card)" stroke-width="2"><title>2026-09-07: CTR 23.40% · 641 קליקים מתוך 2,739 חשיפות</title></circle>
+<circle cx="212.0" cy="8.0" r="4" fill="var(--brand)" stroke="var(--card)" stroke-width="2"><title>2026-09-08: CTR 25.32% · 138 קליקים מתוך 545 חשיפות</title></circle></svg>
+      <div class="trend-range" dir="ltr">07/09 → 08/09</div>
+    </div>
+
+    <div class="trend-card">
+      <div class="trend-name">שיחת מכירה זה לא חוקר ונחקר</div>
+      <div class="trend-value">30.17% <span class="trend-delta up">+8.00%</span></div>
+      <svg viewBox="0 0 220 52" width="220" height="52" class="spark"><polyline points="8.0,44.0 212.0,8.0" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" /><circle cx="8.0" cy="44.0" r="4" fill="var(--brand)" stroke="var(--card)" stroke-width="2"><title>2026-09-07: CTR 22.17% · 617 קליקים מתוך 2,783 חשיפות</title></circle>
+<circle cx="212.0" cy="8.0" r="4" fill="var(--brand)" stroke="var(--card)" stroke-width="2"><title>2026-09-08: CTR 30.17% · 121 קליקים מתוך 401 חשיפות</title></circle></svg>
+      <div class="trend-range" dir="ltr">07/09 → 08/09</div>
+    </div>
+
+    <div class="trend-card">
+      <div class="trend-name">אפקט הסוכר</div>
+      <div class="trend-value">26.46% <span class="trend-delta up">+3.88%</span></div>
+      <svg viewBox="0 0 220 52" width="220" height="52" class="spark"><polyline points="8.0,44.0 212.0,8.0" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" /><circle cx="8.0" cy="44.0" r="4" fill="var(--brand)" stroke="var(--card)" stroke-width="2"><title>2026-09-07: CTR 22.58% · 625 קליקים מתוך 2,768 חשיפות</title></circle>
+<circle cx="212.0" cy="8.0" r="4" fill="var(--brand)" stroke="var(--card)" stroke-width="2"><title>2026-09-08: CTR 26.46% · 118 קליקים מתוך 446 חשיפות</title></circle></svg>
+      <div class="trend-range" dir="ltr">07/09 → 08/09</div>
+    </div>
+
+    <div class="trend-card">
+      <div class="trend-name">החלטות ממקום רגשי - אישיות מקדמת</div>
+      <div class="trend-value">26.63% <span class="trend-delta up">+4.79%</span></div>
+      <svg viewBox="0 0 220 52" width="220" height="52" class="spark"><polyline points="8.0,44.0 212.0,8.0" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" /><circle cx="8.0" cy="44.0" r="4" fill="var(--brand)" stroke="var(--card)" stroke-width="2"><title>2026-09-07: CTR 21.84% · 622 קליקים מתוך 2,848 חשיפות</title></circle>
+<circle cx="212.0" cy="8.0" r="4" fill="var(--brand)" stroke="var(--card)" stroke-width="2"><title>2026-09-08: CTR 26.63% · 135 קליקים מתוך 507 חשיפות</title></circle></svg>
+      <div class="trend-range" dir="ltr">07/09 → 08/09</div>
+    </div>
+
+    <div class="trend-card">
+      <div class="trend-name">פחד זה פיקציה</div>
+      <div class="trend-value">27.64% <span class="trend-delta up">+6.04%</span></div>
+      <svg viewBox="0 0 220 52" width="220" height="52" class="spark"><polyline points="8.0,44.0 212.0,8.0" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" /><circle cx="8.0" cy="44.0" r="4" fill="var(--brand)" stroke="var(--card)" stroke-width="2"><title>2026-09-07: CTR 21.60% · 654 קליקים מתוך 3,028 חשיפות</title></circle>
+<circle cx="212.0" cy="8.0" r="4" fill="var(--brand)" stroke="var(--card)" stroke-width="2"><title>2026-09-08: CTR 27.64% · 102 קליקים מתוך 369 חשיפות</title></circle></svg>
+      <div class="trend-range" dir="ltr">07/09 → 08/09</div>
+    </div>
+
+    <div class="trend-card">
+      <div class="trend-name">לבטל את ההתנגדות עוד לפני שהיא צפה</div>
+      <div class="trend-value">24.85% <span class="trend-delta up">+3.28%</span></div>
+      <svg viewBox="0 0 220 52" width="220" height="52" class="spark"><polyline points="8.0,44.0 212.0,8.0" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" /><circle cx="8.0" cy="44.0" r="4" fill="var(--brand)" stroke="var(--card)" stroke-width="2"><title>2026-09-07: CTR 21.56% · 670 קליקים מתוך 3,107 חשיפות</title></circle>
+<circle cx="212.0" cy="8.0" r="4" fill="var(--brand)" stroke="var(--card)" stroke-width="2"><title>2026-09-08: CTR 24.85% · 121 קליקים מתוך 487 חשיפות</title></circle></svg>
+      <div class="trend-range" dir="ltr">07/09 → 08/09</div>
+    </div>
+
+    <div class="trend-card">
+      <div class="trend-name">מה זה ביטקוין</div>
+      <div class="trend-value">22.39% <span class="trend-delta up">+1.40%</span></div>
+      <svg viewBox="0 0 220 52" width="220" height="52" class="spark"><polyline points="8.0,44.0 212.0,8.0" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" /><circle cx="8.0" cy="44.0" r="4" fill="var(--brand)" stroke="var(--card)" stroke-width="2"><title>2026-09-07: CTR 20.99% · 677 קליקים מתוך 3,225 חשיפות</title></circle>
+<circle cx="212.0" cy="8.0" r="4" fill="var(--brand)" stroke="var(--card)" stroke-width="2"><title>2026-09-08: CTR 22.39% · 103 קליקים מתוך 460 חשיפות</title></circle></svg>
+      <div class="trend-range" dir="ltr">07/09 → 08/09</div>
+    </div>
+
+    <div class="trend-card">
+      <div class="trend-name">3 שאלות משמעות</div>
+      <div class="trend-value">17.88% <span class="trend-delta down">-1.58%</span></div>
+      <svg viewBox="0 0 220 52" width="220" height="52" class="spark"><polyline points="8.0,8.0 212.0,44.0" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" /><circle cx="8.0" cy="8.0" r="4" fill="var(--brand)" stroke="var(--card)" stroke-width="2"><title>2026-09-07: CTR 19.46% · 586 קליקים מתוך 3,011 חשיפות</title></circle>
+<circle cx="212.0" cy="44.0" r="4" fill="var(--brand)" stroke="var(--card)" stroke-width="2"><title>2026-09-08: CTR 17.88% · 120 קליקים מתוך 671 חשיפות</title></circle></svg>
+      <div class="trend-range" dir="ltr">07/09 → 08/09</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>טבלה מלאה</h2>
+  <table>
+    <thead>
+      <tr><th>סרטון / מודעה</th><th>סטטוס</th><th>בדיקת TikTok</th><th>הוצאה</th><th>חשיפות</th><th>קליקים</th><th>CTR</th><th>עלות לקליק</th></tr>
+    </thead>
+    <tbody>
+      
+        <tr>
+          <td><a class="video-link" href="https://drive.google.com/file/d/1oL498LSgCYNqWQW7vHyRMK3mzH7BOfSH/view" target="_blank" rel="noopener noreferrer">בסוף אנשים קונים מחקרים 🔗</a></td>
+          <td><span class="badge st-ENABLE">פעילה</span></td>
+          <td><span class="badge st-st-win">✅ מוצגת</span></td>
+          <td>$6.18</td>
+          <td>2,653</td>
+          <td>746</td>
+          <td>28.12%</td>
+          <td>$0.01</td>
+        </tr>
+
+        <tr>
+          <td><a class="video-link" href="https://drive.google.com/file/d/1Zi5CvI9CI_cPIl0AJHO8oLcX4inL1hh2/view" target="_blank" rel="noopener noreferrer">שוק ההון או נדלן 🔗</a></td>
+          <td><span class="badge st-ENABLE">פעילה</span></td>
+          <td><span class="badge st-st-win">✅ מוצגת</span></td>
+          <td>$6.20</td>
+          <td>2,576</td>
+          <td>696</td>
+          <td>27.02%</td>
+          <td>$0.01</td>
+        </tr>
+
+        <tr>
+          <td><a class="video-link" href="https://drive.google.com/file/d/1DFjPZhCE9SXwhx7A_mOnE7JCQ82EVQS_/view" target="_blank" rel="noopener noreferrer">תודעה הישרדותית תודעת הפסיכולוג תודעת מאסטר 🔗</a></td>
+          <td><span class="badge st-ENABLE">פעילה</span></td>
+          <td><span class="badge st-st-win">✅ מוצגת</span></td>
+          <td>$6.10</td>
+          <td>3,194</td>
+          <td>766</td>
+          <td>23.98%</td>
+          <td>$0.01</td>
+        </tr>
+
+        <tr>
+          <td><a class="video-link" href="https://drive.google.com/file/d/1JvSaB7F61VHLlcsQcg0MFDs5hszdT2q9/view" target="_blank" rel="noopener noreferrer">גישת התלמיד 🔗</a></td>
+          <td><span class="badge st-ENABLE">פעילה</span></td>
+          <td><span class="badge st-st-win">✅ מוצגת</span></td>
+          <td>$6.42</td>
+          <td>3,284</td>
+          <td>779</td>
+          <td>23.72%</td>
+          <td>$0.01</td>
+        </tr>
+
+        <tr>
+          <td><a class="video-link" href="https://drive.google.com/file/d/1iYQ4ULMybBrQjMZ6XeLq5kj0Kxu0-PPT/view" target="_blank" rel="noopener noreferrer">שיחת מכירה זה לא חוקר ונחקר 🔗</a></td>
+          <td><span class="badge st-ENABLE">פעילה</span></td>
+          <td><span class="badge st-st-win">✅ מוצגת</span></td>
+          <td>$6.31</td>
+          <td>3,184</td>
+          <td>738</td>
+          <td>23.18%</td>
+          <td>$0.01</td>
+        </tr>
+
+        <tr>
+          <td><a class="video-link" href="https://drive.google.com/file/d/1CAoFNxQ3zpEwHO64-DIee6hoeSecgzju/view" target="_blank" rel="noopener noreferrer">אפקט הסוכר 🔗</a></td>
+          <td><span class="badge st-ENABLE">פעילה</span></td>
+          <td><span class="badge st-st-win">✅ מוצגת</span></td>
+          <td>$6.28</td>
+          <td>3,214</td>
+          <td>743</td>
+          <td>23.12%</td>
+          <td>$0.01</td>
+        </tr>
+
+        <tr>
+          <td><a class="video-link" href="https://drive.google.com/file/d/17WriEG6jwBb5m1epDwbQLNFwsWHhXeRT/view" target="_blank" rel="noopener noreferrer">החלטות ממקום רגשי - אישיות מקדמת 🔗</a></td>
+          <td><span class="badge st-ENABLE">פעילה</span></td>
+          <td><span class="badge st-st-win">✅ מוצגת</span></td>
+          <td>$6.46</td>
+          <td>3,355</td>
+          <td>757</td>
+          <td>22.56%</td>
+          <td>$0.01</td>
+        </tr>
+
+        <tr>
+          <td><a class="video-link" href="https://drive.google.com/file/d/1dZ5j1KPywcQ9r_vE--wzsDOalQ_YiSmo/view" target="_blank" rel="noopener noreferrer">פחד זה פיקציה 🔗</a></td>
+          <td><span class="badge st-ENABLE">פעילה</span></td>
+          <td><span class="badge st-st-win">✅ מוצגת</span></td>
+          <td>$6.09</td>
+          <td>3,397</td>
+          <td>756</td>
+          <td>22.25%</td>
+          <td>$0.01</td>
+        </tr>
+
+        <tr>
+          <td><a class="video-link" href="https://drive.google.com/file/d/1psJ9zUgRXn83UmFUg_6wvVrjZVTlhyty/view" target="_blank" rel="noopener noreferrer">לבטל את ההתנגדות עוד לפני שהיא צפה 🔗</a></td>
+          <td><span class="badge st-ENABLE">פעילה</span></td>
+          <td><span class="badge st-st-win">✅ מוצגת</span></td>
+          <td>$6.30</td>
+          <td>3,594</td>
+          <td>791</td>
+          <td>22.01%</td>
+          <td>$0.01</td>
+        </tr>
+
+        <tr>
+          <td><a class="video-link" href="https://drive.google.com/file/d/1MZGCf4GZTzyW4K4YRV-6YYQzE-i939Xv/view" target="_blank" rel="noopener noreferrer">מה זה ביטקוין 🔗</a></td>
+          <td><span class="badge st-ENABLE">פעילה</span></td>
+          <td><span class="badge st-st-win">✅ מוצגת</span></td>
+          <td>$6.14</td>
+          <td>3,685</td>
+          <td>780</td>
+          <td>21.17%</td>
+          <td>$0.01</td>
+        </tr>
+
+        <tr>
+          <td><a class="video-link" href="https://drive.google.com/file/d/1vd22L5n1GQZ5In6Fet5DeH4aLzbQWd6F/view" target="_blank" rel="noopener noreferrer">3 שאלות משמעות 🔗</a></td>
+          <td><span class="badge st-ENABLE">פעילה</span></td>
+          <td><span class="badge st-st-win">✅ מוצגת</span></td>
+          <td>$6.25</td>
+          <td>3,682</td>
+          <td>706</td>
+          <td>19.17%</td>
+          <td>$0.01</td>
+        </tr>
+
+        <tr>
+          <td><a class="video-link" href="https://drive.google.com/file/d/1cb92wcH47QziwuGefINqM261KwVgdSXJ/view" target="_blank" rel="noopener noreferrer">יהיו רק 21 מיליון 🔗</a></td>
+          <td><span class="badge st-ENABLE">פעילה</span></td>
+          <td><span class="badge st-other">מושהית</span></td>
+          <td>$0.00</td>
+          <td>0</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>$0.00</td>
+        </tr>
+
+        <tr>
+          <td><a class="video-link" href="https://drive.google.com/file/d/1PzlFs9qaIbiqWF7-oug2di7R-3FuWEF9/view" target="_blank" rel="noopener noreferrer">למה קהילה זה כזה חשוב 🔗</a></td>
+          <td><span class="badge st-ENABLE">פעילה</span></td>
+          <td><span class="badge st-other">מושהית</span></td>
+          <td>$0.00</td>
+          <td>0</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>$0.00</td>
+        </tr>
+    </tbody>
+  </table>
+</div>
+
+<footer>נוצר אוטומטית ע"י tiktok_ads_automation/dashboard.py - קריאה-בלבד, לא נוגע בשום מודעה.</footer>
+
+</body>
+</html>
