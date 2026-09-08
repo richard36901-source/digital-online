@@ -62,8 +62,8 @@ CAMPAIGN_OBJECTIVE = "OUTCOME_TRAFFIC"
 OPTIMIZATION_GOAL = "LINK_CLICKS"
 BILLING_EVENT = "IMPRESSIONS"
 
-# תקציב יומי לכל Ad Set בנפרד (לא לקמפיין!), באגורות. 10 ש"ח = 1000 אגורות.
-DAILY_BUDGET_AGOROT_PER_ADSET = 1000
+# תקציב יומי לכל Ad Set בנפרד (לא לקמפיין!), באגורות. 15 ש"ח = 1500 אגורות.
+DAILY_BUDGET_AGOROT_PER_ADSET = 1500
 
 # אומת בפועל (8/9/2026): החשבון הזה דורש bid_strategy מפורש בכל מקרה - השמטתו
 # מחזירה "נדרש סכום הצעת מחיר לאסטרטגיית הצעת מחיר" (error_subcode 2490487), בלי קשר
