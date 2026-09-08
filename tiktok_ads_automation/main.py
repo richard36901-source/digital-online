@@ -13,6 +13,10 @@
   python main.py rename-videos      - תיקון חד-פעמי: משנה את שם 8 קבוצות המודעות/מודעות
                                        הממוספרות (1.mov-8.mov) לשם התוכן האמיתי (ראו
                                        campaign_launch.NUMBERED_VIDEO_RENAME_MAP)
+  python main.py set-deeplink       - תיקון חד-פעמי: מוסיף deep link (config.DEEPLINK_URL)
+                                       לכל המודעות הקיימות, כדי לפתוח את אפליקציית אינסטגרם
+                                       ישירות במקום דף עם "קיר" חוסם (ראו campaign_launch.
+                                       set_deeplink_for_existing_ads)
   python main.py dashboard          - מרענן דשבורד ביצועים (performance_dashboard.html) - אילו סרטונים מתבלטים
   python main.py                    - מריץ על כל חשבונות המפרסם ב-config.ADVERTISER_ACCOUNTS:
                                          1. מושך ביצועים (insights)
@@ -98,6 +102,14 @@ def cmd_rename_videos():
         sys.exit(1)
     advertiser_id = next(iter(config.ADVERTISER_ACCOUNTS.values()))
     campaign_launch.rename_numbered_videos(advertiser_id)
+
+
+def cmd_set_deeplink():
+    if not config.ADVERTISER_ACCOUNTS:
+        print("שגיאה: אין חשבונות מפרסם ב-config.ADVERTISER_ACCOUNTS.")
+        sys.exit(1)
+    advertiser_id = next(iter(config.ADVERTISER_ACCOUNTS.values()))
+    campaign_launch.set_deeplink_for_existing_ads(advertiser_id)
 
 
 def cmd_dashboard():
@@ -231,6 +243,10 @@ def main():
 
     if len(sys.argv) > 1 and sys.argv[1] == "rename-videos":
         cmd_rename_videos()
+        return
+
+    if len(sys.argv) > 1 and sys.argv[1] == "set-deeplink":
+        cmd_set_deeplink()
         return
 
     if len(sys.argv) > 1 and sys.argv[1] == "dashboard":

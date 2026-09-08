@@ -417,23 +417,32 @@ def create_ad(advertiser_id: str, adgroup_id: str, ad_name: str, video_id: str, 
 
     image_id = get_video_cover_image_id(advertiser_id, video_id)
 
+    creative = {
+        "ad_name": ad_name,
+        "ad_format": "SINGLE_VIDEO",  # נדרש בפועל ע"פ ה-API (קוד 40002 בלעדיו)
+        "ad_text": ad_text,
+        "identity_type": config.IDENTITY_TYPE,
+        "identity_id": config.IDENTITY_ID,
+        "video_id": video_id,
+        "image_ids": [image_id],  # נדרש בפועל ע"פ ה-API - ראו get_video_cover_image_id
+        "landing_page_url": config.DESTINATION_URL,
+        "call_to_action": "LEARN_MORE",
+    }
+    if config.DEEPLINK_URL:
+        # פותח ישירות את אפליקציית אינסטגרם (מדלג על ה"קיר" של אינסטגרם בדפדפן הפנימי
+        # של טיקטוק), עם נפילה חזרה ל-landing_page_url אם האפליקציה לא מותקנת - ראו
+        # config._instagram_deeplink_from_destination.
+        creative["deeplink"] = config.DEEPLINK_URL
+        creative["deeplink_type"] = "NORMAL"
+        creative["fallback_type"] = "WEBSITE"
+
     resp = requests.post(
         f"{config.API_BASE_URL}/ad/create/",
         headers=HEADERS,
         json={
             "advertiser_id": advertiser_id,
             "adgroup_id": adgroup_id,
-            "creatives": [{
-                "ad_name": ad_name,
-                "ad_format": "SINGLE_VIDEO",  # נדרש בפועל ע"פ ה-API (קוד 40002 בלעדיו)
-                "ad_text": ad_text,
-                "identity_type": config.IDENTITY_TYPE,
-                "identity_id": config.IDENTITY_ID,
-                "video_id": video_id,
-                "image_ids": [image_id],  # נדרש בפועל ע"פ ה-API - ראו get_video_cover_image_id
-                "landing_page_url": config.DESTINATION_URL,
-                "call_to_action": "LEARN_MORE",
-            }],
+            "creatives": [creative],
         },
         timeout=30,
     )
@@ -463,3 +472,30 @@ def update_ad_creative(advertiser_id: str, ad_id: str, video_id: str, ad_text: s
     if data.get("code") != 0:
         raise RuntimeError(f"נכשל בעדכון קריאטיב למודעה {ad_id}: {data}")
     return {"dry_run": False, "action": "update_creative", "ad_id": ad_id, "result": data}
+
+
+def update_ad_deeplink(advertiser_id: str, ad_id: str, deeplink: str) -> dict:
+    """מוסיף deep link למודעה קיימת - פותח את אפליקציית אינסטגרם ישירות במקום דף
+    האינטרנט (שאינסטגרם מציג בו "קיר" חוסם בדפדפן הפנימי של טיקטוק - ראו config.DEEPLINK_URL
+    ושיחה על הפער בין קליקים בטיקטוק לביקורי פרופיל באינסטגרם). deeplink_type="NORMAL"
+    ו-fallback_type="WEBSITE" אומתו מול תיעוד ה-SDK הרשמי (AdcreateCreatives) - נופל חזרה
+    ל-landing_page_url הקיים של המודעה אם אין אפליקציית אינסטגרם מותקנת."""
+    if config.DRY_RUN:
+        return {"dry_run": True, "action": "update_deeplink", "ad_id": ad_id, "deeplink": deeplink}
+
+    resp = requests.post(
+        f"{config.API_BASE_URL}/ad/update/",
+        headers=HEADERS,
+        json={
+            "advertiser_id": advertiser_id,
+            "ad_id": ad_id,
+            "deeplink": deeplink,
+            "deeplink_type": "NORMAL",
+            "fallback_type": "WEBSITE",
+        },
+        timeout=30,
+    )
+    data = resp.json()
+    if data.get("code") != 0:
+        raise RuntimeError(f"נכשל בעדכון deep link למודעה {ad_id}: {data}")
+    return {"dry_run": False, "action": "update_deeplink", "ad_id": ad_id, "deeplink": deeplink, "result": data}

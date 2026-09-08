@@ -210,6 +210,40 @@ def fix_existing_budgets(advertiser_id: str) -> None:
     print(f"\nתוקנו {len(adgroups)} קבוצות מודעות לתקציב {correct_budget} {currency} ליום.")
 
 
+def set_deeplink_for_existing_ads(advertiser_id: str) -> None:
+    """
+    תיקון חד-פעמי: מוסיף deep link (config.DEEPLINK_URL) לכל המודעות הקיימות תחת
+    הקמפיין, כדי שיפתחו את אפליקציית אינסטגרם ישירות במקום דף אינטרנט עם "קיר" חוסם
+    בדפדפן הפנימי של טיקטוק - ראו actions.update_ad_deeplink ודיון על הפער בין קליקים
+    בטיקטוק לביקורי פרופיל בפועל באינסטגרם.
+    """
+    if config.DRY_RUN:
+        raise RuntimeError("set_deeplink_for_existing_ads דורש DRY_RUN=False - זו פעולה על נתונים אמיתיים ב-TikTok.")
+    if not config.DEEPLINK_URL:
+        print("DESTINATION_URL הנוכחי אינו קישור לפרופיל אינסטגרם - אין deep link לחשב, מדלגים.")
+        return
+
+    existing_campaigns = insights.get_campaigns(advertiser_id)
+    campaign = next((c for c in existing_campaigns if c.get("campaign_name") == config.CAMPAIGN_NAME), None)
+    if not campaign:
+        print(f"לא נמצא קמפיין בשם '{config.CAMPAIGN_NAME}' - אין מה לעדכן.")
+        return
+    campaign_id = campaign["campaign_id"]
+
+    ads = insights.get_ads_for_campaign(advertiser_id, campaign_id)
+    for ad in ads:
+        result = actions.update_ad_deeplink(advertiser_id, ad["ad_id"], config.DEEPLINK_URL)
+        logger.print_and_log({
+            "level": "action",
+            "action": "set_deeplink",
+            "ad_id": ad["ad_id"],
+            "deeplink": config.DEEPLINK_URL,
+            "result": result,
+        })
+
+    print(f"\nעודכנו {len(ads)} מודעות עם deep link: {config.DEEPLINK_URL}")
+
+
 # תיקון חד-פעמי: 8 הסרטונים האלה סונכרנו בהתחלה עם שמות גנריים (1.mov-8.mov) כי
 # עדיין לא היה שם תוכן ידוע ב-Drive - מאז המשתמש ארגן אותם ב-Drive בתיקיות-בת עם
 # שמות תוכן אמיתיים (ראו drive_sync.KNOWN_FILE_MAP המעודכן), וביקש שהשמות המוצגים

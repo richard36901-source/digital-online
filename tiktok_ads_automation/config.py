@@ -6,6 +6,7 @@
 import json
 import os
 from pathlib import Path
+from urllib.parse import urlparse
 
 
 def _load_saved_access_token() -> str | None:
@@ -67,6 +68,25 @@ CREATIVE_BANK_PATH = "./creative_bank"
 
 # יעד הקליקים - לאן המודעות מפנות.
 DESTINATION_URL = "https://www.instagram.com/ben_nahum_1/"
+
+
+def _instagram_deeplink_from_destination(url: str) -> str | None:
+    """בונה deep link לפתיחת אפליקציית אינסטגרם ישירות (instagram://user?username=...)
+    מתוך DESTINATION_URL, אם זה קישור לפרופיל אינסטגרם - כדי לדלג על "הקיר" שאינסטגרם
+    מציג בדפדפן הפנימי של טיקטוק (נצפה בפועל בבדיקה חיה: חוסם את כל תוכן הפרופיל ומחייב
+    עוד לחיצה כדי לראות אותו בכלל) - זה כנראה ההסבר לפער העצום שנצפה בין קליקים בטיקטוק
+    לביקורי פרופיל בפועל באינסטגרם. השדות deeplink/deeplink_type/fallback_type אומתו מול
+    תיעוד ה-SDK הרשמי של TikTok (AdcreateCreatives) - אותו אובייקט creatives שכבר בשימוש
+    ב-actions.create_ad. deeplink_type="NORMAL" נתמך ל-Traffic (סוג הקמפיין שלנו).
+    """
+    parsed = urlparse(url)
+    if "instagram.com" not in parsed.netloc:
+        return None
+    username = parsed.path.strip("/").split("/")[0]
+    return f"instagram://user?username={username}" if username else None
+
+
+DEEPLINK_URL = _instagram_deeplink_from_destination(DESTINATION_URL)
 
 # תקציב יומי לכל קבוצת מודעות (סרטון) בש"ח. בכוונה 10 (בקשה מפורשת של המשתמש) -
 # אזהרה: TikTok אוכפת תקציב יומי מינימלי לכל ad group (בד"כ סביב $20/יום, ~74 ש"ח),
