@@ -21,7 +21,7 @@ def main():
     print(f"בודק גישה לדף {config.PAGE_ID}...")
     url = f"{config.GRAPH_URL}/{config.PAGE_ID}"
     resp = requests.get(url, params={
-        "fields": "id,name,access_token,tasks",
+        "fields": "id,name",
         "access_token": config.ACCESS_TOKEN,
     }, timeout=30)
     data = resp.json()
