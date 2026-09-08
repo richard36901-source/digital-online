@@ -65,6 +65,13 @@ BILLING_EVENT = "IMPRESSIONS"
 # תקציב יומי לכל Ad Set בנפרד (לא לקמפיין!), באגורות. 10 ש"ח = 1000 אגורות.
 DAILY_BUDGET_AGOROT_PER_ADSET = 1000
 
+# אומת בפועל (8/9/2026): החשבון הזה דורש bid_strategy מפורש בכל מקרה - השמטתו
+# מחזירה "נדרש סכום הצעת מחיר לאסטרטגיית הצעת מחיר" (error_subcode 2490487), בלי קשר
+# ל-optimization_goal. LOWEST_COST_WITH_BID_CAP עם bid_amount שווה לתקציב היומי המלא
+# הוא בפועל שקול ל"בלי תקציב אמיתי" (קליק בודד לא יעלה קרוב לתקציב יומי שלם).
+BID_STRATEGY = "LOWEST_COST_WITH_BID_CAP"
+BID_AMOUNT_AGOROT = DAILY_BUDGET_AGOROT_PER_ADSET
+
 # כפתור קריאה לפעולה על המודעה - מוביל ל-DESTINATION_URL (כתובת הפרופיל).
 CTA_TYPE = "LEARN_MORE"
 

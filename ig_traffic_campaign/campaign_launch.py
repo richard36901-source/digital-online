@@ -87,6 +87,8 @@ def create_ad_set(campaign_id: str, name: str) -> str:
         "campaign_id": campaign_id,
         "daily_budget": config.DAILY_BUDGET_AGOROT_PER_ADSET,
         "billing_event": config.BILLING_EVENT,
+        "bid_strategy": config.BID_STRATEGY,
+        "bid_amount": config.BID_AMOUNT_AGOROT,
         "optimization_goal": config.OPTIMIZATION_GOAL,
         "targeting": json.dumps(config.TARGETING),
         "status": config.CREATED_STATUS,
