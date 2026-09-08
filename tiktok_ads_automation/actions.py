@@ -484,9 +484,12 @@ def update_ad_deeplink(advertiser_id: str, adgroup_id: str, ad_id: str, deeplink
     בניגוד ל-update_ad_creative (ששולח video_id/ad_text כשדות שטוחים - לא אומת בפועל
     מול ה-API), /ad/update/ דחה שדות שטוחים בקריאה אמיתית עם קוד 40002 "creatives: Missing
     data for required field" - צריך לעטוף את השדות ברשימת "creatives", בדיוק כמו ב-/ad/create/.
-    ואז דחה שוב בלי adgroup_id (40002 "adgroup_id: Missing data for required field"), ואז
-    שוב בלי ad_id *בתוך* אובייקט ה-creatives עצמו (40002 "creatives.0.ad_id: Missing data
-    for required field") - כל שלושת השדות האלה אומתו מול ה-API האמיתי, לא רק מול תיעוד ה-SDK."""
+    ואז דחה שוב בלי adgroup_id, ואז שוב בלי ad_id *בתוך* אובייקט ה-creatives עצמו, ואז שוב
+    בלי ad_name - כי בלי patch_update=True, /ad/update/ מתייחס ל-creatives כהחלפה מלאה של
+    הקריאטיב (דורש בהדרגה עוד ועוד שדות קיימים), לא כעדכון חלקי. patch_update מתועד ב-
+    AdUpdateBody הרשמי (ברמת ה-body, לא בתוך creatives) - עם True, רק השדות שבאמת נשלחים
+    (deeplink/deeplink_type/fallback_type) מתעדכנים, והשאר (וידאו, תמונה, landing_page_url
+    וכו') נשארים כפי שהיו. אומת בפועל מול ה-API האמיתי, לא רק מול תיעוד ה-SDK."""
     if config.DRY_RUN:
         return {"dry_run": True, "action": "update_deeplink", "ad_id": ad_id, "deeplink": deeplink}
 
@@ -497,6 +500,7 @@ def update_ad_deeplink(advertiser_id: str, adgroup_id: str, ad_id: str, deeplink
             "advertiser_id": advertiser_id,
             "adgroup_id": adgroup_id,
             "ad_id": ad_id,
+            "patch_update": True,
             "creatives": [{
                 "ad_id": ad_id,
                 "deeplink": deeplink,
