@@ -246,7 +246,7 @@ def main():
 
     if config.DRY_RUN:
         print("\nזו הייתה הרצת DRY RUN בלבד. עברו על הפלט/הלוג (config.LOG_FILE), "
-              "ורק אז שנו DRY_RUN=False ב-config.py כדי ליצור בפועל.")
+              "ורק אז הגדירו משתנה סביבה DRY_RUN=false כדי ליצור בפועל.")
     else:
         print(f"\nהכל נוצר במצב {config.CREATED_STATUS} - כלום לא רץ אוטומטית. "
               "היכנסו ל-Ads Manager, עברו על כל סט/מודעה, ורק אז הפעילו ידנית את מה שנראה תקין.")
