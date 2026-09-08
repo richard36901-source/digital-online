@@ -111,13 +111,14 @@ def create_ad_creative(name: str, video_id: str, thumbnail_url: str, message: st
         logger.print_and_log({"level": "dry_run", "action": "create_ad_creative", "name": name})
         return f"DRY_RUN_CREATIVE_ID_{name}"
 
-    # page_id הוא ה"actor" שמפרסם את המודעה - חובה למודעת LINK_CLICKS (בניגוד ליעד
-    # INSTAGRAM_PROFILE הילידי, כאן זו לא אופציה). instagram_actor_id נשאר בנוסף כדי
-    # שהמודעה תוכל להופיע גם כמגיעה מפרופיל ה-Instagram, אבל הלינק בפועל (call_to_action)
-    # הוא מה שמוביל לפרופיל - link_click, לא native profile-visit destination.
+    # page_id הוא ה"actor" שמפרסם את המודעה - חובה למודעת LINK_CLICKS. בלי
+    # instagram_actor_id בכוונה: אומת בפועל (8/9/2026) שה-API דוחה אותו כאן עם
+    # "must be a valid Instagram account id" - כנראה כי ben_nahum_1 מוקצה ישירות
+    # ל-Business Portfolio בלי קישור קלאסי ל-PAGE_ID הזה, אז לא ניתן "לפרסם כ"
+    # אותו IG actor מהדף הזה. לא נדרש בכל מקרה - היעד בפועל הוא הלינק בקריאה-לפעולה
+    # (call_to_action), לא זהות המפרסם.
     object_story_spec = {
         "page_id": config.PAGE_ID,
-        "instagram_actor_id": config.IG_ACTOR_ID,
         "video_data": {
             "video_id": video_id,
             "image_url": thumbnail_url,
