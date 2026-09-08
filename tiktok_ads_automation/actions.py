@@ -479,7 +479,12 @@ def update_ad_deeplink(advertiser_id: str, ad_id: str, deeplink: str) -> dict:
     האינטרנט (שאינסטגרם מציג בו "קיר" חוסם בדפדפן הפנימי של טיקטוק - ראו config.DEEPLINK_URL
     ושיחה על הפער בין קליקים בטיקטוק לביקורי פרופיל באינסטגרם). deeplink_type="NORMAL"
     ו-fallback_type="WEBSITE" אומתו מול תיעוד ה-SDK הרשמי (AdcreateCreatives) - נופל חזרה
-    ל-landing_page_url הקיים של המודעה אם אין אפליקציית אינסטגרם מותקנת."""
+    ל-landing_page_url הקיים של המודעה אם אין אפליקציית אינסטגרם מותקנת.
+
+    בניגוד ל-update_ad_creative (ששולח video_id/ad_text כשדות שטוחים - לא אומת בפועל
+    מול ה-API), /ad/update/ דחה שדות שטוחים בקריאה אמיתית עם קוד 40002
+    "creatives: Missing data for required field" - צריך לעטוף את השדות ברשימת
+    "creatives", בדיוק כמו ב-/ad/create/. אומת בפועל מול ה-API האמיתי."""
     if config.DRY_RUN:
         return {"dry_run": True, "action": "update_deeplink", "ad_id": ad_id, "deeplink": deeplink}
 
@@ -489,9 +494,11 @@ def update_ad_deeplink(advertiser_id: str, ad_id: str, deeplink: str) -> dict:
         json={
             "advertiser_id": advertiser_id,
             "ad_id": ad_id,
-            "deeplink": deeplink,
-            "deeplink_type": "NORMAL",
-            "fallback_type": "WEBSITE",
+            "creatives": [{
+                "deeplink": deeplink,
+                "deeplink_type": "NORMAL",
+                "fallback_type": "WEBSITE",
+            }],
         },
         timeout=30,
     )
