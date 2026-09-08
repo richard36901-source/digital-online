@@ -474,7 +474,7 @@ def update_ad_creative(advertiser_id: str, ad_id: str, video_id: str, ad_text: s
     return {"dry_run": False, "action": "update_creative", "ad_id": ad_id, "result": data}
 
 
-def update_ad_deeplink(advertiser_id: str, ad_id: str, deeplink: str) -> dict:
+def update_ad_deeplink(advertiser_id: str, adgroup_id: str, ad_id: str, deeplink: str) -> dict:
     """מוסיף deep link למודעה קיימת - פותח את אפליקציית אינסטגרם ישירות במקום דף
     האינטרנט (שאינסטגרם מציג בו "קיר" חוסם בדפדפן הפנימי של טיקטוק - ראו config.DEEPLINK_URL
     ושיחה על הפער בין קליקים בטיקטוק לביקורי פרופיל באינסטגרם). deeplink_type="NORMAL"
@@ -482,9 +482,10 @@ def update_ad_deeplink(advertiser_id: str, ad_id: str, deeplink: str) -> dict:
     ל-landing_page_url הקיים של המודעה אם אין אפליקציית אינסטגרם מותקנת.
 
     בניגוד ל-update_ad_creative (ששולח video_id/ad_text כשדות שטוחים - לא אומת בפועל
-    מול ה-API), /ad/update/ דחה שדות שטוחים בקריאה אמיתית עם קוד 40002
-    "creatives: Missing data for required field" - צריך לעטוף את השדות ברשימת
-    "creatives", בדיוק כמו ב-/ad/create/. אומת בפועל מול ה-API האמיתי."""
+    מול ה-API), /ad/update/ דחה שדות שטוחים בקריאה אמיתית עם קוד 40002 "creatives: Missing
+    data for required field" - צריך לעטוף את השדות ברשימת "creatives", בדיוק כמו ב-/ad/create/.
+    ואז דחה שוב בלי adgroup_id (40002 "adgroup_id: Missing data for required field") - שני
+    השדות האלה אומתו מול ה-API האמיתי, לא רק מול תיעוד ה-SDK."""
     if config.DRY_RUN:
         return {"dry_run": True, "action": "update_deeplink", "ad_id": ad_id, "deeplink": deeplink}
 
@@ -493,6 +494,7 @@ def update_ad_deeplink(advertiser_id: str, ad_id: str, deeplink: str) -> dict:
         headers=HEADERS,
         json={
             "advertiser_id": advertiser_id,
+            "adgroup_id": adgroup_id,
             "ad_id": ad_id,
             "creatives": [{
                 "deeplink": deeplink,

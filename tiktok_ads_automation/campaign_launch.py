@@ -232,7 +232,7 @@ def set_deeplink_for_existing_ads(advertiser_id: str) -> None:
 
     ads = insights.get_ads_for_campaign(advertiser_id, campaign_id)
     for ad in ads:
-        result = actions.update_ad_deeplink(advertiser_id, ad["ad_id"], config.DEEPLINK_URL)
+        result = actions.update_ad_deeplink(advertiser_id, ad["adgroup_id"], ad["ad_id"], config.DEEPLINK_URL)
         logger.print_and_log({
             "level": "action",
             "action": "set_deeplink",
