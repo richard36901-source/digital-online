@@ -34,3 +34,9 @@ def update_adset_budget(adset_id: str, daily_budget_ils: float) -> dict:
     """daily_budget_ils בשקלים שלמים/עשרוניים - מומר לאגורות (השדה האמיתי ב-API)."""
     agorot = int(round(daily_budget_ils * 100))
     return _post(adset_id, {"daily_budget": agorot})
+
+
+def update_adset_bid_amount(adset_id: str, bid_amount_ils: float) -> dict:
+    """bid_amount_ils בשקלים - מומר לאגורות. ראו BID_AMOUNT_AGOROT ב-config.py."""
+    agorot = int(round(bid_amount_ils * 100))
+    return _post(adset_id, {"bid_amount": agorot})
