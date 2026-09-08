@@ -161,22 +161,86 @@ python dashboard.py
 `https://funnel.digitalonline.co.il/ig_traffic_campaign/performance_dashboard.html`
 (אותו דפוס בדיוק כמו כתובת ה-TikTok).
 
-**שים לב:** בכוונה לא בניתי כאן מקבילה ל-`tiktok_ads_automation/webapp.py` (לוח הבקרה
-האינטראקטיבי עם כפתורי השהיה/תקציב) - רק את חלק הדיווח הקריא-בלבד, לפי מה שביקשת.
-אם תרצה גם את זה בהמשך, תגיד.
+## לוח בקרה אינטראקטיבי (webapp.py)
+
+מקביל ל-`tiktok_ads_automation/webapp.py` - שרת מקומי (Flask) עם כפתורי הפעלה/השהיה
+ועדכון תקציב יומי לכל Ad Set, לא רק דיווח קריא-בלבד. **בניגוד ל-`performance_dashboard.html`,
+זה לא ניתן לפרסום כדף ציבורי** - הוא חייב לרוץ אצלכם עם הטוקן.
+
+חובה להגדיר סיסמה לפני ההרצה הראשונה (אחרת השרת מסרב לעלות) - הוא זמין גם ברשת
+ה-WiFi המקומית כדי לאפשר גישה מהטלפון, ולכן צריך הגנה:
+
+```bash
+# Windows cmd:
+set IG_PANEL_PASSWORD=משהו-סודי-שלכם
+# macOS/Linux:
+export IG_PANEL_PASSWORD=משהו-סודי-שלכם
+```
+
+```bash
+python webapp.py
+```
+
+ייפתח דפדפן אוטומטית ב-`http://localhost:5001`. מהטלפון (אותה רשת WiFi) - הכתובת
+שתודפס בטרמינל (`http://<IP-מקומי>:5001`). באייפון: Safari → שיתוף → "הוסף למסך
+הבית" כדי שיהיה כמו אפליקציה עם אייקון.
+
+פועל בפורט **5001** (לא 5000) בכוונה - כדי שאפשר להריץ אותו במקביל ל-webapp.py של
+tiktok_ads_automation על אותו מחשב בלי התנגשות פורטים. מכבד את `DRY_RUN` בדיוק כמו
+`campaign_launch.py` - במצב בדיקה, לחיצות על הכפתורים לא משנות שום דבר בפועל ב-Meta.
+
+## טירגוט לפי תוכן + כותרת/תיאור לכל מודעה
+
+כל סרטון מוגדר ב-`config.VIDEOS` עם `category` (תחום תוכן), `title` (כותרת) ו-
+`description` (תיאור קצר) ייעודיים - לא רק `message`. ה-`category` נבחר אוטומטית
+לתחומי עניין (`config.INTEREST_IDS_BY_CATEGORY`) שמתווספים לטירגוט (`flexible_spec`)
+לצד הטירגוט הרחב, **בלי לכבות Advantage+ audience** (`advantage_audience: 1` נשאר
+דלוק - Meta עדיין מורשית להרחיב מעבר לתחומי העניין, הם רק "נקודת פתיחה" ממוקדת יותר).
+
+אי אפשר לנחש interest ID - הוא חייב להתקבל מה-API עצמו:
+
+```bash
+python debug_search_interests.py
+```
+
+זה מדפיס תוצאות חיפוש אמיתיות (id, name, גודל קהל) לכל קטגוריה. אחרי שממלאים IDs
+אמיתיים ב-`config.INTEREST_IDS_BY_CATEGORY`, יש להריץ פעם אחת:
+
+```bash
+python update_existing_ads.py
+```
+
+זה מעדכן Ad Sets/מודעות **שכבר נוצרו** עם הטירגוט/כותרת/תיאור החדשים (קריאטיבים
+ב-Meta הם immutable - הסקריפט יוצר קריאטיב חדש ומעדכן את המודעה להצביע עליו, בלי
+להעלות שוב את הווידאו). הרצות `campaign_launch.py` הבאות (לסרטונים חדשים) כבר
+כוללות את זה אוטומטית.
+
+## הפעלת כל ה-Ad Sets בבת אחת
+
+אחרי שעברתם ידנית על כל הסטים ב-Ads Manager ואישרתם שהם תקינים:
+
+```bash
+python activate_all_adsets.py
+```
 
 ## מבנה הקבצים
 
 - `config.py` - כל ההגדרות (טוקן, חשבון, יעד, סרטונים, תקציב)
 - `check_permissions.py` - בדיקת הרשאות + איתור PAGE_ID/IG_ACTOR_ID (הרצה ידנית חד-פעמית)
-- `drive_videos.py` - הורדת הסרטונים מ-Google Drive
-- `video_upload.py` - העלאת וידאו ל-Meta + המתנה לעיבוד + thumbnail
+- `drive_videos.py` - הורדת הסרטונים מ-Google Drive + קריאת טקסט המודעה
+- `video_upload.py` - העלאת וידאו ל-Meta + המתנה לעיבוד + thumbnail (עם מטמון מקומי)
 - `campaign_launch.py` - הלוגיקה המרכזית: קמפיין → (לכל סרטון) Ad Set → קריאטיב → מודעה
+- `actions.py` - פעולות כתיבה על Ad Sets קיימים (הפעלה/השהיה, עדכון תקציב) - משמש את `webapp.py`
+- `debug_search_interests.py` - חיפוש interest IDs אמיתיים ל-flexible_spec (הרצה חד-פעמית)
+- `update_existing_ads.py` - עדכון טירגוט/כותרת/תיאור ל-Ad Sets שכבר נוצרו (הרצה חד-פעמית)
+- `activate_all_adsets.py` - הפעלת כל ה-Ad Sets בבת אחת (הרצה חד-פעמית)
 - `insights.py` - משיכת ביצועים (Insights) מסונן לקמפיין הזה בלבד
 - `dashboard.py` - בונה את `performance_dashboard.html` (קריאה-בלבד)
+- `webapp.py` - לוח בקרה אינטראקטיבי (שרת Flask מקומי)
 - `logger.py` - רישום ללוג (JSON Lines)
 - `logs/campaign_launch_log.jsonl` - נוצר אוטומטית בהרצה
 - `performance_dashboard.html` - נוצר אוטומטית ע"י `dashboard.py`
+- `debug_*.py` - כלי אבחון חד-פעמיים מתהליך הניפוי (לא חלק מהזרימה הרגילה)
 
 ## אזהרות חשובות
 

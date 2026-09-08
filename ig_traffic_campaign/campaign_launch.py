@@ -72,7 +72,26 @@ def create_campaign() -> str:
     return campaign_id
 
 
-def create_ad_set(campaign_id: str, name: str) -> str:
+def build_targeting(video: dict) -> dict:
+    """
+    בונה טירגוט ספציפי לתוכן הסרטון: מתחיל מ-config.TARGETING (ישראל, קהל רחב,
+    Advantage+ audience) ומוסיף flexible_spec.interests לפי הקטגוריה של הסרטון -
+    כדי לדבר לקהל הכי רלוונטי ולהעלות סיכוי ללחיצה, בלי לוותר על ההרחבה האוטומטית
+    של Advantage+ (interests משמשים כ"נקודת פתיחה", לא הגבלה נוקשה, כל עוד
+    advantage_audience=1 עדיין דלוק).
+    אם עדיין אין interest IDs אמיתיים לקטגוריה הזו (ראו INTEREST_IDS_BY_CATEGORY,
+    ריקים עד הרצת debug_search_interests.py) - נופל חזרה לטירגוט הרחב בלבד.
+    """
+    interest_ids = config.INTEREST_IDS_BY_CATEGORY.get(video.get("category"), [])
+    if not interest_ids:
+        return config.TARGETING
+
+    targeting = dict(config.TARGETING)
+    targeting["flexible_spec"] = [{"interests": [{"id": iid} for iid in interest_ids]}]
+    return targeting
+
+
+def create_ad_set(campaign_id: str, name: str, targeting: dict) -> str:
     if config.DRY_RUN:
         logger.print_and_log({"level": "dry_run", "action": "create_ad_set", "name": name, "campaign_id": campaign_id})
         return f"DRY_RUN_ADSET_ID_{name}"
@@ -90,7 +109,7 @@ def create_ad_set(campaign_id: str, name: str) -> str:
         "bid_strategy": config.BID_STRATEGY,
         "bid_amount": config.BID_AMOUNT_AGOROT,
         "optimization_goal": config.OPTIMIZATION_GOAL,
-        "targeting": json.dumps(config.TARGETING),
+        "targeting": json.dumps(targeting),
         "status": config.CREATED_STATUS,
         "access_token": config.ACCESS_TOKEN,
     }, timeout=30)
@@ -106,7 +125,8 @@ def create_ad_set(campaign_id: str, name: str) -> str:
     return adset_id
 
 
-def create_ad_creative(name: str, video_id: str, thumbnail_url: str, message: str) -> str:
+def create_ad_creative(name: str, video_id: str, thumbnail_url: str, message: str,
+                        title: str = "", description: str = "") -> str:
     if config.DRY_RUN:
         logger.print_and_log({"level": "dry_run", "action": "create_ad_creative", "name": name})
         return f"DRY_RUN_CREATIVE_ID_{name}"
@@ -117,17 +137,25 @@ def create_ad_creative(name: str, video_id: str, thumbnail_url: str, message: st
     # ל-Business Portfolio בלי קישור קלאסי ל-PAGE_ID הזה, אז לא ניתן "לפרסם כ"
     # אותו IG actor מהדף הזה. לא נדרש בכל מקרה - היעד בפועל הוא הלינק בקריאה-לפעולה
     # (call_to_action), לא זהות המפרסם.
+    # title -> "headline" (הכותרת המודגשת מתחת לווידאו), description -> "link_description"
+    # (התיאור הקטן יותר מתחת לכותרת) - שני השדות האלה היו ריקים קודם.
+    video_data = {
+        "video_id": video_id,
+        "image_url": thumbnail_url,
+        "message": message,
+        "call_to_action": {
+            "type": config.CTA_TYPE,
+            "value": {"link": config.DESTINATION_URL},
+        },
+    }
+    if title:
+        video_data["title"] = title
+    if description:
+        video_data["link_description"] = description
+
     object_story_spec = {
         "page_id": config.PAGE_ID,
-        "video_data": {
-            "video_id": video_id,
-            "image_url": thumbnail_url,
-            "message": message,
-            "call_to_action": {
-                "type": config.CTA_TYPE,
-                "value": {"link": config.DESTINATION_URL},
-            },
-        },
+        "video_data": video_data,
     }
 
     url = f"{config.GRAPH_URL}/act_{config.AD_ACCOUNT_ID}/adcreatives"
@@ -225,7 +253,7 @@ def main():
         upload_result = video_upload.upload_and_prepare(local_path, name=name)
 
         print("  יוצר Ad Set...")
-        adset_id = create_ad_set(campaign_id, name)
+        adset_id = create_ad_set(campaign_id, name, targeting=build_targeting(video))
 
         print("  יוצר קריאטיב...")
         creative_id = create_ad_creative(
@@ -233,6 +261,8 @@ def main():
             video_id=upload_result["video_id"],
             thumbnail_url=upload_result["thumbnail_url"],
             message=message,
+            title=video.get("title", ""),
+            description=video.get("description", ""),
         )
 
         print("  יוצר מודעה...")
