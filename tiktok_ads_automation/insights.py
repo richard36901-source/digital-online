@@ -266,7 +266,7 @@ def get_ads_full_creative(advertiser_id: str, ad_ids: list[str]) -> dict:
             "advertiser_id": advertiser_id,
             "filtering": json.dumps({"ad_ids": ad_ids}),
             "fields": json.dumps([
-                "ad_id", "ad_name", "ad_text", "video_id", "image_ids",
+                "ad_id", "ad_name", "ad_text", "ad_format", "video_id", "image_ids",
                 "identity_type", "identity_id", "landing_page_url", "call_to_action",
             ]),
             "page": 1,
@@ -282,6 +282,7 @@ def get_ads_full_creative(advertiser_id: str, ad_ids: list[str]) -> dict:
         item["ad_id"]: {
             "ad_name": item.get("ad_name"),
             "ad_text": item.get("ad_text"),
+            "ad_format": item.get("ad_format"),
             "video_id": item.get("video_id"),
             "image_ids": item.get("image_ids"),
             "identity_type": item.get("identity_type"),
